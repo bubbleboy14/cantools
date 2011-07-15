@@ -1,0 +1,601 @@
+/*****
+ * cantools.js
+ * version 0.1.0
+ * MIT License:
+
+Copyright (c) 2011 Civil Action Network
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *****/
+
+/****
+ * JSON. If you've got a better wire protocol, I'd love to hear it.
+ ****/
+if(!this.JSON){JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typeof Date.prototype.toJSON!=='function'){Date.prototype.toJSON=function(key){return this.getUTCFullYear()+'-'+f(this.getUTCMonth()+1)+'-'+f(this.getUTCDate())+'T'+f(this.getUTCHours())+':'+f(this.getUTCMinutes())+':'+f(this.getUTCSeconds())+'Z'};String.prototype.toJSON=Number.prototype.toJSON=Boolean.prototype.toJSON=function(key){return this.valueOf()}}var cx=/[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,escapable=/[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,gap,indent,meta={'\b':'\\b','\t':'\\t','\n':'\\n','\f':'\\f','\r':'\\r','"':'\\"','\\':'\\\\'},rep;function quote(string){escapable.lastIndex=0;return escapable.test(string)?'"'+string.replace(escapable,function(a){var c=meta[a];return typeof c==='string'?c:'\\u'+('0000'+a.charCodeAt(0).toString(16)).slice(-4)})+'"':'"'+string+'"'}function str(key,holder){var i,k,v,length,mind=gap,partial,value=holder[key];if(value&&typeof value==='object'&&typeof value.toJSON==='function'){value=value.toJSON(key)}if(typeof rep==='function'){value=rep.call(holder,key,value)}switch(typeof value){case'string':return quote(value);case'number':return isFinite(value)?String(value):'null';case'boolean':case'null':return String(value);case'object':if(!value){return'null'}gap+=indent;partial=[];if(Object.prototype.toString.apply(value)==='[object Array]'){length=value.length;for(i=0;i<length;i+=1){partial[i]=str(i,value)||'null'}v=partial.length===0?'[]':gap?'[\n'+gap+partial.join(',\n'+gap)+'\n'+mind+']':'['+partial.join(',')+']';gap=mind;return v}if(rep&&typeof rep==='object'){length=rep.length;for(i=0;i<length;i+=1){k=rep[i];if(typeof k==='string'){v=str(k,value);if(v){partial.push(quote(k)+(gap?': ':':')+v)}}}}else{for(k in value){if(Object.hasOwnProperty.call(value,k)){v=str(k,value);if(v){partial.push(quote(k)+(gap?': ':':')+v)}}}}v=partial.length===0?'{}':gap?'{\n'+gap+partial.join(',\n'+gap)+'\n'+mind+'}':'{'+partial.join(',')+'}';gap=mind;return v}}if(typeof JSON.stringify!=='function'){JSON.stringify=function(value,replacer,space){var i;gap='';indent='';if(typeof space==='number'){for(i=0;i<space;i+=1){indent+=' '}}else if(typeof space==='string'){indent=space}rep=replacer;if(replacer&&typeof replacer!=='function'&&(typeof replacer!=='object'||typeof replacer.length!=='number')){throw new Error('JSON.stringify');}return str('',{'':value})}}if(typeof JSON.parse!=='function'){JSON.parse=function(text,reviver){var j;function walk(holder,key){var k,v,value=holder[key];if(value&&typeof value==='object'){for(k in value){if(Object.hasOwnProperty.call(value,k)){v=walk(value,k);if(v!==undefined){value[k]=v}else{delete value[k]}}}}return reviver.call(holder,key,value)}cx.lastIndex=0;if(cx.test(text)){text=text.replace(cx,function(a){return'\\u'+('0000'+a.charCodeAt(0).toString(16)).slice(-4)})}if(/^[\],:{}\s]*$/.test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g,'@').replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,']').replace(/(?:^|:|,)(?:\s*\[)+/g,''))){j=eval('('+text+')');return typeof reviver==='function'?walk({'':j},''):j}throw new SyntaxError('JSON.parse');}}}());
+
+/****
+ * Util code.
+ ****/
+
+/****
+ * Fix for IE's broken indexOf
+ * http://soledadpenades.com/2007/05/17/arrayindexof-in-internet-explorer/
+ ****/
+if(!Array.indexOf){
+    Array.prototype.indexOf = function(obj){
+        for(var i=0; i<this.length; i++){
+            if(this[i]==obj){
+                return i;
+            }
+        }
+        return -1;
+    }
+}
+
+/****
+ * Fix for IE's broken document.getElementsByClassName
+ * http://groups.google.com/group/rubyonrails-spinoffs/browse_thread/thread/c0a4ae87cba265f7/d78509661cd1d400
+ ****/
+if (!document.getElementsByClassName) {
+    document.getElementsByClassName = function(className, parentElement) {
+      if (typeof parentElement == 'string'){
+        parentElement = document.getElementById(parentElement);
+      } else if (typeof parentElement != 'object' ||
+                typeof parentElement.tagName != 'string'){
+        parentElement = document.body;
+      }
+      var children = parentElement.getElementsByTagName('*');
+      var re = new RegExp('\\b' + className + '\\b');
+      var el, elements = [];
+      var i = 0;
+      while ( (el = children[i++]) ){
+        if ( el.className && re.test(el.className)){
+          elements.push(el);
+        }
+      }
+      return elements;
+    }
+}
+
+/****
+ * Fix for IE's broken String.trim
+ * http://stackoverflow.com/questions/2308134/trim-in-javascript-not-working-in-ie
+ ****/
+if(typeof String.prototype.trim !== 'function') {
+  String.prototype.trim = function() {
+    return this.replace(/^\s+|\s+$/g, ''); 
+  }
+}
+
+// from http://msdn.microsoft.com/en-us/library/ms537509%28v=vs.85%29.aspx
+var getInternetExplorerVersion = function() {
+    // Returns the version of Internet Explorer or a -1
+    // (indicating the use of another browser).
+    var rv = -1; // Return value assumes failure.
+    if (navigator.appName == 'Microsoft Internet Explorer') {
+        var ua = navigator.userAgent;
+        var re  = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
+        if (re.exec(ua) != null)
+            rv = parseFloat(RegExp.$1);
+    }
+    return rv;
+};
+
+var newNode = function(content, type, classname, id, attrs) {
+    var d = document.createElement(type || "div");
+    if (content != "" && content != null) {
+        if (type == "table")
+            alert("illegal innerHTML set on table! content: "+content);
+        else
+            d.innerHTML = content;
+    }
+    if (classname)
+        d.className = classname;
+    if (id)
+        d.id = id;
+    attrs = attrs || {};
+//    for (var attr in attrs)
+  //      d[attr] = attrs[attr];
+    for (var attr in attrs) {
+        if (attrs[attr] == null)
+            continue;
+        if (attr == "onclick")
+            d.onclick = attrs[attr];
+        else if (attr == "value")
+            d.value = attrs[attr];
+        else
+            d.setAttribute(attr, attrs[attr]);
+    }
+    return d;
+};
+var ALLNODE = null;
+var loadAllNode = function() {
+    if (!ALLNODE)
+        ALLNODE = document.getElementById("all");
+};
+var absers = [];
+var allLeft = function() {
+    // accounts for padding
+    loadAllNode();
+    return ALLNODE.offsetLeft + 8;
+};
+var absed = function(node, leftpx, toppx) {
+    node.style.position = "absolute";
+    node.style.left = (leftpx + allLeft()) + "px";
+    if (toppx != null)
+        node.style.top = toppx + "px";
+    absers.push([node, leftpx]);
+    return node;
+};
+var windowHeight = function() {
+    return window.innerHeight || document.body.clientHeight;
+};
+var windowWidth = function() {
+    return window.innerWidth || document.body.clientWidth;
+};
+var fullscreeners = [];
+var screenheight = function(node) {
+//    node.style.height = ((window.innerHeight || document.body.offsetHeight)- 50) + "px";
+    node.style.height = (windowHeight() - 50) + "px";
+    fullscreeners.push(node);
+    return node;
+};
+var centerscreeners = [];
+var centered = function(n) {
+    n.style.top = (windowHeight()/2) - (n.clientHeight/2) + "px";
+    n.style.left = (windowWidth()/2) - (n.clientWidth/2) + "px";
+    centerscreeners.push(n);
+    return n;
+};
+var centerall = function() {
+    for (var i = 0; i < centerscreeners.length; i++) {
+        var n = centerscreeners[i];
+        n.style.top = (windowHeight()/2) - (n.clientHeight/2) + "px";
+        n.style.left = (windowWidth()/2) - (n.clientWidth/2) + "px";
+    }
+};
+window.onresize = function() {
+    loadAllNode();
+    if (!ALLNODE) {
+        window.onresize = {};
+        return;
+    }
+    var offset = allLeft();
+    for (var i = 0; i < absers.length; i++)
+        absers[i][0].style.left = (absers[i][1] + offset) + "px";
+    for (var i = 0; i < fullscreeners.length; i++)
+        fullscreeners[i].style.height = ((window.innerHeight || document.body.offsetHeight) - 50) + "px";
+    centerall();
+};
+var newLink = function(content, onclick, href, classname, id, attrs) {
+    if (attrs == null)
+        attrs = {};
+    if (onclick)
+        attrs.onclick = onclick;
+    if (href)
+        attrs.href = href;
+    return newNode(content, "a", classname, id, attrs);
+};
+var newButton = function(content, onclick, classname, id) {
+    return newNode(content, "button", classname, id, {"onclick": onclick});
+};
+var newField = function(id, value, classname, type) {
+    return newNode("", "input", classname, id, (value!=null || type!=null) && {"value": value, "type": type} || null);
+};
+var labelAndField = function(lname, fid, fclass, lclass, fval, ista, isresize) {
+    var n = newNode();
+    var finput = (ista && newTA || newField)(fid, fval,
+        "right "+(fclass||""),
+        lname == "Password" && "password" || null);
+    if (ista && isresize) {
+        finput.onkeyup = function() {
+            resizeTextArea(finput);
+            return true;
+        };
+    }
+    n.appendChild(finput);
+    n.appendChild(newNode(lname, "label", lclass,
+        null, {"for": fid, "htmlFor": fid}));
+    n.appendChild(newNode("", "div", "clearnode"));
+    return n;
+}
+var newSelect = function(onames, ovalues, id, curvalue, defaultvalue) {
+    ovalues = ovalues || onames;
+    var s = newNode("", "select", "", id);
+    for (var i = 0; i < onames.length; i++) {
+        s.appendChild(newNode(onames[i], "option",
+            "", "", {"value": ovalues[i]}));
+    }
+    if (curvalue)
+        s.value = ovalues.indexOf(curvalue) != -1 && curvalue || defaultvalue;
+    return s;
+};
+var monthnames = ["January", "February",
+    "March", "April", "May", "June", "July", "August",
+    "September", "October", "November", "December"];
+var month2num = function(month) {
+    return monthnames.indexOf(month)+1; // for "Month" at top of select
+};
+var dateSelectors = function(node, d, startdate, enddate, withtime, noday) {
+    var eyears = ["Year"];
+    for (var i = startdate; i <= enddate; i++)
+        eyears.push(i);
+    d.year = newSelect(eyears);
+    d.month = newSelect(["Month"].concat(monthnames),
+        ["Month", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+    node.appendChild(d.year);
+    node.appendChild(d.month);
+    if (!noday) {
+        d.day = newSelect(["Day", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+            11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
+            25, 26, 27, 28, 29, 30, 31]);
+        node.appendChild(d.day);
+    }
+    if (withtime) {
+        // hour, minute = etime.split(":") server-side
+        var etimes = ["Time"];
+        for (var i = 0; i < 24; i++) {
+            etimes.push(i+":"+"00");
+            etimes.push(i+":"+"30");
+        }
+        d.time = newSelect(etimes);
+        node.appendChild(d.time);
+    }
+};
+var radioStripStep = function(radios, labels, lname, cb, stripname, stripnum, ison) {
+    var fname = (stripname || "radiostrip") + (stripnum || "") + lname;
+    var f = newField(fname, null, null, "radio");
+    f.name = (stripname||"")+(stripnum||"");
+    f.onclick = function() {
+        cb(lname);
+    };
+    if (ison)
+        f.checked = true;
+    radios.insertCell(-1).appendChild(f);
+    labels.insertCell(-1).appendChild(newNode(lname,
+        "label", null, null,
+        {"htmlFor": fname, "for": fname}));
+};
+var capitalize = function(word) {
+    return word.slice(0,1).toUpperCase() + word.slice(1);
+};
+var toCaps = function(lowers) {
+    var uppers = [];
+    for (var i = 0; i < lowers.length; i++)
+        uppers.push(capitalize(lowers[i]));
+    return uppers;
+};
+var key2title = function(k) {
+    return toCaps(k.split("_")).join(" ");
+};
+var words2title = function(k) {
+    return toCaps(k.split(" ")).join(" ");
+};
+var keys2titles = function(lowers) {
+    var uppers = [];
+    for (var i = 0; i < lowers.length; i++)
+        uppers.push(key2title(lowers[i]));
+    return uppers;
+};
+var genfield = function(ftype, n, d, u, val, node2) {
+    var f = newField("up"+ftype, val || u[ftype],
+        "right w300", (ftype.indexOf("password") != -1) && "password" || null);
+    d[ftype] = f;
+    n.appendChild(f);
+    n.appendChild(newNode(key2title(ftype), "label", "bold",
+        null, {"for": "up"+ftype, "htmlFor": "up"+ftype}));
+    if (node2) {
+        n.appendChild(newNode("&nbsp;&nbsp;", "span"));
+        n.appendChild(node2);
+    }
+    n.appendChild(newNode("", "div", "clearnode"));
+};
+var radioStrip = function(pnode, lnames, cb, stripname, stripnum, stripval) {
+    var rtable = newNode("", "table");
+    rtable.style.textAlign = "center";
+    var radios = rtable.insertRow(0);
+    var labels = rtable.insertRow(1);
+    for (var i = 0; i < lnames.length; i++)
+        radioStripStep(radios, labels, lnames[i], cb, stripname, stripnum, lnames[i] == stripval);
+    pnode.appendChild(rtable);
+};
+var newTA = function(id, value, classname) {
+    return newNode("", "textarea", classname, id, value && {"value": value} || null);
+};
+var newImg = function(imgsrc, imgclass, onclick, _href, _target, _title, _linkid) {
+    var n = newNode("", "img", imgclass, "", {"src": imgsrc});
+    if (onclick || _href) {
+        var l = newLink("", onclick, _href);
+        if (_target)
+            l.target = _target;
+        if (_title)
+            l.title = l.alt = _title;
+        if (_linkid)
+            l.id = _linkid;
+        l.appendChild(n);
+        return l;
+    }
+    return n;
+};
+var linkWithIcon = function(icon, lname, laddr, lonclick) {
+    var n = newNode("", "span");
+    n.appendChild(newImg(icon, "vmiddle rpaddedsmall nodecoration", lonclick, laddr));
+    n.appendChild(newLink(lname, lonclick, laddr));
+    return n;
+};
+var wrapped = function(node, type, className, id, attrs) {
+    var wrapper = newNode("", type, className, id, attrs);
+    wrapper.appendChild(node);
+    return wrapper;
+};
+var validEmail = function(s) {
+    var atChar = s.indexOf('@');
+    var dotChar = s.indexOf('.', atChar);
+    if (atChar == -1 || dotChar == -1 || atChar > dotChar)
+        return false;
+    return true;
+};
+var validPassword = function(s) {
+    return s && s.length > 5;
+};
+var listRemove = function(oldlist, element) {
+    var newlist = [];
+    for (var i = 0; i < oldlist.length; i++) {
+        if (oldlist[i] != element)
+            newlist.push(oldlist[i]);
+    }
+    return newlist;
+};
+var _NUMS = '0123456789';
+var stripToNums = function(s) {
+    s = s || "";
+    var newStr = '';
+    for (var i = 0; i < s.length; i++) {
+        if (_NUMS.indexOf(s.charAt(i)) != -1)
+            newStr += s.charAt(i);
+    }
+    return newStr;
+};
+var stripToPhone = function(s) {
+    var newStr = stripToNums(s);
+    if (newStr.length < 10)
+        return "";
+    return newStr.slice(0,10);
+};
+var stripToZip = function(s) {
+    var newStr = stripToNums(s);
+    if (newStr.length < 5)
+        return "";
+    return newStr.slice(0,5);
+};
+var checkBoxAndLabel = function(cbid, ischecked, lname, lclass, cclass, onclick) {
+    var n = newNode("", "div", cclass);
+    var cbname = cbid+"checkbox";
+    var cbdata = {"type": "checkbox"};
+    if (ischecked)
+        cbdata.checked = ischecked;
+    var cb = newNode("", "input", "", cbname, cbdata);
+    n.appendChild(cb);
+    if (onclick) {
+        cb.onclick = function() {
+            onclick(cb);
+        };
+    }
+    n.appendChild(newNode(lname || cbid, "label", lclass, "",
+        {"for": cbname, "htmlFor": cbname}));
+    return n;
+};
+var inputEnterCallback = function(n, cb) {
+    n.onkeyup = function(e) {
+        e = e || window.event;
+        var code = e.keyCode || e.which;
+        if (code == 13 || code == 3)
+            cb();
+    };
+};
+var processPostParams = function(x) {
+    // overwrite this function to add encryption (for example)
+    return x;
+};
+var _xhr = function () {
+    return window.XMLHttpRequest ? new XMLHttpRequest(): new ActiveXObject("Microsoft.XMLHTTP");
+};
+var postData = function(path, params, errMsg, cb, eb, cbarg, ebarg) {
+    var xhr = _xhr();
+    xhr.open("POST", path, true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4) {
+            if (xhr.status == 200) {
+                var data = xhr.responseText;
+                if (ENCODE)
+                    data = flipReverse(data);
+                if (data.charAt(0) == '0') {
+                    if (eb) eb(data.slice(1), ebarg);
+                    else alert(errMsg+": "+data.slice(1));
+                }
+                else if (cb != null)
+                    cb(eval("("+data.slice(1)+")"), cbarg);
+            }
+            else if (!ENCODE)
+                alert("request to "+path+" failed!");
+        }
+    }
+    xhr.send(processPostParams(params));
+};
+var sameList = function(list1, list2) {
+    if (list1.length != list2.length)
+        return false;
+    for (var i = 0; i < list1.length; i++) {
+        if (list1[i] != list2[i])
+            return false;
+    }
+    return true;
+};
+var copyList = function(oldlist) {
+    var newlist = [];
+    for (var i = 0; i < oldlist.length; i++)
+        newlist.push(oldlist[i]);
+    return newlist;
+};
+var dataDiff = function(dold, dnew, required, compdicts, submap, complists) {
+    var ddiff = required || {};
+    compdicts = compdicts || [];
+    complists = complists || [];
+    submap = submap || {};
+    for (var k in dnew) {
+        if (compdicts.indexOf(k) != -1) {
+            for (var j in dnew[k]) {
+                if (dnew[k][j] != dold[k][j]) {
+                    ddiff[k] = dnew[k];
+                    break;
+                }
+            }
+        }
+        else if (complists.indexOf(k) != -1) {
+            if (!sameList(dnew[k], dold[k]))
+                ddiff[k] = dnew[k];
+        }
+        else if (k in submap) {
+            if (dnew[k] != dold[k][submap[k]])
+                ddiff[k] = dnew[k];
+        }
+        else if (dnew[k] != dold[k])
+            ddiff[k] = dnew[k];
+    }
+    return ddiff;
+};
+var datamap = {};
+var newData = function(d) {
+    if (datamap[d.key]) {
+        for (var k in d)
+            datamap[d.key][k] = d[k];
+    }
+    else
+        datamap[d.key] = d;
+};
+var newDataSet = function(dlist) {
+    for (var i = 0; i < dlist.length; i++)
+        newData(dlist[i]);
+};
+var uniquify = function(items, exceptions) {
+    exceptions = exceptions || [];
+    items.sort();
+    var newitems = [];
+    var latestitem = "";
+    for (var i = 0; i < items.length; i++) {
+        if (items[i] != latestitem && exceptions.indexOf(items[i]) == -1) {
+            latestitem = items[i];
+            newitems.push(latestitem);
+        }
+    }
+    return newitems;
+};
+var showHideT = function(n) {
+    n.style.opacity = n.style.opacity == "1" && "0" || "1";
+};
+var showHide = function(n, juston, justoff, dstyle) {
+    dstyle = dstyle || "block";
+    if (juston || justoff)
+        n.style.display = juston && dstyle || "none";
+    else if (n.style.display == "" && n.className.indexOf("hidden") == -1)
+        n.style.display = "none";
+    else
+        n.style.display = (n.style.display == dstyle) && "none" || dstyle;
+};
+var labeledImage = function(img, href, label, _alt, _icl, _wcl, _lcl) {
+    var nlink = newLink();
+    nlink.appendChild(newImg(img, _icl));
+    nlink.appendChild(newNode(label, "div", _lcl));
+    nlink.href = href;
+    nlink.target = "_blank";
+    nlink.title = nlink.alt = _alt || label;
+    var wclass = "lfloat";
+    if (_wcl)
+        wclass += " "+_wcl;
+    return wrapped(nlink, "div", wclass);
+};
+var url2link = function(rurl, rname) {
+    var furl = rurl;
+    if (furl.slice(0,7) == "http://")
+        rurl = rurl.slice(7);
+    else
+        furl = "http://" + furl;
+    return "<a href='"+ furl + "'>" + (rname || rurl) + "</a>"
+};
+// wysiwyg editor widget
+var wysiwygize = function(nodeid, isrestricted, val) {
+    var d = {
+        "plugins": "paste",
+        "paste_auto_cleanup_on_paste": true,
+        "mode": "exact",
+        "elements": nodeid,
+        "theme": "advanced",
+        "skin": "o2k7",
+        "theme_advanced_buttons1": "bold,italic,|,justifyleft,justifycenter,justifyright,justifyfull,|,bullist,numlist,|,outdent,indent,blockquote,|,link,unlink,undo,redo",
+        "theme_advanced_buttons2": "pastetext,pasteword,selectall",
+        "theme_advanced_buttons3": "",
+        "theme_advanced_statusbar_location": "bottom",
+        "theme_advanced_toolbar_location": "top",
+        "theme_advanced_toolbar_align": "left",
+        "theme_advanced_resizing": true,
+        "theme_advanced_resize_horizontal": false,
+        "width": "100%",
+        "force_br_newlines": true,
+        "force_p_newlines": false,
+        "forced_root_block": false
+    };
+    if (! isrestricted) {
+        d.plugins += ",table";
+        d.theme_advanced_buttons2 += ",|,image,tablecontrols";
+        d.theme_advanced_buttons3 = "";
+    }
+    tinyMCE.init(d);
+    var n = document.getElementById(nodeid);
+    n.get = function() {
+        return n.node.getContent();
+    };
+    n.dothis = function(f) {
+        if (!n.node) {
+            n.node = tinyMCE.get(nodeid);
+            if (!n.node)
+                return setTimeout(n.dothis, 200, f);
+        }
+        (f||(function(){}))();
+    };
+    n.set = function(s) {
+        n.dothis(function() { n.node.setContent(s); });
+    };
+    if (val)
+        setTimeout(n.set, 100, val);
+    else
+        n.dothis();
+};
+var sanitize = function(b) {
+    var ssi = b.indexOf("<script");
+    while (ssi != -1) {
+        var sei = b.indexOf("</script>", ssi);
+        if (sei == -1)
+            sei = b.length;
+        b = b.slice(0, ssi) + b.slice(sei+9, b.length);
+        ssi = b.indexOf("<script");
+    }
+    // regex from http://www.somacon.com/p355.php
+    return b.replace(/^\s+|\s+$/g,"");
+};
+var resizeTextArea = function(cbody) {
+    // expander/contracter
+    // from http://www.webdeveloper.com/forum/archive/index.php/t-61552.html
+    if (navigator.appName.indexOf("Microsoft Internet Explorer") == 0)
+        cbody.style.overflow = 'visible';
+    else {
+        while (cbody.rows > 1 && cbody.scrollHeight < cbody.offsetHeight)
+            cbody.rows--;
+        while (cbody.scrollHeight > cbody.offsetHeight)
+            cbody.rows++;
+    }
+};
