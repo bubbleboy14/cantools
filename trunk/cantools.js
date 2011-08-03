@@ -246,7 +246,7 @@ var labelAndField = function(lname, fid, fclass, lclass, fval, ista, isresize) {
     var n = newNode();
     var finput = (ista && newTA || newField)(fid,
         fval, "right "+(fclass||""),
-        lname == "Password" && "password" || null);
+        (lname.indexOf("Password") != -1) && "password" || null);
     if (ista && isresize) {
         finput.onkeyup = function() {
             resizeTextArea(finput);
