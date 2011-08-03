@@ -1,6 +1,6 @@
 /*****
  * cantools.js
- * version 0.1.0
+ * version 0.1.1
  * MIT License:
 
 Copyright (c) 2011 Civil Action Network
@@ -112,6 +112,60 @@ var newNode = function(content, type, classname, id, attrs) {
     }
     return d;
 };
+
+var blurs = {};
+var setBlur = function(fieldId, values) {
+    blurs[fieldId] = values;
+};
+var getFieldValue = function(fieldId, fieldPath, rules) {
+    var field = document.getElementById(fieldId);
+    if (!field)
+        return null;
+    if (fieldPath) {
+        for (var i = 0; i < fieldPath.length; i++)
+            field = field[fieldPath[i]];
+    }
+    var s = field.value;
+    if (s == "" || (blurs[fieldId] && blurs[fieldId].indexOf(s) != -1))
+        return "";
+    if (rules) {
+        if (rules.requires) {
+            for (var i = 0; i < rules.requires.length; i++) {
+                if (s.indexOf(rules.requires[i]) == -1) {
+                    s = "";
+                    break;
+                }
+            }
+        }
+        if ((s && s.length || 0) < (rules.length || 0))
+            s = "";
+    }
+    return s;
+};
+var setFieldValue = function(value, fieldId, fieldPath) {
+    var field = document.getElementById(fieldId);
+    if (fieldPath) {
+        for (var i = 0; i < fieldPath.length; i++)
+            field = field[fieldPath[i]];
+    }
+    field.value = value || "";
+};
+var blurField = function(field, blurs) {
+    field.onblur = function() {
+        if (field.value == "") {
+            field.className += " gray";
+            field.value = blurs[Math.floor(Math.random()*blurs.length)];
+        }
+    };
+    field.onfocus = function() {
+        if (blurs.indexOf(field.value) != -1) {
+            field.value = "";
+            field.className = field.className.replace(" gray", "");
+        }
+    };
+    field.onblur();
+};
+
 var ALLNODE = null;
 var loadAllNode = function() {
     if (!ALLNODE)
