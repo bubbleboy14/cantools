@@ -242,7 +242,7 @@ var newField = function(id, value, classname, type) {
     return newNode("", "input", classname, id, (value!=null || type!=null) && {"value": value, "type": type} || null);
 };
 var labelAndField = function(lname, fid, fclass, lclass, fval, ista, isresize) {
-    fid = fid || lname;
+    fid = fid || lname.replace(/ /g, "");
     var n = newNode();
     var finput = (ista && newTA || newField)(fid,
         fval, "right "+(fclass||""),
