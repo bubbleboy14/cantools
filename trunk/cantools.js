@@ -460,6 +460,7 @@ var processPostParams = function(x) {
 var _xhr = function () {
     return window.XMLHttpRequest ? new XMLHttpRequest(): new ActiveXObject("Microsoft.XMLHTTP");
 };
+var ENCODE = false;
 var postData = function(path, params, errMsg, cb, eb, cbarg, ebarg) {
     var xhr = _xhr();
     xhr.open("POST", path, true);
