@@ -445,12 +445,16 @@ var checkBoxAndLabel = function(cbid, ischecked, lname, lclass, cclass, onclick)
         {"for": cbname, "htmlFor": cbname}));
     return n;
 };
-var inputEnterCallback = function(n, cb) {
+var inputEnterCallback = function(n, cb, fid) {
     n.onkeyup = function(e) {
         e = e || window.event;
         var code = e.keyCode || e.which;
-        if (code == 13 || code == 3)
+        if (code == 13 || code == 3) {
+            // can prevent annoying repeating alert on enter scenarios
+            if (fid)
+                document.getElementById(fid).focus();
             cb();
+        }
     };
 };
 var processPostParams = function(x) {
