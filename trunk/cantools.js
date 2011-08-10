@@ -455,7 +455,7 @@ var inputEnterCallback = function(n, cb) {
 };
 var processPostParams = function(x) {
     // overwrite this function to add encryption (for example)
-    return x;
+    return JSON.stringify(x);
 };
 var _xhr = function () {
     return window.XMLHttpRequest ? new XMLHttpRequest(): new ActiveXObject("Microsoft.XMLHTTP");
