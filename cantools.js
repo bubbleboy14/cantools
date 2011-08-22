@@ -200,7 +200,7 @@ var screenheight = function(node) {
 };
 var centerscreeners = [];
 var centered = function(n) {
-    n.style.position = "absolute";
+    n.style.position = "fixed";
     n.style.top = (windowHeight()/2) - (n.clientHeight/2) + "px";
     n.style.left = (windowWidth()/2) - (n.clientWidth/2) + "px";
     centerscreeners.push(n);
