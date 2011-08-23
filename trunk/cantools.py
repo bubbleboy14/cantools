@@ -44,7 +44,7 @@ def redirect(addr, msg=""):
     a = "<script>"
     if msg:
         a += 'alert("%s"); '%(msg,)
-    a += 'document.location = "%s";</script>'%(addr,)
+    a += "document.location = '%s';</script>"%(addr,)
     _write(envelope['html']%(a,))
 
 def succeed(data="", html=False, noenc=False):
