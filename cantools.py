@@ -1,6 +1,6 @@
 """
 cantools.py
-version 0.1.1
+version 0.1.2
 MIT License:
 
 Copyright (c) 2011 Civil Action Network
@@ -63,12 +63,6 @@ def fail(data="failed", html=False, err=None):
             data = logdata
     _write(s%(enc("0"+data),))
 
-def send_image(data):
-    print "Content-Type: image/png"
-    print ""
-    print data
-    sys.exit()
-
 def send_pdf(data, title):
     print 'Content-Type: application/pdf; name="%s.pdf"'%(title,)
     print 'Content-Disposition: attachment; filename="%s.pdf"'%(title,)
@@ -76,11 +70,20 @@ def send_pdf(data, title):
     print data
     sys.exit()
 
-def send_xml(data):
-    print "Content-Type: text/xml"
+def send_image(data):
+    print "Content-Type: image/png"
     print ""
     print data
     sys.exit()
+
+def send_text(data, dtype):
+    print "Content-Type: text/%s"%(dtype,)
+    print ""
+    print data
+    sys.exit()    
+
+def send_xml(data):
+    send_text(data, "xml")
 
 # request functions
 request = None
