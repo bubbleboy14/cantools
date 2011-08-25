@@ -76,7 +76,7 @@ def send_image(data):
     print data
     sys.exit()
 
-def send_text(data, dtype):
+def send_text(data, dtype="html"):
     print "Content-Type: text/%s"%(dtype,)
     print ""
     print data
