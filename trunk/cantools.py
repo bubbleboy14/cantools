@@ -76,8 +76,10 @@ def send_image(data):
     print data
     sys.exit()
 
-def send_text(data, dtype="html"):
+def send_text(data, dtype="html", fname=None):
     print "Content-Type: text/%s"%(dtype,)
+    if fname:
+        print 'Content-Disposition: attachment; filename="%s.%s"'%(fname, dtype)
     print ""
     print data
     sys.exit()    
