@@ -457,6 +457,34 @@ var inputEnterCallback = function(n, cb, fid) {
         }
     };
 };
+var _pwpcb = null;
+var passwordPrompt = function(cb) {
+    _pwpcb = cb;
+    var pwprompt = document.getElementById("passwordprompt");
+    var pwpfield = document.getElementById("pwpfield");
+    if (pwprompt == null) {
+        pwprompt = newNode("", "div", "hidden basicpopup centered", "passwordprompt");
+        document.body.appendChild(pwprompt);
+        pwprompt.appendChild(newNode("For your own security, please enter your password.", "div", "bottompadded"));
+        pwpfield = newField("pwpfield", null, null, "password");
+        pwprompt.appendChild(pwpfield);
+        var entercb = function() {
+            if (! validPassword(pwpfield.value))
+                return alert("invalid password!");
+            pwprompt.style.display = "none";
+            _pwpcb(pwpfield.value);
+        };
+        inputEnterCallback(pwpfield, entercb);
+        pwprompt.appendChild(newButton("Continue", entercb));
+        pwprompt.appendChild(newButton("Cancel", function() {
+            pwprompt.style.display = "none";
+        }));
+    }
+    pwpfield.value = "";
+    pwprompt.style.display = "block";
+    pwpfield.focus();
+    centered(pwprompt);
+};
 var processPostParams = function(x) {
     // overwrite this function to add encryption (for example)
     return JSON.stringify(x);
