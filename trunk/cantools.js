@@ -87,7 +87,7 @@ var getInternetExplorerVersion = function() {
 
 var newNode = function(content, type, classname, id, attrs) {
     var d = document.createElement(type || "div");
-    if (content != "" && content != null) {
+    if (content !== "" && content != null) {
         if (type == "table")
             alert("illegal innerHTML set on table! content: "+content);
         else
