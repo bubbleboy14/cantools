@@ -1,6 +1,6 @@
 """
 cantools.py
-version 0.1.2
+version 0.1.3
 MIT License:
 
 Copyright (c) 2011 Civil Action Network
@@ -40,11 +40,13 @@ def _write(data):
     print data
     sys.exit()
 
-def redirect(addr, msg=""):
+def redirect(addr, msg="", noscript=False):
     a = "<script>"
     if msg:
         a += 'alert("%s"); '%(msg,)
     a += "document.location = '%s';</script>"%(addr,)
+    if noscript:
+        a += '<noscript>This site requires Javascript to function properly. To enable Javascript in your browser, please follow <a href="http://www.google.com/support/bin/answer.py?answer=23852">these instructions</a>. Thank you, and have a nice day.</noscript>'
     _write(envelope['html']%(a,))
 
 def succeed(data="", html=False, noenc=False):
