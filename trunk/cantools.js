@@ -74,18 +74,24 @@ if(typeof String.prototype.trim !== 'function') {
 // original: http://msdn.microsoft.com/en-us/library/ms537509%28v=vs.85%29.aspx
 //  - removed appName check, which doesn't detect IE-based AOL Explorer
 //  - added Opera check, since Opera sometimes thinks it's IE
+//  - removed regular expression, which interfered with compilation
+//  - in other words, we've rewritten the entire function. thank you microsoft.
 var getInternetExplorerVersion = function() {
     // Returns the version of Internet Explorer or a -1
     // (indicating the use of another browser).
-    var rv = -1; // Return value assumes failure.
+//    var rv = -1; // Return value assumes failure.
 //    if (navigator.appName == 'Microsoft Internet Explorer') {
     var ua = navigator.userAgent;
     if (ua.indexOf("Opera") == -1) {
-        var re  = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
-        if (re.exec(ua) != null)
-            rv = parseFloat(RegExp.$1);
+        var parts = ua.split("MSIE ");
+        if (parts.length > 1)
+            return parseFloat(parts[1].split(";")[0]);
+//        var re  = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
+//        if (re.exec(ua) != null)
+//            rv = parseFloat(RegExp.$1);
     }
-    return rv;
+    return -1;
+//    return rv;
 };
 
 var newNode = function(content, type, classname, id, attrs) {
