@@ -1,6 +1,6 @@
 /*****
  * cantools.js
- * version 0.1.3
+ * version 0.1.4
  * MIT License:
 
 Copyright (c) 2011 Civil Action Network
@@ -71,13 +71,16 @@ if(typeof String.prototype.trim !== 'function') {
   }
 }
 
-// from http://msdn.microsoft.com/en-us/library/ms537509%28v=vs.85%29.aspx
+// original: http://msdn.microsoft.com/en-us/library/ms537509%28v=vs.85%29.aspx
+//  - removed appName check, which doesn't detect IE-based AOL Explorer
+//  - added Opera check, since Opera sometimes thinks it's IE
 var getInternetExplorerVersion = function() {
     // Returns the version of Internet Explorer or a -1
     // (indicating the use of another browser).
     var rv = -1; // Return value assumes failure.
-    if (navigator.appName == 'Microsoft Internet Explorer') {
-        var ua = navigator.userAgent;
+//    if (navigator.appName == 'Microsoft Internet Explorer') {
+    var ua = navigator.userAgent;
+    if (ua.indexOf("Opera") == -1) {
         var re  = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
         if (re.exec(ua) != null)
             rv = parseFloat(RegExp.$1);
