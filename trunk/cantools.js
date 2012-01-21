@@ -1,6 +1,6 @@
 /*****
  * cantools.js
- * version 0.1.4
+ * version 0.1.5
  * MIT License:
 
 Copyright (c) 2011 Civil Action Network
@@ -624,6 +624,8 @@ var url2link = function(rurl, rname) {
         rurl = rurl.slice(7);
     else
         furl = "http://" + furl;
+    if (!rname)
+        rurl = rurl.replace(/\//g, "/&#8203;");
     return "<a href='"+ furl + "'>" + (rname || rurl) + "</a>"
 };
 // wysiwyg editor widget
@@ -675,13 +677,15 @@ var wysiwygize = function(nodeid, isrestricted, val) {
         n.dothis();
 };
 var sanitize = function(b) {
-    var ssi = b.indexOf("<script");
+    var sstart = "<scr" + "ipt";
+    var send = "</sc" + "ript>";
+    var ssi = b.indexOf(sstart);
     while (ssi != -1) {
-        var sei = b.indexOf("</script>", ssi);
+        var sei = b.indexOf(send, ssi);
         if (sei == -1)
             sei = b.length;
         b = b.slice(0, ssi) + b.slice(sei+9, b.length);
-        ssi = b.indexOf("<script");
+        ssi = b.indexOf(sstart);
     }
     // regex from http://www.somacon.com/p355.php
     return b.replace(/^\s+|\s+$/g,"");
