@@ -1,6 +1,6 @@
 /*****
  * cantools.js
- * version 0.1.5
+ * version 0.1.6
  * MIT License:
 
 Copyright (c) 2011 Civil Action Network
@@ -99,6 +99,14 @@ var newNode = function(content, type, classname, id, attrs) {
     if (content !== "" && content != null) {
         if (type == "table")
             alert("illegal innerHTML set on table! content: "+content);
+        else if (type == "style") {
+            d.type = 'text/css';
+            if (d.styleSheet) {
+                d.styleSheet.cssText = content;
+            } else {
+                d.appendChild(document.createTextNode(content));
+            }
+        }
         else
             d.innerHTML = content;
     }
@@ -208,20 +216,20 @@ var screenheight = function(node) {
     return node;
 };
 var centerscreeners = [];
-var centered = function(n) {
-    n.style.position = "fixed";
+var centernode = function(n) {
     n.style.top = (windowHeight()/2) - (n.clientHeight/2) + "px";
     n.style.left = (windowWidth()/2) - (n.clientWidth/2) + "px";
+};
+var centered = function(n) {
+    n.style.position = "fixed";
+    centernode(n);
     if (centerscreeners.indexOf(n) == -1)
         centerscreeners.push(n);
     return n;
 };
 var centerall = function() {
-    for (var i = 0; i < centerscreeners.length; i++) {
-        var n = centerscreeners[i];
-        n.style.top = (windowHeight()/2) - (n.clientHeight/2) + "px";
-        n.style.left = (windowWidth()/2) - (n.clientWidth/2) + "px";
-    }
+    for (var i = 0; i < centerscreeners.length; i++)
+        centernode(centerscreeners[i]);
 };
 window.onresize = function() {
     loadAllNode();
@@ -236,13 +244,15 @@ window.onresize = function() {
         fullscreeners[i].style.height = ((window.innerHeight || document.body.offsetHeight) - 50) + "px";
     centerall();
 };
-var newLink = function(content, onclick, href, classname, id, attrs) {
+var newLink = function(content, onclick, href, classname, id, attrs, newtab) {
     if (attrs == null)
         attrs = {};
     if (onclick)
         attrs.onclick = onclick;
     if (href)
         attrs.href = href;
+    if (newtab)
+        attrs.target = "_blank";
     return newNode(content, "a", classname, id, attrs);
 };
 var newButton = function(content, onclick, classname, id) {
@@ -349,7 +359,7 @@ var keys2titles = function(lowers) {
 };
 var genfield = function(ftype, n, d, u, val, node2) {
     var f = newField("up"+ftype, val || u[ftype],
-        "right w300", (ftype.indexOf("password") != -1) && "password" || null);
+        "right w280", (ftype.indexOf("password") != -1) && "password" || null);
     d[ftype] = f;
     n.appendChild(f);
     n.appendChild(newNode(key2title(ftype), "label", "bold",
@@ -512,7 +522,7 @@ var postData = function(path, params, errMsg, cb, eb, cbarg, ebarg) {
             if (xhr.status == 200) {
                 var data = xhr.responseText;
                 if (ENCODE)
-                    data = flipReverse(data);
+                    data = flipSafe(data);
                 if (data.charAt(0) == '0') {
                     if (eb) eb(data.slice(1), ebarg);
                     else alert(errMsg+": "+data.slice(1));
@@ -618,18 +628,21 @@ var labeledImage = function(img, href, label, _alt, _icl, _wcl, _lcl) {
         wclass += " "+_wcl;
     return wrapped(nlink, "div", wclass);
 };
+var breakurl = function(url) {
+    return url.replace(/&/g, "&&#8203;").replace(/\//g, "/&#8203;").replace(/_/g, "_&#8203;");
+};
 var url2link = function(rurl, rname) {
     var furl = rurl;
     if (furl.slice(0,7) == "http://")
         rurl = rurl.slice(7);
+    else if (furl.slice(0,8) == "https://")
+        rurl = rurl.slice(8);
     else
         furl = "http://" + furl;
-    if (!rname)
-        rurl = rurl.replace(/\//g, "/&#8203;");
-    return "<a href='"+ furl + "'>" + (rname || rurl) + "</a>"
+    return "<a href='"+ furl + "'>" + (rname || breakurl(rurl)) + "</a>";
 };
 // wysiwyg editor widget
-var wysiwygize = function(nodeid, isrestricted, val) {
+var wysiwygize = function(nodeid, isrestricted, val, cb) {
     var d = {
         "plugins": "paste",
         "paste_auto_cleanup_on_paste": true,
@@ -657,8 +670,11 @@ var wysiwygize = function(nodeid, isrestricted, val) {
     }
     tinyMCE.init(d);
     var n = document.getElementById(nodeid);
-    n.get = function() {
-        return n.node.getContent();
+    n.get = function(stripnbsp) {
+        var c = n.node.getContent();
+        if (stripnbsp) while (c.slice(-6) == "&nbsp;")
+            c = c.slice(0, -6);
+        return c;
     };
     n.dothis = function(f) {
         if (!n.node) {
@@ -671,10 +687,16 @@ var wysiwygize = function(nodeid, isrestricted, val) {
     n.set = function(s) {
         n.dothis(function() { n.node.setContent(s); });
     };
-    if (val)
-        setTimeout(n.set, 100, val);
-    else
-        n.dothis();
+    n.dothis(function() {
+        val && n.set(val);
+        cb && cb();
+    });
+};
+var qwiz = function(nodeid, val) {
+    var n = document.getElementById(nodeid);
+    if (!n || n.get)
+        return setTimeout(qwiz, 500, nodeid, val);
+    !n.get && wysiwygize(nodeid, true, val);
 };
 var sanitize = function(b) {
     var sstart = "<scr" + "ipt";

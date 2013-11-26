@@ -1,6 +1,6 @@
 """
 cantools.py
-version 0.1.5
+version 0.1.6
 MIT License:
 
 Copyright (c) 2011 Civil Action Network
@@ -37,7 +37,7 @@ def setenc(f):
 
 # response functions
 def _write(data):
-    print data
+    print data.encode('utf-8').strip()
     sys.exit()
 
 def redirect(addr, msg="", noscript=False):
@@ -53,7 +53,7 @@ def succeed(data="", html=False, noenc=False):
     s = html and envelope['html'] or envelope['plain']
     _write(s%(enc("1"+simplejson.dumps(data), noenc),))
 
-def fail(data="failed", html=False, err=None):
+def fail(data="failed", html=False, err=None, noenc=False):
     s = html and envelope['html'] or envelope['plain']
     if err:
         # log it
@@ -63,7 +63,7 @@ def fail(data="failed", html=False, err=None):
         if DEBUG:
             # write it
             data = logdata
-    _write(s%(enc("0"+data),))
+    _write(s%(enc("0"+data, noenc),))
 
 def send_pdf(data, title):
     print 'Content-Type: application/pdf; name="%s.pdf"'%(title,)
@@ -79,12 +79,12 @@ def send_image(data):
     sys.exit()
 
 def send_text(data, dtype="html", fname=None):
-    print "Content-Type: text/%s"%(dtype,)
+    msg = ["Content-Type: text/%s"%(dtype,)]
     if fname:
-        print 'Content-Disposition: attachment; filename="%s.%s"'%(fname, dtype)
-    print ""
-    print data
-    sys.exit()    
+        msg.append('Content-Disposition: attachment; filename="%s.%s"'%(fname, dtype))
+    msg.append("")
+    msg.append(data)
+    _write('\n'.join(msg))
 
 def send_xml(data):
     send_text(data, "xml")

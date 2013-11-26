@@ -1,6 +1,6 @@
 /*****
  * cantools.css
- * version 0.1.5
+ * version 0.1.6
  * MIT License:
 
 Copyright (c) 2011 Civil Action Network
@@ -56,6 +56,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
     clear: both;
 }
 
+.w30 {
+    width: 30px;
+}
+
 .w100 {
     width: 100px;
 }
@@ -72,12 +76,20 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
     width: 200px;
 }
 
+.w280 {
+    width: 280px;
+}
+
 .w300 {
     width: 300px;
 }
 
 .w400 {
     width: 400px;
+}
+
+.w405 {
+    width: 405px;
 }
 
 .w420 {
@@ -88,19 +100,44 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
     width: 500px;
 }
 
+.w556 {
+    width: 556px;
+}
+
+.h30 {
+    height: 30px;
+}
+
+.h75 {
+    height: 75px;
+}
+
 .h100 {
     height: 100px;
 }
 
-.h120 {
-    height: 120px;
+.h150 {
+    height: 150px;
 }
 
 .h200 {
     height: 200px;
 }
 
+.h225 {
+    height: 225px;
+}
+
+.h255 {
+    height: 255px;
+}
+
 .nodecoration {
+    text-decoration: none;
+}
+
+.nicelinks a {
+    color: blue;
     text-decoration: none;
 }
 
@@ -182,6 +219,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 .shiftupless {
     margin-top: -5px;
+}
+
+.shiftupsome {
+    margin-top: -25px;
 }
 
 .shiftupmore {
