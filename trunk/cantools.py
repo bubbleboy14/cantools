@@ -1,6 +1,6 @@
 """
 cantools.py
-version 0.1.6
+version 0.1.7
 MIT License:
 
 Copyright (c) 2011 Civil Action Network
@@ -13,7 +13,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 """
 
 import sys
-from django.utils import simplejson
+try:
+    import json
+except:
+    from django.utils import simplejson as json
+from google.appengine.runtime.apiproxy_errors import RequestTooLargeError
 
 DEBUG = True
 envelope = {
@@ -36,24 +40,34 @@ def setenc(f):
     enc = f
 
 # response functions
-def _write(data):
-    print data.encode('utf-8').strip()
-    sys.exit()
+def respond(responseFunc, failMsg="failed", failHtml=False, failNoEnc=False):
+    try:
+        responseFunc()
+    except RequestTooLargeError:
+        fail("The file you are trying to upload is too large. Please submit something under 1MB. Thank you!", html=True, noenc=True, exit=False)
+    except Exception, e:
+        fail(data=failMsg, html=failHtml, err=e, noenc=failNoEnc, exit=False)
+    except SystemExit:
+        pass
 
-def redirect(addr, msg="", noscript=False):
+def _write(data, exit=True):
+    print data.encode('utf-8').strip()
+    exit and sys.exit()
+
+def redirect(addr, msg="", noscript=False, exit=True):
     a = "<script>"
     if msg:
         a += 'alert("%s"); '%(msg,)
     a += "document.location = '%s';</script>"%(addr,)
     if noscript:
         a += '<noscript>This site requires Javascript to function properly. To enable Javascript in your browser, please follow <a href="http://www.google.com/support/bin/answer.py?answer=23852">these instructions</a>. Thank you, and have a nice day.</noscript>'
-    _write(envelope['html']%(a,))
+    _write(envelope['html']%(a,), exit)
 
 def succeed(data="", html=False, noenc=False):
     s = html and envelope['html'] or envelope['plain']
-    _write(s%(enc("1"+simplejson.dumps(data), noenc),))
+    _write(s%(enc("1"+json.dumps(data), noenc),))
 
-def fail(data="failed", html=False, err=None, noenc=False):
+def fail(data="failed", html=False, err=None, noenc=False, exit=True):
     s = html and envelope['html'] or envelope['plain']
     if err:
         # log it
@@ -63,7 +77,7 @@ def fail(data="failed", html=False, err=None, noenc=False):
         if DEBUG:
             # write it
             data = logdata
-    _write(s%(enc("0"+data, noenc),))
+    _write(s%(enc("0"+data, noenc),), exit)
 
 def send_pdf(data, title):
     print 'Content-Type: application/pdf; name="%s.pdf"'%(title,)
@@ -78,13 +92,13 @@ def send_image(data):
     print data
     sys.exit()
 
-def send_text(data, dtype="html", fname=None):
+def send_text(data, dtype="html", fname=None, exit=True):
     msg = ["Content-Type: text/%s"%(dtype,)]
     if fname:
         msg.append('Content-Disposition: attachment; filename="%s.%s"'%(fname, dtype))
     msg.append("")
     msg.append(data)
-    _write('\n'.join(msg))
+    _write('\n'.join(msg), exit)
 
 def send_xml(data):
     send_text(data, "xml")
@@ -104,7 +118,7 @@ def cgi_load(force=False):
     global request
     data = enc(sys.stdin.read(), False, "request")
     try:
-        request = deUnicodeDict(simplejson.loads(data))
+        request = deUnicodeDict(json.loads(data))
     except:
         import cgi
         request = cgi.FieldStorage()
