@@ -1,6 +1,6 @@
 """
 cantools.py
-version 0.1.7
+version 0.1.8
 MIT License:
 
 Copyright (c) 2011 Civil Action Network
@@ -17,7 +17,6 @@ try:
     import json
 except:
     from django.utils import simplejson as json
-from google.appengine.runtime.apiproxy_errors import RequestTooLargeError
 
 DEBUG = True
 envelope = {
@@ -43,8 +42,6 @@ def setenc(f):
 def respond(responseFunc, failMsg="failed", failHtml=False, failNoEnc=False):
     try:
         responseFunc()
-    except RequestTooLargeError:
-        fail("The file you are trying to upload is too large. Please submit something under 1MB. Thank you!", html=True, noenc=True, exit=False)
     except Exception, e:
         fail(data=failMsg, html=failHtml, err=e, noenc=failNoEnc, exit=False)
     except SystemExit:
