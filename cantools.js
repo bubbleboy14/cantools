@@ -1,6 +1,6 @@
 /*****
  * cantools.js
- * version 0.1.7
+ * version 0.1.8
  * MIT License:
 
 Copyright (c) 2011 Civil Action Network
@@ -210,15 +210,25 @@ var windowWidth = function() {
 };
 var fullscreeners = [];
 var screenheight = function(node) {
-//    node.style.height = ((window.innerHeight || document.body.offsetHeight)- 50) + "px";
     node.style.height = (windowHeight() - 50) + "px";
-    fullscreeners.push(node);
+    if (fullscreeners.indexOf(node) == -1)
+        fullscreeners.push(node);
     return node;
 };
 var centerscreeners = [];
 var centernode = function(n) {
-    n.style.top = (windowHeight()/2) - (n.clientHeight/2) + "px";
-    n.style.left = (windowWidth()/2) - (n.clientWidth/2) + "px";
+    if (n.scrollHeight) {
+        n.origScrollHeight = n.origScrollHeight || n.scrollHeight;
+        var parentHeight = windowHeight();
+        var paddedHeight = parentHeight - 100;
+        var nodeHeight = parseInt(n.style.height) || n.origScrollHeight;
+        if (nodeHeight > paddedHeight || nodeHeight < n.origScrollHeight) {
+            nodeHeight = Math.min(n.origScrollHeight, paddedHeight);
+            n.style.height = nodeHeight + "px";
+        }
+        n.style.top = (parentHeight - nodeHeight)/2 + "px";
+        n.style.left = (windowWidth()/2) - (n.clientWidth/2) + "px";
+    }
 };
 var centered = function(n) {
     n.style.position = "fixed";
@@ -241,9 +251,10 @@ window.onresize = function() {
     for (var i = 0; i < absers.length; i++)
         absers[i][0].style.left = (absers[i][1] + offset) + "px";
     for (var i = 0; i < fullscreeners.length; i++)
-        fullscreeners[i].style.height = ((window.innerHeight || document.body.offsetHeight) - 50) + "px";
+        fullscreeners[i].style.height = (windowHeight() - 50) + "px";
     centerall();
 };
+setInterval(centerall, 1000);
 var newLink = function(content, onclick, href, classname, id, attrs, newtab) {
     if (attrs == null)
         attrs = {};
