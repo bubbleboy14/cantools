@@ -1,6 +1,6 @@
 /*****
  * cantools.js
- * version 0.1.8
+ * version 0.1.9
  * MIT License:
 
 Copyright (c) 2011 Civil Action Network
@@ -167,15 +167,16 @@ var setFieldValue = function(value, fieldId, fieldPath) {
     }
     field.value = value || "";
 };
-var blurField = function(field, blurs) {
+var blurField = function(field, useblurs) {
+    useblurs = useblurs || blurs[field];
     field.onblur = function() {
         if (field.value == "") {
             field.className += " gray";
-            field.value = blurs[Math.floor(Math.random()*blurs.length)];
+            field.value = useblurs[Math.floor(Math.random()*useblurs.length)];
         }
     };
     field.onfocus = function() {
-        if (blurs.indexOf(field.value) != -1) {
+        if (useblurs.indexOf(field.value) != -1) {
             field.value = "";
             field.className = field.className.replace(" gray", "");
         }
@@ -187,6 +188,10 @@ var ALLNODE = null;
 var loadAllNode = function() {
     if (!ALLNODE)
         ALLNODE = document.getElementById("all");
+};
+var getAllNode = function() {
+    loadAllNode();
+    return ALLNODE;
 };
 var absers = [];
 var allLeft = function() {
@@ -307,8 +312,11 @@ var monthnames = ["January", "February",
 var month2num = function(month) {
     return monthnames.indexOf(month)+1; // for "Month" at top of select
 };
+var currentyear = Math.max((new Date()).getFullYear(), 2014);
 var dateSelectors = function(node, d, startdate, enddate, withtime, noday) {
     var eyears = ["Year"];
+    startdate = startdate || currentyear;
+    enddate = enddate || currentyear;
     for (var i = startdate; i <= enddate; i++)
         eyears.push(i);
     d.year = newSelect(eyears);
