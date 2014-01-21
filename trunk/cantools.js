@@ -1,6 +1,6 @@
 /*****
  * cantools.js
- * version 0.1.9
+ * version 0.1.10
  * MIT License:
 
 Copyright (c) 2011 Civil Action Network
@@ -166,9 +166,10 @@ var setFieldValue = function(value, fieldId, fieldPath) {
             field = field[fieldPath[i]];
     }
     field.value = value || "";
+    blurField(field);
 };
 var blurField = function(field, useblurs) {
-    useblurs = useblurs || blurs[field];
+    useblurs = blurs[field.id] = useblurs || blurs[field.id];
     field.onblur = function() {
         if (field.value == "") {
             field.className += " gray";
@@ -660,6 +661,49 @@ var url2link = function(rurl, rname) {
         furl = "http://" + furl;
     return "<a href='"+ furl + "'>" + (rname || breakurl(rurl)) + "</a>";
 };
+var imgTypes = [
+    ".gif",
+    ".jpg",
+    ".png"
+];
+var linkProcessor; // for compilation
+var processLink = function(url) {
+    var extpos = url.length - 4;
+    for (var i = 0; i < imgTypes.length; i++)
+        if (url.indexOf(imgTypes[i]) == extpos)
+            return '<img src="' + url + '">';;
+    return linkProcessor && linkProcessor(url) || url2link(url);
+};
+var processComment = function(c) {
+    if (!c) return "";
+    var clist = c.replace(new RegExp(String.fromCharCode(10), 'g'), ' ')
+        .replace(new RegExp(String.fromCharCode(13), 'g'), ' ')
+        .replace(/  /g, ' ').split(" ");
+    for (var i = 0; i < clist.length; i++) {
+        var w = clist[i];
+        var fci = w.indexOf("http://");
+        if (fci == -1)
+            fci = w.indexOf("https://");
+        if (fci != -1 && w[fci-1] != '"') {
+            var frontCap = w.slice(0, fci);
+            w = w.slice(fci);
+            var endCap = "";
+            var eci = w.indexOf('<');
+            if (eci != -1) {
+                endCap = w.slice(eci);
+                w = w.slice(0, eci);
+            }
+            var lc = w.charAt(w.length-1);
+            if (['.', ',', ':', ';', ')'].indexOf(lc) != -1)
+                w = w.slice(0, w.length-1);
+            else
+                lc = "";
+            clist[i] = frontCap + processLink(w) + lc + endCap;
+        }
+    }
+    return clist.join(" ");
+};
+
 // wysiwyg editor widget
 var wysiwygize = function(nodeid, isrestricted, val, cb) {
     var d = {
