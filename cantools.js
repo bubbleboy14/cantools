@@ -1,6 +1,6 @@
 /*****
  * cantools.js
- * version 0.1.11
+ * version 0.1.12
  * MIT License:
 
 Copyright (c) 2011 Civil Action Network
@@ -159,6 +159,24 @@ var getFieldValue = function(fieldId, fieldPath, rules) {
     }
     return s;
 };
+var blurField = function(field, useblurs) {
+    useblurs = blurs[field.id] = useblurs || blurs[field.id];
+    if (useblurs) {
+        field.onblur = function() {
+            if (field.value == "") {
+                field.className += " gray";
+                field.value = useblurs[Math.floor(Math.random()*useblurs.length)];
+            }
+        };
+        field.onfocus = function() {
+            if (useblurs.indexOf(field.value) != -1) {
+                field.value = "";
+                field.className = field.className.replace(" gray", "");
+            }
+        };
+        field.onblur();
+    }
+};
 var setFieldValue = function(value, fieldId, fieldPath) {
     var field = document.getElementById(fieldId);
     if (fieldPath) {
@@ -167,22 +185,6 @@ var setFieldValue = function(value, fieldId, fieldPath) {
     }
     field.value = value || "";
     blurField(field);
-};
-var blurField = function(field, useblurs) {
-    useblurs = blurs[field.id] = useblurs || blurs[field.id];
-    field.onblur = function() {
-        if (field.value == "") {
-            field.className += " gray";
-            field.value = useblurs[Math.floor(Math.random()*useblurs.length)];
-        }
-    };
-    field.onfocus = function() {
-        if (useblurs.indexOf(field.value) != -1) {
-            field.value = "";
-            field.className = field.className.replace(" gray", "");
-        }
-    };
-    field.onblur();
 };
 
 var ALLNODE = null;
