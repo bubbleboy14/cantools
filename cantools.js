@@ -1,6 +1,6 @@
 /*****
  * cantools.js
- * version 0.1.12
+ * version 0.1.13
  * MIT License:
 
 Copyright (c) 2011 Civil Action Network
@@ -93,6 +93,17 @@ var getInternetExplorerVersion = function() {
     return -1;
 //    return rv;
 };
+
+// absolute position finder
+// from: http://www.quirksmode.org/js/findpos.html
+function findPos(obj) {
+    var curleft = curtop = 0;
+    if (obj.offsetParent) do {
+        curleft += obj.offsetLeft;
+        curtop += obj.offsetTop;
+    } while (obj = obj.offsetParent);
+    return [curleft,curtop];
+}
 
 var newNode = function(content, type, classname, id, attrs) {
     var d = document.createElement(type || "div");
@@ -425,9 +436,12 @@ var linkWithIcon = function(icon, lname, laddr, lonclick) {
     n.appendChild(newLink(lname, lonclick, laddr));
     return n;
 };
-var wrapped = function(node, type, className, id, attrs) {
+var wrapped = function(nodes, type, className, id, attrs) {
     var wrapper = newNode("", type, className, id, attrs);
-    wrapper.appendChild(node);
+    if (!Array.isArray(nodes))
+        nodes = [nodes];
+    for (var i = 0; i < nodes.length; i++)
+        wrapper.appendChild(nodes[i]);
     return wrapper;
 };
 var validEmail = function(s) {
@@ -788,4 +802,39 @@ var resizeTextArea = function(cbody) {
         while (cbody.scrollHeight > cbody.offsetHeight)
             cbody.rows++;
     }
+};
+
+// info bubbles
+var infoBubble, bubbleBounds;
+var setInfoBubble = function(n, content) {
+    if (!infoBubble) {
+        infoBubble = newNode("hello there", "div", "small infobubble");
+        ALLNODE.appendChild(infoBubble);
+        var allpos = findPos(ALLNODE);
+        bubbleBounds = {
+            'left': allpos[0],
+            'top': allpos[1]
+        };
+    }
+    var npos;
+    n.onmouseover = function(e) {
+        if (n.nodeName == "A") // contains image
+            n = n.firstChild;
+        if (!npos)
+            npos = findPos(n);
+        infoBubble.innerHTML = content;
+        showHide(infoBubble, true);
+        bubbleBounds.right = bubbleBounds.left + ALLNODE.clientWidth - infoBubble.clientWidth;
+        bubbleBounds.bottom = bubbleBounds.top + ALLNODE.clientHeight - infoBubble.clientHeight;
+        infoBubble.style.left = Math.min(bubbleBounds.right - 10,
+            Math.max(bubbleBounds.left + 10,
+            npos[0] - (infoBubble.clientWidth - n.clientWidth) / 2)) + "px";
+        infoBubble.style.top = Math.min(bubbleBounds.bottom - 10,
+            Math.max(bubbleBounds.top + 10,
+            npos[1] + n.clientHeight + 10)) + "px";
+    };
+    n.onmouseout = function() {
+        showHide(infoBubble, false, true);
+    };
+    return n;
 };
