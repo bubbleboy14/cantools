@@ -266,3 +266,14 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
     background: white;
     border: 1px solid black;
 }
+
+.infobubble {
+    z-index: 5;
+    position: fixed;
+    max-width: 300px;
+    max-height: 300px;
+    padding: 10px;
+    background: white;
+    border: 1px solid black;
+    text-align: justify;
+}
