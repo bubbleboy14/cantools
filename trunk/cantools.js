@@ -1,6 +1,6 @@
 /*****
  * cantools.js
- * version 0.1.13
+ * version 0.1.14
  * MIT License:
 
 Copyright (c) 2011 Civil Action Network
