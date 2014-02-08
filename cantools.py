@@ -1,6 +1,6 @@
 """
 cantools.py
-version 0.1.13
+version 0.1.14
 MIT License:
 
 Copyright (c) 2011 Civil Action Network
@@ -39,9 +39,11 @@ def setenc(f):
     enc = f
 
 # response functions
-def respond(responseFunc, failMsg="failed", failHtml=False, failNoEnc=False):
+def respond(responseFunc, failMsg="failed", failHtml=False, failNoEnc=False, noLoad=False):
     try:
+        noLoad or cgi_load()
         responseFunc()
+        succeed()
     except Exception, e:
         fail(data=failMsg, html=failHtml, err=e, noenc=failNoEnc, exit=False)
     except SystemExit:
@@ -133,3 +135,22 @@ def cgi_get(key, choices=None, required=True, default=None):
     if choices and val not in choices:
         fail('invalid value for "%s": "%s"'%(key, val))
     return val
+
+def verify_recaptcha(cchallenge, cresponse, pkey):
+    import os, urllib, urllib2
+    verification_result = urllib2.urlopen(urllib2.Request(
+        url = "http://api-verify.recaptcha.net/verify",
+        data = urllib.urlencode({
+            'privatekey': pkey,
+            'remoteip': os.environ.get('REMOTE_ADDR', os.environ.get('REMOTE_HOST')),
+            'challenge': cchallenge,
+            'response': cresponse
+            }),
+        headers = {
+            "Content-type": "application/x-www-form-urlencoded"
+            }
+        ))
+    vdata = verification_result.read().splitlines()
+    verification_result.close()
+    if vdata[0] != "true":
+        fail(vdata[1])
