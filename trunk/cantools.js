@@ -1,6 +1,6 @@
 /*****
  * cantools.js
- * version 0.1.14
+ * version 0.1.15
  * MIT License:
 
 Copyright (c) 2011 Civil Action Network
@@ -808,7 +808,7 @@ var resizeTextArea = function(cbody) {
 var infoBubble, bubbleBounds;
 var setInfoBubble = function(n, content) {
     if (!infoBubble) {
-        infoBubble = newNode("hello there", "div", "small infobubble");
+        infoBubble = newNode("", "div", "small hidden infobubble");
         ALLNODE.appendChild(infoBubble);
         var allpos = findPos(ALLNODE);
         bubbleBounds = {
@@ -831,7 +831,7 @@ var setInfoBubble = function(n, content) {
             npos[0] - (infoBubble.clientWidth - n.clientWidth) / 2)) + "px";
         infoBubble.style.top = Math.min(bubbleBounds.bottom - 10,
             Math.max(bubbleBounds.top + 10,
-            npos[1] + n.clientHeight + 10)) + "px";
+            npos[1] + (n.clientHeight || n.offsetHeight) + 10)) + "px";
     };
     n.onmouseout = function() {
         showHide(infoBubble, false, true);
