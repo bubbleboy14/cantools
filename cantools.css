@@ -1,6 +1,6 @@
 /*****
  * cantools.css
- * version 0.1.14
+ * version 0.1.15
  * MIT License:
 
 Copyright (c) 2011 Civil Action Network
@@ -269,7 +269,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 .infobubble {
     z-index: 5;
-    position: fixed;
+    position: absolute;
     max-width: 300px;
     max-height: 300px;
     padding: 10px;
