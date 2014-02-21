@@ -1,6 +1,6 @@
 /*****
  * cantools.css
- * version 0.1.15
+ * version 0.1.16
  * MIT License:
 
 Copyright (c) 2011 Civil Action Network
@@ -257,6 +257,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 .fullwidth {
     width: 100%;
+}
+
+.pointer {
+    cursor: pointer;
 }
 
 .basicpopup {

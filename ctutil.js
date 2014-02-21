@@ -1,6 +1,6 @@
 /*****
  * ctutil.js
- * version 0.1.15
+ * version 0.1.16
  * MIT License:
 
 Copyright (c) 2011 Civil Action Network
@@ -250,7 +250,7 @@ var get_ta_id = function() {
     ricounter += 1;
     return taid;
 };
-var richInput = function(inputnode, taid, submitbutton, content, charlimit, blurs) {
+var richInput = function(inputnode, taid, submitbutton, content, charlimit, blurs, noclear) {
     taid = taid || get_ta_id();
     charlimit = charlimit || 500;
     var cbody = newTA(taid, content, "fullwidth");
@@ -261,7 +261,8 @@ var richInput = function(inputnode, taid, submitbutton, content, charlimit, blur
         e = e || window.event;
 
         // counter
-        var c = cbody.value.length;
+        var c = getFieldValue(taid).length;
+//        var c = cbody.value.length;
         if (c > charlimit) {
             cbody.value = cbody.value.slice(0, charlimit);
             charcount.className = "right bold";
@@ -280,6 +281,9 @@ var richInput = function(inputnode, taid, submitbutton, content, charlimit, blur
     inputnode.appendChild(charcount);
     if (submitbutton)
         inputnode.appendChild(submitbutton);
+    else if (!noclear)
+        inputnode.appendChild(newNode("", "div", "clearnode"));
+    return cbody;
 };
 
 // conversation widget
@@ -287,9 +291,12 @@ var checkFirstName, checkLastName;
 var ALLOW_ANONYMOUS_COMMENTS = true;
 var ANON_UID, RECAPTCHA_KEY;
 var firstLastLink = function(u, noname, rfloat, hash, firstonly) {
-    var nl = newNode(noname && "user"
-            || (u.firstName + ((firstonly || !u.lastName) ? "" : (" " + u.lastName))),
-        "b", "unamelink");
+    var nl = newNode(null, "b", "unamelink");
+    nl.refresh = function(u) {
+        nl.innerHTML = noname && "user" || (u.firstName +
+            ((firstonly || !u.lastName) ? "" : (" " + u.lastName)));
+    };
+    u && nl.refresh(u);
     if (rfloat)
         return wrapped(nl, "div", "small right lpadded");
     return nl;
@@ -313,8 +320,13 @@ var newComment = function(c, commentsnode, uid, noflagging) {
         commentsnode.innerHTML = "";
     commentsnode.appendChild(commentnode);
 };
+var COMMENT_PREFIX = "";
+var setCommentPrefix = function(cp) {
+    COMMENT_PREFIX = cp ? "<b>[" + cp + "]</b> " : "";
+};
 var conversationInput = function(uid, ckey, convonode, contentkey, taid, noflagging, commentsnode, charlimit, blurs) {
     taid = taid || get_ta_id();
+    charlimit = charlimit || 500;
     richInput(convonode, taid,
         ckey != "conversation" && newButton("Add Comment", function() {
             var cbody = document.getElementById(taid);
@@ -322,6 +334,7 @@ var conversationInput = function(uid, ckey, convonode, contentkey, taid, noflagg
             var b = sanitize(cbody.value);
             if (b == "")
                 return alert("say what?");
+            b = COMMENT_PREFIX + b;
             postData("/say", {"uid": uid, "conversation": ckey,
                 "body": b, "contentkey": contentkey},
                 "error posting comment", function() {
@@ -330,7 +343,7 @@ var conversationInput = function(uid, ckey, convonode, contentkey, taid, noflagg
                     cbody.value = "";
                     cbody.focus();
                     charcount.innerHTML = "(" + charlimit + " chars left)"; });
-        }) || null, null, charlimit, blurs);
+        }) || null, null, charlimit, blurs, ckey == "conversation");
 };
 var loadConversation = function(uid, ckey, convonode, contentkey, taid, noflagging, charlimit, blurs) {
     if (uid == "nouid") uid = null;
