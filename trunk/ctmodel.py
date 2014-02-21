@@ -1,6 +1,6 @@
 """
 ctmodel.py
-version 0.1.15
+version 0.1.16
 MIT License:
 
 Copyright (c) 2011 Civil Action Network
@@ -87,6 +87,12 @@ class IP(ModelBase):
                 "users": self.userCount,
                 "votes": self.voteCount,
                 "authentications": self.authCount}
+
+class Log(ModelBase):
+    message = db.TextProperty()
+    type = db.StringProperty()
+    ip = db.ReferenceProperty(IP, collection_name="logs")
+    date = db.DateTimeProperty(auto_now_add=True)
 
 class ZipCode(ModelBase):
     code = db.StringProperty()
@@ -202,3 +208,67 @@ class Comment(ModelBase, Flaggable):
             d['seenlist'] = self.seenlist
         return d
 
+ZIPDOMAIN = None
+def setzipdomain(zipdomain):
+    global ZIPDOMAIN
+    ZIPDOMAIN = zipdomain
+
+def getip():
+    import os
+    addr = os.environ.get('REMOTE_ADDR', 'none')
+    ip = IP.gql("WHERE address = :address", address=addr).get()
+    if not ip:
+        ip = IP()
+        ip.address = addr
+        ip.put()
+    return ip
+
+def hashpass(password, date):
+    import hashlib
+    return hashlib.md5(password + str(date.date()).replace('-','')).hexdigest()
+
+def getzip(code):
+    if len(code) < 5:
+        from util import fail
+        fail("invalid zip code")
+    try:
+        code = str(int(code.strip()[:5]))
+        while len(code) < 5: # preceding 0's
+            code = '0'+code
+    except:
+        from util import fail
+        fail("invalid zip code")
+    try:
+        zipcode = ZipCode.all().filter("code =", code).fetch(1)[0]
+    except:
+        try:
+            from google.appengine.api.urlfetch import fetch
+            raw = fetch("http://%s/%s"%(ZIPDOMAIN, code))
+        except Exception, e:
+            from util import fail
+            fail(repr(e))
+        try:
+            from util import json
+            city, state, county = json.loads(raw.content)
+        except Exception, e:
+            from util import fail
+            fail("%s || %s"%(repr(e), raw.content))
+        try:
+            zipcode = ZipCode(code=code, city=city, state=state, county=county)
+            db.put(zipcode)
+        except Exception, e:
+            from util import fail
+            fail(repr(e))
+    return zipcode
+
+def getzips(kwargs):
+    zips = ZipCode.all()
+    for key, val in kwargs.items():
+        zips.filter("%s ="%(key,), val)
+    return zips.fetch(1000)
+
+def send_email(recipient, sender, subject, body, html=None):
+    html = html or body
+    from google.appengine.api import mail
+    mail.send_mail(to=recipient, sender=sender,
+        subject=subject, body=body, html=html)

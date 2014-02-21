@@ -1,6 +1,6 @@
 /*****
  * cantools.js
- * version 0.1.15
+ * version 0.1.16
  * MIT License:
 
 Copyright (c) 2011 Civil Action Network
@@ -175,8 +175,12 @@ var blurField = function(field, useblurs) {
     if (useblurs) {
         field.onblur = function() {
             if (field.value == "") {
-                field.className += " gray";
+                if (field.className.indexOf("gray") == -1)
+                    field.className += " gray";
                 field.value = useblurs[Math.floor(Math.random()*useblurs.length)];
+            }
+            else {
+                field.className = field.className.replace(" gray", "");
             }
         };
         field.onfocus = function() {
@@ -190,6 +194,8 @@ var blurField = function(field, useblurs) {
 };
 var setFieldValue = function(value, fieldId, fieldPath) {
     var field = document.getElementById(fieldId);
+    if (!field)
+        return setTimeout(setFieldValue, 500, value, fieldId, fieldPath);
     if (fieldPath) {
         for (var i = 0; i < fieldPath.length; i++)
             field = field[fieldPath[i]];
@@ -652,6 +658,10 @@ var showHide = function(n, juston, justoff, dstyle) {
     else
         n.style.display = (n.style.display == dstyle) && "none" || dstyle;
 };
+var showHideSet = function(nodes, juston, justoff, dstyle) {
+    for (var i = 0; i < nodes.length; i++)
+        showHide(nodes[i], juston, justoff, dstyle);
+};
 var labeledImage = function(img, href, label, _alt, _icl, _wcl, _lcl) {
     var nlink = newLink();
     nlink.appendChild(newImg(img, _icl));
@@ -721,7 +731,7 @@ var processComment = function(c) {
 };
 
 // wysiwyg editor widget
-var wysiwygize = function(nodeid, isrestricted, val, cb) {
+var wysiwygize = function(nodeid, isrestricted, val, cb, mismatchcb) {
     var d = {
         "plugins": "paste",
         "paste_auto_cleanup_on_paste": true,
@@ -749,6 +759,12 @@ var wysiwygize = function(nodeid, isrestricted, val, cb) {
     }
     tinyMCE.init(d);
     var n = document.getElementById(nodeid);
+    var dothiscbs = [];
+    var doset = function(s, followup) {
+        n.node.setContent(s);
+        if (followup && s != n.get() && confirm("Our WYSIWYG text editor seems to have changed the formatting of your text. Don't worry, it probably still looks the same. Press OK to resave your slightly reformatted content, or Cancel if you don't want to."))
+            followup();
+    };
     n.get = function(stripnbsp) {
         var c = n.node.getContent();
         if (stripnbsp) while (c.slice(-6) == "&nbsp;")
@@ -756,18 +772,19 @@ var wysiwygize = function(nodeid, isrestricted, val, cb) {
         return c;
     };
     n.dothis = function(f) {
-        if (!n.node) {
-            n.node = tinyMCE.get(nodeid);
-            if (!n.node)
-                return setTimeout(n.dothis, 200, f);
-        }
-        (f||(function(){}))();
+        f && dothiscbs.push(f);
+        n.node = n.node || tinyMCE.get(nodeid);
+        if (!n.node)
+            return setTimeout(n.dothis, 200);
+        for (var i = 0; i < dothiscbs.length; i++)
+            dothiscbs[i]();
+        dothiscbs.length = 0;
     };
-    n.set = function(s) {
-        n.dothis(function() { n.node.setContent(s); });
+    n.set = function(s, followup) {
+        n.node ? doset(s, followup) : n.dothis(function() { doset(s, followup); });
     };
     n.dothis(function() {
-        val && n.set(val);
+        val && n.set(val, mismatchcb);
         cb && cb();
     });
 };
@@ -816,12 +833,10 @@ var setInfoBubble = function(n, content) {
             'top': allpos[1]
         };
     }
-    var npos;
     n.onmouseover = function(e) {
         if (n.nodeName == "A") // contains image
             n = n.firstChild;
-        if (!npos)
-            npos = findPos(n);
+        var npos = findPos(n); // recheck every time in case target moves
         infoBubble.innerHTML = content;
         showHide(infoBubble, true);
         bubbleBounds.right = bubbleBounds.left + ALLNODE.clientWidth - infoBubble.clientWidth;
