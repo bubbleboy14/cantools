@@ -1,6 +1,6 @@
 /*****
  * cantools.js
- * version 0.1.16
+ * version 0.1.17
  * MIT License:
 
 Copyright (c) 2011 Civil Action Network
@@ -280,6 +280,11 @@ window.onresize = function() {
     centerall();
 };
 setInterval(centerall, 1000);
+var newScript = function(src, content, delay) {
+    if (delay)
+        content = "setTimeout(function() { " + content + " }, 1000);";
+    return newNode(content, "script", null, null, { "src": src });
+};
 var newLink = function(content, onclick, href, classname, id, attrs, newtab) {
     if (attrs == null)
         attrs = {};
@@ -685,12 +690,13 @@ var url2link = function(rurl, rname) {
         rurl = rurl.slice(8);
     else
         furl = "http://" + furl;
-    return "<a href='"+ furl + "'>" + (rname || breakurl(rurl)) + "</a>";
+    return '<a href="' + furl.replace(/'/g, "%E2%80%99") + '">' + (rname || breakurl(rurl)) + "</a>";
 };
 var imgTypes = [
     ".gif",
+    ".png",
     ".jpg",
-    ".png"
+    "jpeg"
 ];
 var linkProcessor; // for compilation
 var processLink = function(url) {
@@ -823,7 +829,16 @@ var resizeTextArea = function(cbody) {
 
 // info bubbles
 var infoBubble, bubbleBounds;
-var setInfoBubble = function(n, content) {
+var checkPos = function(n) {
+    if (n.style.position == "fixed") {
+        infoBubble.style.position = "fixed";
+        return [n.offsetLeft, n.offsetTop];
+    } else {
+        infoBubble.style.position = "absolute";
+        return findPos(n);
+    }
+};
+var setInfoBubble = function(n, content, poptop) {
     if (!infoBubble) {
         infoBubble = newNode("", "div", "small hidden infobubble");
         ALLNODE.appendChild(infoBubble);
@@ -836,9 +851,11 @@ var setInfoBubble = function(n, content) {
     n.onmouseover = function(e) {
         if (n.nodeName == "A") // contains image
             n = n.firstChild;
-        var npos = findPos(n); // recheck every time in case target moves
+        var npos = checkPos(n); // recheck every time in case target moves
         infoBubble.innerHTML = content;
         showHide(infoBubble, true);
+        var voffset = poptop ? -((infoBubble.clientHeight || infoBubble.offsetHeight) + 10)
+            : ((n.clientHeight || n.offsetHeight) + 10);
         bubbleBounds.right = bubbleBounds.left + ALLNODE.clientWidth - infoBubble.clientWidth;
         bubbleBounds.bottom = bubbleBounds.top + ALLNODE.clientHeight - infoBubble.clientHeight;
         infoBubble.style.left = Math.min(bubbleBounds.right - 10,
@@ -846,7 +863,7 @@ var setInfoBubble = function(n, content) {
             npos[0] - (infoBubble.clientWidth - n.clientWidth) / 2)) + "px";
         infoBubble.style.top = Math.min(bubbleBounds.bottom - 10,
             Math.max(bubbleBounds.top + 10,
-            npos[1] + (n.clientHeight || n.offsetHeight) + 10)) + "px";
+            npos[1] + voffset)) + "px";
     };
     n.onmouseout = function() {
         showHide(infoBubble, false, true);
