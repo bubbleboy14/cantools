@@ -1,6 +1,6 @@
 """
 cantools.py
-version 0.1.16
+version 0.1.17
 MIT License:
 
 Copyright (c) 2011 Civil Action Network
@@ -104,6 +104,7 @@ def send_xml(data):
 
 # request functions
 request = None
+request_string = None
 
 def deUnicodeDict(d):
     if d.__class__.__name__ != "dict":
@@ -113,9 +114,14 @@ def deUnicodeDict(d):
         n[str(v)] = deUnicodeDict(d[v])
     return n
 
+def cgi_dump():
+    return request_string
+
 def cgi_load(force=False):
     global request
-    data = enc(sys.stdin.read(), False, "request")
+    global request_string
+    request_string = sys.stdin.read()
+    data = enc(request_string, False, "request")
     try:
         request = deUnicodeDict(json.loads(data))
     except:
