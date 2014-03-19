@@ -1,6 +1,6 @@
 /*****
  * cantools.js
- * version 0.1.17
+ * version 0.1.18
  * MIT License:
 
 Copyright (c) 2011 Civil Action Network
@@ -255,16 +255,19 @@ var centernode = function(n) {
         n.style.left = (windowWidth()/2) - (n.clientWidth/2) + "px";
     }
 };
+var centerall = function() {
+    for (var i = 0; i < centerscreeners.length; i++)
+        centernode(centerscreeners[i]);
+};
+var centerInterval;
 var centered = function(n) {
+    if (!centerInterval)
+        centerInterval = setInterval(centerall, 1000);
     n.style.position = "fixed";
     centernode(n);
     if (centerscreeners.indexOf(n) == -1)
         centerscreeners.push(n);
     return n;
-};
-var centerall = function() {
-    for (var i = 0; i < centerscreeners.length; i++)
-        centernode(centerscreeners[i]);
 };
 window.onresize = function() {
     loadAllNode();
@@ -279,7 +282,6 @@ window.onresize = function() {
         fullscreeners[i].style.height = (windowHeight() - 50) + "px";
     centerall();
 };
-setInterval(centerall, 1000);
 var newScript = function(src, content, delay) {
     if (delay)
         content = "setTimeout(function() { " + content + " }, 1000);";
@@ -495,13 +497,16 @@ var stripToZip = function(s) {
         return "";
     return newStr.slice(0,5);
 };
-var checkBoxAndLabel = function(cbid, ischecked, lname, lclass, cclass, onclick) {
-    var n = newNode("", "div", cclass);
-    var cbname = cbid+"checkbox";
+var newCheckbox = function(id, ischecked) {
     var cbdata = {"type": "checkbox"};
     if (ischecked)
         cbdata.checked = ischecked;
-    var cb = newNode("", "input", "", cbname, cbdata);
+    return newNode("", "input", "", id, cbdata);
+};
+var checkBoxAndLabel = function(cbid, ischecked, lname, lclass, cclass, onclick) {
+    var n = newNode("", "div", cclass);
+    var cbname = cbid+"checkbox";
+    var cb = newCheckbox(cbname, ischecked);
     n.appendChild(cb);
     if (onclick) {
         cb.onclick = function() {
@@ -557,7 +562,7 @@ var processPostParams = function(x) {
     return JSON.stringify(x);
 };
 var _xhr = function () {
-    return window.XMLHttpRequest ? new XMLHttpRequest(): new ActiveXObject("Microsoft.XMLHTTP");
+    return window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
 };
 var ENCODE = false;
 var postData = function(path, params, errMsg, cb, eb, cbarg, ebarg) {
@@ -825,6 +830,13 @@ var resizeTextArea = function(cbody) {
         while (cbody.scrollHeight > cbody.offsetHeight)
             cbody.rows++;
     }
+};
+
+// defer function until node exists in dom
+var doWhenNodeExists = function(id, cb) {
+    if (document.getElementById(id))
+        return cb();
+    setTimeout(doWhenNodeExists, 1000, id, cb);
 };
 
 // info bubbles

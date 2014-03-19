@@ -1,6 +1,6 @@
 """
 ctmodel.py
-version 0.1.17
+version 0.1.18
 MIT License:
 
 Copyright (c) 2011 Civil Action Network
@@ -29,6 +29,15 @@ class ModelBase(db.Model):
 
     def modeltype(self):
         return self.__class__.__name__.lower()
+
+    def modeltype_multiword(self):
+        return self.modeltype()
+
+    def modeltype_singular(self):
+        return self.modeltype()
+
+    def verb(self):
+        return "participate in"
 
     def id(self):
         return str(self.key())
