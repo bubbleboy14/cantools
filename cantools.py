@@ -1,6 +1,6 @@
 """
 cantools.py
-version 0.1.17
+version 0.1.18
 MIT License:
 
 Copyright (c) 2011 Civil Action Network
@@ -49,7 +49,29 @@ def respond(responseFunc, failMsg="failed", failHtml=False, failNoEnc=False, noL
     except SystemExit:
         pass
 
-def _write(data, exit=True):
+# memcache stuff
+def getmem(key, tojson=True):
+    from google.appengine.api import memcache
+    result = memcache.get(key)
+    if result is None: return None
+    return tojson and json.loads(result) or result
+
+def setmem(key, val, fromjson=True):
+    from google.appengine.api import memcache
+    memcache.set(key, fromjson and json.dumps(val) or val)
+
+def delmem(key):
+    from google.appengine.api import memcache
+    if memcache.get(key) is not None:
+        memcache.delete(key)
+
+def trysavedresponse(key):
+    response = getmem(key, False)
+    response and _write(response, exit=True)
+
+def _write(data, exit=True, savename=None):
+    if savename:
+        setmem(savename, data, False)
     print data.encode('utf-8').strip()
     exit and sys.exit()
 
@@ -62,9 +84,9 @@ def redirect(addr, msg="", noscript=False, exit=True):
         a += '<noscript>This site requires Javascript to function properly. To enable Javascript in your browser, please follow <a href="http://www.google.com/support/bin/answer.py?answer=23852">these instructions</a>. Thank you, and have a nice day.</noscript>'
     _write(envelope['html']%(a,), exit)
 
-def succeed(data="", html=False, noenc=False):
+def succeed(data="", html=False, noenc=False, savename=None):
     s = html and envelope['html'] or envelope['plain']
-    _write(s%(enc("1"+json.dumps(data), noenc),))
+    _write(s%(enc("1"+json.dumps(data), noenc),), savename=savename)
 
 def fail(data="failed", html=False, err=None, noenc=False, exit=True):
     s = html and envelope['html'] or envelope['plain']
@@ -78,15 +100,26 @@ def fail(data="failed", html=False, err=None, noenc=False, exit=True):
             data = logdata
     _write(s%(enc("0"+data, noenc),), exit)
 
-def send_pdf(data, title):
-    print 'Content-Type: application/pdf; name="%s.pdf"'%(title,)
-    print 'Content-Disposition: attachment; filename="%s.pdf"'%(title,)
+def send_pdf(data, title=None):
+    if title:
+        print 'Content-Type: application/pdf; name="%s.pdf"'%(title,)
+        print 'Content-Disposition: attachment; filename="%s.pdf"'%(title,)
+    else:
+        print "Content-Type: application/pdf"
     print ""
     print data
     sys.exit()
 
 def send_image(data):
     print "Content-Type: image/png"
+    print ""
+    print data
+    sys.exit()
+
+FILETYPES = {"pdf": "application/pdf", "img": "image/png"}
+
+def send_file(data, file_type):
+    print "Content-Type: "+FILETYPES[file_type]
     print ""
     print data
     sys.exit()
