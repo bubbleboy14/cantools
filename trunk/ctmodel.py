@@ -1,6 +1,6 @@
 """
 ctmodel.py
-version 0.1.18
+version 0.1.19
 MIT License:
 
 Copyright (c) 2011 Civil Action Network
