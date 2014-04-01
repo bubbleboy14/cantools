@@ -1,6 +1,6 @@
 /*****
  * cantools.js
- * version 0.1.18
+ * version 0.1.19
  * MIT License:
 
 Copyright (c) 2011 Civil Action Network
@@ -695,7 +695,7 @@ var url2link = function(rurl, rname) {
         rurl = rurl.slice(8);
     else
         furl = "http://" + furl;
-    return '<a href="' + furl.replace(/'/g, "%E2%80%99") + '">' + (rname || breakurl(rurl)) + "</a>";
+    return '<a target="_blank" href="' + furl + '">' + (rname || breakurl(rurl)) + "</a>";
 };
 var imgTypes = [
     ".gif",
@@ -705,10 +705,9 @@ var imgTypes = [
 ];
 var linkProcessor; // for compilation
 var processLink = function(url) {
-    var extpos = url.length - 4;
-    for (var i = 0; i < imgTypes.length; i++)
-        if (url.indexOf(imgTypes[i]) == extpos)
-            return '<img src="' + url + '">';;
+    var ext = url.slice(-4);
+    if (imgTypes.indexOf(ext) != -1)
+        return '<img src="' + url + '">';
     return linkProcessor && linkProcessor(url) || url2link(url);
 };
 var processComment = function(c) {
