@@ -1,6 +1,6 @@
 """
 cantools.py
-version 0.1.19
+version 0.1.20
 MIT License:
 
 Copyright (c) 2011 Civil Action Network
@@ -22,6 +22,9 @@ DEBUG = True
 envelope = {
     'plain': "Content-Type: text/plain\n\n%s",
     'html': "Content-Type: text/html\n\n<html><head></head><body>%s</body></html>" }
+request = None
+request_string = None
+cache_default = False
 
 # logging and encoding -- overwrite with setlog and setenc
 def log(message, type="info"):
@@ -65,7 +68,12 @@ def delmem(key):
     if memcache.get(key) is not None:
         memcache.delete(key)
 
-def trysavedresponse(key):
+def clearmem():
+    from google.appengine.api import memcache
+    memcache.flush_all()
+
+def trysavedresponse(key=None):
+    key = key or request_string
     response = getmem(key, False)
     response and _write(response, exit=True)
 
@@ -84,7 +92,13 @@ def redirect(addr, msg="", noscript=False, exit=True):
         a += '<noscript>This site requires Javascript to function properly. To enable Javascript in your browser, please follow <a href="http://www.google.com/support/bin/answer.py?answer=23852">these instructions</a>. Thank you, and have a nice day.</noscript>'
     _write(envelope['html']%(a,), exit)
 
-def succeed(data="", html=False, noenc=False, savename=None):
+def setcachedefault(shouldCache=True):
+    global cache_default
+    cache_default = shouldCache
+
+def succeed(data="", html=False, noenc=False, savename=None, cache=False):
+    if cache or cache_default:
+        savename = request_string
     s = html and envelope['html'] or envelope['plain']
     _write(s%(enc("1"+json.dumps(data), noenc),), savename=savename)
 
@@ -136,9 +150,6 @@ def send_xml(data):
     send_text(data, "xml")
 
 # request functions
-request = None
-request_string = None
-
 def deUnicodeDict(d):
     if d.__class__.__name__ != "dict":
         return d
