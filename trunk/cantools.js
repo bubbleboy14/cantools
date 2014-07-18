@@ -1,6 +1,6 @@
 /*****
  * cantools.js
- * version 0.1.19
+ * version 0.1.20
  * MIT License:
 
 Copyright (c) 2011 Civil Action Network
@@ -458,10 +458,11 @@ var wrapped = function(nodes, type, className, id, attrs) {
     return wrapper;
 };
 var validEmail = function(s) {
-    var atChar = s.indexOf('@');
+    var atChar = s.indexOf('@', 1);
     var dotChar = s.indexOf('.', atChar);
-    if (atChar == -1 || dotChar == -1 || atChar > dotChar)
-        return false;
+    if (atChar == -1 || dotChar == -1 ||
+        dotChar == s.length - 1 || atChar + 2 > dotChar)
+            return false;
     return true;
 };
 var validPassword = function(s) {
@@ -525,7 +526,7 @@ var inputEnterCallback = function(n, cb, fid) {
             // can prevent annoying repeating alert on enter scenarios
             if (fid)
                 document.getElementById(fid).focus();
-            cb();
+            cb(n.value);
         }
     };
 };
@@ -710,16 +711,21 @@ var processLink = function(url) {
         return '<img src="' + url + '">';
     return linkProcessor && linkProcessor(url) || url2link(url);
 };
-var processComment = function(c) {
+var processComment = function(c, simple) {
     if (!c) return "";
     var clist = c.replace(new RegExp(String.fromCharCode(10), 'g'), ' ')
         .replace(new RegExp(String.fromCharCode(13), 'g'), ' ')
-        .replace(/  /g, ' ').split(" ");
+        .replace(/</g, " <").replace(/>/g, "> ")
+        .replace(/&nbsp;/g, " ").replace(/  /g, ' ').trim().split(" ");
     for (var i = 0; i < clist.length; i++) {
         var w = clist[i];
-        var fci = w.indexOf("http://");
+        if (w.indexOf(":") == -1 && validEmail(w)) {
+            clist[i] = "<a href='mailto:" + w + "'>" + w + "</a>";
+            continue;
+        }
+        var fci = w.indexOf("https://");
         if (fci == -1)
-            fci = w.indexOf("https://");
+            fci = w.indexOf("http://");
         if (fci != -1 && w[fci-1] != '"') {
             var frontCap = w.slice(0, fci);
             w = w.slice(fci);
@@ -734,7 +740,9 @@ var processComment = function(c) {
                 w = w.slice(0, w.length-1);
             else
                 lc = "";
-            clist[i] = frontCap + processLink(w) + lc + endCap;
+            clist[i] = frontCap
+                + (simple ? url2link : processLink)(w)
+                + lc + endCap;
         }
     }
     return clist.join(" ");
