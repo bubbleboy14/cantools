@@ -1,6 +1,6 @@
 /*****
  * cantools.js
- * version 0.1.20
+ * version 0.1.21
  * MIT License:
 
 Copyright (c) 2011 Civil Action Network
@@ -486,17 +486,25 @@ var stripToNums = function(s) {
     }
     return newStr;
 };
+var stripToZip = function(s) {
+    var newStr = stripToNums(s);
+    if (newStr.length < 5)
+        return "";
+    return newStr.slice(0,5);
+};
 var stripToPhone = function(s) {
     var newStr = stripToNums(s);
     if (newStr.length < 10)
         return "";
     return newStr.slice(0,10);
 };
-var stripToZip = function(s) {
-    var newStr = stripToNums(s);
-    if (newStr.length < 5)
-        return "";
-    return newStr.slice(0,5);
+var formatPhone = function(s) {
+    var pn = stripToPhone(s);
+    return pn.slice(0, 3) + "-" + pn.slice(3, 6) + "-" + pn.slice(6);
+};
+var formatPhoneLink = function(s) {
+    var pn = formatPhone(s);
+    return "<a href='tel:+1" + pn + "'>" + pn + "</a>";
 };
 var newCheckbox = function(id, ischecked) {
     var cbdata = {"type": "checkbox"};
@@ -673,18 +681,89 @@ var showHideSet = function(nodes, juston, justoff, dstyle) {
     for (var i = 0; i < nodes.length; i++)
         showHide(nodes[i], juston, justoff, dstyle);
 };
-var labeledImage = function(img, href, label, _alt, _icl, _wcl, _lcl) {
+var labeledImage = function(img, href, label, _alt, _icl, _wcl, _lcl, reverseNodes) {
     var nlink = newLink();
-    nlink.appendChild(newImg(img, _icl));
-    nlink.appendChild(newNode(label, "div", _lcl));
+    var imageNode = newImg(img, _icl);
+    var labelNode = newNode(label, "div", _lcl);
+    if (reverseNodes) {
+        nlink.appendChild(labelNode);
+        nlink.appendChild(imageNode);
+    } else {
+        nlink.appendChild(imageNode);
+        nlink.appendChild(labelNode);
+    }
     nlink.href = href;
     nlink.target = "_blank";
     nlink.title = nlink.alt = _alt || label;
-    var wclass = "lfloat";
-    if (_wcl)
-        wclass += " "+_wcl;
-    return wrapped(nlink, "div", wclass);
+    return wrapped(nlink, "div", _wcl);
 };
+
+// video link detection and parsing
+var rawVidTypes = ["mp4", "ogg", "webm"];
+var player2url = {
+    "google": "video.google.com?docid=",
+    "youtube": "www.youtube.com/watch?v=",
+    "vimeo": "vimeo.com/",
+    "mp4": "", "ogg": "", "webm": ""
+};
+var urlFromData = function(player, docid) {
+    return player ? ("http://" + player2url[player] + docid) : "";
+};
+var getQSParam = function(url, param) {
+    var s = url.indexOf(param + "=") + param.length + 1,
+        e = url.indexOf("&", s);
+    if (e == -1)
+        e = url.indexOf("#", s);
+    if (e == -1)
+        return url.slice(s);
+    return url.slice(s, e);
+};
+var docidFromUrl = function(url) {
+    if (url.indexOf("video.google.com") != -1)
+        return getQSParam(url, "docid");
+    else if (url.indexOf("youtube.com") != -1)
+        return getQSParam(url, "v");
+    else if (url.indexOf("vimeo.com") != -1)
+        return url.slice(url.lastIndexOf('/') + 1);
+    var spliturl = url.split('.'),
+        ext = spliturl[spliturl.length - 1];
+    if (rawVidTypes.indexOf(ext) != -1) // eventually do more about ssl
+        return url.replace("http://", "").replace("https://", "");
+};
+var playerFromUrl = function(url) {
+    if (url.indexOf("video.google.com") != -1)
+        return "google";
+    if (url.indexOf("youtube.com") != -1)
+        return "youtube";
+    if (url.indexOf("vimeo.com") != -1)
+        return "vimeo";
+    var spliturl = url.split('.'),
+        ext = spliturl[spliturl.length - 1];
+    if (rawVidTypes.indexOf(ext) != -1)
+        return ext;
+};
+var videoData = function(vlink) {
+    var player = playerFromUrl(vlink);
+    return player ? {
+        player: player,
+        docid: docidFromUrl(vlink)
+    } : null;
+};
+var embeddedVideo = function(video, small) {
+    var w = small ? 375 : 400;
+    var h = small ? 315 : 335;
+    if (video.player == "google")
+        return "<embed width=" + w + " height=" + h + " id=VideoPlayback src=http://video.google.com/googleplayer.swf?docid=" + video.docid + "&hl=en&fs=true allowFullScreen=true allowScriptAccess=always type=application/x-shockwave-flash> </embed>";
+    else if (video.player == "youtube")
+        return "<object width=" + w + " height=" + h + "><param name=allowFullScreen value=true><param name=movie value=http://www.youtube.com/v/" + video.docid + "?version=3&autohide=1&showinfo=0></param><param name=allowScriptAccess value=always></param><param name=wmode value=opaque /><embed src=http://www.youtube.com/v/" + video.docid + "?version=3&autohide=1&showinfo=0 type=application/x-shockwave-flash allowscriptaccess=always allowfullscreen=true wmode=opaque width=" + w + " height=" + h + "></embed></object>";
+    else if (video.player == "vimeo")
+        return "<iframe src=http://player.vimeo.com/video/" + video.docid + " width=" + w + " height=" + h + " frameborder=0 webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>";
+    else if (rawVidTypes.indexOf(video.player) != -1)
+        return "<video width=" + w + " height=" + h + " controls><source src=http://" + video.docid + " type=video/" + video.player + "></video>";
+    else
+        alert("unknown video player: "+video.player);
+};
+
 var breakurl = function(url) {
     return url.replace(/&/g, "&&#8203;").replace(/\//g, "/&#8203;").replace(/_/g, "_&#8203;");
 };
@@ -705,18 +784,34 @@ var imgTypes = [
     "jpeg"
 ];
 var linkProcessor; // for compilation
-var processLink = function(url) {
+var processLink = function(url, novid) {
     var ext = url.slice(-4);
     if (imgTypes.indexOf(ext) != -1)
         return '<img src="' + url + '">';
-    return linkProcessor && linkProcessor(url) || url2link(url);
+    return linkProcessor && linkProcessor(url, novid) || url2link(url);
 };
-var processComment = function(c, simple) {
+var processComment = function(c, simple, novid) {
     if (!c) return "";
-    var clist = c.replace(new RegExp(String.fromCharCode(10), 'g'), ' ')
+
+    // whitespace and tags
+    var cmodded = c.replace(new RegExp(String.fromCharCode(10), 'g'), ' ')
         .replace(new RegExp(String.fromCharCode(13), 'g'), ' ')
         .replace(/</g, " <").replace(/>/g, "> ")
-        .replace(/&nbsp;/g, " ").replace(/  /g, ' ').trim().split(" ");
+        .replace(/&nbsp;/g, " ").replace(/  /g, ' ');
+
+    // phone numbers
+    var phoneMatches = cmodded.match(/\d{3}-\d{3}-\d{4}/g);
+    if (phoneMatches) phoneMatches.forEach(function(matchstr) {
+        var i = cmodded.indexOf(matchstr);
+        var prev = cmodded.charAt(i - 1);
+        if (prev != ">" && prev != ":" && cmodded.slice(i - 2, i) != "+1")
+            cmodded = cmodded.replace(matchstr, formatPhoneLink(matchstr));
+    });
+
+    // tokenize
+    var clist = cmodded.trim().split(" ");
+
+    // emails and links
     for (var i = 0; i < clist.length; i++) {
         var w = clist[i];
         if (w.indexOf(":") == -1 && validEmail(w)) {
@@ -741,7 +836,7 @@ var processComment = function(c, simple) {
             else
                 lc = "";
             clist[i] = frontCap
-                + (simple ? url2link : processLink)(w)
+                + (simple ? url2link : processLink)(w, novid)
                 + lc + endCap;
         }
     }

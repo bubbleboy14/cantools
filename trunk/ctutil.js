@@ -1,6 +1,6 @@
 /*****
  * ctutil.js
- * version 0.1.20
+ * version 0.1.21
  * MIT License:
 
 Copyright (c) 2011 Civil Action Network
