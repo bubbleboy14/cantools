@@ -1,6 +1,6 @@
 /*****
  * ctutil.js
- * version 0.1.21
+ * version 0.1.22
  * MIT License:
 
 Copyright (c) 2011 Civil Action Network
@@ -226,7 +226,7 @@ var buildRecaptcha = function(key, rnode, eb, iecb) {
 };
 var tryRecaptcha = function(respOnSuccess, respOnAttempt, respPath, respArgs) {
     var resp = Recaptcha.get_response();
-    if (resp.length < 3 || resp.indexOf(" ") == -1)
+    if (resp.length < 3)
         alert("don't forget to fill in the CAPTCHA! you are human, right?");
     else {
         respArgs = respArgs || {};

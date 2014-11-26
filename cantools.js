@@ -1,6 +1,6 @@
 /*****
  * cantools.js
- * version 0.1.21
+ * version 0.1.22
  * MIT License:
 
 Copyright (c) 2011 Civil Action Network
@@ -537,6 +537,7 @@ var inputEnterCallback = function(n, cb, fid) {
             cb(n.value);
         }
     };
+    return n;
 };
 var _pwpcb = null;
 var passwordPrompt = function(cb) {
@@ -729,6 +730,7 @@ var docidFromUrl = function(url) {
         ext = spliturl[spliturl.length - 1];
     if (rawVidTypes.indexOf(ext) != -1) // eventually do more about ssl
         return url.replace("http://", "").replace("https://", "");
+    return "";
 };
 var playerFromUrl = function(url) {
     if (url.indexOf("video.google.com") != -1)
@@ -741,6 +743,7 @@ var playerFromUrl = function(url) {
         ext = spliturl[spliturl.length - 1];
     if (rawVidTypes.indexOf(ext) != -1)
         return ext;
+    return "";
 };
 var videoData = function(vlink) {
     var player = playerFromUrl(vlink);
@@ -790,6 +793,16 @@ var processLink = function(url, novid) {
         return '<img src="' + url + '">';
     return linkProcessor && linkProcessor(url, novid) || url2link(url);
 };
+var stripLast = function(w) {
+    var lcs = "",
+        lc = w.charAt(w.length - 1);
+    while (['.', ',', ':', ';', ')', ']'].indexOf(lc) != -1) {
+        w = w.slice(0, w.length - 1);
+        lcs = lc + lcs;
+        lc = w.charAt(w.length - 1);
+    }
+    return [lcs, w];
+};
 var processComment = function(c, simple, novid) {
     if (!c) return "";
 
@@ -830,11 +843,9 @@ var processComment = function(c, simple, novid) {
                 endCap = w.slice(eci);
                 w = w.slice(0, eci);
             }
-            var lc = w.charAt(w.length-1);
-            if (['.', ',', ':', ';', ')'].indexOf(lc) != -1)
-                w = w.slice(0, w.length-1);
-            else
-                lc = "";
+            var sl = stripLast(w),
+                lc = sl[0],
+                w = sl[1];
             clist[i] = frontCap
                 + (simple ? url2link : processLink)(w, novid)
                 + lc + endCap;
