@@ -13,6 +13,8 @@ var CT = {
 		    	"application/x-www-form-urlencoded");
 		    xhr.onreadystatechange = cb;
 		    xhr.send(CT.net._processPostParams(params));
+		    if (!async)
+		    	return xhr.responseText;
 		},
 		"post": function(path, params, errMsg, cb, eb, cbarg, ebarg) {
 			CT.net.xhr(path, "POST", params, true, function() {
@@ -31,7 +33,7 @@ var CT = {
 		            else if (!CT.net._encode)
 		                alert("request to "+path+" failed!");
 		        }
-		    }
+		    });
 		},
 		"get": function(path) {
 			return CT.net.xhr(path, "GET");
