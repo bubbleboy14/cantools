@@ -206,22 +206,23 @@ var setFieldValue = function(value, fieldId, fieldPath) {
 
 var ALLNODE = null;
 var loadAllNode = function() {
-    if (!ALLNODE)
+    if (!ALLNODE) {
         ALLNODE = document.getElementById("all");
+        ALLNODE._mobile = windowWidth() <= 720;
+    }
 };
 var getAllNode = function() {
     loadAllNode();
     return ALLNODE;
 };
 var absers = [];
-var allLeft = function() {
-    // accounts for padding
-    loadAllNode();
-    return ALLNODE.offsetLeft + 8;
+var fromLeft = function(x) {
+    // 8px padding
+    return 8 + x;
 };
 var absed = function(node, leftpx, toppx) {
     node.style.position = "absolute";
-    node.style.left = (leftpx + allLeft()) + "px";
+    node.style.left = fromLeft(leftpx) + "px";
     if (toppx != null)
         node.style.top = toppx + "px";
     absers.push([node, leftpx]);
@@ -269,15 +270,29 @@ var centered = function(n) {
         centerscreeners.push(n);
     return n;
 };
+var trueOffset = function(n) {
+    var o = {
+        "top": 0,
+        "left": 0
+    };
+    while (n) {
+        if (n == ALLNODE)
+            break;
+        o["top"] += n.offsetTop;
+        o["left"] += n.offsetLeft;
+        n = n.offsetParent;
+    }
+    return o;
+};
 window.onresize = function() {
     loadAllNode();
     if (!ALLNODE) {
         window.onresize = {};
         return;
     }
-    var offset = allLeft();
+    ALLNODE.resize();
     for (var i = 0; i < absers.length; i++)
-        absers[i][0].style.left = (absers[i][1] + offset) + "px";
+        absers[i][0].style.left = fromLeft(absers[i][1]) + "px";
     for (var i = 0; i < fullscreeners.length; i++)
         fullscreeners[i].style.height = (windowHeight() - 50) + "px";
     centerall();
@@ -428,7 +443,7 @@ var radioStrip = function(pnode, lnames, cb, stripname, stripnum, stripval) {
 var newTA = function(id, value, classname) {
     return newNode("", "textarea", classname, id, value && {"value": value} || null);
 };
-var newImg = function(imgsrc, imgclass, onclick, _href, _target, _title, _linkid) {
+var newImg = function(imgsrc, imgclass, onclick, _href, _target, _title, _linkid, wclass) {
     var n = newNode("", "img", imgclass, "", {"src": imgsrc});
     if (onclick || _href) {
         var l = newLink("", onclick, _href);
@@ -438,6 +453,8 @@ var newImg = function(imgsrc, imgclass, onclick, _href, _target, _title, _linkid
             l.title = l.alt = _title;
         if (_linkid)
             l.id = _linkid;
+        if (wclass)
+            n = wrapped(n, "div", wclass);
         l.appendChild(n);
         return l;
     }
@@ -534,7 +551,7 @@ var inputEnterCallback = function(n, cb, fid) {
             // can prevent annoying repeating alert on enter scenarios
             if (fid)
                 document.getElementById(fid).focus();
-            cb(n.value);
+            cb && cb(n.value);
         }
     };
     return n;
@@ -682,7 +699,7 @@ var showHideSet = function(nodes, juston, justoff, dstyle) {
     for (var i = 0; i < nodes.length; i++)
         showHide(nodes[i], juston, justoff, dstyle);
 };
-var labeledImage = function(img, href, label, _alt, _icl, _wcl, _lcl, reverseNodes) {
+var labeledImage = function(img, href, label, _alt, _icl, _wcl, _lcl, reverseNodes, onclick) {
     var nlink = newLink();
     var imageNode = newImg(img, _icl);
     var labelNode = newNode(label, "div", _lcl);
@@ -693,10 +710,14 @@ var labeledImage = function(img, href, label, _alt, _icl, _wcl, _lcl, reverseNod
         nlink.appendChild(imageNode);
         nlink.appendChild(labelNode);
     }
-    nlink.href = href;
-    nlink.target = "_blank";
     nlink.title = nlink.alt = _alt || label;
-    return wrapped(nlink, "div", _wcl);
+    var w = wrapped(nlink, "div", _wcl);
+    if (href) {
+        nlink.href = href;
+        nlink.target = "_blank";
+    } else if (onclick)
+        w.onclick = onclick;
+    return w;
 };
 
 // video link detection and parsing
@@ -705,6 +726,7 @@ var player2url = {
     "google": "video.google.com?docid=",
     "youtube": "www.youtube.com/watch?v=",
     "vimeo": "vimeo.com/",
+    "ustream": "www.ustream.tv/recorded/",
     "mp4": "", "ogg": "", "webm": ""
 };
 var urlFromData = function(player, docid) {
@@ -726,6 +748,8 @@ var docidFromUrl = function(url) {
         return getQSParam(url, "v");
     else if (url.indexOf("vimeo.com") != -1)
         return url.slice(url.lastIndexOf('/') + 1);
+    else if (url.indexOf("ustream.tv/recorded/") != -1)
+        return url.split("recorded/")[1].split("?")[0];
     var spliturl = url.split('.'),
         ext = spliturl[spliturl.length - 1];
     if (rawVidTypes.indexOf(ext) != -1) // eventually do more about ssl
@@ -739,6 +763,8 @@ var playerFromUrl = function(url) {
         return "youtube";
     if (url.indexOf("vimeo.com") != -1)
         return "vimeo";
+    if (url.indexOf("ustream.tv") != -1)
+        return "ustream";
     var spliturl = url.split('.'),
         ext = spliturl[spliturl.length - 1];
     if (rawVidTypes.indexOf(ext) != -1)
@@ -752,15 +778,19 @@ var videoData = function(vlink) {
         docid: docidFromUrl(vlink)
     } : null;
 };
+var eurl = {
+    "youtube": "http://www.youtube.com/embed/",
+    "vimeo": "//player.vimeo.com/video/"
+};
 var embeddedVideo = function(video, small) {
     var w = small ? 375 : 400;
     var h = small ? 315 : 335;
     if (video.player == "google")
         return "<embed width=" + w + " height=" + h + " id=VideoPlayback src=http://video.google.com/googleplayer.swf?docid=" + video.docid + "&hl=en&fs=true allowFullScreen=true allowScriptAccess=always type=application/x-shockwave-flash> </embed>";
-    else if (video.player == "youtube")
-        return "<object width=" + w + " height=" + h + "><param name=allowFullScreen value=true><param name=movie value=http://www.youtube.com/v/" + video.docid + "?version=3&autohide=1&showinfo=0></param><param name=allowScriptAccess value=always></param><param name=wmode value=opaque /><embed src=http://www.youtube.com/v/" + video.docid + "?version=3&autohide=1&showinfo=0 type=application/x-shockwave-flash allowscriptaccess=always allowfullscreen=true wmode=opaque width=" + w + " height=" + h + "></embed></object>";
-    else if (video.player == "vimeo")
-        return "<iframe src=http://player.vimeo.com/video/" + video.docid + " width=" + w + " height=" + h + " frameborder=0 webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>";
+    else if (video.player == "youtube" || video.player == "vimeo")
+        return "<iframe src=" + eurl[video.player] + video.docid + "?html5=1 width=" + w + " height=" + h + " frameborder=0 webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>";
+    else if (video.player == "ustream")
+        return "<object type=application/x-shockwave-flash data=http://static-cdn1.ustream.tv/swf/live/viewerqos:21.swf width=" + w + " height=" + h + "id=utv" + video.docid + " name=utv" + video.docid + "><param name=flashvars value=autoplay=true&locale=en_US&referrer=http%3A%2F%2Fwww.ustream.tv%2Frecorded%2F" + video.docid + "%3Futm_campaign%3Dustre.am%26utm_source%3Dustre.am%2F%3A44gEy%26utm_medium%3Dsocial%26utm_content%3D20150324210416&autoResize=false&enablejsapi=true&sv=6&volume=1&ts=1427256261325&vid=" + video.docid + "&loc=" + video.docid + "&hasticket=false><param name=allowfullscreen value=true><param name=allowscriptaccess value=always><param name=bgcolor value=000000><param name=wmode value=transparent></object>"
     else if (rawVidTypes.indexOf(video.player) != -1)
         return "<video width=" + w + " height=" + h + " controls><source src=http://" + video.docid + " type=video/" + video.player + "></video>";
     else
@@ -778,19 +808,19 @@ var url2link = function(rurl, rname) {
         rurl = rurl.slice(8);
     else
         furl = "http://" + furl;
-    return '<a target="_blank" href="' + furl + '">' + (rname || breakurl(rurl)) + "</a>";
+    return '<a target="_blank" href=' + furl + '>' + (rname || breakurl(rurl)) + "</a>";
 };
 var imgTypes = [
-    ".gif",
-    ".png",
-    ".jpg",
-    "jpeg"
+    ".gif", ".GIF",
+    ".png", ".PNG",
+    ".jpg", ".JPG",
+    "jpeg", "JPEG"
 ];
 var linkProcessor; // for compilation
 var processLink = function(url, novid) {
     var ext = url.slice(-4);
     if (imgTypes.indexOf(ext) != -1)
-        return '<img src="' + url + '">';
+        return '<img src=' + url + '>';
     return linkProcessor && linkProcessor(url, novid) || url2link(url);
 };
 var stripLast = function(w) {
@@ -994,4 +1024,47 @@ var setInfoBubble = function(n, content, poptop) {
         showHide(infoBubble, false, true);
     };
     return n;
+};
+
+// trans
+var _vender_prefixes = [
+    "-webkit-",
+    "-moz-",
+    "-ms-",
+    "-o-",
+    ""
+];
+var setVenderPrefixed = function(node, property, value) {
+    for (var i = 0; i < _vender_prefixes.length; i++)
+        node.style[_vender_prefixes[i] + property] = value;
+};
+var _tswap = { "transform": "-webkit-transform" }; // mobile safari transitions
+var trans = function(node, cb, property, duration, ease, value, prefix) {
+    duration = duration || 500;
+    property && setVenderPrefixed(node, "transition",
+        (_tswap[property] || property)
+        + " " + duration + "ms " + (ease || "ease-in-out"));
+    if (cb) {
+        var transTimeout, wrapper = function () {
+            property && setVenderPrefixed(node, "transition", "");
+            clearTimeout(transTimeout);
+            transTimeout = null;
+            node.removeEventListener("webkitTransitionEnd", wrapper, false);
+            node.removeEventListener("mozTransitionEnd", wrapper, false);
+            node.removeEventListener("oTransitionEnd", wrapper, false);
+            node.removeEventListener("transitionend", wrapper, false);
+            cb();
+        }
+        node.addEventListener("webkitTransitionEnd", wrapper, false);
+        node.addEventListener("mozTransitionEnd", wrapper, false);
+        node.addEventListener("oTransitionEnd", wrapper, false);
+        node.addEventListener("transitionend", wrapper, false);
+        transTimeout = setTimeout(wrapper, duration);
+    }
+    if (value && property) {
+        if (prefix)
+            setVenderPrefixed(node, property, value);
+        else
+            node.style[property] = value;
+    }
 };
