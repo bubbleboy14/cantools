@@ -1,9 +1,22 @@
 var CT = {
 	"net": {
 		// defaults
+		"_path": "",
 		"_encode": false,
 		"_processPostParams": JSON.stringify,
 		// functions
+		"fullPath": function(p) {
+			if (!CT.net._path) {
+				var s = document.getElementsByTagName("script");
+				for (var i = 0; i < s.length; i++) {
+					if (s[i].src.endsWith("CT/ct.js")) {
+						CT.net._path = s[i].src.replace("CT/ct.js", "");
+						break;
+					}
+				}
+			}
+			return CT.net._path + p;
+		},
 		"xhr": function(path, method, params, async, cb) {
 		    var xhr = window.XMLHttpRequest
 		    	? new XMLHttpRequest()
@@ -45,6 +58,6 @@ var CT = {
 		while (curmod && modpath.length)
 			curmod = curmod[modpath.shift()];
 		if (!curmod)
-			eval(CT.net.get(modname.replace(/\./g, "/") + ".js"));
+			eval(CT.net.get(CT.net.fullPath(modname.replace(/\./g, "/") + ".js")));
 	}
 };
