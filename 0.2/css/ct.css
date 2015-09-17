@@ -1,0 +1,93 @@
+.hidden {
+    display: none;
+}
+
+.transparent {
+    opacity: 0;
+}
+
+.italic {
+    font-style: italic;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.blue {
+    color: #010068;
+}
+
+.gray {
+    color: gray;
+}
+
+.right {
+    float: right;
+}
+
+.lfloat {
+    float: left;
+}
+
+.big {
+    font-size: 120%;
+}
+
+.bigger {
+    font-size: 140%;
+}
+
+.small {
+    font-size: 80%;
+}
+
+.smaller {
+    font-size: 60%;
+}
+
+.clearnode {
+    clear: both;
+}
+
+.padded {
+    padding: 10px;
+}
+
+.bottompadded {
+    padding-bottom: 10px;
+}
+
+.nowrap {
+    white-space: nowrap;
+}
+
+.bordered {
+    border: 1px solid #d3d3d3;
+}
+
+.round {
+    border-radius: 5px 5px 5px 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+}
+
+.centered {
+    text-align: center;
+}
+
+.fullwidth {
+    width: 100%;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.activetab a {
+    color: #670002;
+}
+
+.shiftleft {
+    margin-left: -18px;
+}

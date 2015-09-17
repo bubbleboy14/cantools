@@ -1,4 +1,5 @@
 CT.dom = {
+	// node generation
 	"node": function(content, type, classname, id, attrs) {
 	    var d = document.createElement(type || "div");
 	    if (content !== "" && content != null) {
@@ -168,5 +169,87 @@ CT.dom = {
 	    for (var i = 0; i < nodes.length; i++)
 	        wrapper.appendChild(nodes[i]);
 	    return wrapper;
+	},
+
+	// fields
+	"_blurs": {},
+	"setBlur": function(fieldId, values) {
+	    CT.dom._blurs[fieldId] = values;
+	},
+	"getFieldValue": function(fieldId, fieldPath, rules) {
+	    var field = document.getElementById(fieldId);
+	    if (!field)
+	        return null;
+	    if (fieldPath) {
+	        for (var i = 0; i < fieldPath.length; i++)
+	            field = field[fieldPath[i]];
+	    }
+	    var s = field.value;
+	    if (s == "" || (CT.dom._blurs[fieldId] && CT.dom._blurs[fieldId].indexOf(s) != -1))
+	        return "";
+	    if (rules) {
+	        if (rules.requires) {
+	            for (var i = 0; i < rules.requires.length; i++) {
+	                if (s.indexOf(rules.requires[i]) == -1) {
+	                    s = "";
+	                    break;
+	                }
+	            }
+	        }
+	        if ((s && s.length || 0) < (rules.length || 0))
+	            s = "";
+	    }
+	    return s;
+	},
+	"blurField": function(field, useblurs) {
+	    useblurs = CT.dom._blurs[field.id] = useblurs || CT.dom._blurs[field.id];
+	    if (useblurs) {
+	        field.onblur = function() {
+	            if (field.value == "") {
+	                if (field.className.indexOf("gray") == -1)
+	                    field.className += " gray";
+	                field.value = useblurs[Math.floor(Math.random()*useblurs.length)];
+	            }
+	            else {
+	                field.className = field.className.replace(" gray", "");
+	            }
+	        };
+	        field.onfocus = function() {
+	            if (useblurs.indexOf(field.value) != -1) {
+	                field.value = "";
+	                field.className = field.className.replace(" gray", "");
+	            }
+	        };
+	        field.onblur();
+	    }
+	},
+	"setFieldValue": function(value, fieldId, fieldPath) {
+	    var field = document.getElementById(fieldId);
+	    if (!field)
+	        return setTimeout(CT.dom.setFieldValue, 500, value, fieldId, fieldPath);
+	    if (fieldPath) {
+	        for (var i = 0; i < fieldPath.length; i++)
+	            field = field[fieldPath[i]];
+	    }
+	    field.value = value || "";
+	    CT.dom.blurField(field);
+	},
+
+	// visibility
+	"showHideT": function(n) {
+	    n.style.opacity = n.style.opacity == "1" && "0" || "1";
+	},
+	"showHide": function(n, juston, justoff, dstyle) {
+	    dstyle = dstyle || "block";
+	    if (juston || justoff)
+	        n.style.display = juston && dstyle || "none";
+	    else if (n.style.display == "" && n.className.indexOf("hidden") == -1)
+	        n.style.display = "none";
+	    else
+	        n.style.display = (n.style.display == dstyle) && "none" || dstyle;
+	},
+	"showHideSet": function(nodes, juston, justoff, dstyle) {
+	    for (var i = 0; i < nodes.length; i++)
+	        CT.dom.showHide(nodes[i], juston, justoff, dstyle);
 	}
 };

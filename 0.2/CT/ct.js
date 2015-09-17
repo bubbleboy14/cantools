@@ -1,4 +1,9 @@
 var CT = {
+	"style": {
+		"panel": {
+			"title": "bigger blue bold bottompadded"
+		}
+	},
 	"net": {
 		// defaults
 		"_path": "",
