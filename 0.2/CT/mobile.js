@@ -4,8 +4,8 @@ CT.mobile = {
         "false": ["normal", "stretched"]
     },
     "fitNode": function(n, t, o, cb) {
-        var tline, w = windowWidth() - 10,
-            toff = n && CT.dom.trueOffset(n);
+        var tline, w = CT.align.width() - 10,
+            toff = n && CT.align.offset(n);
         CT.dom.ALLNODE.mobileNode = n;
         if (CT.dom.ALLNODE._mode == "mobile")
             tline = "scale(" + (w / n.clientWidth) + ") translate(-"
@@ -66,8 +66,8 @@ CT.mobile = {
         });
         mmbtn.bottoms.appendChild(CT.mobile.mobileMenuLink(
             mobileMenus.alternatives[loggedin ? "participate" : "login"]));
-        inputEnterCallback(mobile_search, doBasicSearch);
-        blurField(mobile_search);
+        CT.dom.inputEnterCallback(mobile_search, doBasicSearch);
+        CT.dom.blurField(mobile_search);
 
         document.body.appendChild(mmbtn.tops);
         document.body.appendChild(mmbtn.bottoms);
