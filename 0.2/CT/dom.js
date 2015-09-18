@@ -1,5 +1,5 @@
 CT.dom = {
-	// node generation
+	// basic nodes
 	"node": function(content, type, classname, id, attrs) {
 	    var d = document.createElement(type || "div");
 	    if (content !== "" && content != null) {
@@ -56,6 +56,66 @@ CT.dom = {
 	    return CT.dom.node("", "input", classname, id,
 	    	(value!=null || type!=null) && {"value": value, "type": type} || null);
 	},
+	"textArea": function(id, value, classname) {
+	    return CT.dom.node("", "textarea", classname,
+	    	id, value && {"value": value} || null);
+	},
+	"img": function(imgsrc, imgclass, onclick, _href, _target, _title, _linkid) {
+	    var n = CT.dom.node("", "img", imgclass, "", {"src": imgsrc});
+	    if (onclick || _href) {
+	        var l = CT.dom.link("", onclick, _href);
+	        if (_target)
+	            l.target = _target;
+	        if (_title)
+	            l.title = l.alt = _title;
+	        if (_linkid)
+	            l.id = _linkid;
+	        l.appendChild(n);
+	        return l;
+	    }
+	    return n;
+	},
+	"select": function(onames, ovalues, id, curvalue, defaultvalue) {
+	    ovalues = ovalues || onames;
+	    var s = CT.dom.node("", "select", "", id);
+	    for (var i = 0; i < onames.length; i++) {
+	        s.appendChild(CT.dom.node(onames[i], "option",
+	            "", "", {"value": ovalues[i]}));
+	    }
+	    if (curvalue)
+	        s.value = ovalues.indexOf(curvalue) != -1 && curvalue || defaultvalue;
+	    return s;
+	},
+	"checkbox": function(id, ischecked) {
+	    var cbdata = {"type": "checkbox"};
+	    if (ischecked)
+	        cbdata.checked = ischecked;
+	    return CT.dom.node("", "input", "", id, cbdata);
+	},
+	"wrapped": function(nodes, type, className, id, attrs) {
+	    var wrapper = CT.dom.node("", type, className, id, attrs);
+	    if (!Array.isArray(nodes))
+	        nodes = [nodes];
+	    for (var i = 0; i < nodes.length; i++)
+	        wrapper.appendChild(nodes[i]);
+	    return wrapper;
+	},
+
+	// composite nodes
+	"checkboxAndLabel": function(cbid, ischecked, lname, lclass, cclass, onclick) {
+	    var n = CT.dom.node("", "div", cclass);
+	    var cbname = cbid+"checkbox";
+	    var cb = CT.dom.checkbox(cbname, ischecked);
+	    n.appendChild(cb);
+	    if (onclick) {
+	        cb.onclick = function() {
+	            onclick(cb);
+	        };
+	    }
+	    n.appendChild(CT.dom.node(lname || cbid, "label", lclass, "",
+	        {"for": cbname, "htmlFor": cbname}));
+	    return n;
+	},
 	"_resizeTextArea": function(cbody) {
 	    // expander/contracter
 	    // from http://www.webdeveloper.com/forum/archive/index.php/t-61552.html
@@ -86,17 +146,6 @@ CT.dom = {
 	    n.appendChild(CT.dom.node("", "div", "clearnode"));
 	    return n;
 	},
-	"select": function(onames, ovalues, id, curvalue, defaultvalue) {
-	    ovalues = ovalues || onames;
-	    var s = CT.dom.node("", "select", "", id);
-	    for (var i = 0; i < onames.length; i++) {
-	        s.appendChild(CT.dom.node(onames[i], "option",
-	            "", "", {"value": ovalues[i]}));
-	    }
-	    if (curvalue)
-	        s.value = ovalues.indexOf(curvalue) != -1 && curvalue || defaultvalue;
-	    return s;
-	},
 	"_radioStripStep": function(radios, labels, lname, cb, stripname, stripnum, ison) {
 	    var fname = (stripname || "radiostrip") + (stripnum || "") + lname;
 	    var f = CT.dom.field(fname, null, null, "radio");
@@ -121,25 +170,6 @@ CT.dom = {
 	        	cb, stripname, stripnum, lnames[i] == stripval);
 	    pnode.appendChild(rtable);
 	},
-	"textArea": function(id, value, classname) {
-	    return CT.dom.node("", "textarea", classname,
-	    	id, value && {"value": value} || null);
-	},
-	"img": function(imgsrc, imgclass, onclick, _href, _target, _title, _linkid) {
-	    var n = CT.dom.node("", "img", imgclass, "", {"src": imgsrc});
-	    if (onclick || _href) {
-	        var l = CT.dom.link("", onclick, _href);
-	        if (_target)
-	            l.target = _target;
-	        if (_title)
-	            l.title = l.alt = _title;
-	        if (_linkid)
-	            l.id = _linkid;
-	        l.appendChild(n);
-	        return l;
-	    }
-	    return n;
-	},
 	"linkWithIcon": function(icon, lname, laddr, lonclick) {
 	    var n = CT.dom.node("", "span");
 	    n.appendChild(CT.dom.img(icon, "vmiddle rpaddedsmall nodecoration", lonclick, laddr));
@@ -162,13 +192,42 @@ CT.dom = {
 	    nlink.title = nlink.alt = _alt || label;
 	    return CT.dom.wrapped(nlink, "div", _wcl);
 	},
-	"wrapped": function(nodes, type, className, id, attrs) {
-	    var wrapper = CT.dom.node("", type, className, id, attrs);
-	    if (!Array.isArray(nodes))
-	        nodes = [nodes];
-	    for (var i = 0; i < nodes.length; i++)
-	        wrapper.appendChild(nodes[i]);
-	    return wrapper;
+
+	// date selector
+	"_currentyear": Math.max((new Date()).getFullYear(), 2014),
+	"_monthnames": ["January", "February",
+	    "March", "April", "May", "June", "July", "August",
+	    "September", "October", "November", "December"],
+	"_month2num": function(month) {
+	    return monthnames.indexOf(month)+1; // for "Month" at top of select
+	},
+	"dateSelectors": function(node, d, startdate, enddate, withtime, noday) {
+	    var eyears = ["Year"];
+	    startdate = startdate || CT.dom._currentyear;
+	    enddate = enddate || CT.dom._currentyear;
+	    for (var i = startdate; i <= enddate; i++)
+	        eyears.push(i);
+	    d.year = CT.dom.select(eyears);
+	    d.month = CT.dom.select(["Month"].concat(CT.dom._monthnames),
+	        ["Month", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+	    node.appendChild(d.year);
+	    node.appendChild(d.month);
+	    if (!noday) {
+	        d.day = CT.dom.select(["Day", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+	            11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
+	            25, 26, 27, 28, 29, 30, 31]);
+	        node.appendChild(d.day);
+	    }
+	    if (withtime) {
+	        // hour, minute = etime.split(":") server-side
+	        var etimes = ["Time"];
+	        for (var i = 0; i < 24; i++) {
+	            etimes.push(i+":"+"00");
+	            etimes.push(i+":"+"30");
+	        }
+	        d.time = CT.dom.select(etimes);
+	        node.appendChild(d.time);
+	    }
 	},
 
 	// fields
@@ -266,12 +325,12 @@ CT.dom = {
 	        CT.dom.showHide(nodes[i], juston, justoff, dstyle);
 	},
 
-	// position (ALLNODE-centric)
+	// position (mostly ALLNODE-centric)
 	"ALLNODE": null,
 	"loadAllNode": function() {
 	    if (!CT.dom.ALLNODE) {
 	        CT.dom.ALLNODE = document.getElementById("all");
-	        CT.dom.ALLNODE._mobile = windowWidth() <= 720;
+	        CT.dom.ALLNODE._mobile = CT.align.width() <= 720;
 	    }
 	},
 	"getAllNode": function() {
@@ -283,20 +342,6 @@ CT.dom = {
 	    _a.style.opacity = _a.style["-moz-opacity"] = _a.style["-khtml-opacity"] = "1";
 	    _a.style.filter = "alpha(opacity = 100)";
 	    _a.style["-ms-filter"] = "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
-	},
-	"trueOffset": function(n) {
-	    var o = {
-	        "top": 0,
-	        "left": 0
-	    };
-	    while (n) {
-	        if (n == (CT.dom.ALLNODE || document.body))
-	            break;
-	        o["top"] += n.offsetTop;
-	        o["left"] += n.offsetLeft;
-	        n = n.offsetParent;
-	    }
-	    return o;
 	},
 
 	// transitions
