@@ -29,13 +29,13 @@ var CT = {
 		    xhr.open(method, path, async);
 		    xhr.setRequestHeader("Content-Type",
 		    	"application/x-www-form-urlencoded");
-		    xhr.onreadystatechange = cb;
+		    xhr.onreadystatechange = cb && function() { cb(xhr); };
 		    xhr.send(CT.net._processPostParams(params));
 		    if (!async)
 		    	return xhr.responseText;
 		},
 		"post": function(path, params, errMsg, cb, eb, cbarg, ebarg) {
-			CT.net.xhr(path, "POST", params, true, function() {
+			CT.net.xhr(path, "POST", params, true, function(xhr) {
 		        if (xhr.readyState == 4) {
 		            if (xhr.status == 200) {
 		                var data = xhr.responseText;

@@ -234,6 +234,19 @@ CT.dom = {
 	    field.value = value || "";
 	    CT.dom.blurField(field);
 	},
+	"inputEnterCallback": function(n, cb, fid) {
+	    n.onkeyup = function(e) {
+	        e = e || window.event;
+	        var code = e.keyCode || e.which;
+	        if (code == 13 || code == 3) {
+	            // can prevent annoying repeating alert on enter scenarios
+	            if (fid)
+	                document.getElementById(fid).focus();
+	            cb && cb(n.value);
+	        }
+	    };
+	    return n;
+	},
 
 	// visibility
 	"showHideT": function(n) {
@@ -251,5 +264,81 @@ CT.dom = {
 	"showHideSet": function(nodes, juston, justoff, dstyle) {
 	    for (var i = 0; i < nodes.length; i++)
 	        CT.dom.showHide(nodes[i], juston, justoff, dstyle);
+	},
+
+	// position (ALLNODE-centric)
+	"ALLNODE": null,
+	"loadAllNode": function() {
+	    if (!CT.dom.ALLNODE) {
+	        CT.dom.ALLNODE = document.getElementById("all");
+	        CT.dom.ALLNODE._mobile = windowWidth() <= 720;
+	    }
+	},
+	"getAllNode": function() {
+	    CT.dom.loadAllNode();
+	    return CT.dom.ALLNODE;
+	},
+	"showAllNode": function() {
+		var _a = CT.dom.ALLNODE;
+	    _a.style.opacity = _a.style["-moz-opacity"] = _a.style["-khtml-opacity"] = "1";
+	    _a.style.filter = "alpha(opacity = 100)";
+	    _a.style["-ms-filter"] = "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+	},
+	"trueOffset": function(n) {
+	    var o = {
+	        "top": 0,
+	        "left": 0
+	    };
+	    while (n) {
+	        if (n == (CT.dom.ALLNODE || document.body))
+	            break;
+	        o["top"] += n.offsetTop;
+	        o["left"] += n.offsetLeft;
+	        n = n.offsetParent;
+	    }
+	    return o;
+	},
+
+	// transitions
+	"_vender_prefixes": [
+	    "-webkit-",
+	    "-moz-",
+	    "-ms-",
+	    "-o-",
+	    ""
+	],
+	"setVenderPrefixed": function(node, property, value) {
+	    for (var i = 0; i < _vender_prefixes.length; i++)
+	        node.style[_vender_prefixes[i] + property] = value;
+	},
+	"_tswap": { "transform": "-webkit-transform" }, // mobile safari transitions
+	"trans": function(node, cb, property, duration, ease, value, prefix) {
+	    duration = duration || 500;
+	    property && CT.dom.setVenderPrefixed(node, "transition",
+	        (_tswap[property] || property)
+	        + " " + duration + "ms " + (ease || "ease-in-out"));
+	    if (cb) {
+	        var transTimeout, wrapper = function () {
+	            property && CT.dom.setVenderPrefixed(node, "transition", "");
+	            clearTimeout(transTimeout);
+	            transTimeout = null;
+	            node.removeEventListener("webkitTransitionEnd", wrapper, false);
+	            node.removeEventListener("mozTransitionEnd", wrapper, false);
+	            node.removeEventListener("oTransitionEnd", wrapper, false);
+	            node.removeEventListener("transitionend", wrapper, false);
+	            cb();
+	        }
+	        node.addEventListener("webkitTransitionEnd", wrapper, false);
+	        node.addEventListener("mozTransitionEnd", wrapper, false);
+	        node.addEventListener("oTransitionEnd", wrapper, false);
+	        node.addEventListener("transitionend", wrapper, false);
+	        transTimeout = setTimeout(wrapper, duration);
+	    }
+	    if (value && property) {
+	        if (prefix)
+	            CT.dom.setVenderPrefixed(node, property, value);
+	        else
+	            node.style[property] = value;
+	    }
 	}
 };
