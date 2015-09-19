@@ -60,7 +60,7 @@ CT.dom = {
 	    return CT.dom.node("", "textarea", classname,
 	    	id, value && {"value": value} || null);
 	},
-	"img": function(imgsrc, imgclass, onclick, _href, _target, _title, _linkid) {
+	"img": function(imgsrc, imgclass, onclick, _href, _target, _title, _linkid, wclass) {
 	    var n = CT.dom.node("", "img", imgclass, "", {"src": imgsrc});
 	    if (onclick || _href) {
 	        var l = CT.dom.link("", onclick, _href);
@@ -70,6 +70,8 @@ CT.dom = {
 	            l.title = l.alt = _title;
 	        if (_linkid)
 	            l.id = _linkid;
+	        if (wclass)
+	            n = CT.dom.wrapped(n, "div", wclass);
 	        l.appendChild(n);
 	        return l;
 	    }
