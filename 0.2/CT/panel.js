@@ -25,7 +25,7 @@ CT.panel = {
 	        document.getElementById(keystring+"item"+key).className += " activetab";
 	        CT.panel.lastClicked[keystring] = key;
 	    }
-	    mobileSnap();
+	    CT.mobile.mobileSnap();
 	},
 	"new": function(key, trysidepanel, keystring, itemnode, panelnode, nospace, icon, cb) {
 	    nospace = nospace || key.replace(/ /g, "");
