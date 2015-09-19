@@ -1,5 +1,5 @@
 CT.mobile = {
-    "moptions": { // true/false for ALLNODE._mobile
+    "options": { // true/false for ALLNODE._mobile
         "true": ["mobile", "stretched"],
         "false": ["normal", "stretched"]
     },
@@ -32,8 +32,8 @@ CT.mobile = {
         if (bdata.id)
             return document.getElementById(bdata.id);
         else {
-            var cname = (_pswap && _pswap[bdata.name])
-                ? _pswap[bdata.name] : bdata.firstClass;
+            var cname = (CT.mobile.page && CT.mobile.page[bdata.name])
+                ? CT.mobile.page[bdata.name] : bdata.firstClass;
             return document.getElementsByClassName(cname)[0];
         }
     },
@@ -47,7 +47,7 @@ CT.mobile = {
                     CT.mobile.fitAndSnap(CT.mobile.getMobileNode(bdata));
                 });
     },
-    "initMobileMenus": function(mmbtn, loggedin) {
+    "initMobileMenus": function(mmbtn, loggedin, searchcb) {
         mmbtn.tops = CT.dom.node(null, null,
             "button_row top_out", "top_buttons");
         mmbtn.bottoms = CT.dom.node(null, null,
@@ -58,15 +58,15 @@ CT.mobile = {
             [CT.dom.node("CAN Smart Search"), mobile_search], "div",
             "round bordered padded", "mobile_search_node"), "label", null,
             null, {"for": "mobile_search", "htmlFor": "mobile_search"}));
-        (_pswap && _pswap.top || mobileMenus.top).forEach(function(bdata) {
-            mmbtn.tops.appendChild(mobileMenuLink(bdata));
+        (CT.mobile.page && CT.mobile.page.top || CT.mobile.menus.top).forEach(function(bdata) {
+            mmbtn.tops.appendChild(CT.mobile.mobileMenuLink(bdata));
         });
-        mobileMenus.bottom.forEach(function(bdata) {
+        CT.mobile.menus.bottom.forEach(function(bdata) {
             mmbtn.bottoms.appendChild(CT.mobile.mobileMenuLink(bdata));
         });
         mmbtn.bottoms.appendChild(CT.mobile.mobileMenuLink(
-            mobileMenus.alternatives[loggedin ? "participate" : "login"]));
-        CT.dom.inputEnterCallback(mobile_search, doBasicSearch);
+            CT.mobile.menus.alternatives[loggedin ? "participate" : "login"]));
+        CT.dom.inputEnterCallback(mobile_search, searchcb);
         CT.dom.blurField(mobile_search);
 
         document.body.appendChild(mmbtn.tops);
@@ -74,15 +74,18 @@ CT.mobile = {
     },
     "_mset": function() {
         var _a = CT.dom.ALLNODE;
-        return moptions[(!!(_a._mobile && _a._mobileDefault)).toString()];
+        return CT.mobile.options[(!!(_a._mobile && _a._mobileDefault)).toString()];
     },
-    "initResizer": function(loggedin) {
+    "initResizer": function(loggedin, resdata, menus, page, searchcb) {
+        CT.mobile.menus = menus;
+        CT.mobile.page = page;
+
         // for compiler
         var curd, btn, mmbtn, _a = CT.dom.ALLNODE, zMode = function() {
             return CT.mobile._mset()[_a._mindex];
         };
-        _a._mobileDefault = _a.mobileNode = CT.mobile.getMobileNode((_pswap
-            && _pswap.top || mobileMenus.top)[1]);
+        _a._mobileDefault = _a.mobileNode =
+            CT.mobile.getMobileNode((page && page.top || menus.top)[1]);
         _a._mode = zMode();
         _a._mindex = 0;
         _a._otherMode = function() {
@@ -100,6 +103,11 @@ CT.mobile = {
                 setTimeout(_doscroll, 2000);
                 setTimeout(_doscroll, 3000);
             };
+
+            // TODO
+            //  - remove old listeners, or only add once
+            //  - maybe only do this for certain browsers?
+
             var firstMove;
             window.addEventListener('touchstart', function (e) {
                 firstMove = true;
@@ -139,12 +147,12 @@ CT.mobile = {
             mmbtn._on = !mmbtn._on;
         };
         curd = resdata[_a._otherMode()];
-        btn = newImg(curd.img, null, _a._swapMode, null,
+        btn = CT.dom.img(curd.img, null, _a._swapMode, null,
             null, curd.alt, "resize_btn", "round bordered padded");
-        mmbtn = newImg("/img/mobile-menu.png", null, _a.toggleMobileMenu,
+        mmbtn = CT.dom.img("/img/mobile-menu.png", null, _a.toggleMobileMenu,
             null, null, "Mobile Menu", "mobile_menu_btn", "round bordered padded");
         _a.resize = function() {
-            _a._mobile = ismobile || windowWidth() <= 720;
+            _a._mobile = CT.info.mobile || CT.align.width() <= 720;
             _a._mode = zMode();
             if (_a._mode == "normal")
                 CT.mobile.fitNode(null, "scale(1)", "50% 0%");
@@ -166,7 +174,7 @@ CT.mobile = {
         };
         document.body.appendChild(btn);
         document.body.appendChild(mmbtn);
-        CT.mobile.initMobileMenus(mmbtn, loggedin);
+        CT.mobile.initMobileMenus(mmbtn, loggedin, searchcb);
         _a.resize();
         _a.setScroll();
     }
