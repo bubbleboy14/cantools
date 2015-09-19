@@ -353,14 +353,14 @@ CT.dom = {
 	    ""
 	],
 	"setVenderPrefixed": function(node, property, value) {
-	    for (var i = 0; i < _vender_prefixes.length; i++)
-	        node.style[_vender_prefixes[i] + property] = value;
+	    for (var i = 0; i < CT.dom._vender_prefixes.length; i++)
+	        node.style[CT.dom._vender_prefixes[i] + property] = value;
 	},
 	"_tswap": { "transform": "-webkit-transform" }, // mobile safari transitions
 	"trans": function(node, cb, property, duration, ease, value, prefix) {
 	    duration = duration || 500;
 	    property && CT.dom.setVenderPrefixed(node, "transition",
-	        (_tswap[property] || property)
+	        (CT.dom._tswap[property] || property)
 	        + " " + duration + "ms " + (ease || "ease-in-out"));
 	    if (cb) {
 	        var transTimeout, wrapper = function () {
