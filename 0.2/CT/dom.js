@@ -327,7 +327,7 @@ CT.dom = {
 	        CT.dom.showHide(nodes[i], juston, justoff, dstyle);
 	},
 
-	// position (mostly ALLNODE-centric)
+	// ALLNODE stuff
 	"ALLNODE": null,
 	"loadAllNode": function() {
 	    if (!CT.dom.ALLNODE) {
@@ -344,6 +344,24 @@ CT.dom = {
 	    _a.style.opacity = _a.style["-moz-opacity"] = _a.style["-khtml-opacity"] = "1";
 	    _a.style.filter = "alpha(opacity = 100)";
 	    _a.style["-ms-filter"] = "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+	},
+
+	// dynamically add style rules
+	"addStyle": function(s) {
+	    document.getElementsByTagName("head")[0]
+	        .appendChild(CT.dom.node(s, "style"));
+	},
+
+	// defer function until node exists in dom
+	"doWhenNodeExists": function(id, cb) {
+	    if (document.getElementById(id))
+	        return cb();
+	    setTimeout(CT.dom.doWhenNodeExists, 1000, id, cb);
+	},
+
+	// determine iframe location
+	"getLoc": function(iframe) {
+	    return (iframe.documentWindow || iframe.contentWindow || iframe.contentDocument).location;
 	},
 
 	// transitions
