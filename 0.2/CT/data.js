@@ -66,5 +66,67 @@ CT.data = {
 	        }
 	    }
 	    return newitems;
+	},
+
+	// data acquisition functions -- require backend integration
+	"checkAndDo": function(keys, cb, nlcb, eb, req, getpath, getparams) {
+	    var needed = [];
+	    keys = CT.data.uniquify(keys);
+	    for (var i = 0; i < keys.length; i++) {
+	        if (CT.data.map[keys[i]] == null || req && CT.data.map[keys[i]][req] == null)
+	            needed.push(keys[i]);
+	    }
+	    if (needed.length == 0)
+	        return cb();
+	    getparams = getparams || {"gtype": "data"};
+	    getparams.keys = needed;
+	    CT.net.post(getpath || "/get", getparams,
+	    "error retrieving data", function(rawdata) {
+	        CT.data.addSet(rawdata);
+	        if (nlcb) nlcb(needed);
+	        cb();
+	    }, eb);
+	},
+	"requirePrep": function() {}, // override!
+	"itemReady": function(key, plist) {
+	    var isready = key in CT.data.map;
+	    plist && plist.forEach(function(p) {
+	    	isready = isready && p in CT.data.map[key];
+	    });
+	    return isready;
+	},
+	"require": function(key, cb, plist, getpath, getparams) {
+		CT.data.requirePrep(key);
+	    if (CT.data.itemReady(key, plist))
+	        cb(CT.data.map[key]);
+	    else {
+	    	getparams = getparams || {"gtype": "user", "chat": 1};
+	    	getparams.uid = key;
+	        CT.net.post(getpath || "/get", getparams,
+	            "error retrieving data", function(rawdata) {
+	                CT.data.new(rawdata);
+	                cb(CT.data.map[key]);
+	            });
+	    }
+	},
+	"requireAll": function(keys, cb, uid, plist, getpath, getparams) {
+		keys.forEach(CT.data.requirePrep);
+	    var needed = [];
+	    for (var i = 0; i < keys.length; i++) {
+	    	if (!CT.data.itemReady(keys[i], plist))
+	            needed.push(keys[i]);
+	    }
+	    if (needed.length == 0)
+	        cb(keys);
+	    else {
+	    	getparams = getparams || {"gtype": "user", "chat": 1};
+	    	getparams.uids = needed;
+	        CT.net.post("/get", getparams,
+	            "error retrieving data", function(rawdata) {
+	                for (var i = 0; i < rawdata.length; i++)
+	                    CT.data.new(rawdata[i]);
+	                cb(keys);
+	            });
+	    }
 	}
 };
