@@ -65,9 +65,21 @@ var CT = {
 	},
 	"require": function(modname) {
 		var modpath = modname.split("."),
-			curmod = window;
-		while (curmod && modpath.length)
-			curmod = curmod[modpath.shift()];
+			curpath, curmod = window;
+		while (curmod && modpath.length) {
+			curpath = modpath.shift();
+			if (curpath in curmod)
+				curmod = curmod[curpath];
+			else {
+				modpath.unshift(curpath);
+				modpath.forEach(function(p) {
+					if (p != "all")
+						curmod = curmod[p] = {};
+				});
+				modpath.length = 0;
+				curmod = null;
+			}
+		}
 		if (!curmod)
 			eval(CT.net.get(CT.net.fullPath(modname.replace(/\./g, "/") + ".js")));
 	}
