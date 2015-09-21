@@ -120,6 +120,13 @@ CT.parse = {
 	    var pn = CT.parse.formatPhone(s);
 	    return "<a href='tel:+1" + pn + "'>" + pn + "</a>";
 	},
+	"shortened": function(txt, len) {
+	    len = len || 500;
+	    if (txt.length < len) {
+	        return txt;
+	    }
+	    return txt.slice(0, len) + ' ...';
+	},
 	"sanitize": function(b) {
 	    var sstart = "<scr" + "ipt";
 	    var send = "</sc" + "ript>";

@@ -42,6 +42,9 @@ CT.data = {
 	    }
 	    return ddiff;
 	},
+	"get": function(key) {
+		return CT.data.map[key];
+	},
 	"add": function(d) {
 	    if (CT.data.map[d.key]) {
 	        for (var k in d)
