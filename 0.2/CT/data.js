@@ -1,5 +1,7 @@
 CT.data = {
 	map: {},
+
+	// data comparison
 	"sameList": function(list1, list2) {
 	    if (list1.length != list2.length)
 	        return false;
@@ -42,6 +44,8 @@ CT.data = {
 	    }
 	    return ddiff;
 	},
+
+	// cache
 	"get": function(key) {
 		return CT.data.map[key];
 	},
