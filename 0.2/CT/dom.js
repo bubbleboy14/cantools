@@ -309,6 +309,50 @@ CT.dom = {
 	    return n;
 	},
 
+	// rich input stuff
+	"_ricounter": 0,
+	"_get_ta_id": function() {
+	    var taid = "richinput" + CT.dom._ricounter;
+	    CT.dom._ricounter += 1;
+	    return taid;
+	},
+	"richInput": function(inputnode, taid, submitbutton, content, charlimit, blurs, noclear) {
+	    taid = taid || CT.dom._get_ta_id();
+	    charlimit = charlimit || 500;
+	    var cbody = CT.dom.textArea(taid, content, "fullwidth");
+	    CT.dom.blurField(cbody, blurs);
+	    inputnode.appendChild(CT.dom.wrapped(cbody));
+	    var charcount = CT.dom.node("(" + charlimit
+	    	+ " chars left)", "div", "right", taid + "cc");
+	    cbody.onkeyup = function(e) {
+	        e = e || window.event;
+
+	        // counter
+	        var c = CT.dom.getFieldValue(taid).length;
+	//        var c = cbody.value.length;
+	        if (c > charlimit) {
+	            cbody.value = cbody.value.slice(0, charlimit);
+	            charcount.className = "right bold";
+	            if (e.preventDefault)
+	                e.preventDefault();
+	            return false;
+	        }
+	        else
+	            charcount.className = "right";
+	        charcount.innerHTML = "(" + (charlimit - c) + " chars left)";
+
+	        CT.dom._resizeTextArea(cbody);
+
+	        return true;
+	    };
+	    inputnode.appendChild(charcount);
+	    if (submitbutton)
+	        inputnode.appendChild(submitbutton);
+	    else if (!noclear)
+	        inputnode.appendChild(CT.dom.node("", "div", "clearnode"));
+	    return cbody;
+	},
+
 	// visibility
 	"showHideT": function(n) {
 	    n.style.opacity = n.style.opacity == "1" && "0" || "1";
