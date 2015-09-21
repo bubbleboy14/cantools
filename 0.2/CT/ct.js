@@ -14,7 +14,7 @@ var CT = {
 		// defaults
 		"_path": "",
 		"_encode": false,
-		"_processPostParams": JSON.stringify,
+		"_processPostParams": JSON.stringify, // override
 		// functions
 		"fullPath": function(p) {
 			if (!CT.net._path) {
@@ -36,7 +36,7 @@ var CT = {
 		    xhr.setRequestHeader("Content-Type",
 		    	"application/x-www-form-urlencoded");
 		    xhr.onreadystatechange = cb && function() { cb(xhr); };
-		    xhr.send(CT.net._processPostParams(params));
+		    xhr.send(params && CT.net._processPostParams(params));
 		    if (!async)
 		    	return xhr.responseText;
 		},
@@ -64,23 +64,27 @@ var CT = {
 		}
 	},
 	"require": function(modname) {
-		var modpath = modname.split("."),
-			curpath, curmod = window;
-		while (curmod && modpath.length) {
-			curpath = modpath.shift();
-			if (curpath in curmod)
-				curmod = curmod[curpath];
-			else {
-				modpath.unshift(curpath);
-				modpath.forEach(function(p) {
-					if (p != "all")
-						curmod = curmod[p] = {};
-				});
-				modpath.length = 0;
-				curmod = null;
+		if (modname.slice(0, 4) == "http")
+			eval(CT.net.get(modname));
+		else {
+			var modpath = modname.split("."),
+				curpath, curmod = window;
+			while (curmod && modpath.length) {
+				curpath = modpath.shift();
+				if (curpath in curmod)
+					curmod = curmod[curpath];
+				else {
+					modpath.unshift(curpath);
+					modpath.forEach(function(p) {
+						if (p != "all")
+							curmod = curmod[p] = {};
+					});
+					modpath.length = 0;
+					curmod = null;
+				}
 			}
+			if (!curmod)
+				eval(CT.net.get(CT.net.fullPath(modname.replace(/\./g, "/") + ".js")));
 		}
-		if (!curmod)
-			eval(CT.net.get(CT.net.fullPath(modname.replace(/\./g, "/") + ".js")));
 	}
 };
