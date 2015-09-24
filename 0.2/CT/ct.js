@@ -16,6 +16,9 @@ var CT = {
 		"_encode": false,
 		"_processPostParams": JSON.stringify, // override
 		// functions
+		"setEncode": function(bool) {
+			CT.net._encode = bool;
+		},
 		"fullPath": function(p) {
 			if (!CT.net._path) {
 				var s = document.getElementsByTagName("script");
