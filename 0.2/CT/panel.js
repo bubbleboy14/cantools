@@ -71,5 +71,27 @@ CT.panel = {
 	            icons && icons[i] || null, cbs && cbs[i] || null);
 	    if (stillswap || (!itemnode && !noclear))
 	        CT.panel.swap(pnames[0], trysidepanel, keystring);
+	},
+	"alternatebg": function(n, watchforicons, resetonbreak) {
+	    n = n || document.getElementById("sbitems");
+	    if (watchforicons) {
+	        var switcher = 1;
+	        for (var i = 0; i < n.childNodes.length; i++) {
+	            var c = n.childNodes[i];
+	            if (c.className.indexOf("lfloat") == -1 && c.className.indexOf("clearnode") == -1) {
+	                if (resetonbreak && c.nodeName == "BR") {
+	                    switcher = 1;
+	                    continue;
+	                }
+	                if (switcher == 1)
+	                    c.style.background = "#899fb0";
+	                switcher *= -1;
+	            }
+	        }
+	    }
+	    else {
+	        for (var i = 0; i < n.childNodes.length; i+=2)
+	            n.childNodes[i].style.background = "#899fb0";
+	    }
 	}
 };
