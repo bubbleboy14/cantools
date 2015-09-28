@@ -79,6 +79,9 @@ CT.parse = {
 	        uppers.push(CT.parse.key2title(lowers[i]));
 	    return uppers;
 	},
+	"month2num": function(month) {
+	    return CT.dom._monthnames.indexOf(month) + 1;
+	},
 
 	// strippers, formatters, sanitization
 	"stripLast": function(w) {
