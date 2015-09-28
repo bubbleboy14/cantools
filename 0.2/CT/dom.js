@@ -118,7 +118,7 @@ CT.dom = {
 	        {"for": cbname, "htmlFor": cbname}));
 	    return n;
 	},
-	"_resizeTextArea": function(cbody) {
+	"resizeTextArea": function(cbody) {
 	    // expander/contracter
 	    // from http://www.webdeveloper.com/forum/archive/index.php/t-61552.html
 	    if (navigator.appName.indexOf("Microsoft Internet Explorer") == 0)
@@ -138,7 +138,7 @@ CT.dom = {
 	        (lname.indexOf("Password") != -1) && "password" || null);
 	    if (ista && isresize) {
 	        finput.onkeyup = function() {
-	            CT.dom._resizeTextArea(finput);
+	            CT.dom.resizeTextArea(finput);
 	            return true;
 	        };
 	    }
@@ -211,14 +211,14 @@ CT.dom = {
 	},
 
 	// date selector
-	"_currentyear": Math.max((new Date()).getFullYear(), 2014),
 	"_monthnames": ["January", "February",
 	    "March", "April", "May", "June", "July", "August",
 	    "September", "October", "November", "December"],
+	"currentyear": Math.max((new Date()).getFullYear(), 2014),
 	"dateSelectors": function(node, d, startdate, enddate, withtime, noday) {
 	    var eyears = ["Year"];
-	    startdate = startdate || CT.dom._currentyear;
-	    enddate = enddate || CT.dom._currentyear;
+	    startdate = startdate || CT.dom.currentyear;
+	    enddate = enddate || CT.dom.currentyear;
 	    for (var i = startdate; i <= enddate; i++)
 	        eyears.push(i);
 	    d.year = CT.dom.select(eyears);
@@ -396,7 +396,7 @@ CT.dom = {
 	            charcount.className = "right";
 	        charcount.innerHTML = "(" + (charlimit - c) + " chars left)";
 
-	        CT.dom._resizeTextArea(cbody);
+	        CT.dom.resizeTextArea(cbody);
 
 	        return true;
 	    };
