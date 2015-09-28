@@ -200,9 +200,6 @@ CT.dom = {
 	"_monthnames": ["January", "February",
 	    "March", "April", "May", "June", "July", "August",
 	    "September", "October", "November", "December"],
-	"_month2num": function(month) {
-	    return monthnames.indexOf(month)+1; // for "Month" at top of select
-	},
 	"dateSelectors": function(node, d, startdate, enddate, withtime, noday) {
 	    var eyears = ["Year"];
 	    startdate = startdate || CT.dom._currentyear;
@@ -230,6 +227,36 @@ CT.dom = {
 	        d.time = CT.dom.select(etimes);
 	        node.appendChild(d.time);
 	    }
+	},
+
+	// password prompt
+	"_pwpcb": null,
+	"passwordPrompt": function(cb) {
+	    CT.dom._pwpcb = cb;
+	    var pwprompt = document.getElementById("passwordprompt");
+	    var pwpfield = document.getElementById("pwpfield");
+	    if (pwprompt == null) {
+	        pwprompt = CT.dom.node("", "div", "hidden basicpopup centered", "passwordprompt");
+	        document.body.appendChild(pwprompt);
+	        pwprompt.appendChild(CT.dom.node("For your own security, please enter your password.", "div", "bottompadded"));
+	        pwpfield = CT.dom.field("pwpfield", null, null, "password");
+	        pwprompt.appendChild(pwpfield);
+	        var entercb = function() {
+	            if (! CT.parse.validPassword(pwpfield.value))
+	                return alert("invalid password!");
+	            pwprompt.style.display = "none";
+	            CT.dom._pwpcb(pwpfield.value);
+	        };
+	        CT.dom.inputEnterCallback(pwpfield, entercb);
+	        pwprompt.appendChild(CT.dom.button("Continue", entercb));
+	        pwprompt.appendChild(CT.dom.button("Cancel", function() {
+	            pwprompt.style.display = "none";
+	        }));
+	    }
+	    pwpfield.value = "";
+	    pwprompt.style.display = "block";
+	    pwpfield.focus();
+	    CT.align.centered(pwprompt);
 	},
 
 	// fields
@@ -295,6 +322,19 @@ CT.dom = {
 	    field.value = value || "";
 	    CT.dom.blurField(field);
 	},
+	"genfield": function(ftype, n, d, u, val, node2) {
+	    var f = CT.dom.field("up"+ftype, val || u[ftype],
+	        "right w280", (ftype.indexOf("password") != -1) && "password" || null);
+	    d[ftype] = f;
+	    n.appendChild(f);
+	    n.appendChild(CT.dom.node(CT.parse.key2title(ftype), "label", "bold",
+	        null, {"for": "up" + ftype, "htmlFor": "up" + ftype}));
+	    if (node2) {
+	        n.appendChild(CT.dom.node("&nbsp;&nbsp;", "span"));
+	        n.appendChild(node2);
+	    }
+	    n.appendChild(CT.dom.node("", "div", "clearnode"));
+	},
 	"inputEnterCallback": function(n, cb, fid) {
 	    n.onkeyup = function(e) {
 	        e = e || window.event;
@@ -351,6 +391,71 @@ CT.dom = {
 	    else if (!noclear)
 	        inputnode.appendChild(CT.dom.node("", "div", "clearnode"));
 	    return cbody;
+	},
+
+	// wysiwyg editor widget
+	"wysiwygize": function(nodeid, isrestricted, val, cb, mismatchcb) {
+	    var d = {
+	        "plugins": "paste",
+	        "paste_auto_cleanup_on_paste": true,
+	        "mode": "exact",
+	        "elements": nodeid,
+	        "theme": "advanced",
+	        "skin": "o2k7",
+	        "theme_advanced_buttons1": "bold,italic,|,justifyleft,justifycenter,justifyright,justifyfull,|,bullist,numlist,|,outdent,indent,blockquote,|,link,unlink,undo,redo",
+	        "theme_advanced_buttons2": "pastetext,pasteword,selectall",
+	        "theme_advanced_buttons3": "",
+	        "theme_advanced_statusbar_location": "bottom",
+	        "theme_advanced_toolbar_location": "top",
+	        "theme_advanced_toolbar_align": "left",
+	        "theme_advanced_resizing": true,
+	        "theme_advanced_resize_horizontal": false,
+	        "width": "100%",
+	        "force_br_newlines": true,
+	        "force_p_newlines": false,
+	        "forced_root_block": false
+	    };
+	    if (! isrestricted) {
+	        d.plugins += ",table";
+	        d.theme_advanced_buttons2 += ",|,image,tablecontrols";
+	        d.theme_advanced_buttons3 = "";
+	    }
+	    tinyMCE.init(d);
+	    var n = document.getElementById(nodeid);
+	    var dothiscbs = [];
+	    var doset = function(s, followup) {
+	        n.node.setContent(s);
+	        if (followup && s != n.get() && confirm("Our WYSIWYG text editor seems to have changed the formatting of your text. Don't worry, it probably still looks the same. Press OK to resave your slightly reformatted content, or Cancel if you don't want to."))
+	            followup();
+	    };
+	    n.get = function(stripnbsp) {
+	        var c = n.node.getContent();
+	        if (stripnbsp) while (c.slice(-6) == "&nbsp;")
+	            c = c.slice(0, -6);
+	        return c;
+	    };
+	    n.dothis = function(f) {
+	        f && dothiscbs.push(f);
+	        n.node = n.node || tinyMCE.get(nodeid);
+	        if (!n.node)
+	            return setTimeout(n.dothis, 200);
+	        for (var i = 0; i < dothiscbs.length; i++)
+	            dothiscbs[i]();
+	        dothiscbs.length = 0;
+	    };
+	    n.set = function(s, followup) {
+	        n.node ? doset(s, followup) : n.dothis(function() { doset(s, followup); });
+	    };
+	    n.dothis(function() {
+	        val && n.set(val, mismatchcb);
+	        cb && cb();
+	    });
+	},
+	"qwiz": function(nodeid, val) {
+	    var n = document.getElementById(nodeid);
+	    if (!n || n.get)
+	        return setTimeout(CT.dom.qwiz, 500, nodeid, val);
+	    !n.get && CT.dom.wysiwygize(nodeid, true, val);
 	},
 
 	// visibility
