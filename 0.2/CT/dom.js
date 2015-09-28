@@ -194,6 +194,21 @@ CT.dom = {
 	    nlink.title = nlink.alt = _alt || label;
 	    return CT.dom.wrapped(nlink, "div", _wcl);
 	},
+	"buildForm": function(section, fields) {
+	    var table = document.getElementById(section + "Table");
+	    for (var i = 0; i < fields.length; i++) {
+	        var field = fields[i];
+	        var id = section + field.replace(/ /g, "");
+	        var row = table.insertRow(-1);
+	        row.insertCell(0).appendChild(CT.dom.node(field,
+	            "label", "", "", {"htmlFor": id, "for": id}));
+	        var inputTag = CT.dom.field(id);
+	        if (field.indexOf("Password") != -1)
+	            inputTag.type = "password";
+	        row.insertCell(1).appendChild(inputTag);
+	    }
+	    return table;
+	},
 
 	// date selector
 	"_currentyear": Math.max((new Date()).getFullYear(), 2014),
