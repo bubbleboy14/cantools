@@ -1,0 +1,28 @@
+application: your-cantools-app
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: false
+
+handlers:
+- url: /remote_api
+  script: $PYTHON_LIB/google/appengine/ext/remote_api/handler.py
+  login: admin
+
+## MODE SWITCHING -- DON'T MESS WITH!
+# START mode: dynamic
+- url: /javascript
+  static_dir: javascript
+- url: /.*\.(html|css)
+  static_dir: html
+# END mode: dynamic
+# START mode: static
+- url: /javascript
+  static_dir: javascript
+- url: /.*\.(html|css)
+  static_dir: html-static
+# END mode: static
+# START mode: production
+- url: /.*\.(html|css)
+  static_dir: html-production
+# END mode: production
