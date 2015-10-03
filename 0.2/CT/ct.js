@@ -93,3 +93,11 @@ var CT = {
 		}
 	}
 };
+
+// shims (fallbacks for old browsers)
+if (!window.JSON)
+	CT.require("CT.lib.shims.JSON", true);
+if (!window.sessionStorage)
+	CT.require("CT.lib.shims.sessionStorage", true);
+if (!document.createElement("div").classList)
+	CT.require("CT.lib.shims.classList", true);
