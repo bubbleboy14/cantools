@@ -1,10 +1,9 @@
 // TODO: this functionality requires backend integration
 // include complementary python module!
 
-CT.require("CT.lib.recaptcha_ajax");
-
 CT.recaptcha = {
 	"build": function(key, rnode, eb, iecb, response_field_id) {
+		CT.require("CT.lib.recaptcha_ajax", true);
 	    try {
 	        Recaptcha.create(key, rnode);
 	        iecb && setTimeout(function() {
