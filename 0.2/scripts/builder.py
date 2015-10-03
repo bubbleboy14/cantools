@@ -87,13 +87,13 @@ def build(nothing, dirname, fnames):
     for fname in bfiles(dirname, fnames):
         for mode, compdir in BUILD_DIRS.items():
             log('building %s/%s'%(compdir, fname))
-            if fname.endswith(".css"):
-                log('- (skipping css file)')
-                data = read("%s/%s"%(dirname, fname))
-            elif "fonts" in dirname:
+            if "fonts" in dirname:
                 log('- (skipping font file)')
                 data = read("%s/%s"%(dirname, fname))
-            elif fname.endswith(".html"):
+            elif not fname.endswith(".html"):
+                log('- (skipping non-html file)')
+                data = read("%s/%s"%(dirname, fname))
+            else:
                 txt, js = processhtml(read("%s/%s"%(dirname, fname)))
                 if js:
                     jspaths, jsblock = compilejs(js)
@@ -107,8 +107,6 @@ def build(nothing, dirname, fnames):
                     data = txt.format(jsspot=js)
                 else:
                     data = txt
-            else:
-                continue
             write(data, "%s/%s"%(compdir, fname))
 
 if __name__ == "__main__":
