@@ -66,7 +66,7 @@ var CT = {
 			return CT.net.xhr(path, "GET");
 		}
 	},
-	"require": function(modname) {
+	"require": function(modname, lazy) { // lazy only matters compile-time
 		if (modname.slice(0, 4) == "http")
 			eval(CT.net.get(modname));
 		else {
