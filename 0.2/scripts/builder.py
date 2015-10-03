@@ -101,7 +101,7 @@ def build(nothing, dirname, fnames):
                         js = '\n'.join(['<script src="%s"></script>'%(p,) for p in jspaths])
                     elif mode is "production":
                         txt = compress(txt)
-                        js = "<script>%s</script>"%(encodestrings(compress(minify(jsblock).replace("ENCODE = false;", "ENCODE = true;"), mangle=True),))
+                        js = "<script>%s</script>"%(encodestrings(compress(minify(jsblock).replace('"_encode": false,', '"_encode": true,'), mangle=True),))
                     else:
                         error("invalid mode: %s"%(mode,))
                     data = txt.format(jsspot=js)

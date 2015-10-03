@@ -16,8 +16,9 @@ Supports 3 modes:
      - otherwise unmodified source files
    - original files are directly referenced
      - chrome debugger prefers
-   - optional wire encryption
-   - no lazy imports -- all loaded in head
+   - no wire encryption
+   - all hard requirements loaded in head
+     - lazy-designated imports still lazy
  - production (files live in html-production)
    - all code is compiled in head
      - html is compressed
@@ -31,7 +32,7 @@ Generates fresh 'static' and 'production' files (from 'development' source files
 """
 
 import subprocess, commands, os
-from config import YPATH, YSTART, YEND
+from config import YPATH, YSTART, YEND, ENC_TOGGLE_PATH, ENC_TOGGLE_STR
 from util import log, error, read, write
 from builder import build
 
@@ -54,10 +55,9 @@ def doyaml(mode):
 
 def setmode(mode):
     doyaml(mode) # support other backends beyond app engine
-    # figure out this part (python-side wire encryption) later
-#    isdev = mode == "development"
-#    write(read(ENC_TOGGLE_PATH).replace(ENC_TOGGLE_STR%(str(isdev),),
-#        ENC_TOGGLE_STR%(str(not isdev),)), ENC_TOGGLE_PATH)
+    isprod = mode == "production"
+    write(read(ENC_TOGGLE_PATH).replace(ENC_TOGGLE_STR%(str(not isprod),),
+        ENC_TOGGLE_STR%(str(isprod),)), ENC_TOGGLE_PATH)
 
 if __name__ == "__main__":
     from optparse import OptionParser
