@@ -93,7 +93,7 @@ def build(nothing, dirname, fnames):
             elif "fonts" in dirname:
                 log('- (skipping font file)')
                 data = read("%s/%s"%(dirname, fname))
-            else:
+            elif fname.endswith(".html"):
                 txt, js = processhtml(read("%s/%s"%(dirname, fname)))
                 if js:
                     jspaths, jsblock = compilejs(js)
@@ -107,6 +107,8 @@ def build(nothing, dirname, fnames):
                     data = txt.format(jsspot=js)
                 else:
                     data = txt
+            else:
+                continue
             write(data, "%s/%s"%(compdir, fname))
 
 if __name__ == "__main__":
