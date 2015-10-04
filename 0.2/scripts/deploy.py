@@ -32,7 +32,7 @@ Generates fresh 'static' and 'production' files (from 'development' source files
 """
 
 import subprocess, commands, os
-from config import YPATH, YSTART, YEND, ENC_TOGGLE_PATH, ENC_TOGGLE_STR
+from config import YPATH, YSTART, YEND, CT_PY_PATH, ENC_TOGGLE, MODE_SWAP
 from util import log, error, read, write
 from builder import build
 
@@ -55,9 +55,16 @@ def doyaml(mode):
 
 def setmode(mode):
     doyaml(mode) # support other backends beyond app engine
+    ctpy = read(CT_PY_PATH)
     isprod = mode == "production"
-    write(read(ENC_TOGGLE_PATH).replace(ENC_TOGGLE_STR%(str(not isprod),),
-        ENC_TOGGLE_STR%(str(isprod),)), ENC_TOGGLE_PATH)
+    # set encode
+    ctpy = ctpy.replace(ENC_TOGGLE%(str(not isprod),),
+        ENC_TOGGLE%(str(isprod),))
+    # set mode
+    for m in ["dynamic", "static", "production"]:
+        if m != mode:
+            ctpy = ctpy.replace(MODE_SWAP%(m,), MODE_SWAP%(mode,))
+    write(ctpy, CT_PY_PATH)
 
 if __name__ == "__main__":
     from optparse import OptionParser
