@@ -1,5 +1,5 @@
 import subprocess, os
-from config import PARSE_ERROR_SEGMENT_LENGTH, BUILD_DIRS, CTPATH, JSFLAG, JSOFFSET, JSENDOFFSET, NOSCRIPT
+from config import PARSE_ERROR_SEGMENT_LENGTH, DYNAMIC_DIR, BUILD_DIRS, CTPATH, JSFLAG, JSOFFSET, JSENDOFFSET, NOSCRIPT
 from util import log, error, read, write
 try:
     from slimit import minify
@@ -53,7 +53,7 @@ def compress(html):
     return newhtml
 
 def bfiles(dirname, fnames):
-    return [fname for fname in fnames if os.path.isfile("%s/%s"%(dirname, fname)) and fname != ".svn" and not fname.endswith("~") and not "_old." in fname]
+    return [fname for fname in fnames if os.path.isfile(os.path.join(dirname, fname)) and fname != ".svn" and not fname.endswith("~") and not "_old." in fname]
 
 def processjs(path, jspaths, ctpath=False):
     block = read("%s%s"%(ctpath and CTPATH or "..", path))
@@ -72,6 +72,11 @@ def compilejs(js):
         jsblock += processjs(p, jspaths)
     return jspaths, jsblock
 
+def checkdir(p):
+    if not os.path.isdir(p):
+        log('making directory "%s"'%(p,))
+        os.mkdir(p)
+
 def build(nothing, dirname, fnames):
     """
     This parses an html file, squishes together the javascript, scans
@@ -81,20 +86,19 @@ def build(nothing, dirname, fnames):
     if ".svn" in dirname:
         return
     for bd in BUILD_DIRS.values():
-        if not os.path.isdir(bd):
-            log('making directory "%s"'%(bd,))
-            os.mkdir(bd)
+        checkdir(bd)
     for fname in bfiles(dirname, fnames):
         for mode, compdir in BUILD_DIRS.items():
-            log('building %s/%s'%(compdir, fname))
-            if "fonts" in dirname:
-                log('- (skipping font file)')
-                data = read("%s/%s"%(dirname, fname))
-            elif not fname.endswith(".html"):
-                log('- (skipping non-html file)')
-                data = read("%s/%s"%(dirname, fname))
+            fulldir = dirname.replace(DYNAMIC_DIR, compdir)
+            frompath = os.path.join(dirname, fname)
+            topath = os.path.join(fulldir, fname)
+            data = read(frompath)
+            checkdir(fulldir)
+            log('building: %s -> %s'%(frompath, topath))
+            if "fonts" in dirname or not fname.endswith(".html"):
+                log('- copying non-html file')
             else:
-                txt, js = processhtml(read("%s/%s"%(dirname, fname)))
+                txt, js = processhtml(data)
                 if js:
                     jspaths, jsblock = compilejs(js)
                     if mode is "static":
@@ -109,7 +113,7 @@ def build(nothing, dirname, fnames):
                     data = txt.format(jsspot=js)
                 else:
                     data = txt
-            write(data, "%s/%s"%(compdir, fname))
+            write(data, topath)
 
 if __name__ == "__main__":
-    os.path.walk("../html", build, "html")
+    os.path.walk(DYNAMIC_DIR, build, "html")

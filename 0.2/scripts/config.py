@@ -1,4 +1,5 @@
 PARSE_ERROR_SEGMENT_LENGTH = 100
+DYNAMIC_DIR = "../html"
 BUILD_DIRS = {
 	"static": "../html-static",
 	"production": "../html-production"
