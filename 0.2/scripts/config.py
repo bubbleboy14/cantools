@@ -4,7 +4,7 @@ BUILD_DIRS = {
 	"production": "../html-production"
 }
 CTPATH = ".."
-JSFLAG = '<script src="'
+JSFLAG = '<script src="/'
 JSOFFSET = len('<script src="')
 JSENDOFFSET = len('"></script>')
 NOSCRIPT = """

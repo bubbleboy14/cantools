@@ -63,7 +63,7 @@ def processjs(path, jspaths, ctpath=False):
             if jspath not in jspaths:
                 block = block.replace(line, processjs(jspath, jspaths, True))
     jspaths.append(path)
-    return block
+    return "%s;\n"%(block,)
 
 def compilejs(js):
     jsblock = ""
