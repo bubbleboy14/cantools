@@ -1,5 +1,5 @@
 import subprocess, os
-from config import PARSE_ERROR_SEGMENT_LENGTH, BUILD_DIRS, JSFLAG, JSOFFSET, JSENDOFFSET, NOSCRIPT
+from config import PARSE_ERROR_SEGMENT_LENGTH, BUILD_DIRS, CTPATH, JSFLAG, JSOFFSET, JSENDOFFSET, NOSCRIPT
 from util import log, error, read, write
 try:
     from slimit import minify
@@ -55,13 +55,13 @@ def compress(html):
 def bfiles(dirname, fnames):
     return [fname for fname in fnames if os.path.isfile("%s/%s"%(dirname, fname)) and fname != ".svn" and not fname.endswith("~") and not "_old." in fname]
 
-def processjs(path, jspaths):
-    block = read("..%s"%(path,))
+def processjs(path, jspaths, ctpath=False):
+    block = read("%s%s"%(ctpath and CTPATH or "..", path))
     for line in block.split("\n"):
         if line.startswith("CT.require(") and not line.endswith(", true);"):
             jspath = "/%s.js"%(line[12:-3].replace(".", "/"),)
             if jspath not in jspaths:
-                block = block.replace(line, processjs(jspath, jspaths))
+                block = block.replace(line, processjs(jspath, jspaths, True))
     jspaths.append(path)
     return block
 

@@ -3,6 +3,7 @@ BUILD_DIRS = {
 	"static": "../html-static",
 	"production": "../html-production"
 }
+CTPATH = ".."
 JSFLAG = '<script src="'
 JSOFFSET = len('<script src="')
 JSENDOFFSET = len('"></script>')
