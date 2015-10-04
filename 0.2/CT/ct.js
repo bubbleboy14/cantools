@@ -66,10 +66,14 @@ var CT = {
 			return CT.net.xhr(path, "GET");
 		}
 	},
+	"_extReqs": {},
 	"require": function(modname, lazy) { // lazy only matters compile-time
-		if (modname.slice(0, 4) == "http")
-			eval(CT.net.get(modname));
-		else {
+		if (modname.slice(0, 4) == "http") {
+			if (!(modname in CT._extReqs)) {
+				CT._extReqs[modname] = true;
+				eval(CT.net.get(modname));
+			}
+		} else {
 			var modpath = modname.split("."),
 				curpath, curmod = window;
 			while (curmod && modpath.length) {
