@@ -27,7 +27,7 @@ CT.panel = {
 	    }
 	    CT.mobile.mobileSnap();
 	},
-	"new": function(key, trysidepanel, keystring, itemnode, panelnode, nospace, icon, cb) {
+	"add": function(key, trysidepanel, keystring, itemnode, panelnode, nospace, icon, cb) {
 	    nospace = nospace || key.replace(/ /g, "");
 	    keystring = keystring || "sb";
 	    if (!document.getElementById(keystring+"panel"+nospace)) {
@@ -66,7 +66,7 @@ CT.panel = {
 	    if (!noclear)
 	        (itemnode || document.getElementById(keystring+"items")).innerHTML = "";
 	    for (var i = 0; i < pnames.length; i++)
-	        CT.panel.new(pnames[i], trysidepanel, keystring, itemnode,
+	        CT.panel.add(pnames[i], trysidepanel, keystring, itemnode,
 	            panelnode, nospaces && nospaces[i] || null,
 	            icons && icons[i] || null, cbs && cbs[i] || null);
 	    if (stillswap || (!itemnode && !noclear))
