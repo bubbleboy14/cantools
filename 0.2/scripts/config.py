@@ -4,7 +4,7 @@ BUILD_DIRS = {
 	"static": "../html-static",
 	"production": "../html-production"
 }
-CTPATH = ".."
+JSPATH = ".."
 JSFLAG = '<script src="/'
 JSOFFSET = len('<script src="')
 JSENDOFFSET = len('"></script>')
@@ -18,5 +18,6 @@ NOSCRIPT = """
 YPATH = "../app.yaml"
 YSTART = "# START mode: "
 YEND = "# END mode: "
-ENC_TOGGLE_PATH = "../cantools.py"
-ENC_TOGGLE_STR = "ENCODE = %s"
+CT_PY_PATH = "../cantools.py"
+ENC_TOGGLE = "ENCODE = %s"
+MODE_SWAP = 'MODE = "%s"'
