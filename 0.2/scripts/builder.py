@@ -28,7 +28,7 @@ def encodestrings(text):
     return text
 
 def processhtml(html):
-    html = html.replace("{", "&#123").replace("}", "&#125").replace("/javascript/lib/", "/lib/").replace("</body>", "%s</body>"%(NOSCRIPT,))
+    html = html.replace("{", "&#123").replace("}", "&#125").replace("</body>", "%s</body>"%(NOSCRIPT,))
     firststart = start = end = html.find(JSFLAG)
     js = []
     while start != -1:
@@ -56,10 +56,10 @@ def bfiles(dirname, fnames):
     return [fname for fname in fnames if os.path.isfile("%s/%s"%(dirname, fname)) and fname != ".svn" and not fname.endswith("~") and not "_old." in fname]
 
 def processjs(path, jspaths):
-    block = read("..%"(path,))
+    block = read("..%s"%(path,))
     for line in block.split("\n"):
         if line.startswith("CT.require(") and not line.endswith(", true);"):
-            jspath = "%s.js"%(line[12:-2].replace(".", "/"),)
+            jspath = "/%s.js"%(line[12:-3].replace(".", "/"),)
             if jspath not in jspaths:
                 block = block.replace(line, processjs(jspath, jspaths))
     jspaths.append(path)
@@ -98,10 +98,12 @@ def build(nothing, dirname, fnames):
                 if js:
                     jspaths, jsblock = compilejs(js)
                     if mode is "static":
+                        log("- static mode")
                         js = '\n'.join(['<script src="%s"></script>'%(p,) for p in jspaths])
                     elif mode is "production":
+                        log("- production mode")
                         txt = compress(txt)
-                        js = "<script>%s</script>"%(encodestrings(compress(minify(jsblock).replace('"_encode": false,', '"_encode": true,'), mangle=True),))
+                        js = "<script>%s</script>"%(minify(jsblock.replace('"_encode": false,', '"_encode": true,'), mangle=True),)
                     else:
                         error("invalid mode: %s"%(mode,))
                     data = txt.format(jsspot=js)

@@ -3,7 +3,7 @@ BUILD_DIRS = {
 	"static": "../html-static",
 	"production": "../html-production"
 }
-JSFLAG = '<script src="/javascript/'
+JSFLAG = '<script src="'
 JSOFFSET = len('<script src="')
 JSENDOFFSET = len('"></script>')
 NOSCRIPT = """
