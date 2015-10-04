@@ -38,18 +38,18 @@ def processhtml(html):
             error("no closing quote in this file: %s"%(html,))
         js.append(html[start:end])
         start = html.find(JSFLAG, end)
-    log("- js: %s"%(js,))
+    log("js: %s"%(js,), 1)
     if start == end:
         return html, ""
     return html[:firststart] + "{jsspot}" + html[end+JSENDOFFSET:], js
 
 def compress(html):
-    log("compressing html")
+    log("compressing html", 1)
     newhtml = html.replace("\n", " ").replace("\t", " ")
     while "  " in newhtml:
         newhtml = newhtml.replace("  ", " ")
     newhtml = newhtml.replace("> <", "><")
-    log(" - orig: %s. new: %s"%(len(html), len(newhtml)))
+    log("orig: %s. new: %s"%(len(html), len(newhtml)), 2)
     return newhtml
 
 def bfiles(dirname, fnames):
@@ -88,7 +88,7 @@ def compilejs(js):
 
 def checkdir(p):
     if not os.path.isdir(p):
-        log('making directory "%s"'%(p,))
+        log('making directory "%s"'%(p,), 1)
         os.mkdir(p)
 
 def build(nothing, dirname, fnames):
@@ -107,19 +107,19 @@ def build(nothing, dirname, fnames):
             frompath = os.path.join(dirname, fname)
             topath = os.path.join(fulldir, fname)
             data = read(frompath)
+            log('building: %s -> %s'%(frompath, topath), important=True)
             checkdir(fulldir)
-            log('building: %s -> %s'%(frompath, topath))
             if "fonts" in dirname or not fname.endswith(".html"):
-                log('- copying non-html file')
+                log('copying non-html file', 1)
             else:
                 txt, js = processhtml(data)
                 if js:
                     jspaths, jsblock = compilejs(js)
                     if mode is "static":
-                        log("- static mode")
+                        log("static mode", 1)
                         js = '\n'.join(['<script src="%s"></script>'%(p,) for p in jspaths])
                     elif mode is "production":
-                        log("- production mode")
+                        log("production mode", 1)
                         txt = compress(txt)
                         js = "<script>%s</script>"%(minify(jsblock.replace('"_encode": false,', '"_encode": true,'), mangle=True),)
                     else:
