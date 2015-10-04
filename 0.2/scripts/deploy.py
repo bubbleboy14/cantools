@@ -70,14 +70,16 @@ if __name__ == "__main__":
         dest="production", default=False, help="switch to production (garbled) mode")
     parser.add_option("-u", "--upload", action="store_true",
         dest="upload", default=False, help="uploads project in specified mode and then switches back to dynamic (development) mode")
+    options, args = parser.parse_args()
+
+    mode = options.dynamic and "dynamic" or options.static and "static" or options.production and "production"
+    if not mode:
+        error("no mode specified")
 
     # 1) build static/production files
     os.path.walk("../html", build, None)
 
     # 2) switch to specified mode
-    mode = options.dynamic and "dynamic" or options.static and "static" or options.production and "production"
-    if not mode:
-        error("no mode specified")
     setmode(mode)
 
     # 3) if -u, upload project and switch back to -d mode
