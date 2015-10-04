@@ -1,5 +1,5 @@
 import subprocess, os
-from config import PARSE_ERROR_SEGMENT_LENGTH, DYNAMIC_DIR, BUILD_DIRS, CTPATH, JSFLAG, JSOFFSET, JSENDOFFSET, NOSCRIPT
+from config import PARSE_ERROR_SEGMENT_LENGTH, DYNAMIC_DIR, BUILD_DIRS, JSPATH, JSFLAG, JSOFFSET, JSENDOFFSET, NOSCRIPT
 from util import log, error, read, write
 try:
     from slimit import minify
@@ -56,7 +56,7 @@ def bfiles(dirname, fnames):
     return [fname for fname in fnames if os.path.isfile(os.path.join(dirname, fname)) and fname != ".svn" and not fname.endswith("~") and not "_old." in fname]
 
 def processjs(path, jspaths, ctpath=False):
-    block = read("%s%s"%(ctpath and CTPATH or "..", path))
+    block = read("%s%s"%(ctpath and JSPATH or "..", path))
     for line in block.split("\n"):
         if line.startswith("CT.require(") and not line.endswith(", true);"):
             jspath = "/%s.js"%(line[12:-3].replace(".", "/"),)
