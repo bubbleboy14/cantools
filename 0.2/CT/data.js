@@ -111,7 +111,7 @@ CT.data = {
 	    	getparams.uid = key;
 	        CT.net.post(getpath || "/get", getparams,
 	            "error retrieving data", function(rawdata) {
-	                CT.data.new(rawdata);
+	                CT.data.add(rawdata);
 	                cb(CT.data.map[key]);
 	            });
 	    }
@@ -130,8 +130,7 @@ CT.data = {
 	    	getparams.uids = needed;
 	        CT.net.post("/get", getparams,
 	            "error retrieving data", function(rawdata) {
-	                for (var i = 0; i < rawdata.length; i++)
-	                    CT.data.new(rawdata[i]);
+	            	CT.data.addSet(rawdata);
 	                cb(keys);
 	            });
 	    }
