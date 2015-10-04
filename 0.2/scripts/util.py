@@ -1,5 +1,7 @@
-def log(msg):
-    print msg
+def log(msg, level=0, important=False):
+    if important:
+        print
+    print "  " * level + msg
 
 def error(msg, *lines):
     log("error: %s"%(msg,))
