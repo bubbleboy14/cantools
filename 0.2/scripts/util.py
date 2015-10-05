@@ -4,9 +4,9 @@ def log(msg, level=0, important=False):
     print "  " * level + msg
 
 def error(msg, *lines):
-    log("error: %s"%(msg,))
+    log("error: %s"%(msg,), important=True)
     for line in lines:
-        log(line)
+        log(line, 1)
     log("goodbye")
     import sys
     sys.exit()
