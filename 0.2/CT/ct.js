@@ -14,10 +14,11 @@ var CT = {
 		// defaults
 		"_path": "",
 		"_encode": false,
+		"_encoder": function(d) { return d; },
 		"_processPostParams": JSON.stringify, // override
 		// functions
-		"setEncode": function(bool) {
-			CT.net._encode = bool;
+		"setEncoder": function(func) {
+			CT.net._encoder = func;
 		},
 		"fullPath": function(p) {
 			if (!CT.net._path) {
@@ -49,7 +50,7 @@ var CT = {
 		            if (xhr.status == 200) {
 		                var data = xhr.responseText;
 		                if (CT.net._encode)
-		                    data = flipSafe(data);
+		                    data = CT.net._encoder(data);
 		                if (data.charAt(0) == '0') {
 		                    if (eb) eb(data.slice(1), ebarg);
 		                    else alert(errMsg+": "+data.slice(1));
