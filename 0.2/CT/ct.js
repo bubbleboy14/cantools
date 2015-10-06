@@ -15,10 +15,13 @@ var CT = {
 		"_path": "",
 		"_encode": false,
 		"_encoder": function(d) { return d; },
-		"_processPostParams": JSON.stringify, // override
+		"_decoder": JSON.stringify,
 		// functions
 		"setEncoder": function(func) {
 			CT.net._encoder = func;
+		},
+		"setDecoder": function(func) {
+			CT.net._decoder = func;
 		},
 		"fullPath": function(p) {
 			if (!CT.net._path) {
@@ -40,7 +43,7 @@ var CT = {
 		    xhr.setRequestHeader("Content-Type",
 		    	"application/x-www-form-urlencoded");
 		    xhr.onreadystatechange = cb && function() { cb(xhr); };
-		    xhr.send(params && CT.net._processPostParams(params));
+		    xhr.send(params && CT.net._encoder(params));
 		    if (!async)
 		    	return xhr.responseText;
 		},
@@ -50,7 +53,7 @@ var CT = {
 		            if (xhr.status == 200) {
 		                var data = xhr.responseText;
 		                if (CT.net._encode)
-		                    data = CT.net._encoder(data);
+		                    data = CT.net._decoder(data);
 		                if (data.charAt(0) == '0') {
 		                    if (eb) eb(data.slice(1), ebarg);
 		                    else alert(errMsg+": "+data.slice(1));
