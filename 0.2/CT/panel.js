@@ -27,6 +27,15 @@ CT.panel = {
 	    }
 	    CT.mobile.mobileSnap();
 	},
+	"selectLister": function(newkey, oldkey, newhtml) {
+	    if (oldkey)
+	        document.getElementById("ll" + oldkey).className = "";
+	    var newnode = document.getElementById("ll" + newkey);
+	    newnode.className = "activetab";
+	    if (newhtml)
+	        newnode.firstChild.innerHTML = newhtml;
+	    CT.mobile.mobileSnap();
+	},
 	"add": function(key, trysidepanel, keystring, itemnode, panelnode, nospace, icon, cb) {
 	    nospace = nospace || key.replace(/ /g, "");
 	    keystring = keystring || "sb";
