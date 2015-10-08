@@ -178,7 +178,7 @@ CT.dom = {
 	    n.appendChild(CT.dom.link(lname, lonclick, laddr));
 	    return n;
 	},
-	"labeledImage": function(img, href, label, _alt, _icl, _wcl, _lcl, reverseNodes) {
+	"labeledImage": function(img, href, label, _alt, _icl, _wcl, _lcl, reverseNodes, onclick) {
 	    var nlink = CT.dom.link();
 	    var imageNode = CT.dom.img(img, _icl);
 	    var labelNode = CT.dom.node(label, "div", _lcl);
@@ -189,10 +189,14 @@ CT.dom = {
 	        nlink.appendChild(imageNode);
 	        nlink.appendChild(labelNode);
 	    }
-	    nlink.href = href;
-	    nlink.target = "_blank";
 	    nlink.title = nlink.alt = _alt || label;
-	    return CT.dom.wrapped(nlink, "div", _wcl);
+	    var w = CT.dom.wrapped(nlink, "div", _wcl);
+	    if (href) {
+	        nlink.href = href;
+	        nlink.target = "_blank";
+	    } else if (onclick)
+	        w.onclick = onclick;
+	    return w;
 	},
 	"buildForm": function(section, fields) {
 	    var table = document.getElementById(section + "Table");
