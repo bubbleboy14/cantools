@@ -12,7 +12,7 @@ Date.prototype.dst = function() {
 var SERVER_OFFSET = (new Date()).dst() ? 7 : 8; // i think ;)
 
 CT.parse = {
-	"linkProcessor": null,
+	"_linkProcessor": null,
 	"_NUMS": '0123456789',
 	"imgTypes": [
 	    ".gif", ".GIF",
@@ -22,6 +22,9 @@ CT.parse = {
 	],
 
 	// link handlers
+	"setLinkProcessor": function(cb) {
+		CT.parse._linkProcessor = cb;
+	},
 	"breakurl": function(url) {
 	    return url.replace(/&/g, "&&#8203;").replace(/\//g, "/&#8203;").replace(/_/g, "_&#8203;");
 	},
@@ -39,8 +42,8 @@ CT.parse = {
 	    var ext = url.slice(-4);
 	    if (CT.parse.imgTypes.indexOf(ext) != -1)
 	        return '<img src=' + url + '>';
-	    return CT.parse.linkProcessor
-	    	&& CT.parse.linkProcessor(url, novid)
+	    return CT.parse._linkProcessor
+	    	&& CT.parse._linkProcessor(url, novid)
 	    	|| CT.parse.url2link(url);
 	},
 
