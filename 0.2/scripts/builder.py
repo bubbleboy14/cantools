@@ -58,7 +58,7 @@ def bfiles(dirname, fnames):
 def require(line, jspaths, block):
     rline = line[12:-3]
     rsplit = rline.split(".")
-    jspath = "/%s.js"%("/".join(rsplit),)
+    jspath = "%s/%s.js"%(JSPATH, "/".join(rsplit))
     if jspath not in jspaths:
         prefixes = []
         fullp = "window"
@@ -68,11 +68,11 @@ def require(line, jspaths, block):
                 prefixes.append("%s = %s || %s"%(fullp,
                     fullp, (rword == "all") and "true" or "{}"))
         block = block.replace(line, "%s;%s"%(";".join(prefixes),
-            processjs(jspath, jspaths, True)))
+            processjs(jspath, jspaths)), 1)
     return block
 
-def processjs(path, jspaths, ctpath=False):
-    block = read("%s%s"%(ctpath and JSPATH or "..", path))
+def processjs(path, jspaths):
+    block = read("..%s"%(path,))
     for line in block.split("\n"):
         if line.startswith("CT.require(") and not line.endswith(", true);"):
             block = require(line, jspaths, block)
