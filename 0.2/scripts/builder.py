@@ -67,7 +67,9 @@ def require(line, jspaths, block):
                 fullp = ".".join([fullp, rword])
                 prefixes.append("%s = %s || %s"%(fullp,
                     fullp, (rword == "all") and "true" or "{}"))
-        block = block.replace(line, "%s;%s"%(";".join(prefixes),
+        pblock = ";".join(prefixes)
+        jspaths.append(pblock)
+        block = block.replace(line, "%s;%s"%(pblock,
             processjs(jspath, jspaths)), 1)
     return block
 
@@ -117,7 +119,7 @@ def build(nothing, dirname, fnames):
                     jspaths, jsblock = compilejs(js)
                     if mode is "static":
                         log("static mode", 1)
-                        js = '\n'.join(['<script src="%s"></script>'%(p,) for p in jspaths])
+                        js = '\n'.join([p.endswith("js") and '<script src="%s"></script>'%(p,) or '<script>%s</script>'%(p,) for p in jspaths])
                     elif mode is "production":
                         log("production mode", 1)
                         txt = compress(txt)
