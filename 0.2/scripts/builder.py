@@ -55,37 +55,44 @@ def compress(html):
 def bfiles(dirname, fnames):
     return [fname for fname in fnames if os.path.isfile(os.path.join(dirname, fname)) and fname != ".svn" and not fname.endswith("~") and not "_old." in fname]
 
-def require(line, jspaths, block):
+def tryinit(iline, inits, prefixes):
+    if iline not in inits:
+        inits.add(iline)
+        prefixes.append(iline)
+
+def require(line, jspaths, block, inits):
     rline = line[12:-3]
     rsplit = rline.split(".")
     jspath = "%s/%s.js"%(JSPATH, "/".join(rsplit))
     if jspath not in jspaths:
         prefixes = []
         fullp = "window"
+        for rword in rsplit[:-1]:
+            fullp = ".".join([fullp, rword])
+            tryinit("%s = %s || {}"%(fullp, fullp), inits, prefixes)
         if rline.endswith(".all"):
-            for rword in rsplit:
-                fullp = ".".join([fullp, rword])
-                prefixes.append("%s = %s || %s"%(fullp,
-                    fullp, (rword == "all") and "true" or "{}"))
+            tryinit("%s.all = %s.all || true"%(fullp, fullp), inits, prefixes)
         pblock = ";".join(prefixes)
-        jspaths.append(pblock)
+        if pblock:
+            jspaths.append(pblock)
         block = block.replace(line, "%s;%s"%(pblock,
-            processjs(jspath, jspaths)), 1)
+            processjs(jspath, jspaths, inits)), 1)
     return block
 
-def processjs(path, jspaths):
+def processjs(path, jspaths, inits):
     block = read("..%s"%(path,))
     for line in block.split("\n"):
         if line.startswith("CT.require(") and not line.endswith(", true);"):
-            block = require(line, jspaths, block)
+            block = require(line, jspaths, block, inits)
     jspaths.append(path)
     return "%s;\n"%(block,)
 
 def compilejs(js):
     jsblock = ""
     jspaths = []
+    inits = set(["window.CT = window.CT || {}"]) # already initialized
     for p in js:
-        jsblock += processjs(p, jspaths)
+        jsblock += processjs(p, jspaths, inits)
     return jspaths, jsblock
 
 def checkdir(p):
