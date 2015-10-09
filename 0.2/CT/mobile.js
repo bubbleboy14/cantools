@@ -97,7 +97,7 @@ CT.mobile = {
         _a.setScroll = function() {
             var _doscroll = function(e) {
                 var n = _a.mobileNode || _a;
-                if (n.getBoundingClientRect().bottom < windowHeight())
+                if (n.getBoundingClientRect().bottom < CT.align.height())
                     n.scrollIntoView(false, { "behavior": "smooth" });
             };
             window.onscroll = function(e) {
