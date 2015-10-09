@@ -76,6 +76,9 @@ CT.mobile = {
         var _a = CT.dom.ALLNODE;
         return CT.mobile.options[(!!(_a._mobile && _a._mobileDefault)).toString()];
     },
+    "isMobile": function() {
+        return CT.dom.ALLNODE._mobile;
+    },
     "initResizer": function(loggedin, resdata, menus, page, searchcb) {
         CT.mobile.menus = menus;
         CT.mobile.page = page;
