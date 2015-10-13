@@ -71,6 +71,9 @@ var CT = {
 		}
 	},
 	"_extReqs": {},
+	"scriptImport": function(modpath) {
+		document.getElementsByTagName("head")[0].appendChild(CT.dom.script(CT.net.fullPath(modpath.replace(/\./g, "/") + ".js")));
+	},
 	"require": function(modname, lazy) { // lazy only matters compile-time
 		if (modname.slice(0, 4) == "http") {
 			if (!(modname in CT._extReqs)) {
