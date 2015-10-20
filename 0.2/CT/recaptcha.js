@@ -1,6 +1,7 @@
 // TODO: this functionality requires backend integration
 // include complementary python module!
 
+CT.scriptImport("CT.lib.tiny_mce.tiny_mce");
 CT.recaptcha = {
 	"build": function(key, rnode, eb, iecb, response_field_id) {
 		CT.require("CT.lib.recaptcha_ajax", true);

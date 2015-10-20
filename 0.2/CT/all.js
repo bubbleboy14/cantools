@@ -4,5 +4,8 @@ CT.require("CT.dom");
 CT.require("CT.mobile");
 CT.require("CT.panel");
 CT.require("CT.parse");
-CT.require("CT.recaptcha");
 CT.require("CT.video");
+
+// import CT.recaptcha as needed
+// as inclusion here results in
+// dumb iceweasel errors.
