@@ -27,7 +27,7 @@ var CT = {
 			if (!CT.net._path) {
 				var s = document.getElementsByTagName("script");
 				for (var i = 0; i < s.length; i++) {
-					if (s[i].src.endsWith("CT/ct.js")) {
+					if (s[i].src.slice(-8) == "CT/ct.js") {
 						CT.net._path = s[i].src.replace("CT/ct.js", "");
 						break;
 					}
