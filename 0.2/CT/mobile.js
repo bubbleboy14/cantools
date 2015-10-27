@@ -87,14 +87,7 @@ CT.mobile = {
         var curd, btn, mmbtn, _a = CT.dom.ALLNODE, zMode = function() {
             return CT.mobile._mset()[_a._mindex];
         };
-        _a._mobileDefault = _a.mobileNode =
-            CT.mobile.getMobileNode((page && page.top || menus.top)[1]);
-        _a._mode = zMode();
-        _a._mindex = 0;
-        _a._otherMode = function() {
-            return CT.mobile._mset()[(_a._mindex + 1) % 2];
-        };
-        _a.setScroll = function() {
+        var setScroll = function() {
             var _doscroll = function(e) {
                 var n = _a.mobileNode || _a;
                 if (n.getBoundingClientRect().bottom < CT.align.height())
@@ -117,6 +110,13 @@ CT.mobile = {
                 } else
                     window.onscroll && window.onscroll();
             });
+        };
+        _a._mobileDefault = _a.mobileNode =
+            CT.mobile.getMobileNode((page && page.top || menus.top)[1]);
+        _a._mode = zMode();
+        _a._mindex = 0;
+        _a._otherMode = function() {
+            return CT.mobile._mset()[(_a._mindex + 1) % 2];
         };
         _a._swapMode = function() {
             _a._mindex = _a._mindex ? 0 : 1;
@@ -173,6 +173,6 @@ CT.mobile = {
         document.body.appendChild(mmbtn);
         CT.mobile.initMobileMenus(mmbtn, loggedin, searchcb);
         _a.resize();
-        _a.setScroll();
+        setScroll();
     }
 };
