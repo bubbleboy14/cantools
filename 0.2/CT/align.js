@@ -2,7 +2,6 @@ CT.align = {
 	"absers": [],
 	"fullscreeners": [],
 	"centerscreeners": [],
-	"centerInterval": null,
 
 	"_setLeft": function(n, x) {
 	    // 8px padding
@@ -41,13 +40,20 @@ CT.align = {
 	        CT.align.centernode(CT.align.centerscreeners[i]);
 	},
 	"centered": function(n) {
-	    if (!CT.align.centerInterval)
-	        CT.align.centerInterval = setInterval(CT.align.centerall, 1000);
 	    n.style.position = "fixed";
 	    CT.align.centernode(n);
 	    if (CT.align.centerscreeners.indexOf(n) == -1)
 	        CT.align.centerscreeners.push(n);
 	    return n;
+	},
+	"resize": function() {
+		var abs = CT.align.absers,
+			fulls = CT.align.fullscreeners;
+	    for (var i = 0; i < abs.length; i++)
+	    	CT.align._setLeft(abs[i][0], abs[i][1]);
+	    for (var i = 0; i < fulls.length; i++)
+	    	CT.align.screenheight(fulls[i]);
+	    CT.align.centerall();
 	},
 
 	// position finders -- merge?

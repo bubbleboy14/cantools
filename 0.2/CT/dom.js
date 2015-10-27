@@ -501,6 +501,10 @@ CT.dom = {
 	    if (!CT.dom.ALLNODE) {
 	        CT.dom.ALLNODE = document.getElementById("all");
 	        CT.dom.ALLNODE._mobile = CT.align.width() <= 720;
+			window.onresize = function() {
+			    CT.dom.ALLNODE.resize();
+			    CT.align.resize();
+			};
 	    }
 	},
 	"getAllNode": function() {
