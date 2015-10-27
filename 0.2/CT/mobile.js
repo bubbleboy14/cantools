@@ -106,11 +106,6 @@ CT.mobile = {
                 setTimeout(_doscroll, 2000);
                 setTimeout(_doscroll, 3000);
             };
-
-            // TODO
-            //  - remove old listeners, or only add once
-            //  - maybe only do this for certain browsers?
-
             var firstMove;
             window.addEventListener('touchstart', function (e) {
                 firstMove = true;
@@ -137,7 +132,6 @@ CT.mobile = {
                 }
             }, 200);
             _a.resize();
-            _a.setScroll();
         };
         _a.toggleMobileMenu = function() {
             if (mmbtn._on) {
