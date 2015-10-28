@@ -15,12 +15,6 @@ CT.align = {
 	    CT.align.absers.push([node, leftpx]);
 	    return node;
 	},
-	"screenheight": function(node) {
-	    node.style.height = (CT.align.height() - 50) + "px";
-	    if (CT.align.fullscreeners.indexOf(node) == -1)
-	        CT.align.fullscreeners.push(node);
-	    return node;
-	},
 	"centernode": function(n) {
 	    if (n.scrollHeight) {
 	        n.origScrollHeight = n.origScrollHeight || n.scrollHeight;
@@ -47,12 +41,9 @@ CT.align = {
 	    return n;
 	},
 	"resize": function() {
-		var abs = CT.align.absers,
-			fulls = CT.align.fullscreeners;
+		var abs = CT.align.absers;
 	    for (var i = 0; i < abs.length; i++)
 	    	CT.align._setLeft(abs[i][0], abs[i][1]);
-	    for (var i = 0; i < fulls.length; i++)
-	    	CT.align.screenheight(fulls[i]);
 	    CT.align.centerall();
 	},
 
