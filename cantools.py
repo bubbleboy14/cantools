@@ -1,6 +1,6 @@
 """
 cantools.py
-version 0.1.22
+version 0.2.0
 MIT License:
 
 Copyright (c) 2011 Civil Action Network
