@@ -19,6 +19,8 @@ except:
     from django.utils import simplejson as json
 
 DEBUG = True
+ENCODE = False
+MODE = "dynamic"
 envelope = {
     'plain': "Content-Type: text/plain\n\n%s",
     'html': "Content-Type: text/html\n\n<html><head></head><body>%s</body></html>" }
@@ -107,7 +109,7 @@ def fail(data="failed", html=False, err=None, noenc=False, exit=True):
     if err:
         # log it
         import traceback
-        logdata = "%s --- %s --> %s"%(data, repr(err), traceback.format_exc(2))
+        logdata = "%s --- %s --> %s"%(data, repr(err), traceback.format_exc())
         log(logdata, "error")
         if DEBUG:
             # write it

@@ -1,0 +1,158 @@
+/* required CT classes */
+.activetab a {
+    color: #670002;
+}
+.basicpopup {
+    z-index: 5;
+    position: fixed;
+    padding: 10px;
+    background: white;
+    border: 1px solid black;
+}
+.bigger {
+    font-size: 140%;
+}
+.blue {
+    color: #010068;
+}
+.bold {
+    font-weight: bold;
+}
+.bordered {
+    border: 1px solid #d3d3d3;
+}
+.bottom_out {
+    bottom: -150px !important;
+}
+.bottompadded {
+    padding-bottom: 10px;
+}
+.button_row {
+    position: absolute;
+    text-align: center;
+    pointer-events: none;
+    -webkit-transition: top 1s, bottom 1s;
+    -moz-transition: top 1s, bottom 1s;
+    -o-transition: top 1s, bottom 1s;
+    transition: top 1s, bottom 1s;
+    right: 0px;
+    left: 0px;
+}
+.button_row div {
+    margin: 2px;
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.75);
+    pointer-events: auto;
+    cursor: pointer;
+}
+.centered {
+    text-align: center;
+}
+.centeredimg img {
+    margin-left: auto;
+    margin-right: auto;
+}
+.clearnode {
+    clear: both;
+}
+.fullwidth {
+    width: 100%;
+}
+.gray {
+    color: gray;
+}
+.hidden {
+    display: none;
+}
+.lfloat {
+    float: left;
+}
+.nodecoration,
+.nodecoration a {
+    text-decoration: none;
+}
+.nowrap {
+    white-space: nowrap;
+}
+.padded {
+    padding: 10px;
+}
+.right {
+    float: right;
+}
+.round {
+    border-radius: 5px 5px 5px 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+}
+.rpaddedsmall {
+    padding-right: 2px;
+}
+.shiftleft {
+    margin-left: -18px;
+}
+.small {
+    font-size: 80%;
+}
+.top_out {
+    top: -250px !important;
+}
+.vmiddle {
+    vertical-align: middle;
+}
+.w280 {
+    width: 280px;
+}
+
+/* required CT ids */
+#top_buttons {
+    top: 3px;
+}
+#bottom_buttons {
+    bottom: 30px;
+}
+#resize_btn, #mobile_menu_btn {
+    cursor: pointer;
+    position: absolute;
+    top: 5px;
+    z-index: 10;
+}
+#resize_btn {
+    left: 5px;
+}
+#mobile_menu_btn {
+    right: 5px;
+}
+#resize_btn div, #mobile_menu_btn div {
+    background: rgba(255, 255, 255, 0.75);
+}
+#mobile_search {
+    width: 90%;
+}
+#mobile_search_node {
+    display: block;
+    height: 35px;
+    margin-right: 65px;
+    margin-left: 65px;
+}
+#mobile_search_node div {
+    display: block;
+    margin-top: -5px;
+}
+
+/* some extras for funsies */
+.big {
+    font-size: 120%;
+}
+.italic {
+    font-style: italic;
+}
+.pointer {
+    cursor: pointer;
+}
+.smaller {
+    font-size: 60%;
+}
+.transparent {
+    opacity: 0;
+}
