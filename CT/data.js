@@ -32,7 +32,7 @@ CT.data = {
 	            }
 	        }
 	        else if (complists.indexOf(k) != -1) {
-	            if (!sameList(dnew[k], dold[k]))
+	            if (!CT.data.sameList(dnew[k], dold[k]))
 	                ddiff[k] = dnew[k];
 	        }
 	        else if (k in submap) {
