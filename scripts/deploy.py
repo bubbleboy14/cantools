@@ -1,7 +1,4 @@
 """
-OLD WAY: compile javascript; change app.yaml; upload; change app.yaml back.
-
-NEW WAY:
 Supports 3 modes:
  - dynamic (files live in html)
    - normal development files
