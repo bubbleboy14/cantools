@@ -19,7 +19,7 @@ var CT = {
 		// defaults
 		"_path": "",
 		"_encode": false,
-		"_encoder": function(d) { return d; },
+		"_encoder": JSON.stringify,
 		"_decoder": JSON.stringify,
 		// functions
 		"setEncoder": function(func) {
@@ -40,19 +40,21 @@ var CT = {
 			}
 			return CT.net._path + p;
 		},
-		"xhr": function(path, method, params, async, cb) {
+		"xhr": function(path, method, params, async, cb, headers) {
 		    var xhr = window.XMLHttpRequest
 		    	? new XMLHttpRequest()
 		    	: new ActiveXObject("Microsoft.XMLHTTP");
 		    xhr.open(method, path, async);
-		    xhr.setRequestHeader("Content-Type",
-		    	"application/x-www-form-urlencoded");
+		    if ( !(headers && "Content-Type" in headers))
+			    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+		    for (var header in headers)
+		    	xhr.setRequestHeader(header, headers[header]);
 		    xhr.onreadystatechange = cb && function() { cb(xhr); };
 		    xhr.send(params && CT.net._encoder(params));
 		    if (!async)
 		    	return xhr.responseText;
 		},
-		"post": function(path, params, errMsg, cb, eb, cbarg, ebarg) {
+		"post": function(path, params, errMsg, cb, eb, cbarg, ebarg, headers) {
 			CT.net.xhr(path, "POST", params, true, function(xhr) {
 		        if (xhr.readyState == 4) {
 		            if (xhr.status == 200) {
@@ -69,7 +71,7 @@ var CT = {
 		            else if (!CT.net._encode)
 		                alert("request to "+path+" failed!");
 		        }
-		    });
+		    }, headers);
 		},
 		"get": function(path) {
 			return CT.net.xhr(path, "GET");
