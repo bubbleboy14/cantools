@@ -21,6 +21,7 @@ var CT = {
 		"_encode": false,
 		"_encoder": JSON.stringify,
 		"_decoder": JSON.stringify,
+		"_silentFail": true,
 		// functions
 		"setEncoder": function(func) {
 			CT.net._encoder = func;
@@ -54,7 +55,13 @@ var CT = {
 		    if (!async)
 		    	return xhr.responseText;
 		},
-		"post": function(path, params, errMsg, cb, eb, cbarg, ebarg, headers) {
+		"_fallback_error": function(msg) {
+			if (CT.net._silentFail)
+				console.log(msg);
+			else
+				alert(msg);
+		},
+		"post": function(path, params, errMsg, cb, eb, headers, cbarg, ebarg) {
 			CT.net.xhr(path, "POST", params, true, function(xhr) {
 		        if (xhr.readyState == 4) {
 		            if (xhr.status == 200) {
@@ -63,13 +70,13 @@ var CT = {
 		                    data = CT.net._decoder(data);
 		                if (data.charAt(0) == '0') {
 		                    if (eb) eb(data.slice(1), ebarg);
-		                    else alert(errMsg+": "+data.slice(1));
+		                    else CT.net._fallback_error(errMsg+": "+data.slice(1));
 		                }
 		                else if (cb != null)
 		                    cb(eval("("+data.slice(1)+")"), cbarg);
 		            }
 		            else if (!CT.net._encode)
-		                alert("request to "+path+" failed!");
+		                CT.net._fallback_error("request to "+path+" failed!");
 		        }
 		    }, headers);
 		},
