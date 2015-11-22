@@ -34,7 +34,7 @@ class PubSub(WebSocketDaemon):
 
     def unsubscribe(self, channel, user):
         if self._check_channel(channel, True) and user in self.channels[channel].users:
-            self.channels[channel].users.remove(user)
+            self.channels[channel].leave(user)
             self._log('UNSUBSCRIBE: "%s" -> "%s"'%(user.name, channel), 2)
         else:
             self._log('FAILED UNSUBSCRIBE: "%s" -> "%s"'%(user.name, channel), 2)
@@ -68,36 +68,59 @@ class PubSubChannel(object):
         self.history = []
         self._log('NEW CHANNEL: "%s"'%(name,), 1, True)
 
-    def write(self, obj):
-        obj["channel"] = self.name
-        dstring = json.dumps({
-            "action": "publish",
-            "data": obj
-        })
+    def _broadcast(self, obj):
+        dstring = json.dumps(obj)
         for user in self.users:
             user.conn.write(dstring, noEncode=True) # skips logging
+
+    def write(self, subobj):
+        subobj["channel"] = self.name
+        obj = {
+            "action": "publish",
+            "data": subobj
+        }
+        self._broadcast(obj)
         self.history.append(obj)
         self.history = self.history[:PUBSUB_HIST]
 
+    def leave(self, user):
+        if user in self.users:
+            self.users.remove(user)
+            user.leave(self)
+            self._broadcast({
+                "action": "unsubscribe",
+                "data": {
+                    "user": user.name,
+                    "channel": self.name
+                }
+            })
+
     def join(self, user):
-        dstring = json.dumps({
+        self._broadcast({
             "action": "subscribe",
             "data": {
                 "user": user.name,
                 "channel": self.name
             }
         })
-        for user in self.users:
-            user.conn.write(dstring, noEncode=True) # skips logging
         self.users.add(user)
+        user.join(self)
 
 class PubSubUser(object):
     def __init__(self, conn, server, logger):
         self.conn = conn
         self.server = server
         self._log = logger
+        self.channels = set()
         self.conn.set_cb(self._register)
         self._log('NEW CONNECTION', 1, True)
+
+    def join(self, channel):
+        self.channels.add(channel)
+
+    def leave(self, channel):
+        if channel in self.channels:
+            self.channels.remove(channel)
 
     def write(self, data):
         dstring = json.dumps(data) # pre-encode so we can log
@@ -107,11 +130,17 @@ class PubSubUser(object):
     def _read(self, obj):
         getattr(self.server, obj["action"])(obj["data"], self)
 
+    def _close(self):
+        for channel in self.channels:
+            channel.leave(self)
+        del self.server.clients[name]
+
     def _register(self, name):
         self._log('REGISTER: "%s"'%(name,), 1, True)
         self.name = name
         self.server.clients[name] = self
         self.conn.set_cb(self._read)
+        self.conn.set_close_cb(self._close)
 
 if __name__ == "__main__":
     PubSub('localhost', PUBSUB_PORT).start()
