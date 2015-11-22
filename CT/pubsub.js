@@ -27,7 +27,11 @@ CT.pubsub = {
 	},
 	"_register": function() {
 		CT.pubsub._open = true;
-		CT.pubsub._queue.forEach(CT.pubsub.write);
+		CT.pubsub._queue.forEach(function(item, i) {
+			setTimeout(function() {
+				CT.pubsub.write(item);
+			}, 100 * i);
+		});
 	},
 	"set_cb": function(action, cb) { // action: message|join|leave
 		CT.pubsub["_cb_" + action] = cb;
