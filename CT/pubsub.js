@@ -7,7 +7,8 @@ CT.pubsub = {
 	"_cb_join": function() {}, // override w/ set_cb()
 	"_cb_leave": function() {}, // override w/ set_cb()
 	"_read": function(msg) {
-		CT.pubsub["_read_" + msg.action](msg.data);
+		var d = JSON.parse(msg.data);
+		CT.pubsub["_read_" + d.action](d.data);
 	},
 	"_read_channel": function(data) {
 		CT.pubsub._channels[data.channel] = data.users;
@@ -28,7 +29,7 @@ CT.pubsub = {
 		CT.pubsub._open = true;
 		CT.pubsub._queue.forEach(CT.pubsub.write);
 	},
-	"set_cb": function(cb, action) { // action: message|join|leave
+	"set_cb": function(action, cb) { // action: message|join|leave
 		CT.pubsub["_cb_" + action] = cb;
 	},
 	"write": function(data) {
