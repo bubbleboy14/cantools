@@ -19,7 +19,7 @@ CT.pubsub = {
 	},
 	"_read_subscribe": function(data) {
 		CT.pubsub._cb_join(data.channel, data.user);
-		CT.pubsub._channels[data.channel].push(data.user);
+		CT.data.add(CT.pubsub._channels[data.channel], data.user);
 	},
 	"_read_unsubscribe": function(data) {
 		CT.pubsub._cb_leave(data.channel, data.user);

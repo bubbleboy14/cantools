@@ -46,6 +46,11 @@ CT.data = {
 	},
 
 	// array stuff
+	"add": function(arr, el) {
+		var elindex = arr.indexOf(el);
+		if (elindex == -1)
+			return arr.push(el);
+	},
 	"remove": function(arr, el) {
 		var elindex = arr.indexOf(el);
 		if (elindex != -1)
