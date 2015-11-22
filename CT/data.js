@@ -45,6 +45,13 @@ CT.data = {
 	    return ddiff;
 	},
 
+	// array stuff
+	"remove": function(arr, el) {
+		var elindex = arr.indexOf(el);
+		if (elindex != -1)
+			return arr.splice(elindex, 1);
+	},
+
 	// cache
 	"get": function(key) {
 		return CT.data.map[key];
