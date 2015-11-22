@@ -61,6 +61,12 @@ CT.pubsub = {
 			"data": channel
 		});
 	},
+	"unsubscribe": function(channel) {
+		CT.pubsub.write({
+			"action": "unsubscribe",
+			"data": channel
+		});
+	},
 	"connect": function(host, port, uname) {
 		CT.pubsub._ws = new WebSocket("ws://" + host + ":" + port);
 		CT.pubsub._ws.onopen = CT.pubsub._register;
