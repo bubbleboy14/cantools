@@ -5,6 +5,7 @@ CT.pubsub = {
 		"reconnect": true,
 		"reconnect_interval": 250,
 		"initialized": false,
+		"log": CT.data.getLogger("CT.pubsub"),
 		"queue": [],
 		"channels": {},
 		"cb": {
@@ -61,10 +62,10 @@ CT.pubsub = {
 		if (CT.pubsub._.open) {
 			var dstring = JSON.stringify(data);
 			CT.pubsub._.ws.send(dstring);
-			console.log("WRITE", dstring);
+			CT.pubsub._.log("WRITE", dstring);
 		} else {
 			CT.pubsub._.queue.push(data);
-			console.log("QUEUE", JSON.stringify(CT.pubsub._.queue));
+			CT.pubsub._.log("QUEUE", JSON.stringify(CT.pubsub._.queue));
 		}
 	},
 	"publish": function(channel, message) {
