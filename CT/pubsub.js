@@ -1,10 +1,11 @@
 CT.pubsub = {
 	"_": {
 		"ws": null,
+		"args": null,
 		"open": false,
+		"initialized": false,
 		"reconnect": true,
 		"reconnect_interval": 250,
-		"initialized": false,
 		"log": CT.data.getLogger("CT.pubsub"),
 		"queue": [],
 		"channels": {},
@@ -38,6 +39,11 @@ CT.pubsub = {
 		"on": {
 			"open": function() {
 				CT.pubsub._.open = true;
+				CT.pubsub._.reconnect_interval = 250;
+				CT.pubsub._.write({
+					"action": "register",
+					"data": CT.pubsub._.args[2]
+				});
 				CT.pubsub._.queue.forEach(function(item, i) {
 					setTimeout(function() {
 						CT.pubsub._.write(item);
@@ -71,7 +77,12 @@ CT.pubsub = {
 			}
 		},
 		"try_reconnect": function() {
-
+			var r_int = CT.pubsub._.reconnect_interval;
+			CT.pubsub._.log("RECONNECT", r_int);
+			setTimeout(function() {
+				CT.pubsub.connect.apply(null, CT.pubsub._.args)
+			}, r_int);
+			CT.pubsub._.reconnect_interval = Math.min(2 * r_int, 30000);
 		}
 	},
 	"isInitialized": function() {
@@ -105,13 +116,10 @@ CT.pubsub = {
 		});
 	},
 	"connect": function(host, port, uname) {
+		CT.pubsub._.args = arguments;
 		CT.pubsub._.initialized = true;
 		CT.pubsub._.ws = new WebSocket("ws://" + host + ":" + port);
 		for (var action in CT.pubsub._.on)
 			CT.pubsub._.ws["on" + action] = CT.pubsub._.on[action];
-		CT.pubsub._.write({
-			"action": "register",
-			"data": uname
-		});
 	}
 };
