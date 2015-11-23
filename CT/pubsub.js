@@ -29,7 +29,7 @@ CT.pubsub = {
 			},
 			"subscribe": function(data) {
 				CT.pubsub._.cb.join(data.channel, data.user);
-				CT.data.add(CT.pubsub._.channels[data.channel].presence, data.user);
+				CT.data.append(CT.pubsub._.channels[data.channel].presence, data.user);
 			},
 			"unsubscribe": function(data) {
 				CT.pubsub._.cb.leave(data.channel, data.user);
