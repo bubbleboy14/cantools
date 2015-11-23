@@ -132,9 +132,9 @@ class PubSubUser(object):
         getattr(self.server, obj["action"])(obj["data"], self)
 
     def _close(self):
-        for channel in self.channels:
+        for channel in list(self.channels):
             channel.leave(self)
-        del self.server.clients[name]
+        del self.server.clients[self.name]
 
     def _register(self, name):
         self._log('REGISTER: "%s"'%(name,), 1, True)
