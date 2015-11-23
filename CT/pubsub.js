@@ -60,15 +60,16 @@ CT.pubsub = {
 				CT.pubsub._.cb.error();
 			},
 			"message": function(msg) {
-				var d = JSON.parse(msg.data);
+				var d = JSON.parse(atob(msg.data));
 				CT.pubsub._.process[d.action](d.data);
 			}
 		},
 		"write": function(data) {
 			if (CT.pubsub._.open) {
-				var dstring = JSON.stringify(data);
-				CT.pubsub._.ws.send(dstring);
-				CT.pubsub._.log("WRITE", dstring);
+				var dstring = JSON.stringify(data),
+					b64str = btoa(dstring);
+				CT.pubsub._.ws.send(b64str);
+				CT.pubsub._.log("WRITE", dstring, b64str);
 			} else {
 				CT.pubsub._.queue.push(data);
 				CT.pubsub._.log("QUEUE", JSON.stringify(CT.pubsub._.queue));

@@ -6,6 +6,7 @@ from config import PUBSUB_PORT, PUBSUB_HIST
 
 class PubSub(WebSocketDaemon):
     def __init__(self, *args, **kwargs):
+        kwargs["b64"] = True
         kwargs["isJSON"] = True
         kwargs["report_cb"] = self._log
         kwargs["cb"] = self.connect
