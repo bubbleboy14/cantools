@@ -1,6 +1,14 @@
 CT.data = {
 	map: {},
 
+	// logging
+	"getLogger": function(component) {
+		var logger = function() {
+			console.log(component, logger.arguments);
+		};
+		return logger;
+	},
+
 	// data comparison
 	"sameList": function(list1, list2) {
 	    if (list1.length != list2.length)

@@ -1,18 +1,15 @@
-var _log = function() {
-	console.log("CT.pubsub", _log.arguments);
-};
 CT.pubsub = {
 	"_ws": null,
 	"_open": false,
 	"_initialized": false,
 	"_queue": [],
 	"_channels": {},
-	"_cb_message": _log, // override w/ set_cb()
-	"_cb_join": _log, // override w/ set_cb()
-	"_cb_leave": _log, // override w/ set_cb()
-	"_cb_open": _log, // override w/ set_cb()
-	"_cb_close": _log, // override w/ set_cb()
-	"_cb_error": _log, // override w/ set_cb()
+	"_cb_message": CT.data.getLogger("CT.pubsub|message"), // override w/ set_cb()
+	"_cb_join": CT.data.getLogger("CT.pubsub|join"), // override w/ set_cb()
+	"_cb_leave": CT.data.getLogger("CT.pubsub|leave"), // override w/ set_cb()
+	"_cb_open": CT.data.getLogger("CT.pubsub|open"), // override w/ set_cb()
+	"_cb_close": CT.data.getLogger("CT.pubsub|close"), // override w/ set_cb()
+	"_cb_error": CT.data.getLogger("CT.pubsub|error"), // override w/ set_cb()
 	"_read": function(msg) {
 		var d = JSON.parse(msg.data);
 		CT.pubsub["_read_" + d.action](d.data);
