@@ -46,11 +46,7 @@ CT.pubsub = {
 				});
 				for (var channel in CT.pubsub._.channels)
 					CT.pubsub.subscribe(channel);
-				CT.pubsub._.queue.forEach(function(item, i) {
-					setTimeout(function() {
-						CT.pubsub._.write(item);
-					}, 100 * i);
-				});
+				CT.pubsub._.queue.forEach(CT.pubsub._.write);
 				CT.pubsub._.queue.length = 0;
 				CT.pubsub._.cb.open();
 			},
@@ -93,7 +89,7 @@ CT.pubsub = {
 	"set_reconnect": function(bool) {
 		CT.pubsub._.reconnect = bool;
 	},
-	"set_cb": function(action, cb) { // action: message|join|leave|open|close|error
+	"set_cb": function(action, cb) { // action: message|subscribe|join|leave|open|close|error
 		CT.pubsub._.cb[action] = cb;
 	},
 	"publish": function(channel, message) {
