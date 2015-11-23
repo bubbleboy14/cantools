@@ -80,7 +80,7 @@ class PubSubChannel(object):
             "data": subobj
         }
         self._broadcast(obj)
-        self.history.append(obj)
+        self.history.append(subobj)
         self.history = self.history[:PUBSUB_HIST]
 
     def leave(self, user):
