@@ -2,9 +2,14 @@ CT.data = {
 	map: {},
 
 	// logging
+	"_verbose": true,
+	"setLogVerbosity": function(bool) {
+		CT.data._verbose = bool;
+	},
 	"getLogger": function(component) {
 		var logger = function() {
-			console.log(component, logger.arguments);
+			if (CT.data._verbose)
+				console.log(component, Array.prototype.join.call(logger.arguments, " "));
 		};
 		return logger;
 	},
