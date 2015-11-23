@@ -5,6 +5,7 @@ CT.pubsub = {
 	"_queue": [],
 	"_channels": {},
 	"_cb_message": CT.data.getLogger("CT.pubsub|message"), // override w/ set_cb()
+	"_cb_subscribe": CT.data.getLogger("CT.pubsub|subscribe"), // override w/ set_cb()
 	"_cb_join": CT.data.getLogger("CT.pubsub|join"), // override w/ set_cb()
 	"_cb_leave": CT.data.getLogger("CT.pubsub|leave"), // override w/ set_cb()
 	"_cb_open": CT.data.getLogger("CT.pubsub|open"), // override w/ set_cb()
@@ -15,19 +16,20 @@ CT.pubsub = {
 		CT.pubsub["_read_" + d.action](d.data);
 	},
 	"_read_channel": function(data) {
-		CT.pubsub._channels[data.channel] = data.users;
+		CT.pubsub._channels[data.channel] = data;
 		data.history.forEach(CT.pubsub._read_publish);
+		CT.pubsub._cb_subscribe(data.channel, data);
 	},
 	"_read_publish": function(data) {
-		CT.pubsub._cb_message(data.channel, data.user, data.message);
+		CT.pubsub._cb_message(data);
 	},
 	"_read_subscribe": function(data) {
 		CT.pubsub._cb_join(data.channel, data.user);
-		CT.data.add(CT.pubsub._channels[data.channel], data.user);
+		CT.data.add(CT.pubsub._channels[data.channel].users, data.user);
 	},
 	"_read_unsubscribe": function(data) {
 		CT.pubsub._cb_leave(data.channel, data.user);
-		CT.data.remove(CT.pubsub._channels[data.channel], data.user);
+		CT.data.remove(CT.pubsub._channels[data.channel].users, data.user);
 	},
 	"_register": function() {
 		CT.pubsub._open = true;
