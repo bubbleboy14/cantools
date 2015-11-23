@@ -28,7 +28,7 @@ class PubSub(WebSocketDaemon):
             "action": "channel",
             "data": {
                 "channel": channel,
-                "users": [u.name for u in chan.users],
+                "presence": [u.name for u in chan.users],
                 "history": chan.history
             }
         })

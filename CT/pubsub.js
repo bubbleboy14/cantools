@@ -29,11 +29,11 @@ CT.pubsub = {
 			},
 			"subscribe": function(data) {
 				CT.pubsub._.cb.join(data.channel, data.user);
-				CT.data.add(CT.pubsub._.channels[data.channel].users, data.user);
+				CT.data.add(CT.pubsub._.channels[data.channel].presence, data.user);
 			},
 			"unsubscribe": function(data) {
 				CT.pubsub._.cb.leave(data.channel, data.user);
-				CT.data.remove(CT.pubsub._.channels[data.channel].users, data.user);
+				CT.data.remove(CT.pubsub._.channels[data.channel].presence, data.user);
 			}
 		},
 		"on": {
