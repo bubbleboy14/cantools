@@ -18,10 +18,6 @@ CT.pubsub = {
 			"error": CT.data.getLogger("CT.pubsub|error"), // override w/ set_cb()
 		},
 		"process": {
-			"read": function(msg) {
-				var d = JSON.parse(msg.data);
-				CT.pubsub._.process[d.action](d.data);
-			},
 			"channel": function(data) {
 				CT.pubsub._.channels[data.channel] = data;
 				data.history.forEach(CT.pubsub._.process.publish);
@@ -39,15 +35,30 @@ CT.pubsub = {
 				CT.data.remove(CT.pubsub._.channels[data.channel].users, data.user);
 			}
 		},
-		"register": function() {
-			CT.pubsub._.open = true;
-			CT.pubsub._.queue.forEach(function(item, i) {
-				setTimeout(function() {
-					CT.pubsub._.write(item);
-				}, 100 * i);
-			});
-			CT.pubsub._.queue.length = 0;
-			CT.pubsub._.cb.open();
+		"on": {
+			"open": function() {
+				CT.pubsub._.open = true;
+				CT.pubsub._.queue.forEach(function(item, i) {
+					setTimeout(function() {
+						CT.pubsub._.write(item);
+					}, 100 * i);
+				});
+				CT.pubsub._.queue.length = 0;
+				CT.pubsub._.cb.open();
+			},
+			"close": function() {
+				CT.pubsub._.open = false;
+				CT.pubsub._.cb.close();
+				if (CT.pubsub._.reconnect)
+					CT.pubsub._.try_reconnect()
+			},
+			"error": function() {
+				CT.pubsub._.cb.error();
+			},
+			"message": function(msg) {
+				var d = JSON.parse(msg.data);
+				CT.pubsub._.process[d.action](d.data);
+			}
 		},
 		"write": function(data) {
 			if (CT.pubsub._.open) {
@@ -58,6 +69,9 @@ CT.pubsub = {
 				CT.pubsub._.queue.push(data);
 				CT.pubsub._.log("QUEUE", JSON.stringify(CT.pubsub._.queue));
 			}
+		},
+		"try_reconnect": function() {
+
 		}
 	},
 	"isInitialized": function() {
@@ -93,15 +107,8 @@ CT.pubsub = {
 	"connect": function(host, port, uname) {
 		CT.pubsub._.initialized = true;
 		CT.pubsub._.ws = new WebSocket("ws://" + host + ":" + port);
-		CT.pubsub._.ws.onopen = CT.pubsub._.register;
-		CT.pubsub._.ws.onmessage = CT.pubsub._.process.read;
-		CT.pubsub._.ws.onclose = function() {
-			CT.pubsub._.open = false;
-			CT.pubsub._.cb.close();
-		};
-		CT.pubsub._.ws.onerror = function() {
-			CT.pubsub._.cb.error();
-		};
+		for (var action in CT.pubsub._.on)
+			CT.pubsub._.ws["on" + action] = CT.pubsub._.on[action];
 		CT.pubsub._.write({
 			"action": "register",
 			"data": uname
