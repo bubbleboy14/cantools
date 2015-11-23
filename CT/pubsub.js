@@ -1,11 +1,18 @@
+var _log = function() {
+	console.log("CT.pubsub", _log.arguments);
+};
 CT.pubsub = {
 	"_ws": null,
 	"_open": false,
+	"_initialized": false,
 	"_queue": [],
 	"_channels": {},
-	"_cb_message": function() {}, // override w/ set_cb()
-	"_cb_join": function() {}, // override w/ set_cb()
-	"_cb_leave": function() {}, // override w/ set_cb()
+	"_cb_message": _log, // override w/ set_cb()
+	"_cb_join": _log, // override w/ set_cb()
+	"_cb_leave": _log, // override w/ set_cb()
+	"_cb_open": _log, // override w/ set_cb()
+	"_cb_close": _log, // override w/ set_cb()
+	"_cb_error": _log, // override w/ set_cb()
 	"_read": function(msg) {
 		var d = JSON.parse(msg.data);
 		CT.pubsub["_read_" + d.action](d.data);
@@ -32,8 +39,12 @@ CT.pubsub = {
 				CT.pubsub.write(item);
 			}, 100 * i);
 		});
+		CT.pubsub._cb_open("opened");
 	},
-	"set_cb": function(action, cb) { // action: message|join|leave
+	"isInitialized": function() {
+		return CT.pubsub._initialized;
+	},
+	"set_cb": function(action, cb) { // action: message|join|leave|open|close|error
 		CT.pubsub["_cb_" + action] = cb;
 	},
 	"write": function(data) {
@@ -68,9 +79,16 @@ CT.pubsub = {
 		});
 	},
 	"connect": function(host, port, uname) {
+		CT.pubsub._initialized = true;
 		CT.pubsub._ws = new WebSocket("ws://" + host + ":" + port);
 		CT.pubsub._ws.onopen = CT.pubsub._register;
 		CT.pubsub._ws.onmessage = CT.pubsub._read;
+		CT.pubsub._ws.onclose = function() {
+			CT.pubsub._cb_close("closed");
+		};
+		CT.pubsub._ws.onerror = function(e) {
+			CT.pubsub._cb_error("error", e);
+		};
 		CT.pubsub.write(uname);
 	}
 };
