@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 from dez.network.websocket import WebSocketDaemon
 from util import log
 from config import PUBSUB_PORT, PUBSUB_HIST
@@ -69,9 +70,8 @@ class PubSubChannel(object):
         self._log('NEW CHANNEL: "%s"'%(name,), 1, True)
 
     def _broadcast(self, obj):
-        dstring = json.dumps(obj)
         for user in self.users:
-            user.conn.write(dstring, noEncode=True) # skips logging
+            user.write(obj)
 
     def write(self, subobj):
         subobj["channel"] = self.name
@@ -123,6 +123,7 @@ class PubSubUser(object):
             self.channels.remove(channel)
 
     def write(self, data):
+        data["data"]["datetime"] = str(datetime.now()) # do a better job
         dstring = json.dumps(data) # pre-encode so we can log
         self._log('WRITE: "%s" -> "%s"'%(self.name, dstring), 3)
         self.conn.write(dstring, noEncode=True)
