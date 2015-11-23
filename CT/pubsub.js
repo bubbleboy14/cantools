@@ -44,6 +44,8 @@ CT.pubsub = {
 					"action": "register",
 					"data": CT.pubsub._.args[2]
 				});
+				for (var channel in CT.pubsub._.channels)
+					CT.pubsub.subscribe(channel);
 				CT.pubsub._.queue.forEach(function(item, i) {
 					setTimeout(function() {
 						CT.pubsub._.write(item);
