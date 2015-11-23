@@ -8,8 +8,14 @@ CT.data = {
 	},
 	"getLogger": function(component) {
 		var logger = function() {
-			if (CT.data._verbose)
-				console.log(component, Array.prototype.join.call(logger.arguments, " "));
+			if (CT.data._verbose) {
+				var str_arr = [];
+				for (var i = 0; i < logger.arguments.length; i++) {
+					var a = logger.arguments[i];
+					str_arr.push((typeof(a) == "object") ? JSON.stringify(a) : a);
+				}
+				console.log(component, str_arr.join(" "));
+			}
 		};
 		return logger;
 	},
