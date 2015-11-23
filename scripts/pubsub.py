@@ -136,7 +136,8 @@ class PubSubUser(object):
             channel.leave(self)
         del self.server.clients[self.name]
 
-    def _register(self, name):
+    def _register(self, obj):
+        name = obj["data"]
         self._log('REGISTER: "%s"'%(name,), 1, True)
         self.name = name
         self.server.clients[name] = self

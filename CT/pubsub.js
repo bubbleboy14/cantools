@@ -23,9 +23,9 @@ CT.pubsub = {
 				CT.pubsub._.process[d.action](d.data);
 			},
 			"channel": function(data) {
-				CT.pubsub._channels[data.channel] = data;
+				CT.pubsub._.channels[data.channel] = data;
 				data.history.forEach(CT.pubsub._.process.publish);
-				CT.pubsub._.process.subscribe(data.channel, data);
+				CT.pubsub._.cb.subscribe(data);
 			},
 			"publish": function(data) {
 				CT.pubsub._.cb.message(data);
@@ -38,16 +38,27 @@ CT.pubsub = {
 				CT.pubsub._.cb.leave(data.channel, data.user);
 				CT.data.remove(CT.pubsub._.channels[data.channel].users, data.user);
 			}
+		},
+		"register": function() {
+			CT.pubsub._.open = true;
+			CT.pubsub._.queue.forEach(function(item, i) {
+				setTimeout(function() {
+					CT.pubsub._.write(item);
+				}, 100 * i);
+			});
+			CT.pubsub._.queue.length = 0;
+			CT.pubsub._.cb.open();
+		},
+		"write": function(data) {
+			if (CT.pubsub._.open) {
+				var dstring = JSON.stringify(data);
+				CT.pubsub._.ws.send(dstring);
+				CT.pubsub._.log("WRITE", dstring);
+			} else {
+				CT.pubsub._.queue.push(data);
+				CT.pubsub._.log("QUEUE", JSON.stringify(CT.pubsub._.queue));
+			}
 		}
-	},
-	"_register": function() {
-		CT.pubsub._.open = true;
-		CT.pubsub._.queue.forEach(function(item, i) {
-			setTimeout(function() {
-				CT.pubsub.write(item);
-			}, 100 * i);
-		});
-		CT.pubsub._.cb.open("opened");
 	},
 	"isInitialized": function() {
 		return CT.pubsub._.initialized;
@@ -56,20 +67,10 @@ CT.pubsub = {
 		CT.pubsub._.reconnect = bool;
 	},
 	"set_cb": function(action, cb) { // action: message|join|leave|open|close|error
-		CT.pubsub.cb[action] = cb;
-	},
-	"write": function(data) {
-		if (CT.pubsub._.open) {
-			var dstring = JSON.stringify(data);
-			CT.pubsub._.ws.send(dstring);
-			CT.pubsub._.log("WRITE", dstring);
-		} else {
-			CT.pubsub._.queue.push(data);
-			CT.pubsub._.log("QUEUE", JSON.stringify(CT.pubsub._.queue));
-		}
+		CT.pubsub._.cb[action] = cb;
 	},
 	"publish": function(channel, message) {
-		CT.pubsub.write({
+		CT.pubsub._.write({
 			"action": "publish",
 			"data": {
 				"channel": channel,
@@ -78,13 +79,13 @@ CT.pubsub = {
 		});
 	},
 	"subscribe": function(channel) {
-		CT.pubsub.write({
+		CT.pubsub._.write({
 			"action": "subscribe",
 			"data": channel
 		});
 	},
 	"unsubscribe": function(channel) {
-		CT.pubsub.write({
+		CT.pubsub._.write({
 			"action": "unsubscribe",
 			"data": channel
 		});
@@ -92,14 +93,18 @@ CT.pubsub = {
 	"connect": function(host, port, uname) {
 		CT.pubsub._.initialized = true;
 		CT.pubsub._.ws = new WebSocket("ws://" + host + ":" + port);
-		CT.pubsub._.ws.onopen = CT.pubsub._register;
-		CT.pubsub._.ws.onmessage = CT.pubsub._read;
+		CT.pubsub._.ws.onopen = CT.pubsub._.register;
+		CT.pubsub._.ws.onmessage = CT.pubsub._.process.read;
 		CT.pubsub._.ws.onclose = function() {
-			CT.pubsub._.cb.close("closed");
+			CT.pubsub._.open = false;
+			CT.pubsub._.cb.close();
 		};
-		CT.pubsub._.ws.onerror = function(e) {
-			CT.pubsub._.cb.error("error", e);
+		CT.pubsub._.ws.onerror = function() {
+			CT.pubsub._.cb.error();
 		};
-		CT.pubsub.write(uname);
+		CT.pubsub._.write({
+			"action": "register",
+			"data": uname
+		});
 	}
 };
