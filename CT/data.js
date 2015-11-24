@@ -1,6 +1,25 @@
 CT.data = {
 	map: {},
 
+	// logging
+	"_verbose": true,
+	"setLogVerbosity": function(bool) {
+		CT.data._verbose = bool;
+	},
+	"getLogger": function(component) {
+		var logger = function() {
+			if (CT.data._verbose) {
+				var str_arr = [];
+				for (var i = 0; i < logger.arguments.length; i++) {
+					var a = logger.arguments[i];
+					str_arr.push((typeof(a) == "object") ? JSON.stringify(a) : a);
+				}
+				console.log(component, str_arr.join(" "));
+			}
+		};
+		return logger;
+	},
+
 	// data comparison
 	"sameList": function(list1, list2) {
 	    if (list1.length != list2.length)
@@ -43,6 +62,17 @@ CT.data = {
 	            ddiff[k] = dnew[k];
 	    }
 	    return ddiff;
+	},
+
+	// array stuff
+	"append": function(arr, el) {
+		if (arr.indexOf(el) == -1)
+			arr.push(el);
+	},
+	"remove": function(arr, el) {
+		var elindex = arr.indexOf(el);
+		if (elindex != -1)
+			return arr.splice(elindex, 1);
 	},
 
 	// cache

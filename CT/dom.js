@@ -102,6 +102,13 @@ CT.dom = {
 	        wrapper.appendChild(nodes[i]);
 	    return wrapper;
 	},
+	"audio": function(src, autoplay, className, id, attrs) {
+		attrs = attrs || {};
+		attrs.src = src;
+		if (autoplay)
+			attrs.autoplay = "true";
+		return CT.dom.node("", "audio", className, id, attrs);
+	},
 
 	// composite nodes
 	"checkboxAndLabel": function(cbid, ischecked, lname, lclass, cclass, onclick) {
