@@ -135,14 +135,14 @@ CT.data = {
 	"require": function(key, cb, plist, getpath, getparams) {
 		CT.data.requirePrep(key);
 	    if (CT.data.itemReady(key, plist))
-	        cb(CT.data.map[key]);
+	        cb(CT.data.get(key));
 	    else {
 	    	getparams = getparams || {"gtype": "user", "chat": 1};
 	    	getparams.uid = key;
 	        CT.net.post(getpath || "/get", getparams,
 	            "error retrieving data", function(rawdata) {
 	                CT.data.add(rawdata);
-	                cb(CT.data.map[key]);
+	                cb(CT.data.get(key));
 	            });
 	    }
 	},
