@@ -130,6 +130,8 @@ class PubSubUser(object):
         self.conn.write(dstring, noEncode=True)
 
     def _read(self, obj):
+        if obj["action"] == "close":
+            return self.conn.close()
         getattr(self.server, obj["action"])(obj["data"], self)
 
     def _close(self):

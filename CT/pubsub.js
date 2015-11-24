@@ -120,5 +120,8 @@ CT.pubsub = {
 		CT.pubsub._.ws = new WebSocket("ws://" + host + ":" + port);
 		for (var action in CT.pubsub._.on)
 			CT.pubsub._.ws["on" + action] = CT.pubsub._.on[action];
+		window.onbeforeunload = function() {
+			CT.pubsub._.write({ "action": "close" });
+		};
 	}
 };
