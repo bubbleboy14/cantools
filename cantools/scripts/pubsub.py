@@ -147,5 +147,18 @@ class PubSubUser(object):
         self.conn.set_cb(self._read)
         self.conn.set_close_cb(self._close)
 
+def start(host="localhost", port=PUBSUB_PORT):
+    PubSub(host, port).start()
+
+def get_addr_and_start():
+    from optparse import OptionParser
+    parser = OptionParser("ctstart [-d domain] [-p port]")
+    parser.add_option("-d", "--domain", dest="domain", default="localhost",
+        help="use a specific domain (default: localhost)")
+    parser.add_option("-p", "--port", dest="host", default=PUBSUB_PORT,
+        help="use a specific port (default: %s)"%(PUBSUB_PORT,))
+    options, arguments = parser.parse_args()
+    start(options.host, options.port)
+
 if __name__ == "__main__":
-    PubSub('localhost', PUBSUB_PORT).start()
+    get_addr_and_start()

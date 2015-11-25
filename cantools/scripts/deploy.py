@@ -63,7 +63,7 @@ def setmode(mode):
             ctpy = ctpy.replace(MODE_SWAP%(m,), MODE_SWAP%(mode,))
     write(ctpy, CT_PY_PATH)
 
-if __name__ == "__main__":
+def run():
     from optparse import OptionParser
     parser = OptionParser("python deploy.py [-d|s|p] [-u]")
     parser.add_option("-d", "--dynamic", action="store_true", dest="dynamic",
@@ -96,3 +96,6 @@ if __name__ == "__main__":
         setmode("dynamic")
 
     log("goodbye")
+
+if __name__ == "__main__":
+    run()
