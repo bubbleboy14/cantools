@@ -137,7 +137,8 @@ class PubSubUser(object):
     def _close(self):
         for channel in list(self.channels):
             channel.leave(self)
-        del self.server.clients[self.name]
+        if self.name in self.server.clients: # _should_ be
+            del self.server.clients[self.name]
 
     def _register(self, obj):
         name = obj["data"]
