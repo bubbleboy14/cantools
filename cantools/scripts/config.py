@@ -1,12 +1,11 @@
 class Config(object):
 	def __init__(self, cfg):
 		for key, val in cfg.items():
-			if isinstance(val, dict):
-				cfg[key] = Config(val)
-		self._cfg = cfg
+			self.update(key, val)
 
-	def __getattribute__(self, key):
-		return getattr(self._cfg, key)
+	def update(self, key, val):
+		setattr(self, key,
+			isinstance(val, dict) and Config(val) or val)
 
 config = Config({
 	"pubsub": {
@@ -26,7 +25,7 @@ config = Config({
 		"flag": '<script src="/',
 		"offset": len('<script src="'),
 		"endoffset": len('"></script>')
-	}
+	},
 	"noscript": """
 		<noscript>
 		 <div style="position: absolute; left:0px; top:0px;">
@@ -38,7 +37,7 @@ config = Config({
 		"path": "app.yaml",
 		"start": "# START mode: ",
 		"end": "# END mode: "
-	}
+	},
 	"py": {
 		"path": "ctcfg.py",
 		"enc": "ENCODE = %s",

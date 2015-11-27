@@ -5,8 +5,6 @@ version 0.3
 import sys, json
 
 DEBUG = True
-ENCODE = False
-MODE = "dynamic"
 envelope = {
     'plain': "Content-Type: text/plain\n\n%s",
     'html': "Content-Type: text/html\n\n<html><head></head><body>%s</body></html>" }

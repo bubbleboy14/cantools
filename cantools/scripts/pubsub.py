@@ -156,10 +156,10 @@ def get_addr_and_start():
     parser = OptionParser("ctstart [-d domain] [-p port]")
     parser.add_option("-d", "--domain", dest="domain", default="localhost",
         help="use a specific domain (default: localhost)")
-    parser.add_option("-p", "--port", dest="host", default=config.pubsub.port,
+    parser.add_option("-p", "--port", dest="port", default=config.pubsub.port,
         help="use a specific port (default: %s)"%(config.pubsub.port,))
     options, arguments = parser.parse_args()
-    start(options.host, options.port)
+    start(options.domain, options.port)
 
 if __name__ == "__main__":
     get_addr_and_start()

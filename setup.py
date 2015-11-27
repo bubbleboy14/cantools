@@ -18,9 +18,9 @@ setup(
     ],
     entry_points = '''
         [console_scripts]
-        ctstart = cantools.start:go
-        ctdeploy = cantools.deploy:run
-        ctpubsub = cantools.pubsub:get_addr_and_start
+        ctstart = cantools:ctstart
+        ctdeploy = cantools:ctdeploy
+        ctpubsub = cantools:ctpubsub
     ''',
     classifiers = [
         'Development Status :: 3 - Alpha',
