@@ -29,19 +29,19 @@ Generates fresh 'static' and 'production' files (from 'development' source files
 """
 
 import subprocess, commands, os
-from config import YPATH, YSTART, YEND, CT_PY_PATH, ENC_TOGGLE, MODE_SWAP
+from config import config
 from util import log, error, read, write
 from builder import build
 
 def doyaml(mode):
     log("switching to %s mode"%(mode,))
-    lines = read(YPATH, lines=True)
-    f = open(YPATH, 'w')
+    lines = read(config.yaml.path, lines=True)
+    f = open(config.yaml.path, 'w')
     m = None
     for line in lines:
-        if line.startswith(YSTART):
-            m = line[len(YSTART):].strip()
-        elif line.startswith(YEND):
+        if line.startswith(config.yaml.start):
+            m = line[len(config.yaml.start):].strip()
+        elif line.startswith(config.yaml.end):
             m = None
         elif m == mode:
             line = line.strip("#")
@@ -52,16 +52,16 @@ def doyaml(mode):
 
 def setmode(mode):
     doyaml(mode) # support other backends beyond app engine
-    ctpy = read(CT_PY_PATH)
+    ctpy = read(config.py.path)
     isprod = mode == "production"
     # set encode
-    ctpy = ctpy.replace(ENC_TOGGLE%(str(not isprod),),
-        ENC_TOGGLE%(str(isprod),))
+    ctpy = ctpy.replace(config.py.enc%(str(not isprod),),
+        config.py.enc%(str(isprod),))
     # set mode
     for m in ["dynamic", "static", "production"]:
         if m != mode:
-            ctpy = ctpy.replace(MODE_SWAP%(m,), MODE_SWAP%(mode,))
-    write(ctpy, CT_PY_PATH)
+            ctpy = ctpy.replace(config.py.mode%(m,), config.py.mode%(mode,))
+    write(ctpy, config.py.path)
 
 def run():
     from optparse import OptionParser
@@ -84,7 +84,7 @@ def run():
 
     # 1) build static/production files
     if not options.no_build:
-        os.path.walk("../html", build, None)
+        os.path.walk(config.build.dynamic_dir, build, None)
 
     # 2) switch to specified mode
     setmode(mode)

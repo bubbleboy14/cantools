@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 from dez.network.websocket import WebSocketDaemon
 from util import log
-from config import PUBSUB_PORT, PUBSUB_HIST
+from config import config
 
 class PubSub(WebSocketDaemon):
     def __init__(self, *args, **kwargs):
@@ -82,7 +82,7 @@ class PubSubChannel(object):
         }
         self._broadcast(obj)
         self.history.append(subobj)
-        self.history = self.history[:PUBSUB_HIST]
+        self.history = self.history[:config.pubsub.history]
 
     def leave(self, user):
         if user in self.users:
@@ -148,7 +148,7 @@ class PubSubUser(object):
         self.conn.set_cb(self._read)
         self.conn.set_close_cb(self._close)
 
-def start(host="localhost", port=PUBSUB_PORT):
+def start(host="localhost", port=config.pubsub.port):
     PubSub(host, port).start()
 
 def get_addr_and_start():
@@ -156,8 +156,8 @@ def get_addr_and_start():
     parser = OptionParser("ctstart [-d domain] [-p port]")
     parser.add_option("-d", "--domain", dest="domain", default="localhost",
         help="use a specific domain (default: localhost)")
-    parser.add_option("-p", "--port", dest="host", default=PUBSUB_PORT,
-        help="use a specific port (default: %s)"%(PUBSUB_PORT,))
+    parser.add_option("-p", "--port", dest="host", default=config.pubsub.port,
+        help="use a specific port (default: %s)"%(config.pubsub.port,))
     options, arguments = parser.parse_args()
     start(options.host, options.port)
 
