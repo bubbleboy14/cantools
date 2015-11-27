@@ -1,20 +1,20 @@
 from setuptools import setup
 setup(
     name='cantools',
-    version='0.2',
+    version='0.3',
     author='Mario Balibrera',
     author_email='mario.balibrera@gmail.com',
     license='MIT License',
     description='Modern minimal web framework',
     long_description='This is the application-neutral backbone of CivilActionNetwork.org. It provides basic functions for interacting with the DOM, fixes for common browser inconsistencies, and a simple model for communication with a Python backend.',
     packages=[
-        'cantools',
-        'cantools.web'
+        'cantools'
     ],
     zip_safe = False,
     install_requires = [
         "rel >= 0.3.1",
-        "dez >= 0.5.4.1"
+        "dez >= 0.5.4.1",
+        "slimit"
     ],
     entry_points = '''
         [console_scripts]
