@@ -13,7 +13,7 @@ request_string = None
 cache_default = False
 
 # logging and encoding -- overwrite with setlog and setenc
-def log(message, type="info", **kwargs):
+def log(message, type="info", shouldEmail=True):
     pass
 
 def enc(data, noenc=False, etype="response"):
