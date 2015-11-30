@@ -99,7 +99,7 @@ def run():
     # 3) if -u, upload project and switch back to -d mode
     if options.upload:
         log("uploading files")
-        subprocess.call('appcfg.py update .. --no_precompilation', shell=True)
+        subprocess.call('appcfg.py update . --no_precompilation', shell=True)
         setmode("dynamic")
 
     log("goodbye")
