@@ -65,22 +65,29 @@ def setmode(mode):
 
 def run():
     from optparse import OptionParser
-    parser = OptionParser("ctdeploy [-d|s|p] [-un]")
+    parser = OptionParser("ctdeploy [-d|s|p] [-un] [--js_path=PATH]")
     parser.add_option("-d", "--dynamic", action="store_true", dest="dynamic",
         default=False, help="switch to dynamic (development) mode")
     parser.add_option("-s", "--static", action="store_true", dest="static",
         default=False, help="switch to static (debug) mode")
     parser.add_option("-p", "--production", action="store_true", dest="production",
         default=False, help="switch to production (garbled) mode")
-    parser.add_option("-u", "--upload", action="store_true", dest="upload",
-        default=False, help="uploads project in specified mode and then switches back to dynamic (development) mode")
+    parser.add_option("-u", "--upload", action="store_true", dest="upload", default=False,
+        help="uploads project in specified mode and then switches back to dynamic (development) mode")
     parser.add_option("-n", "--no_build", action="store_true",
         dest="no_build", default=False, help="skip compilation step")
+    parser.add_option("-j", "--js_path", dest="js_path", default=config.js.path,
+        help="set javascript path (default=%s)"%(config.js.path,))
     options, args = parser.parse_args()
 
     mode = options.dynamic and "dynamic" or options.static and "static" or options.production and "production"
     if not mode:
         error("no mode specified")
+
+    # 0) set js path
+    if options.js_path != config.js.path:
+        log("setting js path to: %s"%(options.js_path,))
+        config.js.update("path", options.js_path)
 
     # 1) build static/production files
     if not options.no_build:
