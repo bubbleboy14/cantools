@@ -21,6 +21,7 @@ setup(
         ctstart = cantools:ctstart
         ctdeploy = cantools:ctdeploy
         ctpubsub = cantools:ctpubsub
+        ctinit = cantools:ctinit
     ''',
     classifiers = [
         'Development Status :: 3 - Alpha',
