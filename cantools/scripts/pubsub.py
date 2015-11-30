@@ -6,7 +6,7 @@ def start(host="localhost", port=config.pubsub.port):
 
 def get_addr_and_start():
     from optparse import OptionParser
-    parser = OptionParser("ctstart [-d domain] [-p port]")
+    parser = OptionParser("ctpubsub [-d domain] [-p port]")
     parser.add_option("-d", "--domain", dest="domain", default="localhost",
         help="use a specific domain (default: localhost)")
     parser.add_option("-p", "--port", dest="port", default=config.pubsub.port,

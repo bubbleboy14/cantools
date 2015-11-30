@@ -65,7 +65,7 @@ def setmode(mode):
 
 def run():
     from optparse import OptionParser
-    parser = OptionParser("python deploy.py [-d|s|p] [-u]")
+    parser = OptionParser("ctdeploy [-d|s|p] [-un]")
     parser.add_option("-d", "--dynamic", action="store_true", dest="dynamic",
         default=False, help="switch to dynamic (development) mode")
     parser.add_option("-s", "--static", action="store_true", dest="static",

@@ -2,7 +2,7 @@ import subprocess
 from optparse import OptionParser
 
 def go():
-	parser = OptionParser("python start.py [--port=PORT]")
+	parser = OptionParser("ctstart [--port=PORT]")
 	parser.add_option("-p", "--port", dest="port", default="8080", help="select your port (default=8080)")
 	parser.add_option("-d", "--datastore", dest="datastore", default="scripts/db.datastore", help="select your datastore file (default=scripts/db.datastore)")
 	options, args = parser.parse_args()
