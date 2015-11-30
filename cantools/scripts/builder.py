@@ -1,10 +1,6 @@
 import subprocess, os
 from config import config
 from util import log, error, read, write
-try:
-    from slimit import minify
-except ImportError:
-    error("missing dependency! type: 'sudo easy_install slimit'")
 
 def nextQuote(text, lastIndex=0):
     z = i = text.find('"', lastIndex)
@@ -139,4 +135,8 @@ def build(nothing, dirname, fnames):
             write(data, topath)
 
 if __name__ == "__main__":
+    try:
+        from slimit import minify
+    except ImportError:
+        error("missing dependency! type: 'sudo easy_install slimit'")
     os.path.walk(config.build.dynamic_dir, build, "html")
