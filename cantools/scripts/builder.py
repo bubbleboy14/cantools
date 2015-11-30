@@ -32,7 +32,7 @@ def processhtml(html):
         end = html.find('"', start)
         if end == -1:
             error("no closing quote in this file: %s"%(html,))
-        js.append(html[start:end])
+        js.append(html[start:end].strip("/"))
         start = html.find(config.js.flag, end)
     log("js: %s"%(js,), 1)
     if start == end:
@@ -59,7 +59,7 @@ def tryinit(iline, inits, prefixes):
 def require(line, jspaths, block, inits):
     rline = line[12:-3]
     rsplit = rline.split(".")
-    jspath = "%s/%s.js"%(config.js.path, "/".join(rsplit))
+    jspath = os.path.join(config.js.path, *rsplit) + ".js"
     if jspath not in jspaths:
         prefixes = []
         fullp = "window"
@@ -76,7 +76,7 @@ def require(line, jspaths, block, inits):
     return block
 
 def processjs(path, jspaths, inits):
-    block = read("..%s"%(path,))
+    block = read(path)
     for line in block.split("\n"):
         if line.startswith("CT.require(") and not line.endswith(", true);"):
             block = require(line, jspaths, block, inits)
@@ -126,6 +126,10 @@ def build(nothing, dirname, fnames):
                     elif mode is "production":
                         log("production mode", 1)
                         txt = compress(txt)
+                        try:
+                            from slimit import minify
+                        except ImportError:
+                            error("missing dependency! type: 'sudo easy_install slimit'")
                         js = "<script>%s</script>"%(minify(jsblock.replace('"_encode": false,', '"_encode": true,'), mangle=True),)
                     else:
                         error("invalid mode: %s"%(mode,))
@@ -135,8 +139,4 @@ def build(nothing, dirname, fnames):
             write(data, topath)
 
 if __name__ == "__main__":
-    try:
-        from slimit import minify
-    except ImportError:
-        error("missing dependency! type: 'sudo easy_install slimit'")
     os.path.walk(config.build.dynamic_dir, build, "html")
