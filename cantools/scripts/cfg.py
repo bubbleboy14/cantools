@@ -23,9 +23,9 @@ cfg = {
 		"end": "# END mode: "
 	},
 	"py": {
-		"path": "ctcfg.py",
+		"path": "ct.cfg",
 		"enc": "ENCODE = %s",
-		"mode": 'MODE = "%s"'
+		"mode": "MODE = %s"
 	},
 	"noscript": """
 		<noscript>
@@ -73,6 +73,6 @@ handlers:
   <body>
   </body>
 </html>""",
-		"ctcfg": 'ENCODE = False\nMODE = "dynamic"'
+		"ctcfg": 'ENCODE = False\nMODE = dynamic\nWEB_SERVER = %s'
 	}
 }
