@@ -23,7 +23,10 @@ def error(msg, *lines):
 #
 
 def read(fname="_tmp", lines=False):
-    f = open(fname, "r")
+    try:
+        f = open(fname, "r")
+    except Exception, e:
+        return lines and [] or None
     if lines:
         text = f.readlines()
     else:
