@@ -26,7 +26,7 @@ def makeproj(pname, cantools_path):
 	log_write(config.init.yaml%(pname,), "app.yaml")
 	log_write(config.init.ctcfg, "ctcfg.py")
 	log("demo index page", 1)
-	log_write(config.init.html, os.path.join("html", "index.html"))
+	log_write(config.init.html%(pname,), os.path.join("html", "index.html"))
 	log("creating symlinks", 1)
 	ctroot = os.path.join(cantools_path, "cantools", "cantools")
 	log_sym(ctroot, "cantools")
