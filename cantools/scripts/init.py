@@ -5,7 +5,7 @@ from config import config
 
 class Builder(object):
 	def __init__(self, pname, cantools_path=os.environ["HOME"], web_backend="dez"):
-		log("Initializing Project: %s"%(pname,))
+		log("Initializing %s Project: %s"%(web_backend, pname))
 		self.pname = pname
 		self.cantools_path = cantools_path
 		self.web_backend = web_backend
@@ -23,7 +23,8 @@ class Builder(object):
 
 	def make_files(self):
 		log("generating configuration", 1)
-		cp(config.init.yaml%(self.pname,), "app.yaml")
+		if  self.web_backend == "gae":
+			cp(config.init.yaml%(self.pname,), "app.yaml")
 		cp(config.init.ctcfg, "ctcfg.py")
 		log("demo index page", 1)
 		cp(config.init.html%(self.pname,), os.path.join("html", "index.html"))
@@ -39,8 +40,11 @@ def parse_and_make():
 	parser = OptionParser("ctinit [projname] [--cantools_path=PATH]")
 	parser.add_option("-c", "--cantools_path", dest="cantools_path", default=os.environ["HOME"],
 		help="where is cantools? (default: %s)"%(os.environ["HOME"],))
+	parser.add_option("-w", "--web_backend", dest="web_backend", default="dez",
+		help="web backend. options: dez, gae. (default: dez)")
 	options, args = parser.parse_args()
-	Builder(len(args) and args[0] or raw_input("project name? "), options.cantools_path)
+	Builder(len(args) and args[0] or raw_input("project name? "),
+		options.cantools_path, options.web_backend)
 
 if __name__ == "__main__":
 	parse_and_make()
