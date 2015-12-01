@@ -1,6 +1,6 @@
 from setuptools import setup
 setup(
-    name='cantools',
+    name='ct',
     version='0.3',
     author='Mario Balibrera',
     author_email='mario.balibrera@gmail.com',
