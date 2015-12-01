@@ -126,10 +126,7 @@ def build(nothing, dirname, fnames):
                     elif mode is "production":
                         log("production mode", 1)
                         txt = compress(txt)
-                        try:
-                            from slimit import minify
-                        except ImportError:
-                            error("missing dependency! type: 'sudo easy_install slimit'")
+                        from slimit import minify
                         js = "<script>%s</script>"%(minify(jsblock.replace('"_encode": false,', '"_encode": true,'), mangle=True),)
                     else:
                         error("invalid mode: %s"%(mode,))
