@@ -8,7 +8,8 @@ setup(
     description='Modern minimal web framework',
     long_description='This is the application-neutral backbone of CivilActionNetwork.org. It provides basic functions for interacting with the DOM, fixes for common browser inconsistencies, and a simple model for communication with a Python backend.',
     packages=[
-        'cantools'
+        'cantools',
+        'cantools.scripts'
     ],
     zip_safe = False,
     install_requires = [
