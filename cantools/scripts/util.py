@@ -1,4 +1,9 @@
+import os
 from datetime import datetime
+
+#
+# reporting
+#
 
 def log(msg, level=0, important=False):
     if important:
@@ -13,6 +18,10 @@ def error(msg, *lines):
     import sys
     sys.exit()
 
+#
+# io
+#
+
 def read(fname="_tmp", lines=False):
     f = open(fname, "r")
     if lines:
@@ -26,3 +35,19 @@ def write(text, fname="_tmp"):
     f = open(fname, "w")
     f.write(text)
     f.close()
+
+#
+# system
+#
+
+def cp(content, fname): # more write than copy, buuuut...
+    log("writing %s"%(fname,), 2)
+    write(content, fname)
+
+def sym(src, dest):
+    log("symlinking %s to %s"%(src, dest), 2)
+    os.symlink(src, dest)
+
+def mkdir(pname):
+    log("new directory: %s"%(pname,), 2)
+    os.mkdir(pname)
