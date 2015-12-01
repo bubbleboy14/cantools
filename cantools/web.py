@@ -1,7 +1,3 @@
-"""
-version 0.3
-"""
-
 import sys, json
 
 DEBUG = True

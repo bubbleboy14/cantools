@@ -68,7 +68,7 @@ handlers:
   <head>
     <title>%s</title>
     <link rel="stylesheet" href="ct.css">
-    <script src="CT/ct.js"></script>
+    <script src="/js/CT/ct.js"></script>
   </head>
   <body>
   </body>
