@@ -1,10 +1,6 @@
 import subprocess, os
-from config import PARSE_ERROR_SEGMENT_LENGTH, DYNAMIC_DIR, BUILD_DIRS, JSPATH, JSFLAG, JSOFFSET, JSENDOFFSET, NOSCRIPT
+from config import config
 from util import log, error, read, write
-try:
-    from slimit import minify
-except ImportError:
-    error("missing dependency! type: 'sudo easy_install slimit'")
 
 def nextQuote(text, lastIndex=0):
     z = i = text.find('"', lastIndex)
@@ -19,7 +15,7 @@ def encodestrings(text):
         if end == -1:
             error("parse",
                 "unclosed quote: character %s"%(start-1,),
-                "this quote: %s"%(text[start:start+PARSE_ERROR_SEGMENT_LENGTH],),
+                "this quote: %s"%(text[start:start+config.parse_error_segment_length],),
                 text)
         word = ''.join(["\\%s"%(oct(ord(ch))[1:],) for ch in list(text[start:end])])
         if "\\134" not in word: # don't re-escape!
@@ -28,20 +24,20 @@ def encodestrings(text):
     return text
 
 def processhtml(html):
-    html = html.replace("{", "&#123").replace("}", "&#125").replace("</body>", "%s</body>"%(NOSCRIPT,))
-    firststart = start = end = html.find(JSFLAG)
+    html = html.replace("{", "&#123").replace("}", "&#125").replace("</body>", "%s</body>"%(config.noscript,))
+    firststart = start = end = html.find(config.js.flag)
     js = []
     while start != -1:
-        start += JSOFFSET
+        start += config.js.offset
         end = html.find('"', start)
         if end == -1:
             error("no closing quote in this file: %s"%(html,))
-        js.append(html[start:end])
-        start = html.find(JSFLAG, end)
+        js.append(html[start:end].strip("/"))
+        start = html.find(config.js.flag, end)
     log("js: %s"%(js,), 1)
     if start == end:
         return html, ""
-    return html[:firststart] + "{jsspot}" + html[end+JSENDOFFSET:], js
+    return html[:firststart] + "{jsspot}" + html[end+config.js.endoffset:], js
 
 def compress(html):
     log("compressing html", 1)
@@ -63,7 +59,7 @@ def tryinit(iline, inits, prefixes):
 def require(line, jspaths, block, inits):
     rline = line[12:-3]
     rsplit = rline.split(".")
-    jspath = "%s/%s.js"%(JSPATH, "/".join(rsplit))
+    jspath = os.path.join(config.js.path, *rsplit) + ".js"
     if jspath not in jspaths:
         prefixes = []
         fullp = "window"
@@ -80,7 +76,7 @@ def require(line, jspaths, block, inits):
     return block
 
 def processjs(path, jspaths, inits):
-    block = read("..%s"%(path,))
+    block = read(path)
     for line in block.split("\n"):
         if line.startswith("CT.require(") and not line.endswith(", true);"):
             block = require(line, jspaths, block, inits)
@@ -108,11 +104,11 @@ def build(nothing, dirname, fnames):
     """
     if ".svn" in dirname:
         return
-    for bd in BUILD_DIRS.values():
+    for bd in config.build.compiled_dirs.values():
         checkdir(bd)
     for fname in bfiles(dirname, fnames):
-        for mode, compdir in BUILD_DIRS.items():
-            fulldir = dirname.replace(DYNAMIC_DIR, compdir)
+        for mode, compdir in config.build.compiled_dirs.items():
+            fulldir = dirname.replace(config.build.dynamic_dir, compdir)
             frompath = os.path.join(dirname, fname)
             topath = os.path.join(fulldir, fname)
             data = read(frompath)
@@ -130,6 +126,10 @@ def build(nothing, dirname, fnames):
                     elif mode is "production":
                         log("production mode", 1)
                         txt = compress(txt)
+                        try:
+                            from slimit import minify
+                        except ImportError:
+                            error("missing dependency! type: 'sudo easy_install slimit'")
                         js = "<script>%s</script>"%(minify(jsblock.replace('"_encode": false,', '"_encode": true,'), mangle=True),)
                     else:
                         error("invalid mode: %s"%(mode,))
@@ -139,4 +139,4 @@ def build(nothing, dirname, fnames):
             write(data, topath)
 
 if __name__ == "__main__":
-    os.path.walk(DYNAMIC_DIR, build, "html")
+    os.path.walk(config.build.dynamic_dir, build, "html")

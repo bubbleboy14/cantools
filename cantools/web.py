@@ -1,26 +1,10 @@
 """
-cantools.py
-version 0.2.0
-MIT License:
-
-Copyright (c) 2011 Civil Action Network
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+version 0.3
 """
 
-import sys
-try:
-    import json
-except:
-    from django.utils import simplejson as json
+import sys, json
 
 DEBUG = True
-ENCODE = False
-MODE = "dynamic"
 envelope = {
     'plain': "Content-Type: text/plain\n\n%s",
     'html': "Content-Type: text/html\n\n<html><head></head><body>%s</body></html>" }
@@ -29,7 +13,7 @@ request_string = None
 cache_default = False
 
 # logging and encoding -- overwrite with setlog and setenc
-def log(message, type="info"):
+def log(message, type="info", shouldEmail=True):
     pass
 
 def enc(data, noenc=False, etype="response"):

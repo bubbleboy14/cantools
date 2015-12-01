@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 from dez.network.websocket import WebSocketDaemon
 from util import log
-from config import PUBSUB_PORT, PUBSUB_HIST
+from config import config
 
 class PubSub(WebSocketDaemon):
     def __init__(self, *args, **kwargs):
@@ -82,7 +82,7 @@ class PubSubChannel(object):
         }
         self._broadcast(obj)
         self.history.append(subobj)
-        self.history = self.history[:PUBSUB_HIST]
+        self.history = self.history[:config.pubsub.history]
 
     def leave(self, user):
         if user in self.users:
@@ -147,6 +147,3 @@ class PubSubUser(object):
         self.server.clients[name] = self
         self.conn.set_cb(self._read)
         self.conn.set_close_cb(self._close)
-
-if __name__ == "__main__":
-    PubSub('localhost', PUBSUB_PORT).start()

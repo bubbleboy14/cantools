@@ -29,19 +29,19 @@ Generates fresh 'static' and 'production' files (from 'development' source files
 """
 
 import subprocess, commands, os
-from config import YPATH, YSTART, YEND, CT_PY_PATH, ENC_TOGGLE, MODE_SWAP
+from config import config
 from util import log, error, read, write
 from builder import build
 
 def doyaml(mode):
     log("switching to %s mode"%(mode,))
-    lines = read(YPATH, lines=True)
-    f = open(YPATH, 'w')
+    lines = read(config.yaml.path, lines=True)
+    f = open(config.yaml.path, 'w')
     m = None
     for line in lines:
-        if line.startswith(YSTART):
-            m = line[len(YSTART):].strip()
-        elif line.startswith(YEND):
+        if line.startswith(config.yaml.start):
+            m = line[len(config.yaml.start):].strip()
+        elif line.startswith(config.yaml.end):
             m = None
         elif m == mode:
             line = line.strip("#")
@@ -52,39 +52,46 @@ def doyaml(mode):
 
 def setmode(mode):
     doyaml(mode) # support other backends beyond app engine
-    ctpy = read(CT_PY_PATH)
+    ctpy = read(config.py.path)
     isprod = mode == "production"
     # set encode
-    ctpy = ctpy.replace(ENC_TOGGLE%(str(not isprod),),
-        ENC_TOGGLE%(str(isprod),))
+    ctpy = ctpy.replace(config.py.enc%(str(not isprod),),
+        config.py.enc%(str(isprod),))
     # set mode
     for m in ["dynamic", "static", "production"]:
         if m != mode:
-            ctpy = ctpy.replace(MODE_SWAP%(m,), MODE_SWAP%(mode,))
-    write(ctpy, CT_PY_PATH)
+            ctpy = ctpy.replace(config.py.mode%(m,), config.py.mode%(mode,))
+    write(ctpy, config.py.path)
 
-if __name__ == "__main__":
+def run():
     from optparse import OptionParser
-    parser = OptionParser("python deploy.py [-d|s|p] [-u]")
+    parser = OptionParser("ctdeploy [-d|s|p] [-un] [--js_path=PATH]")
     parser.add_option("-d", "--dynamic", action="store_true", dest="dynamic",
         default=False, help="switch to dynamic (development) mode")
     parser.add_option("-s", "--static", action="store_true", dest="static",
         default=False, help="switch to static (debug) mode")
     parser.add_option("-p", "--production", action="store_true", dest="production",
         default=False, help="switch to production (garbled) mode")
-    parser.add_option("-u", "--upload", action="store_true", dest="upload",
-        default=False, help="uploads project in specified mode and then switches back to dynamic (development) mode")
+    parser.add_option("-u", "--upload", action="store_true", dest="upload", default=False,
+        help="uploads project in specified mode and then switches back to dynamic (development) mode")
     parser.add_option("-n", "--no_build", action="store_true",
         dest="no_build", default=False, help="skip compilation step")
+    parser.add_option("-j", "--js_path", dest="js_path", default=config.js.path,
+        help="set javascript path (default=%s)"%(config.js.path,))
     options, args = parser.parse_args()
 
     mode = options.dynamic and "dynamic" or options.static and "static" or options.production and "production"
     if not mode:
         error("no mode specified")
 
+    # 0) set js path
+    if options.js_path != config.js.path:
+        log("setting js path to: %s"%(options.js_path,))
+        config.js.update("path", options.js_path)
+
     # 1) build static/production files
     if not options.no_build:
-        os.path.walk("../html", build, None)
+        os.path.walk(config.build.dynamic_dir, build, None)
 
     # 2) switch to specified mode
     setmode(mode)
@@ -92,7 +99,10 @@ if __name__ == "__main__":
     # 3) if -u, upload project and switch back to -d mode
     if options.upload:
         log("uploading files")
-        subprocess.call('appcfg.py update .. --no_precompilation', shell=True)
+        subprocess.call('appcfg.py update . --no_precompilation', shell=True)
         setmode("dynamic")
 
     log("goodbye")
+
+if __name__ == "__main__":
+    run()
