@@ -48,14 +48,14 @@ handlers:
 
 ## MODE SWITCHING -- DON'T MESS WITH (unless you know what you're doing)!
 # START mode: dynamic
-- url: /javascript
-  static_dir: javascript
+- url: /js
+  static_dir: js
 - url: /.*\.(html|css)
   static_dir: html
 # END mode: dynamic
 # START mode: static
-#- url: /javascript
-#  static_dir: javascript
+#- url: /js
+#  static_dir: js
 #- url: /.*\.(html|css)
 #  static_dir: html-static
 # END mode: static
