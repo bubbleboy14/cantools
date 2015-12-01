@@ -1,3 +1,4 @@
+from util import read
 from cfg import cfg
 
 class Config(object):
@@ -23,3 +24,8 @@ class Config(object):
 		self._cfg[key] = isinstance(val, dict) and Config(val) or val
 
 config = Config(cfg)
+for key, val in [[term.strip() for term in line.split(" = ")] for line in read("ct.cfg", True)]:
+	if key == "ENCODE":
+		config.update("encode", val == "True")
+	else:
+		config.update(key.lower(), val)
