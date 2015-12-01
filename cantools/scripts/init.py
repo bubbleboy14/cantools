@@ -37,7 +37,7 @@ class Builder(object):
 		sym(os.path.join(ctroot, "css", "ct.css"), os.path.join("html", "ct.css"))
 
 def parse_and_make():
-	parser = OptionParser("ctinit [projname] [--cantools_path=PATH]")
+	parser = OptionParser("ctinit [projname] [--cantools_path=PATH] [--web_backend=BACKEND]")
 	parser.add_option("-c", "--cantools_path", dest="cantools_path", default=os.environ["HOME"],
 		help="where is cantools? (default: %s)"%(os.environ["HOME"],))
 	parser.add_option("-w", "--web_backend", dest="web_backend", default="dez",

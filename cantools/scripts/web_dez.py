@@ -1,6 +1,6 @@
 from dez.http.application import HTTPApplication
 from dez.logging import get_logger
-from scripts.util import log
+from util import log
 
 class Web(HTTPApplication):
 	def __init__(self, bind_address, port):
