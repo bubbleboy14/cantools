@@ -26,7 +26,9 @@ def read(fname="_tmp", lines=False):
     try:
         f = open(fname, "r")
     except Exception, e:
-        return lines and [] or None
+        if lines:
+            return []
+        return None
     if lines:
         text = f.readlines()
     else:

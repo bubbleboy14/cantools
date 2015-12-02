@@ -1,10 +1,11 @@
 from optparse import OptionParser
 from util import error
+from config import config
 
 def go():
 	parser = OptionParser("ctstart [--web_backend=BACKEND] [--port=PORT] [--datastore=DS_PATH]")
-	parser.add_option("-w", "--web_backend", dest="web_backend", default="dez",
-		help="web backend. options: dez, gae. (default: dez)")
+	parser.add_option("-w", "--web_backend", dest="web_backend", default=config.web_server,
+		help="web backend. options: dez, gae. (default: %s)"%(config.web_server,))
 	parser.add_option("-p", "--port", dest="port", default="8080",
 		help="select your port (default=8080)")
 	parser.add_option("-d", "--datastore", dest="datastore", default="scripts/db.datastore",
