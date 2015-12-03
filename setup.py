@@ -1,7 +1,7 @@
 from setuptools import setup
 setup(
     name='ct',
-    version='0.3',
+    version='0.3.1',
     author='Mario Balibrera',
     author_email='mario.balibrera@gmail.com',
     license='MIT License',
@@ -13,8 +13,8 @@ setup(
     ],
     zip_safe = False,
     install_requires = [
-        "rel >= 0.3.1",
-        "dez >= 0.5.4.1",
+        "rel >= 0.3.2",
+        "dez >= 0.5.5",
         "slimit"
     ],
     entry_points = '''
