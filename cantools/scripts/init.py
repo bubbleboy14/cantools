@@ -32,7 +32,8 @@ class Builder(object):
 	def generate_symlinks(self):
 		log("creating symlinks", 1)
 		ctroot = os.path.join(self.cantools_path, "cantools", "cantools")
-		sym(ctroot, "cantools")
+		if self.web_backend == "gae":
+			sym(ctroot, "cantools")
 		sym(os.path.join(ctroot, "CT"), os.path.join("js", "CT"))
 		sym(os.path.join(ctroot, "css", "ct.css"), os.path.join("html", "ct.css"))
 
