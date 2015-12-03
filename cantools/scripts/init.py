@@ -3,8 +3,10 @@ from optparse import OptionParser
 from util import log, cp, sym, mkdir
 from config import config
 
+HOME = os.environ.get("HOME", ".")
+
 class Builder(object):
-	def __init__(self, pname, cantools_path=os.environ["HOME"], web_backend="dez"):
+	def __init__(self, pname, cantools_path=HOME, web_backend="dez"):
 		log("Initializing %s Project: %s"%(web_backend, pname))
 		self.pname = pname
 		self.cantools_path = cantools_path
@@ -39,8 +41,8 @@ class Builder(object):
 
 def parse_and_make():
 	parser = OptionParser("ctinit [projname] [--cantools_path=PATH] [--web_backend=BACKEND]")
-	parser.add_option("-c", "--cantools_path", dest="cantools_path", default=os.environ["HOME"],
-		help="where is cantools? (default: %s)"%(os.environ["HOME"],))
+	parser.add_option("-c", "--cantools_path", dest="cantools_path", default=HOME,
+		help="where is cantools? (default: %s)"%(HOME,))
 	parser.add_option("-w", "--web_backend", dest="web_backend", default="dez",
 		help="web backend. options: dez, gae. (default: dez)")
 	options, args = parser.parse_args()
