@@ -1,4 +1,5 @@
 cfg = {
+	"web_server": "dez",
 	"pubsub": {
 		"port": 8888,
 		"history": 10
@@ -46,18 +47,7 @@ handlers:
 - url: /remote_api
   script: $PYTHON_LIB/google/appengine/ext/remote_api/handler.py
   login: admin""",
-  			"core": """application: %s
-version: 1
-runtime: python27
-api_version: 1
-threadsafe: false
-
-handlers:
-- url: /remote_api
-  script: $PYTHON_LIB/google/appengine/ext/remote_api/handler.py
-  login: admin
-
-## MODE SWITCHING -- DON'T MESS WITH (unless you know what you're doing)!
+  			"core": """## MODE SWITCHING -- DON'T MESS WITH (unless you know what you're doing)!
 # START mode: dynamic
 - url: /js
   static_dir: js
