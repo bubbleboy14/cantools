@@ -25,8 +25,8 @@ class Builder(object):
 
 	def make_files(self):
 		log("generating configuration", 1)
-		if  self.web_backend == "gae":
-			cp(config.init.yaml%(self.pname,), "app.yaml")
+		cp(self.web_backend == "gae" and "%s\r\n%s"%(config.init.yaml.gae,
+			config.init.yaml.core)%(self.pname,) or config.init.yaml.core, "app.yaml")
 		cp(config.init.ctcfg%(self.web_backend,), "ct.cfg")
 		log("demo index page", 1)
 		cp(config.init.html%(self.pname,), os.path.join("html", "index.html"))

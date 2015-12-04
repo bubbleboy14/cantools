@@ -35,7 +35,18 @@ cfg = {
 		</noscript>
 	""",
 	"init": {
-		"yaml": """application: %s
+		"yaml": {
+			"gae": """application: %s
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: false
+
+handlers:
+- url: /remote_api
+  script: $PYTHON_LIB/google/appengine/ext/remote_api/handler.py
+  login: admin""",
+  			"core": """application: %s
 version: 1
 runtime: python27
 api_version: 1
@@ -62,7 +73,8 @@ handlers:
 # START mode: production
 #- url: /.*\.(html|css)
 #  static_dir: html-production
-# END mode: production""",
+# END mode: production"""
+		},
 		"html": """<!doctype html>
 <html>
   <head>
