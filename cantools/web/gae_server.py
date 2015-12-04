@@ -23,17 +23,6 @@ def setenc(f):
     global enc
     enc = f
 
-# response functions
-def respond(responseFunc, failMsg="failed", failHtml=False, failNoEnc=False, noLoad=False):
-    try:
-        noLoad or cgi_load()
-        responseFunc()
-        succeed()
-    except Exception, e:
-        fail(data=failMsg, html=failHtml, err=e, noenc=failNoEnc, exit=False)
-    except SystemExit:
-        pass
-
 # memcache stuff
 def getmem(key, tojson=True):
     from google.appengine.api import memcache
@@ -53,6 +42,17 @@ def delmem(key):
 def clearmem():
     from google.appengine.api import memcache
     memcache.flush_all()
+
+# response functions
+def respond(responseFunc, failMsg="failed", failHtml=False, failNoEnc=False, noLoad=False):
+    try:
+        noLoad or cgi_load()
+        responseFunc()
+        succeed()
+    except Exception, e:
+        fail(data=failMsg, html=failHtml, err=e, noenc=failNoEnc, exit=False)
+    except SystemExit:
+        pass
 
 def trysavedresponse(key=None):
     key = key or request_string
@@ -167,39 +167,3 @@ def cgi_get(key, choices=None, required=True, default=None):
     if choices and val not in choices:
         fail('invalid value for "%s": "%s"'%(key, val))
     return val
-
-def verify_recaptcha(cchallenge, cresponse, pkey):
-    import os, urllib, urllib2
-    verification_result = urllib2.urlopen(urllib2.Request(
-        url = "http://api-verify.recaptcha.net/verify",
-        data = urllib.urlencode({
-            'privatekey': pkey,
-            'remoteip': os.environ.get('REMOTE_ADDR', os.environ.get('REMOTE_HOST')),
-            'challenge': cchallenge,
-            'response': cresponse
-            }),
-        headers = {
-            "Content-type": "application/x-www-form-urlencoded"
-            }
-        ))
-    vdata = verification_result.read().splitlines()
-    verification_result.close()
-    if vdata[0] != "true":
-        fail(vdata[1])
-
-def strip_punctuation(s):
-    return "".join([c for c in s if c.isalnum() or c.isspace()])
-
-def strip_html(s, keep_breaks=False):
-    i = s.find('<');
-    while i != -1:
-        j = s.find('>', i)
-        if keep_breaks and 'br' in s[i:j]:
-            i = s.find('<', i+1)
-        else:
-            s = s[:i] + s[j+1:]
-            i = s.find('<')
-    s = s.replace("&nbsp;", " ")
-    while "  " in s:
-        s = s.replace("  ", " ")
-    return s
