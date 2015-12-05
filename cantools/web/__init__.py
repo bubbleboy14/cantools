@@ -7,5 +7,3 @@ elif config.web_server == "dez":
 else:
 	from cantools import util
 	util.error("no web server specified")
-
-from util import *

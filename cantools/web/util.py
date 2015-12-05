@@ -1,3 +1,19 @@
+# logging and encoding -- overwrite with setlog and setenc
+def log(message, type="info", shouldEmail=True):
+    pass
+
+def enc(data, noenc=False, etype="response"):
+    return data
+
+def setlog(f):
+    global log
+    log = f
+
+def setenc(f):
+    global enc
+    enc = f
+
+# misc
 def verify_recaptcha(cchallenge, cresponse, pkey):
     import os, urllib, urllib2
     verification_result = urllib2.urlopen(urllib2.Request(

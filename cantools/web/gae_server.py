@@ -1,4 +1,5 @@
 import sys, json
+from util import *
 
 DEBUG = True
 envelope = {
@@ -7,21 +8,6 @@ envelope = {
 request = None
 request_string = None
 cache_default = False
-
-# logging and encoding -- overwrite with setlog and setenc
-def log(message, type="info", shouldEmail=True):
-    pass
-
-def enc(data, noenc=False, etype="response"):
-    return data
-
-def setlog(f):
-    global log
-    log = f
-
-def setenc(f):
-    global enc
-    enc = f
 
 # memcache stuff
 def getmem(key, tojson=True):

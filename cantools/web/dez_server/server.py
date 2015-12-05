@@ -1,6 +1,7 @@
 from dez.http.application import HTTPApplication
 from dez.logging import get_logger
-from ...scripts.util import log
+from ...scripts.util import log as syslog
+from ..util import *
 from routes import static, cb
 
 DWEB = None
