@@ -18,7 +18,7 @@ def go():
 		print cmd
 		subprocess.call(cmd, shell=True)
 	elif options.web_backend == "dez":
-		from web_dez import run_dez_webserver
+		from cantools.web import run_dez_webserver
 		run_dez_webserver(port=int(options.port))
 	else:
 		error("invalid web_backend: %s"%(options.web_backend,))
