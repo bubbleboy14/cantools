@@ -1,3 +1,4 @@
+from dez.http.server import HTTPResponse
 from dez.http.application import HTTPApplication
 from dez.logging import get_logger_getter
 from dez.memcache import get_memcache
@@ -23,14 +24,15 @@ class Web(HTTPApplication):
 
 	def register_handler(self, args, kwargs):
 		self.logger.info("register handler: %s"%(self.curpath,))
-		self.handlers[self.curpath] = lambda : do_response(*args, **kwargs)
+		self.handlers[self.curpath] = lambda : do_respond(*args, **kwargs)
 
 	def _handler(self, rule, target):
 		self.logger.info("setting handler: %s %s"%(rule, target))
 		def h(req):
+			resp = HTTPResponse(req)
 			set_read(lambda : req.body)
-			set_send(req.write)
-			set_close(req.close)
+			set_send(resp.write)
+			set_close(resp.dispatch)
 			self.curpath = rule
 			if rule not in self.handlers:
 				self.logger.info("importing module: %s"%(target,))
@@ -42,7 +44,7 @@ class Web(HTTPApplication):
 def run_dez_webserver(host="localhost", port=8080):
 	global DWEB
 	DWEB = Web(host, port)
-	setlog(DWEB.logger.info)
+	setlog(DWEB.logger.simple)
 	DWEB.start()
 
 def get_dez_webserver():
