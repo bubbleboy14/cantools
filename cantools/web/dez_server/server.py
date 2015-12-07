@@ -4,6 +4,7 @@ from dez.memcache import get_memcache
 from ...scripts.util import log as syslog
 from ..util import *
 from routes import static, cb
+sys.path.insert(0, ".") # for dynamically loading modules
 
 DWEB = None
 
@@ -27,19 +28,21 @@ class Web(HTTPApplication):
 	def _handler(self, rule, target):
 		self.logger.info("setting handler: %s %s"%(rule, target))
 		def h(req):
-			self.logger.info("invoking handler: %s %s"%(rule, req.url))
 			set_read(lambda : req.body)
 			set_send(req.write)
 			set_close(req.close)
 			self.curpath = rule
 			if rule not in self.handlers:
+				self.logger.info("importing module: %s"%(target,))
 				__import__(target)
+			self.logger.info("invoking handler: %s"%(rule,))
 			self.handlers[rule]()
 		return h
 
 def run_dez_webserver(host="localhost", port=8080):
 	global DWEB
 	DWEB = Web(host, port)
+	setlog(DWEB.logger.info)
 	DWEB.start()
 
 def get_dez_webserver():
