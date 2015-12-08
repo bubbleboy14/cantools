@@ -1,9 +1,6 @@
 import sys, json
 
 DEBUG = True
-envelope = {
-    'plain': "Content-Type: text/plain\n\n%s",
-    'html': "Content-Type: text/html\n\n<html><head></head><body>%s</body></html>" }
 request = None
 request_string = None
 cache_default = False
@@ -82,6 +79,13 @@ def set_close(f):
     global _close
     _close = f
 
+def _header(hkey, hval):
+    _send("%s: %s"%(hkey, hval))
+
+def set_header(f):
+    global _header
+    _header = f
+
 def _write(data, exit=True, savename=None):
     if savename:
         setmem(savename, data, False)
@@ -110,20 +114,27 @@ def redirect(addr, msg="", noscript=False, exit=True):
     a += "document.location = '%s';</script>"%(addr,)
     if noscript:
         a += '<noscript>This site requires Javascript to function properly. To enable Javascript in your browser, please follow <a href="http://www.google.com/support/bin/answer.py?answer=23852">these instructions</a>. Thank you, and have a nice day.</noscript>'
-    _write(envelope['html']%(a,), exit)
+    _header("Content-Type", "text/html")
+    _write(_env(True)%(a,), exit)
 
 def setcachedefault(shouldCache=True):
     global cache_default
     cache_default = shouldCache
 
+def _env(html):
+    return "%s"
+
+def set_env(f):
+    global _env
+    _env = f
+
 def succeed(data="", html=False, noenc=False, savename=None, cache=False):
     if cache or cache_default:
         savename = request_string
-    s = html and envelope['html'] or envelope['plain']
-    _write(s%(enc("1"+json.dumps(data), noenc),), savename=savename)
+    _header("Content-Type", "text/%s"%(html and "html" or "plain"))
+    _write(_env(html)%(enc("1"+json.dumps(data), noenc),), savename=savename)
 
 def fail(data="failed", html=False, err=None, noenc=False, exit=True):
-    s = html and envelope['html'] or envelope['plain']
     if err:
         # log it
         import traceback
@@ -132,39 +143,44 @@ def fail(data="failed", html=False, err=None, noenc=False, exit=True):
         if DEBUG:
             # write it
             data = logdata
-    _write(s%(enc("0"+data, noenc),), exit)
+    _header("Content-Type", "text/%s"%(html and "html" or "plain"))
+    _write(_env(html)%(enc("0"+data, noenc),), exit)
+
+def _headers(headers):
+    for k, v in headers.items():
+        _header(k, v)
+    if config.web_server == "gae":
+        _send("")
 
 def send_pdf(data, title=None):
     if title:
-        _send('Content-Type: application/pdf; name="%s.pdf"'%(title,))
-        _send('Content-Disposition: attachment; filename="%s.pdf"'%(title,))
+        _headers({
+            "Content-Type": 'application/pdf; name="%s.pdf"'%(title,),
+            "Content-Disposition": 'attachment; filename="%s.pdf"'%(title,)
+        })
     else:
-        _send("Content-Type: application/pdf")
-    _send("")
+        _headers({"Content-Type": "application/pdf"})
     _send(data)
-    sys.exit()
+    _close()
 
 def send_image(data):
-    _send("Content-Type: image/png")
-    _send("")
+    _headers({"Content-Type": "image/png"})
     _send(data)
-    sys.exit()
+    _close()
 
 FILETYPES = {"pdf": "application/pdf", "img": "image/png"}
 
 def send_file(data, file_type):
-    _send("Content-Type: " + FILETYPES[file_type])
-    _send("")
+    _headers({"Content-Type": FILETYPES[file_type]})
     _send(data)
-    sys.exit()
+    _close()
 
 def send_text(data, dtype="html", fname=None, exit=True):
-    msg = ["Content-Type: text/%s"%(dtype,)]
+    headers = { "Content-Type": "text/%s"%(dtype,) }
     if fname:
-        msg.append('Content-Disposition: attachment; filename="%s.%s"'%(fname, dtype))
-    msg.append("")
-    msg.append(data)
-    _write('\n'.join(msg), exit)
+        headers['Content-Disposition'] = 'attachment; filename="%s.%s"'%(fname, dtype)
+    _headers(headers)
+    _write(data, exit)
 
 def send_xml(data):
     send_text(data, "xml")

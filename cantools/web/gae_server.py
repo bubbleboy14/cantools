@@ -1,6 +1,11 @@
 from util import *
+envelope = {
+    'plain': "\n\n%s",
+    'html': "\n\n<html><head></head><body>%s</body></html>"
+}
 
 respond = do_respond
+set_env(lambda html : envelope[html and 'html' or 'plain'])
 
 # memcache stuff
 def getmem(key, tojson=True):
