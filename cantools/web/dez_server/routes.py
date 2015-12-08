@@ -9,7 +9,7 @@ for line in read("app.yaml", True):
 		url = line[7:].strip()
 	elif url:
 		if line.startswith("  static_dir: "):
-			if not url.endswith("/"):
+			if not url.endswith("/") and "*" not in url:
 				url += "/"
 			static[url] = line[14:].strip()
 			url = None
