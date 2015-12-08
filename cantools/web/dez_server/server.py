@@ -29,8 +29,9 @@ class Web(HTTPApplication):
 	def _handler(self, rule, target):
 		self.logger.info("setting handler: %s %s"%(rule, target))
 		def h(req):
-			resp = HTTPResponse(req)
+			resp = HTTPResponse(req, False)
 			set_read(lambda : req.body)
+			set_header(resp.__setitem__)
 			set_send(resp.write)
 			set_close(resp.dispatch)
 			self.curpath = rule
