@@ -1,3 +1,4 @@
+from rel import abort_branch
 from dez.http.server import HTTPResponse
 from dez.http.application import HTTPApplication
 from dez.logging import get_logger_getter
@@ -29,11 +30,11 @@ class Web(HTTPApplication):
 	def _handler(self, rule, target):
 		self.logger.info("setting handler: %s %s"%(rule, target))
 		def h(req):
-			resp = HTTPResponse(req, False)
+			resp = HTTPResponse(req)
 			set_read(lambda : req.body)
 			set_header(resp.__setitem__)
 			set_send(resp.write)
-			set_close(resp.dispatch)
+			set_close(lambda : resp.dispatch(abort_branch))
 			self.curpath = rule
 			if rule not in self.handlers:
 				self.logger.info("importing module: %s"%(target,))

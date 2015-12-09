@@ -1,4 +1,5 @@
 import sys, json
+from ..scripts.config import config
 
 DEBUG = True
 request = None
@@ -51,7 +52,7 @@ def cgi_load(force=False):
         request = cgi.FieldStorage()
         setattr(request, "get", lambda x, y: request.getvalue(x, y))
     if not request:
-        if force:
+        if force or config.web_server == "dez":
             request = {}
         else:
             fail('no request data!')

@@ -1,4 +1,4 @@
-from ..scripts.config import config
+from util import config
 
 if config.web_server == "gae":
 	from gae_server import *
