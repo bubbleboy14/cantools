@@ -2,7 +2,7 @@ CT.data = {
 	map: {},
 
 	// logging
-	"_verbose": true,
+	"_verbose": false,
 	"setLogVerbosity": function(bool) {
 		CT.data._verbose = bool;
 	},
