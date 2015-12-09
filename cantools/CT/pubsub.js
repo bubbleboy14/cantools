@@ -70,10 +70,8 @@ CT.pubsub = {
 					b64str = btoa(dstring);
 				CT.pubsub._.ws.send(b64str);
 				CT.pubsub._.log("WRITE", dstring, b64str);
-			} else {
+			} else
 				CT.pubsub._.queue.push(data);
-				CT.pubsub._.log("QUEUE", JSON.stringify(CT.pubsub._.queue));
-			}
 		},
 		"try_reconnect": function() {
 			var r_int = CT.pubsub._.reconnect_interval;
