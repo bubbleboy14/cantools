@@ -123,6 +123,12 @@ var CT = {
 			if (!curmod)
 				eval(CT.net.get(CT.net.fullPath(modname.replace(/\./g, "/") + ".js")));
 		}
+	},
+	"log": function(msg, level) {
+		var s = Date() + " ::";
+		if (level) for (var i = 0; i < level; i++)
+			s += "  ";
+		console.log(s, msg);
 	}
 };
 
