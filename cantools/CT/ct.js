@@ -4,6 +4,10 @@ var CT = {
 		"scriptImportCb": {},
 		"onImport": function(fullpath) {
 			CT._.scriptImportCb[fullpath].forEach(function(cb) { cb(); });
+		},
+		"onload": [],
+		"triggerOnload": function() {
+			CT._.onload.forEach(function(cb) { cb(); });
 		}
 	},
 	"style": {
@@ -123,6 +127,11 @@ var CT = {
 			if (!curmod)
 				eval(CT.net.get(CT.net.fullPath(modname.replace(/\./g, "/") + ".js")));
 		}
+	},
+	"onload": function(cb) {
+		if (!CT._.onload.length)
+			window.onload = CT._.triggerOnload;
+		CT._.onload.push(cb);
 	},
 	"log": function(msg, level) {
 		var s = Date() + " ::";
