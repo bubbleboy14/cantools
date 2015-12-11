@@ -6,6 +6,35 @@ request = None
 request_string = None
 cache_default = False
 
+# memcache stuff -- overwrite with setters
+def getmem(key, tojson=True):
+    log("memcache getting: %s"%(key,))
+
+def setmem(key, val, fromjson=True):
+    log("memcache setting: %s -> %s"%(key, val))
+
+def delmem(key):
+    log("memcache deleting: %s"%(key,))
+
+def clearmem():
+    log("memcache clearing")
+
+def set_getmem(f):
+    global getmem
+    getmem = f
+
+def set_setmem(f):
+    global setmem
+    setmem = f
+
+def set_delmem(f):
+    global delmem
+    delmem = f
+
+def set_clearmem(f):
+    global clearmem
+    clearmem = f
+
 # logging and encoding -- overwrite with setlog and setenc
 def log(*args, **kwargs):
     print args, kwargs
@@ -90,7 +119,7 @@ def set_header(f):
 def _write(data, exit=True, savename=None):
     if savename:
         setmem(savename, data, False)
-    _send(data.encode('utf-8').strip())
+    _send(data.encode('utf-8'))
     exit and _close()
 
 def trysavedresponse(key=None):

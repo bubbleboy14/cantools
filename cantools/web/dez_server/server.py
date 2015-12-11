@@ -56,17 +56,22 @@ def respond(*args, **kwargs):
 	DWEB.register_handler(args, kwargs)
 
 # memcache stuff
-def getmem(key, tojson=True):
+def _getmem(key, tojson=True):
 	return DWEB.memcache.get(key, tojson)
 
-def setmem(key, val, fromjson=True):
+def _setmem(key, val, fromjson=True):
 	DWEB.memcache.set(key, val, tojson)
 
-def delmem(key):
+def _delmem(key):
 	DWEB.memcache.rm(key)
 
-def clearmem():
+def _clearmem():
 	DWEB.memcache.clear()
+
+set_getmem(_getmem)
+set_setmem(_setmem)
+set_delmem(_delmem)
+set_clearmem(_clearmem)
 
 if __name__ == "__main__":
 	run_dez_webserver()
