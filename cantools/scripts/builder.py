@@ -127,7 +127,7 @@ def build(nothing, dirname, fnames):
                         log("production mode", 1)
                         txt = compress(txt)
                         from slimit import minify
-                        js = "<script>%s</script>"%(minify(jsblock.replace('"_encode": false,', '"_encode": true,'), mangle=True),)
+                        js = "<script>%s</script>"%(minify(jsblock.replace('"_encode": false,', '"_encode": true,').replace("CT.log._silent = false;", "CT.log._silent = true;"), mangle=True),)
                     else:
                         error("invalid mode: %s"%(mode,))
                     data = txt.format(jsspot=js)
