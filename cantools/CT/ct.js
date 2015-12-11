@@ -77,7 +77,7 @@ var CT = {
 		                    else CT.net._fallback_error(errMsg+": "+data.slice(1));
 		                }
 		                else if (cb != null)
-		                    cb(eval("("+data.slice(1)+")"), cbarg);
+		                    cb(eval("("+data.trim().slice(1)+")"), cbarg);
 		            }
 		            else if (!CT.net._encode)
 		                CT.net._fallback_error("request to "+path+" failed!");
