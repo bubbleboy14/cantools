@@ -1,4 +1,5 @@
 from rel import abort_branch
+from dez.http import fetch
 from dez.http.server import HTTPResponse
 from dez.http.application import HTTPApplication
 from dez.logging import get_logger_getter
