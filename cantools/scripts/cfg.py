@@ -1,4 +1,5 @@
 cfg = {
+	"web_server": "dez",
 	"pubsub": {
 		"port": 8888,
 		"history": 10
@@ -35,7 +36,8 @@ cfg = {
 		</noscript>
 	""",
 	"init": {
-		"yaml": """application: %s
+		"yaml": {
+			"gae": """application: %s
 version: 1
 runtime: python27
 api_version: 1
@@ -44,9 +46,8 @@ threadsafe: false
 handlers:
 - url: /remote_api
   script: $PYTHON_LIB/google/appengine/ext/remote_api/handler.py
-  login: admin
-
-## MODE SWITCHING -- DON'T MESS WITH (unless you know what you're doing)!
+  login: admin""",
+  			"core": """## MODE SWITCHING -- DON'T MESS WITH (unless you know what you're doing)!
 # START mode: dynamic
 - url: /js
   static_dir: js
@@ -62,7 +63,8 @@ handlers:
 # START mode: production
 #- url: /.*\.(html|css)
 #  static_dir: html-production
-# END mode: production""",
+# END mode: production"""
+		},
 		"html": """<!doctype html>
 <html>
   <head>

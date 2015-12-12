@@ -6,17 +6,17 @@ CT.pubsub = {
 		"initialized": false,
 		"reconnect": true,
 		"reconnect_interval": 250,
-		"log": CT.data.getLogger("CT.pubsub"),
+		"log": CT.log.getLogger("CT.pubsub"),
 		"queue": [],
 		"channels": {},
 		"cb": {
-			"message": CT.data.getLogger("CT.pubsub|message"), // override w/ set_cb()
-			"subscribe": CT.data.getLogger("CT.pubsub|subscribe"), // override w/ set_cb()
-			"join": CT.data.getLogger("CT.pubsub|join"), // override w/ set_cb()
-			"leave": CT.data.getLogger("CT.pubsub|leave"), // override w/ set_cb()
-			"open": CT.data.getLogger("CT.pubsub|open"), // override w/ set_cb()
-			"close": CT.data.getLogger("CT.pubsub|close"), // override w/ set_cb()
-			"error": CT.data.getLogger("CT.pubsub|error"), // override w/ set_cb()
+			"message": CT.log.getLogger("CT.pubsub|message"), // override w/ set_cb()
+			"subscribe": CT.log.getLogger("CT.pubsub|subscribe"), // override w/ set_cb()
+			"join": CT.log.getLogger("CT.pubsub|join"), // override w/ set_cb()
+			"leave": CT.log.getLogger("CT.pubsub|leave"), // override w/ set_cb()
+			"open": CT.log.getLogger("CT.pubsub|open"), // override w/ set_cb()
+			"close": CT.log.getLogger("CT.pubsub|close"), // override w/ set_cb()
+			"error": CT.log.getLogger("CT.pubsub|error"), // override w/ set_cb()
 		},
 		"process": {
 			"channel": function(data) {

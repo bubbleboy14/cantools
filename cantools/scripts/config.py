@@ -27,5 +27,7 @@ config = Config(cfg)
 for key, val in [[term.strip() for term in line.split(" = ")] for line in read("ct.cfg", True)]:
 	if key == "ENCODE":
 		config.update("encode", val == "True")
+	elif key == "JS_PATH":
+		config.js.update("path", val)
 	else:
 		config.update(key.lower(), val)
