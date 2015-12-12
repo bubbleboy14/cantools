@@ -1,5 +1,6 @@
+import requests
 from rel import abort_branch
-from dez.http import fetch
+from dez.http import fetch as dfetch
 from dez.http.server import HTTPResponse
 from dez.http.application import HTTPApplication
 from dez.logging import get_logger_getter
@@ -55,6 +56,10 @@ def get_dez_webserver():
 
 def respond(*args, **kwargs):
 	DWEB.register_handler(args, kwargs)
+
+def fetch(host, path="/", port=80, cb=None, timeout=1, json=False, async=False):
+	return async and dfetch(host, port, cb, timeout,
+		json) or requests.get("http://%s:%s%s"%(host, port, path)).content
 
 # memcache stuff
 def _getmem(key, tojson=True):
