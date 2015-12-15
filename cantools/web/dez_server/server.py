@@ -62,22 +62,22 @@ def fetch(host, path="/", port=80, cb=None, timeout=1, json=False, async=False):
 		json) or requests.get("http://%s:%s%s"%(host, port, path)).content
 
 # memcache stuff
-def _getmem(key, tojson=True):
+def getmem(key, tojson=True):
 	return DWEB.memcache.get(key, tojson)
 
-def _setmem(key, val, fromjson=True):
+def setmem(key, val, fromjson=True):
 	DWEB.memcache.set(key, val, tojson)
 
-def _delmem(key):
+def delmem(key):
 	DWEB.memcache.rm(key)
 
-def _clearmem():
+def clearmem():
 	DWEB.memcache.clear()
 
-set_getmem(_getmem)
-set_setmem(_setmem)
-set_delmem(_delmem)
-set_clearmem(_clearmem)
+set_getmem(getmem)
+set_setmem(setmem)
+set_delmem(delmem)
+set_clearmem(clearmem)
 
 if __name__ == "__main__":
 	run_dez_webserver()
