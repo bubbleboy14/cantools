@@ -24,10 +24,8 @@ CT.dom = {
 	    for (var attr in attrs) {
 	        if (attrs[attr] == null)
 	            continue;
-	        if (attr == "onclick")
-	            d.onclick = attrs[attr];
-	        else if (attr == "value")
-	            d.value = attrs[attr];
+	        if (["onclick", "value", "onplay"].indexOf(attr) != -1)
+	            d[attr] = attrs[attr];
 	        else
 	            d.setAttribute(attr, attrs[attr]);
 	    }
@@ -102,11 +100,13 @@ CT.dom = {
 	        wrapper.appendChild(nodes[i]);
 	    return wrapper;
 	},
-	"audio": function(src, autoplay, className, id, attrs) {
+	"audio": function(src, autoplay, onplay, className, id, attrs) {
 		attrs = attrs || {};
 		attrs.src = src;
 		if (autoplay)
 			attrs.autoplay = "true";
+		if (onplay)
+			attrs.onplay = onplay;
 		return CT.dom.node("", "audio", className, id, attrs);
 	},
 
