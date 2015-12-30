@@ -1,18 +1,32 @@
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
 from properties import *
 from query import *
 
-class CTMeta(type):
+class CTMeta(DeclarativeMeta):
     def __new__(cls, name, bases, attrs):
-        attrs["__tablename__"] = name.lower() + "s"
-        return type(name, bases, attrs)
-
-    def query(cls, *args, **kwargs):
-        return Query(cls, *args, **kwargs)
+        lname = name.lower()
+        attrs["__tablename__"] = lname
+        if lname != "modelbase":
+            attrs["__mapper_args__"] = {
+                "polymorphic_identity": lname
+            }
+            attrs["key"] = sqlalchemy.Column(sqlString,
+                sqlForeignKey("%s.key"%(bases[0].__name__.lower(),)),
+                primary_key=True)
+#        print
+#        print cls, name, bases, attrs
+#        print
+        return super(CTMeta, cls).__new__(cls, name, bases, attrs)
 
 class ModelBase(declarative_base()):
-    __metaclass__ = CTMeta
     key = String(primary_key=True)
+    polytype = String()
+    __metaclass__ = CTMeta
+    __mapper_args__ = {
+        "polymorphic_on": polytype,
+        "polymorphic_identity": "modelbase",
+        "with_polymorphic": "*"
+    }
 
     def __eq__(self, other):
         return self.key == (other and hasattr(other, "key") and other.key)
@@ -34,3 +48,5 @@ class ModelBase(declarative_base()):
 
     def id(self):
         return self.key
+
+ModelBase.query = lambda *args, **kwargs : Query(*args, **kwargs)
