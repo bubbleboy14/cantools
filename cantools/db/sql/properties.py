@@ -7,7 +7,6 @@ def _col(colClass, *args, **kwargs):
 	for p in _cparams:
 		if p in kwargs:
 			cargs[p] = kwargs.pop(p)
-#	print args, kwargs, cargs
 	if kwargs.pop("repeated", None):
 		return sqlalchemy.Column(ArrayType(**kwargs), *args, **cargs)
 	typeInstance = colClass(**kwargs)

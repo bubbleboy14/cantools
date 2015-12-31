@@ -16,8 +16,7 @@ class Query(object):
 		self.first = self.query.first
 		self.order = self.query.order_by
 		self.filter = self.query.filter
-		self.filter(*args)
-		# kwargs?
+		self.filter(*args) # kwargs?
 
 	def fetch(self, limit, offset=0):
 		self.query.limit(limit)

@@ -4,6 +4,9 @@ from properties import *
 from query import *
 
 class CTMeta(DeclarativeMeta):
+    def query(cls, *args, **kwargs):
+        return Query(cls, *args, **kwargs)
+
     def __new__(cls, name, bases, attrs):
         lname = name.lower()
         attrs["__tablename__"] = lname
@@ -12,9 +15,6 @@ class CTMeta(DeclarativeMeta):
                 "polymorphic_identity": lname
             }
             attrs["key"] = ForeignKey(bases[0], primary_key=True)
-#        print
-#        print cls, name, bases, attrs
-#        print
         return super(CTMeta, cls).__new__(cls, name, bases, attrs)
 
 class ModelBase(declarative_base()):
@@ -51,5 +51,3 @@ class ModelBase(declarative_base()):
 
     def id(self):
         return self.key
-
-ModelBase.query = lambda *args, **kwargs : Query(*args, **kwargs)
