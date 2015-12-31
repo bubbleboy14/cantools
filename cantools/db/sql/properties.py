@@ -1,4 +1,4 @@
-import sqlalchemy
+import json, sqlalchemy
 
 _cparams = ["primary_key", "default"]
 
@@ -8,6 +8,8 @@ def _col(colClass, *args, **kwargs):
 		if p in kwargs:
 			cargs[p] = kwargs.pop(p)
 #	print args, kwargs, cargs
+	if kwargs.pop("repeated", None):
+		return sqlalchemy.Column(ArrayType(**kwargs), *args, **cargs)
 	return sqlalchemy.Column(colClass(**kwargs), *args, **cargs)
 
 def sqlColumn(colClass):
@@ -29,3 +31,15 @@ class DateTimeColumn(sqlalchemy.DateTime):
 		sqlalchemy.DateTime.__init__(self, *args, **kwargs)
 
 DateTime = sqlColumn(DateTimeColumn)
+
+class ArrayType(sqlalchemy.TypeDecorator):
+	impl = sqlString
+
+	def process_bind_param(self, value, dialect):
+		return json.dumps(value)
+
+	def process_result_value(self, value, dialect):
+		return json.loads(value)
+
+	def copy(self):
+		return ArrayType(self.impl.length)
