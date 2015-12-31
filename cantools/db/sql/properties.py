@@ -1,24 +1,26 @@
 import sqlalchemy
 
+_cparams = ["primary_key", "default"]
+
 def _col(colClass, *args, **kwargs):
 	cargs = {}
-	if "primary_key" in kwargs:
-		cargs["primary_key"] = kwargs.pop("primary_key")
+	for p in _cparams:
+		if p in kwargs:
+			cargs[p] = kwargs.pop(p)
 #	print args, kwargs, cargs
 	return sqlalchemy.Column(colClass(**kwargs), *args, **cargs)
 
 def sqlColumn(colClass):
-	class WrappedProperty(colClass):
-		def __init__(self, *args, **kwargs):
-			if "default" in kwargs:
-				kwargs.pop("default") # actually, set value to kwargs.pop("default")
-			colClass.__init__(self, *args, **kwargs)
-	return lambda *args, **kwargs : _col(WrappedProperty, *args, **kwargs)
+	return lambda *args, **kwargs : _col(colClass, *args, **kwargs)
 
-for prop in ["Integer", "Float", "Boolean", "String", "Text", "Binary", "Date", "Time", "ForeignKey"]:
+for prop in ["Integer", "Float", "Boolean", "String", "Text", "Binary", "Date", "Time"]:
 	sqlprop = getattr(sqlalchemy, prop)
 	globals()["sql%s"%(prop,)] = sqlprop
 	globals()[prop] = sqlColumn(sqlprop)
+
+def ForeignKey(targetClass, **kwargs):
+	return sqlalchemy.Column(sqlInteger,
+		sqlalchemy.ForeignKey("%s.key"%(targetClass.__tablename__,)), **kwargs)
 
 class DateTimeColumn(sqlalchemy.DateTime):
 	def __init__(self, *args, **kwargs): # do something with auto_now, auto_now_add

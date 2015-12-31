@@ -10,16 +10,14 @@ class CTMeta(DeclarativeMeta):
             attrs["__mapper_args__"] = {
                 "polymorphic_identity": lname
             }
-            attrs["key"] = sqlalchemy.Column(sqlString,
-                sqlForeignKey("%s.key"%(bases[0].__name__.lower(),)),
-                primary_key=True)
+            attrs["key"] = ForeignKey(bases[0], primary_key=True)
 #        print
 #        print cls, name, bases, attrs
 #        print
         return super(CTMeta, cls).__new__(cls, name, bases, attrs)
 
 class ModelBase(declarative_base()):
-    key = String(primary_key=True)
+    key = Integer(primary_key=True)
     polytype = String()
     __metaclass__ = CTMeta
     __mapper_args__ = {
