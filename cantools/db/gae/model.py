@@ -26,3 +26,14 @@ class ModelBase(db.Model):
 
     def id(self):
         return self.key.urlsafe()
+
+def getall(entity=None, query=None, keys_only=False):
+    cursor = None
+    ents = []
+    while True:
+        q = query or entity.query()
+        batch, cursor, more = q.fetch_page(1000, start_cursor=cursor, keys_only=keys_only)
+        ents += batch
+        if len(batch) < 1000:
+            break
+    return ents
