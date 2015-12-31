@@ -1,6 +1,8 @@
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-session = sessionmaker()()
+engine = create_engine('sqlite:///:memory:', echo=True)
+session = sessionmaker(bind=engine)()
 
 put_multi = session.add_all
 def delete_multi(instances):

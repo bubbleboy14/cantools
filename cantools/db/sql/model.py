@@ -5,6 +5,7 @@ from query import *
 
 class CTMeta(DeclarativeMeta):
     def query(cls, *args, **kwargs):
+        cls.metadata.create_all(engine) # ensure tables exist
         return Query(cls, *args, **kwargs)
 
     def __new__(cls, name, bases, attrs):
