@@ -10,7 +10,12 @@ def _col(colClass, *args, **kwargs):
 #	print args, kwargs, cargs
 	if kwargs.pop("repeated", None):
 		return sqlalchemy.Column(ArrayType(**kwargs), *args, **cargs)
-	return sqlalchemy.Column(colClass(**kwargs), *args, **cargs)
+	typeInstance = colClass(**kwargs)
+	col = sqlalchemy.Column(typeInstance, *args, **cargs)
+	if colClass is DateTimeAutoStamper:
+		col.is_dt_autostamper = True
+		col.should_stamp = typeInstance.should_stamp
+	return col
 
 def sqlColumn(colClass):
 	return lambda *args, **kwargs : _col(colClass, *args, **kwargs)
@@ -24,13 +29,16 @@ def ForeignKey(targetClass, **kwargs):
 	return sqlalchemy.Column(sqlInteger,
 		sqlalchemy.ForeignKey("%s.key"%(targetClass.__tablename__,)), **kwargs)
 
-class DateTimeColumn(sqlalchemy.DateTime):
-	def __init__(self, *args, **kwargs): # do something with auto_now, auto_now_add
-		self.auto_add = "auto_add" in kwargs and kwargs.pop("auto_add") or False
-		self.auto_now_add = "auto_now_add" in kwargs and kwargs.pop("auto_now_add") or False
+class DateTimeAutoStamper(sqlalchemy.DateTime):
+	def __init__(self, *args, **kwargs):
+		self.auto_now = kwargs.pop("auto_now", False)
+		self.auto_now_add = kwargs.pop("auto_now_add", False)
 		sqlalchemy.DateTime.__init__(self, *args, **kwargs)
 
-DateTime = sqlColumn(DateTimeColumn)
+	def should_stamp(self, is_new):
+		return self.auto_now or is_new and self.auto_now_add
+
+DateTime = sqlColumn(DateTimeAutoStamper)
 
 class ArrayType(sqlalchemy.TypeDecorator):
 	impl = sqlString

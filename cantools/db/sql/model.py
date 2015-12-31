@@ -1,3 +1,4 @@
+from datetime import datetime
 from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
 from properties import *
 from query import *
@@ -33,6 +34,10 @@ class ModelBase(declarative_base()):
         return not self.__eq__(other)
 
     def put(self):
+        for key, val in self.__class__.__dict__.items():
+            # is "not self.key" how we check whether table is saved?
+            if getattr(val, "is_dt_autostamper", False) and val.should_stamp(not self.key):
+                setattr(self, key, datetime.now())
         session.add(self)
 
     def rm(self):
