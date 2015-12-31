@@ -9,21 +9,33 @@ def delete_multi(instances):
 	for instance in instances:
 		instance.rm()
 
+_passthru = ["count", "get", "all", "first"]
+_qmod = ["filter", "limit", "offset"]
+
 class Query(object):
 	def __init__(self, mod, *args, **kwargs):
 		self.query = session.query(mod)
-		self.count = self.query.count
-		self.get = self.query.get
-		self.all = self.query.all
-		self.first = self.query.first
-		self.order = self.query.order_by
-		self.filter = self.query.filter
-		self.filter(*args) # kwargs?
+		for fname in _passthru:
+			setattr(self, fname, self._qplam(fname))
+		for fname in _qmod:
+			setattr(self, fname, self._qmlam(fname))
+		setattr(self, "order", self._qmlam("order_by"))
+		self.filter(*args, **kwargs)
+
+	def _qplam(self, fname):
+		return lambda *a, **k : getattr(self.query, fname)(*a, **k)
+
+	def _qmlam(self, fname):
+		return lambda *a, **k : self._qmod(fname, *a, **k)
+
+	def _qmod(self, modname, *args, **kwargs):
+		self.query = getattr(self.query, modname)(*args, **kwargs)
+		return self
 
 	def fetch(self, limit, offset=0, keys_only=False):
-		self.query.limit(limit)
+		self.limit(limit)
 		if offset:
-			self.query.offset(offset)
+			self.offset(offset)
 		res = self.all()
 		if keys_only: # best way?
 			return [r.key for r in res]
