@@ -45,10 +45,15 @@ class ModelBase(declarative_base()):
         session.delete(self)
 
     def collection(self, entity_model, property_name, fetch=True, keys_only=False, data=False):
-        pass
+        q = entity_model.query(getattr(entity_model, property_name) == self.key)
+        if not fetch:
+            return q
+        if not data:
+            return q.fetch(1000, keys_only=keys_only)
+        return [d.data() for d in q.fetch(1000)]
 
     def modeltype(self):
-        return self.__class__.__name__.lower()
+        return self.__tablename__
 
     def id(self):
         return self.key

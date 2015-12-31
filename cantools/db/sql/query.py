@@ -20,8 +20,11 @@ class Query(object):
 		self.filter = self.query.filter
 		self.filter(*args) # kwargs?
 
-	def fetch(self, limit, offset=0):
+	def fetch(self, limit, offset=0, keys_only=False):
 		self.query.limit(limit)
 		if offset:
 			self.query.offset(offset)
-		return self.all()
+		res = self.all()
+		if keys_only: # best way?
+			return [r.key for r in res]
+		return res
