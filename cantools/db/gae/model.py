@@ -37,3 +37,6 @@ def getall(entity=None, query=None, keys_only=False):
         if len(batch) < 1000:
             break
     return ents
+
+def get(key):
+    return nbd.Key(urlsafe=key).get()

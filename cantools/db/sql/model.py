@@ -73,3 +73,7 @@ def getall(entity=None, query=None, keys_only=False):
     if keys_only:
         return [r.id() for r in res]
     return res
+
+def get(b64compkey):
+    compkey = json.loads(b64decode(b64compkey))
+    return modelsubs[compkey["model"]].query().get(compkey["key"])
