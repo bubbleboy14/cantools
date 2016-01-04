@@ -1,3 +1,4 @@
+from base64 import b64encode, b64decode
 from datetime import datetime
 from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
 from properties import *
@@ -29,7 +30,7 @@ class ModelBase(declarative_base()):
     }
 
     def __eq__(self, other):
-        return self.key == (other and hasattr(other, "key") and other.key)
+        return self.id() == (other and hasattr(other, "id") and other.id())
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -56,4 +57,7 @@ class ModelBase(declarative_base()):
         return self.__tablename__
 
     def id(self):
-        return self.key
+        return b64encode(json.dumps({
+            "key": self.key,
+            "model": self.polytype
+        }))
