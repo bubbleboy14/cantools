@@ -1,5 +1,6 @@
 cfg = {
 	"web_server": "dez",
+	"db": "sqlite:///:memory:", # (dez only -- override)
 	"pubsub": {
 		"port": 8888,
 		"history": 10

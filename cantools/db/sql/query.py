@@ -1,7 +1,8 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from ...scripts.config import config
 
-engine = create_engine('sqlite:///:memory:', echo=True)
+engine = create_engine(config.db, echo=True)
 session = sessionmaker(bind=engine)()
 
 put_multi = session.add_all
