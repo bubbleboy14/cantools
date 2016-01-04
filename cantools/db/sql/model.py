@@ -61,3 +61,12 @@ class ModelBase(declarative_base()):
             "key": self.key,
             "model": self.polytype
         }))
+
+def getall(entity=None, query=None, keys_only=False):
+    if query:
+        res = query.all()
+    elif entity:
+        res = entity.query().all()
+    if keys_only:
+        return [r.id() for r in res]
+    return res
