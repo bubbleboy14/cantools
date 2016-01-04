@@ -77,3 +77,21 @@ def getall(entity=None, query=None, keys_only=False):
 def get(b64compkey):
     compkey = json.loads(b64decode(b64compkey))
     return modelsubs[compkey["model"]].query().get(compkey["key"])
+
+def get_multi(b64keys):
+    keys = [json.loads(b64decode(k)) for k in b64keys]
+    ents = {}
+    res = {}
+    for k in keys:
+        mod = k["model"]
+        if mod not in ents:
+            ents[mod] = {
+                "model": modelsubs[mod],
+                "keys": []
+            }
+        ents[mod]["keys"].append(k)
+    for key, val in ents.items():
+        mod = val["model"]
+        for r in mod.query().filter(mod.key.in_(val["keys"])).all():
+            res[r.id()] = r
+    return [res[k] for k in b64keys]
