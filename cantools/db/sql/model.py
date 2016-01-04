@@ -4,6 +4,8 @@ from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
 from properties import *
 from query import *
 
+modelsubs = {}
+
 class CTMeta(DeclarativeMeta):
     def query(cls, *args, **kwargs):
         cls.metadata.create_all(engine) # ensure tables exist
@@ -17,7 +19,8 @@ class CTMeta(DeclarativeMeta):
                 "polymorphic_identity": lname
             }
             attrs["key"] = ForeignKey(bases[0], primary_key=True)
-        return super(CTMeta, cls).__new__(cls, name, bases, attrs)
+        modelsubs[lname] = super(CTMeta, cls).__new__(cls, name, bases, attrs)
+        return modelsubs[lname]
 
 class ModelBase(declarative_base()):
     key = Integer(primary_key=True)
