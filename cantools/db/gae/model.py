@@ -1,6 +1,6 @@
 from properties import *
 
-class ModelBase(db.Model):
+class ModelBase(ndb.Model):
     def __eq__(self, other):
         return self.id() == (other and hasattr(other, "id") and other.id())
 
@@ -14,7 +14,7 @@ class ModelBase(db.Model):
         self.key.delete()
 
     def collection(self, entity_model, property_name, fetch=True, keys_only=False, data=False):
-        q = entity_model.query(db.GenericProperty(property_name) == self.key)
+        q = entity_model.query(ndb.GenericProperty(property_name) == self.key)
         if not fetch:
             return q
         if not data:
@@ -39,4 +39,4 @@ def getall(entity=None, query=None, keys_only=False):
     return ents
 
 def get(key):
-    return nbd.Key(urlsafe=key).get()
+    return ndb.Key(urlsafe=key).get()
