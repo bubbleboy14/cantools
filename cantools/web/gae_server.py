@@ -1,4 +1,6 @@
+from google.appengine.runtime.apiproxy_errors import RequestTooLargeError
 from util import *
+
 envelope = {
     'plain': "\n\n%s",
     'html': "\n\n<html><head></head><body>%s</body></html>"
@@ -14,6 +16,13 @@ def fetch(host, path="/", port=80, json=False):
     if json:
         return json.loads(raw)
     return raw
+
+# file uploads
+def read_file(data_field):
+    try:
+        return data_field.file.read()
+    except RequestTooLargeError:
+        fail("The file you are trying to upload is too large. Please submit something under 1MB. Thank you!", html=True, noenc=True)
 
 # memcache stuff
 def getmem(key, tojson=True):

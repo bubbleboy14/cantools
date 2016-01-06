@@ -61,6 +61,10 @@ def fetch(host, path="/", port=80, cb=None, timeout=1, json=False, async=False):
 	return async and dfetch(host, port, cb, timeout,
 		json) or requests.get("http://%s:%s%s"%(host, port, path)).content
 
+# file uploads
+def read_file(data_field):
+	return data_field.file.read()
+
 # memcache stuff
 def getmem(key, tojson=True):
 	return DWEB.memcache.get(key, tojson)
