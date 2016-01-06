@@ -1,7 +1,7 @@
 cfg = {
 	"web_server": "dez",
 	"db": "sqlite:///:memory:", # (dez only -- override)
-	"mailer": None, # (dez only -- override)
+	"mailer": None, # (override)
 	"pubsub": {
 		"port": 8888,
 		"history": 10

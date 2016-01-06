@@ -26,7 +26,10 @@ def read_file(data_field):
         fail("The file you are trying to upload is too large. Please submit something under 1MB. Thank you!", html=True, noenc=True)
 
 # emails
-send_mail = mail.send_mail
+def send_mail(to=None, subject=None, body=None, html=None):
+    if not config.mailer:
+        fail("failed to send email -- no MAILER specified in ct.cfg!")
+    mail.send_mail(to=to, sender=config.mailer, subject=subject, body=body, html=html)
 
 # memcache stuff
 def getmem(key, tojson=True):
