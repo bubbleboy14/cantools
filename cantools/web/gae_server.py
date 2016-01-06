@@ -1,4 +1,5 @@
 from google.appengine.runtime.apiproxy_errors import RequestTooLargeError
+from google.appengine.api import mail
 from util import *
 
 envelope = {
@@ -23,6 +24,9 @@ def read_file(data_field):
         return data_field.file.read()
     except RequestTooLargeError:
         fail("The file you are trying to upload is too large. Please submit something under 1MB. Thank you!", html=True, noenc=True)
+
+# emails
+send_mail = mail.send_mail
 
 # memcache stuff
 def getmem(key, tojson=True):
