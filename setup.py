@@ -17,6 +17,7 @@ setup(
     install_requires = [
         "rel >= 0.3.3",
         "dez >= 0.5.6",
+        "yagmail >= 0.4.116",
         "slimit"
     ],
     entry_points = '''

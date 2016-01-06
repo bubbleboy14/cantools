@@ -8,6 +8,7 @@ from dez.memcache import get_memcache
 from ...scripts.util import log as syslog
 from ..util import *
 from routes import static, cb
+from mail import send_mail
 sys.path.insert(0, ".") # for dynamically loading modules
 
 DWEB = None
