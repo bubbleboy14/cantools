@@ -8,7 +8,9 @@ modelsubs = {}
 
 def choice_validator(choices):
     def cval(s, k, v):
-        assert v in choices
+        if v not in choices:
+            from cantools import util
+            util.error("can't set %s! %s not in %s"%(k, v, choices))
         return v
     return cval
 
