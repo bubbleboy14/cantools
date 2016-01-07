@@ -3,20 +3,21 @@ from datetime import datetime
 from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
 from properties import *
 from query import *
-
-modelsubs = {}
+from cantools import util
 
 def choice_validator(choices):
     def cval(s, k, v):
         if v not in choices:
-            from cantools import util
             util.error("can't set %s! %s not in %s"%(k, v, choices))
         return v
     return cval
 
+def loadTables(cls): # ensure tables exist
+    cls.metadata.create_all(engine)
+
 class CTMeta(DeclarativeMeta):
     def query(cls, *args, **kwargs):
-        cls.metadata.create_all(engine) # ensure tables exist
+        loadTables(cls)
         return Query(cls, *args, **kwargs)
 
     def __new__(cls, name, bases, attrs):
@@ -26,7 +27,7 @@ class CTMeta(DeclarativeMeta):
             attrs["__mapper_args__"] = {
                 "polymorphic_identity": lname
             }
-            attrs["key"] = ForeignKey(bases[0], primary_key=True)
+            attrs["index"] = ForeignKey(bases[0], primary_key=True)
         for key, val in attrs.items():
             if getattr(val, "choices", None):
                 attrs["%s_validator"%(key,)] = sqlalchemy.orm.validates(key)(choice_validator(val.choices))
@@ -34,8 +35,9 @@ class CTMeta(DeclarativeMeta):
         return modelsubs[lname]
 
 class ModelBase(declarative_base()):
-    key = Integer(primary_key=True)
+    index = Integer(primary_key=True)
     polytype = String()
+    key = CompositeKey()
     __metaclass__ = CTMeta
     __mapper_args__ = {
         "polymorphic_on": polytype,
@@ -51,16 +53,21 @@ class ModelBase(declarative_base()):
 
     def put(self):
         for key, val in self.__class__.__dict__.items():
-            # is "not self.key" how we check whether table is saved?
-            if getattr(val, "is_dt_autostamper", False) and val.should_stamp(not self.key):
+            if getattr(val, "is_dt_autostamper", False) and val.should_stamp(not self.index):
                 setattr(self, key, datetime.now())
+        loadTables(self.__class__)
         session.add(self)
+        if not self.key:
+            self.key = b64encode(json.dumps({
+                "index": self.index,
+                "model": self.polytype
+            }))
 
     def rm(self):
         session.delete(self)
 
     def collection(self, entity_model, property_name, fetch=True, keys_only=False, data=False):
-        q = entity_model.query(getattr(entity_model, property_name) == self.key)
+        q = entity_model.query(getattr(entity_model, property_name) == self.index)
         if not fetch:
             return q
         if not data:
@@ -71,38 +78,6 @@ class ModelBase(declarative_base()):
         return self.__tablename__
 
     def id(self):
-        return b64encode(json.dumps({
-            "key": self.key,
-            "model": self.polytype
-        }))
-
-def getall(entity=None, query=None, keys_only=False):
-    if query:
-        res = query.all()
-    elif entity:
-        res = entity.query().all()
-    if keys_only:
-        return [r.id() for r in res]
-    return res
-
-def get(b64compkey):
-    compkey = json.loads(b64decode(b64compkey))
-    return modelsubs[compkey["model"]].query().get(compkey["key"])
-
-def get_multi(b64keys):
-    keys = [json.loads(b64decode(k)) for k in b64keys]
-    ents = {}
-    res = {}
-    for k in keys:
-        mod = k["model"]
-        if mod not in ents:
-            ents[mod] = {
-                "model": modelsubs[mod],
-                "keys": []
-            }
-        ents[mod]["keys"].append(k)
-    for key, val in ents.items():
-        mod = val["model"]
-        for r in mod.query().filter(mod.key.in_(val["keys"])).all():
-            res[r.id()] = r
-    return [res[k] for k in b64keys]
+        if not self.key:
+            util.error("can't get id -- not saved!")
+        return self.key.urlsafe()
