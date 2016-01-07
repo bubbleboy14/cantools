@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from ...scripts.config import config
+from cantools import config
 
 engine = create_engine(config.db, echo=True)
 session = sessionmaker(bind=engine)()

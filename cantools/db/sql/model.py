@@ -6,6 +6,12 @@ from query import *
 
 modelsubs = {}
 
+def choice_validator(choices):
+    def cval(s, k, v):
+        assert v in choices
+        return v
+    return cval
+
 class CTMeta(DeclarativeMeta):
     def query(cls, *args, **kwargs):
         cls.metadata.create_all(engine) # ensure tables exist
@@ -19,6 +25,9 @@ class CTMeta(DeclarativeMeta):
                 "polymorphic_identity": lname
             }
             attrs["key"] = ForeignKey(bases[0], primary_key=True)
+        for key, val in attrs.items():
+            if getattr(val, "choices", None):
+                attrs["%s_validator"%(key,)] = sqlalchemy.orm.validates(key)(choice_validator(val.choices))
         modelsubs[lname] = super(CTMeta, cls).__new__(cls, name, bases, attrs)
         return modelsubs[lname]
 
