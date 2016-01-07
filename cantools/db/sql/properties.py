@@ -1,4 +1,5 @@
 import json, sqlalchemy
+from getters import *
 
 class DynamicType(sqlalchemy.TypeDecorator):
 	def __init__(self, *args, **kwargs):
@@ -34,10 +35,6 @@ for prop in ["Integer", "Float", "Boolean", "String", "Text", "Binary", "Date", 
 	globals()["sql%s"%(prop,)] = sqlprop
 	globals()[prop] = sqlColumn(basicType(sqlprop))
 
-def ForeignKey(targetClass, **kwargs):
-	return sqlalchemy.Column(sqlInteger,
-		sqlalchemy.ForeignKey("%s.key"%(targetClass.__tablename__,)), **kwargs)
-
 BasicDT = basicType(sqlalchemy.DateTime)
 class DateTimeAutoStamper(BasicDT):
 	def __init__(self, *args, **kwargs):
@@ -51,9 +48,27 @@ class DateTimeAutoStamper(BasicDT):
 DateTime = sqlColumn(DateTimeAutoStamper)
 
 BasicString = basicType(sqlString)
+
 class ArrayType(BasicString):
 	def process_bind_param(self, value, dialect):
 		return json.dumps(value)
 
 	def process_result_value(self, value, dialect):
 		return json.loads(value)
+
+class CompKey(BasicString):
+	def get(self):
+		return get(self.impl)
+
+	def delete(self):
+		self.get().rm() # should be more efficient way...
+
+	def urlsafe(self):
+		return self.impl
+
+CompositeKey = sqlColumn(CompKey)
+
+def ForeignKey(targetClass, **kwargs):
+	return sqlalchemy.Column(sqlInteger,
+		sqlalchemy.ForeignKey("%s.index"%(targetClass.__tablename__,)), **kwargs)
+
