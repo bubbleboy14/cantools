@@ -8,6 +8,7 @@ from dez.memcache import get_memcache
 from ...scripts.util import log as syslog
 from ..util import *
 from routes import static, cb
+from mail import send_mail
 sys.path.insert(0, ".") # for dynamically loading modules
 
 DWEB = None
@@ -60,6 +61,10 @@ def respond(*args, **kwargs):
 def fetch(host, path="/", port=80, cb=None, timeout=1, json=False, async=False):
 	return async and dfetch(host, port, cb, timeout,
 		json) or requests.get("http://%s:%s%s"%(host, port, path)).content
+
+# file uploads
+def read_file(data_field):
+	return data_field.file.read()
 
 # memcache stuff
 def getmem(key, tojson=True):

@@ -69,18 +69,19 @@ var CT = {
 			CT.net.xhr(path, "POST", params, true, function(xhr) {
 		        if (xhr.readyState == 4) {
 		            if (xhr.status == 200) {
-		                var data = xhr.responseText;
+		                var data = xhr.responseText.trim();
 		                if (CT.net._encode)
 		                    data = CT.net._decoder(data);
+		                var payload = data.slice(1);
 		                if (data.charAt(0) == '0') {
-		                    if (eb) eb(data.slice(1), ebarg);
-		                    else CT.net._fallback_error(errMsg+": "+data.slice(1));
+		                    if (eb) eb(payload, ebarg);
+		                    else CT.net._fallback_error(errMsg + ": " + payload);
 		                }
 		                else if (cb != null)
-		                    cb(eval("("+data.trim().slice(1)+")"), cbarg);
+		                    cb(JSON.parse(payload), cbarg);
 		            }
 		            else if (!CT.net._encode)
-		                CT.net._fallback_error("request to "+path+" failed!");
+		                CT.net._fallback_error("request to " + path + " failed!");
 		        }
 		    }, headers);
 		},
