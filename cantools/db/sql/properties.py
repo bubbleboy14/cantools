@@ -56,9 +56,9 @@ class ArrayType(BasicString):
 	def process_result_value(self, value, dialect):
 		return json.loads(value)
 
-class CompKeyWrapper(object):
-	def __init__(self, value):
-		self.value = value
+class Key(object):
+	def __init__(self, urlsafe=None):
+		self.value = urlsafe
 
 	def get(self):
 		return get(self.value)
@@ -70,12 +70,15 @@ class CompKeyWrapper(object):
 		return self.value
 
 class CompKey(BasicString):
+	def process_bind_param(self, value, dialect):
+		return value and value.urlsafe()
+
 	def process_result_value(self, value, dialect):
-		return CompKeyWrapper(value)
+		return Key(value)
 
 CompositeKey = sqlColumn(CompKey)
+ForeignKey = sqlColumn(CompKey)
 
-def ForeignKey(targetClass, **kwargs):
+def sqlForeignKey(targetClass, **kwargs):
 	return sqlalchemy.Column(sqlInteger,
 		sqlalchemy.ForeignKey("%s.index"%(targetClass.__tablename__,)), **kwargs)
-

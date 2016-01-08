@@ -26,7 +26,7 @@ class CTMeta(DeclarativeMeta):
             attrs["__mapper_args__"] = {
                 "polymorphic_identity": lname
             }
-            attrs["index"] = ForeignKey(bases[0], primary_key=True)
+            attrs["index"] = sqlForeignKey(bases[0], primary_key=True)
         for key, val in attrs.items():
             if getattr(val, "choices", None):
                 attrs["%s_validator"%(key,)] = sqlalchemy.orm.validates(key)(choice_validator(val.choices))
@@ -58,7 +58,7 @@ class ModelBase(declarative_base()):
         session.add(self)
         if not self.key:
             session.flush()
-            self.key = CompKeyWrapper(b64encode(json.dumps({
+            self.key = Key(b64encode(json.dumps({
                 "index": self.index,
                 "model": self.polytype
             })))
