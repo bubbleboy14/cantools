@@ -9,14 +9,15 @@ def getall(entity=None, query=None, keys_only=False):
     elif entity:
         res = entity.query().all()
     if keys_only:
-        return [r.id() for r in res]
+        return [r.key for r in res]
     return res
 
 def get(b64compkey):
     compkey = json.loads(b64decode(b64compkey))
     return modelsubs[compkey["model"]].query().get(compkey["index"])
 
-def get_multi(b64keys):
+def get_multi(keyobjs):
+    b64keys = [k.urlsafe() for k in keyobjs]
     keys = [json.loads(b64decode(k)) for k in b64keys]
     ents = {}
     res = {}
