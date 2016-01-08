@@ -1,4 +1,3 @@
-from base64 import b64encode, b64decode
 from datetime import datetime
 from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
 from properties import *
@@ -58,10 +57,11 @@ class ModelBase(declarative_base()):
         loadTables(self.__class__)
         session.add(self)
         if not self.key:
-            self.key = b64encode(json.dumps({
+            session.flush()
+            self.key = CompKeyWrapper(b64encode(json.dumps({
                 "index": self.index,
                 "model": self.polytype
-            }))
+            })))
 
     def rm(self):
         session.delete(self)

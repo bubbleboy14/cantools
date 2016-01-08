@@ -1,4 +1,4 @@
-import json, sqlalchemy
+import sqlalchemy
 from getters import *
 
 class DynamicType(sqlalchemy.TypeDecorator):
@@ -56,15 +56,22 @@ class ArrayType(BasicString):
 	def process_result_value(self, value, dialect):
 		return json.loads(value)
 
-class CompKey(BasicString):
+class CompKeyWrapper(object):
+	def __init__(self, value):
+		self.value = value
+
 	def get(self):
-		return get(self.impl)
+		return get(self.value)
 
 	def delete(self):
 		self.get().rm() # should be more efficient way...
 
 	def urlsafe(self):
-		return self.impl
+		return self.value
+
+class CompKey(BasicString):
+	def process_result_value(self, value, dialect):
+		return CompKeyWrapper(value)
 
 CompositeKey = sqlColumn(CompKey)
 

@@ -1,3 +1,6 @@
+import json
+from base64 import b64encode, b64decode
+
 modelsubs = {}
 
 def getall(entity=None, query=None, keys_only=False):
