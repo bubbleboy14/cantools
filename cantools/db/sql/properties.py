@@ -69,15 +69,15 @@ class Key(object):
 	def urlsafe(self):
 		return self.value
 
-class CompKey(BasicString):
+class KeyType(BasicString):
 	def process_bind_param(self, value, dialect):
 		return value and value.urlsafe()
 
 	def process_result_value(self, value, dialect):
 		return Key(value)
 
-CompositeKey = sqlColumn(CompKey)
-ForeignKey = sqlColumn(CompKey)
+CompositeKey = sqlColumn(KeyType)
+ForeignKey = sqlColumn(KeyType)
 
 def sqlForeignKey(targetClass, **kwargs):
 	return sqlalchemy.Column(sqlInteger,
