@@ -1,9 +1,6 @@
 from google.appengine.ext import ndb
 
-# map: Integer, Float, Boolean, String, Text, Binary, Date, Time, DateTime, ForeignKey
-
-# figure out: choices
-
+# column properties
 Integer = ndb.IntegerProperty
 Float = ndb.FloatProperty
 Boolean = ndb.BooleanProperty
@@ -14,6 +11,9 @@ Date = ndb.DateProperty
 Time = ndb.TimeProperty
 DateTime = ndb.DateTimeProperty
 ForeignKey = ndb.KeyProperty
+
+# entity keys
+Key = ndb.Key
 
 # funcs
 get_multi = ndb.get_multi
