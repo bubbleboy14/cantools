@@ -58,9 +58,9 @@ def get_dez_webserver():
 def respond(*args, **kwargs):
 	DWEB.register_handler(args, kwargs)
 
-def fetch(host, path="/", port=80, cb=None, timeout=1, json=False, async=False):
+def fetch(host, path="/", port=80, asjson=False, cb=None, timeout=1, async=False):
 	return async and dfetch(host, port, cb, timeout,
-		json) or requests.get("http://%s:%s%s"%(host, port, path)).content
+		asjson) or requests.get("http://%s:%s%s"%(host, port, path)).content
 
 # file uploads
 def read_file(data_field):

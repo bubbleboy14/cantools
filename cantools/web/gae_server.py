@@ -11,10 +11,10 @@ respond = do_respond
 set_env(lambda html : envelope[html and 'html' or 'plain'])
 
 # fetch
-def fetch(host, path="/", port=80, json=False):
+def fetch(host, path="/", port=80, asjson=False):
     from google.appengine.api.urlfetch import fetch
     raw = fetch("http://%s:%s%s"%(host, port, path)).content
-    if json:
+    if asjson:
         return json.loads(raw)
     return raw
 
