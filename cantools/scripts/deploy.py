@@ -29,8 +29,8 @@ Generates fresh 'static' and 'production' files (from 'development' source files
 """
 
 import subprocess, commands, os
-from config import config
-from util import log, error, read, write
+from ..config import config
+from ..util import log, error, read, write
 from builder import build
 
 def doyaml(mode):

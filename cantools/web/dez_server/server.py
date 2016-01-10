@@ -5,7 +5,7 @@ from dez.http.server import HTTPResponse
 from dez.http.application import HTTPApplication
 from dez.logging import get_logger_getter
 from dez.memcache import get_memcache
-from ...scripts.util import log as syslog
+from ...util import log as syslog
 from ..util import *
 from routes import static, cb
 from mail import send_mail

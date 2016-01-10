@@ -1,7 +1,7 @@
 import os
 from optparse import OptionParser
-from util import log, cp, sym, mkdir
-from config import config
+from ..util import log, cp, sym, mkdir
+from ..config import config
 
 HOME = os.environ.get("HOME", ".")
 

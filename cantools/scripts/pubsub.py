@@ -1,4 +1,4 @@
-from config import config
+from ..config import config
 
 def start(host="localhost", port=config.pubsub.port):
     from ps import PubSub

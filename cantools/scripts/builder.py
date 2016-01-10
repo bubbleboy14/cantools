@@ -1,6 +1,6 @@
 import subprocess, os
-from config import config
-from util import log, error, read, write
+from ..config import config
+from ..util import log, error, read, write
 
 def nextQuote(text, lastIndex=0):
     z = i = text.find('"', lastIndex)

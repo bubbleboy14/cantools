@@ -1,4 +1,4 @@
-from ...scripts.util import read
+from ...util import read
 
 url = None
 static = {}

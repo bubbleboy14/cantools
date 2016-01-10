@@ -1,8 +1,8 @@
 import json
 from datetime import datetime
 from dez.network.websocket import WebSocketDaemon
-from util import log
-from config import config
+from ..util import log
+from ..config import config
 
 class PubSub(WebSocketDaemon):
     def __init__(self, *args, **kwargs):

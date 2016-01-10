@@ -1,5 +1,5 @@
 import sys, json
-from ..scripts.config import config
+from ..config import config
 
 DEBUG = True
 request = None

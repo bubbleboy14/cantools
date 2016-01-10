@@ -1,5 +1,6 @@
-from scripts import builder, deploy, init, pubsub, start, util
-from scripts import config as cfgmod
+import util
+import config as cfgmod
+from scripts import builder, deploy, init, pubsub, start
 
 config = cfgmod.config
 ctstart = start.go

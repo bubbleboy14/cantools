@@ -1,6 +1,6 @@
 from optparse import OptionParser
-from util import error
-from config import config
+from ..util import error
+from ..config import config
 
 def go():
 	parser = OptionParser("ctstart [--web_backend=BACKEND] [--port=PORT] [--datastore=DS_PATH]")
