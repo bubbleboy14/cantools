@@ -1,10 +1,23 @@
 import sys
 from datetime import datetime
 
+LOG_FILE = None
+
+def set_log(fname):
+	global LOG_FILE
+	LOG_FILE = open(fname, "w")
+
+def close_log():
+	if LOG_FILE:
+		LOG_FILE.close()
+
 def log(msg, level=0, important=False):
+    s = "* %s : %s %s"%(datetime.now(), "  " * level, msg)
     if important:
-        print
-    print "* %s : %s %s"%(datetime.now(), "  " * level, msg)
+        s = "\n%s"%(s,)
+    if LOG_FILE:
+    	LOG_FILE.write("%s\n"%(s,))
+    print s
 
 def error(msg, *lines):
     log("error: %s"%(msg,), important=True)
