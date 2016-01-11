@@ -10,6 +10,7 @@ def set_log(fname):
 def close_log():
 	if LOG_FILE:
 		LOG_FILE.close()
+		LOG_FILE = None
 
 def log(msg, level=0, important=False):
     s = "* %s : %s %s"%(datetime.now(), "  " * level, msg)
