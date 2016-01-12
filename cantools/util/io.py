@@ -4,7 +4,7 @@ def read(fname="_tmp", lines=False, isjson=False, default=None):
     try:
         f = open(fname, "r")
     except Exception, e:
-        if default:
+        if default is not None:
             return default
         if lines:
             return []
