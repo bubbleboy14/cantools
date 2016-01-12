@@ -8,6 +8,7 @@ def set_log(fname):
 	LOG_FILE = open(fname, "w")
 
 def close_log():
+	global LOG_FILE
 	if LOG_FILE:
 		LOG_FILE.close()
 		LOG_FILE = None
