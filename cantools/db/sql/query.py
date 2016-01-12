@@ -10,7 +10,7 @@ def delete_multi(instances):
 	for instance in instances:
 		instance.rm()
 
-_passthru = ["count", "get", "all", "first"]
+_passthru = ["count", "all"]
 _qmod = ["filter", "limit", "offset"]
 
 class Query(object):
@@ -21,6 +21,7 @@ class Query(object):
 		for fname in _qmod:
 			setattr(self, fname, self._qmlam(fname))
 		setattr(self, "order", self._qmlam("order_by"))
+		self.get = self.query.first
 		self.filter(*args, **kwargs)
 
 	def _qplam(self, fname):

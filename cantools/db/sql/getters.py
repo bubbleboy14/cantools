@@ -14,7 +14,7 @@ def getall(entity=None, query=None, keys_only=False):
 
 def get(b64compkey):
     compkey = json.loads(b64decode(b64compkey))
-    return modelsubs[compkey["model"]].query().get(compkey["index"])
+    return modelsubs[compkey["model"]].query().query.get(compkey["index"])
 
 def get_multi(keyobjs):
     b64keys = [k.urlsafe() for k in keyobjs]
