@@ -33,8 +33,6 @@ class Web(HTTPApplication):
 	def _handler(self, rule, target):
 		self.logger.info("setting handler: %s %s"%(rule, target))
 		def h(req):
-			self.logger.info(req.__class__.__name__)
-			self.logger.info(req.qs)
 			resp = HTTPResponse(req)
 			set_read(lambda : req.body or json.dumps(req.qs_params))
 			set_header(resp.__setitem__)
