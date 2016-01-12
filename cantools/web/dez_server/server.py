@@ -59,8 +59,10 @@ def respond(*args, **kwargs):
 	DWEB.register_handler(args, kwargs)
 
 def fetch(host, path="/", port=80, asjson=False, cb=None, timeout=1, async=False):
-	return async and dfetch(host, port, cb, timeout,
-		asjson) or requests.get("http://%s:%s%s"%(host, port, path)).content
+	if async:
+		return dfetch(host, port, cb, timeout, asjson)
+	result = requests.get("http://%s:%s%s"%(host, port, path)).content
+	return asjson and json.loads(result) or result
 
 # file uploads
 def read_file(data_field):
