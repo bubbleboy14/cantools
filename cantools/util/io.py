@@ -22,5 +22,5 @@ def write(data, fname="_tmp", isjson=False, ispretty=False):
     f.close()
 
 def writejson(data, fname): # fname doesn't include .json extension
-    write("%s.json"%(fname,), data, True)
-    write("%s-pretty.json"%(fname,), data, True, True)
+    write(data, "%s.json"%(fname,), True)
+    write(data, "%s-pretty.json"%(fname,), True, True)
