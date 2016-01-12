@@ -1,4 +1,4 @@
-from ..scripts.config import config
+from ..config import config
 
 # later, switch these imports on 'db' instead of 'web_server'
 if config.web_server == "gae":
