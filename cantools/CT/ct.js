@@ -23,8 +23,8 @@ var CT = {
 		// defaults
 		"_path": "",
 		"_encode": false,
-		"_encoder": JSON.stringify,
-		"_decoder": JSON.stringify,
+		"_encoder": function (d) { return d; },
+		"_decoder": function (d) { return d; },
 		"_silentFail": true,
 		// functions
 		"setEncoder": function(func) {
@@ -55,7 +55,12 @@ var CT = {
 		    for (var header in headers)
 		    	xhr.setRequestHeader(header, headers[header]);
 		    xhr.onreadystatechange = cb && function() { cb(xhr); };
-		    xhr.send(params && CT.net._encoder(params));
+		    if (params) {
+		    	params = JSON.stringify(params);
+		    	if (CT.net._encode)
+		    		params = CT.net._encoder(params)
+		    }
+		    xhr.send(params);
 		    if (!async)
 		    	return xhr.responseText;
 		},

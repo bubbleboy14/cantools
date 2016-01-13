@@ -39,10 +39,10 @@ def set_clearmem(f):
 def log(*args, **kwargs):
     print args, kwargs
 
-def enc(data, noenc=False):
+def enc(data):
     return data
 
-def dec(data, noenc=False):
+def dec(data):
     return data
 
 def setlog(f):
@@ -80,7 +80,7 @@ def cgi_load(force=False):
     global request
     global request_string
     request_string = cgi_read()
-    data = dec(request_string)
+    data = config.encode and dec(request_string) or request_string
     try:
         request = deUnicodeDict(json.loads(data))
     except:
@@ -169,7 +169,9 @@ def succeed(data="", html=False, noenc=False, savename=None, cache=False):
     if cache or cache_default:
         savename = request_string
     _header("Content-Type", "text/%s"%(html and "html" or "plain"))
-    _write(_env(html)%(enc("1"+json.dumps(data), noenc),), savename=savename)
+    draw = "1" + json.dumps(data)
+    dstring = (config.encode and not noenc) and enc(draw) or draw
+    _write(_env(html)%(dstring,), savename=savename)
 
 def fail(data="failed", html=False, err=None, noenc=False, exit=True):
     if err:
@@ -181,7 +183,9 @@ def fail(data="failed", html=False, err=None, noenc=False, exit=True):
             # write it
             data = logdata
     _header("Content-Type", "text/%s"%(html and "html" or "plain"))
-    _write(_env(html)%(enc("0"+data, noenc),), exit)
+    draw = "0" + data
+    dstring = (config.encode and not noenc) and enc(draw) or draw
+    _write(_env(html)%(dstring,), exit)
 
 def _headers(headers):
     for k, v in headers.items():
