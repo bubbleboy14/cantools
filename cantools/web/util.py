@@ -35,11 +35,14 @@ def set_clearmem(f):
     global clearmem
     clearmem = f
 
-# logging and encoding -- overwrite with setlog and setenc
+# logging, encoding, decoding -- overwrite with setlog, setenc, setdec
 def log(*args, **kwargs):
     print args, kwargs
 
-def enc(data, noenc=False, etype="response"):
+def enc(data, noenc=False):
+    return data
+
+def dec(data, noenc=False):
     return data
 
 def setlog(f):
@@ -49,6 +52,10 @@ def setlog(f):
 def setenc(f):
     global enc
     enc = f
+
+def setdec(f):
+    global dec
+    dec = f
 
 # request functions
 def deUnicodeDict(d):
@@ -73,7 +80,7 @@ def cgi_load(force=False):
     global request
     global request_string
     request_string = cgi_read()
-    data = enc(request_string, False, "request")
+    data = dec(request_string)
     try:
         request = deUnicodeDict(json.loads(data))
     except:
