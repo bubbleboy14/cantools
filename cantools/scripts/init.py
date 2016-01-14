@@ -6,14 +6,17 @@ from cantools.util import log, cp, sym, mkdir
 HOME = os.environ.get("HOME", ".")
 
 class Builder(object):
-	def __init__(self, pname, cantools_path=HOME, web_backend="dez"):
-		log("Initializing %s Project: %s"%(web_backend, pname))
+	def __init__(self, pname=None, cantools_path=HOME, web_backend="dez", refresh_symlinks=False):
+		if not pname and not refresh_symlinks:
+			pname = raw_input("project name? ")
+		log("Initializing %s Project: %s"%(web_backend, pname or "(whatever)"))
 		self.pname = pname
 		self.cantools_path = cantools_path
 		self.web_backend = web_backend
-		self.build_dirs()
-		self.make_files()
-		self.generate_symlinks()
+		if not refresh_symlinks:
+			self.build_dirs()
+			self.make_files()
+		self.generate_symlinks(refresh_symlinks)
 		log("done! goodbye.", 1)
 
 	def build_dirs(self):
@@ -31,8 +34,10 @@ class Builder(object):
 		log("demo index page", 1)
 		cp(config.init.html%(self.pname,), os.path.join("html", "index.html"))
 
-	def generate_symlinks(self):
+	def generate_symlinks(self, refresh=False):
 		log("creating symlinks", 1)
+		if refresh and not os.path.isdir("js"):
+			mkdir("js")
 		ctroot = os.path.join(self.cantools_path, "cantools", "cantools")
 		if self.web_backend == "gae":
 			sym(ctroot, "cantools")
@@ -45,9 +50,11 @@ def parse_and_make():
 		help="where is cantools? (default: %s)"%(HOME,))
 	parser.add_option("-w", "--web_backend", dest="web_backend", default="dez",
 		help="web backend. options: dez, gae. (default: dez)")
+	parser.add_option("-r", "--refresh_symlinks", action="store_true",
+		dest="refresh_symlinks", default=False, help="add symlinks to project")
 	options, args = parser.parse_args()
-	Builder(len(args) and args[0] or raw_input("project name? "),
-		options.cantools_path, options.web_backend)
+	Builder(len(args) and args[0], options.cantools_path,
+		options.web_backend, options.refresh_symlinks)
 
 if __name__ == "__main__":
 	parse_and_make()
