@@ -1,8 +1,9 @@
-import util
 import config as cfgmod
+config = cfgmod.config
+
+import util
 from scripts import builder, deploy, init, pubsub, start
 
-config = cfgmod.config
 ctstart = start.go
 ctdeploy = deploy.run
 ctpubsub = pubsub.get_addr_and_start
