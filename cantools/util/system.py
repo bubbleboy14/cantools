@@ -1,5 +1,6 @@
 import os
 from reporting import log
+from io import write
 
 def cp(content, fname): # more write than copy, buuuut...
     log("writing %s"%(fname,), 2)

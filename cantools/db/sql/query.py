@@ -2,7 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from cantools import config
 
-engine = create_engine(config.db, echo=True)
+engine = create_engine(config.db)
 session = sessionmaker(bind=engine)()
 
 put_multi = session.add_all
