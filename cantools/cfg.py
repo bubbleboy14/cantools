@@ -6,6 +6,7 @@ cfg = {
 	},
 	"mailer": None, # (override w/ MAILER)
 	"pubsub": {
+		"host": "localhost",
 		"port": 8888,
 		"history": 10,
 		"bots": []
