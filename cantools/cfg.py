@@ -1,7 +1,10 @@
 cfg = {
 	"web_server": "dez",
-	"db": "sqlite:///:memory:", # (dez only -- override)
-	"mailer": None, # (override)
+	"db": { # switch on web backend (override w/ DB)
+		"gae": "data.db",
+		"dez": "sqlite:///data.db"
+	},
+	"mailer": None, # (override w/ MAILER)
 	"pubsub": {
 		"port": 8888,
 		"history": 10

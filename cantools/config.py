@@ -10,6 +10,9 @@ class Config(object):
 	def __getattr__(self, key):
 		return self._cfg[key]
 
+	def __getitem__(self, key):
+		return self._cfg[key]
+
 	# dict compabitility
 	def values(self):
 		return self._cfg.values()
@@ -29,5 +32,8 @@ for key, val in [[term.strip() for term in line.split(" = ")] for line in read("
 		config.update("encode", val == "True")
 	elif key == "JS_PATH":
 		config.js.update("path", val)
+	elif key == "DB":
+		config.db.update(config.web_server, val)
 	else:
 		config.update(key.lower(), val)
+config.update("db", config.db[config.web_server])
