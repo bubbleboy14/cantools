@@ -461,9 +461,23 @@ CT.dom = {
 	},
 
 	// dynamically add style rules
-	"addStyle": function(s) {
-	    document.getElementsByTagName("head")[0]
-	        .appendChild(CT.dom.node(s, "style"));
+	"addStyle": function(text, href, objarr) { // choose one!
+		if (objarr) {
+			text = [];
+			objarr.forEach(function(objwrapper) {
+				for (var key in objwrapper) { // there's only one ;)
+					text.push(key + " {");
+					var pobj = objwrapper[key];
+					for (var prop in pobj)
+						text.push(prop + ": " + pobj[prop] + ";");
+					text.push("}");
+				}
+			});
+			text = "\n".join(text);
+		}
+		var node = href ? CT.dom.node(null, "link", null, null,
+			{ "href": href }) : CT.dom.node(text, "style");
+	    document.getElementsByTagName("head")[0].appendChild(node);
 	},
 
 	// defer function until node exists in dom
