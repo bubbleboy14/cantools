@@ -9,7 +9,7 @@ cfg = {
 		"host": "localhost",
 		"port": 8888,
 		"history": 10,
-		"bots": []
+		"bots": {}
 	},
 	"parse_error_segment_length": 100,
 	"build": {

@@ -18,7 +18,12 @@ class PubSub(WebSocketDaemon):
         WebSocketDaemon.__init__(self, *args, **kwargs)
         self.clients = {}
         self.channels = {}
+        self.bots = {}
         log("Initialized PubSub Server @ %s:%s"%(self.hostname, self.port), important=True)
+        config.pubsub.loadBots()
+        for bname, bot in config.pubsub.bots.items():
+            log("Registering Bot: %s"%(bname,), 2)
+            self.bots[bname] = bot(self)
 
     def subscribe(self, channel, user):
         self._check_channel(channel)

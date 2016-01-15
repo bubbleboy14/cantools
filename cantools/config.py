@@ -35,7 +35,16 @@ for key, val in [[term.strip() for term in line.split(" = ")] for line in read("
 	elif key == "DB":
 		config.db.update(config.web_server, val)
 	elif key == "PUBSUB_BOTS":
-		config.pubsub.update("bots", val.split("|"))
+		def lb():
+			from cantools.util import log
+			log("Loading Bots")
+			import sys
+			sys.path.insert(0, "bots") # for dynamically loading bot modules
+			for bname in config.pubsub._botNames:
+				log("Importing Bot: %s"%(bname.title(),), 2)
+				__import__(bname) # config modified in pubsub.bots.BotMeta.__new__()
+		config.pubsub.update("_botNames", val.split("|"))
+		config.pubsub.update("loadBots", lb)
 	else:
 		config.update(key.lower(), val)
 config.update("db", config.db[config.web_server])

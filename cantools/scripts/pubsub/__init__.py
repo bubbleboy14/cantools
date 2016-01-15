@@ -1,4 +1,5 @@
 from cantools import config
+from bots import Bot
 
 def start(host=config.pubsub.host, port=config.pubsub.port):
     from ps import PubSub
@@ -13,6 +14,3 @@ def get_addr_and_start():
         help="use a specific port (default: %s)"%(config.pubsub.port,))
     options, arguments = parser.parse_args()
     start(options.domain, options.port)
-
-if __name__ == "__main__":
-    get_addr_and_start()
