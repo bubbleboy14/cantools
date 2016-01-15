@@ -1,6 +1,6 @@
 from optparse import OptionParser
-from ..util import error
-from ..config import config
+from cantools import config
+from cantools.util import error
 
 def go():
 	parser = OptionParser("ctstart [--web_backend=BACKEND] [--port=PORT] [--datastore=DS_PATH]")
@@ -8,8 +8,8 @@ def go():
 		help="web backend. options: dez, gae. (default: %s)"%(config.web_server,))
 	parser.add_option("-p", "--port", dest="port", default="8080",
 		help="select your port (default=8080)")
-	parser.add_option("-d", "--datastore", dest="datastore", default="scripts/db.datastore",
-		help="[gae only] select your datastore file (default=scripts/db.datastore)")
+	parser.add_option("-d", "--datastore", dest="datastore", default=config.db,
+		help="select your datastore file (default=%s)"%(config.db,))
 	options, args = parser.parse_args()
 
 	if options.web_backend == "gae":
