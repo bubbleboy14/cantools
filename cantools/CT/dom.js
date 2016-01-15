@@ -473,7 +473,7 @@ CT.dom = {
 					text.push("}");
 				}
 			});
-			text = "\n".join(text);
+			text = text.join("\n");
 		}
 		var node = href ? CT.dom.node(null, "link", null, null,
 			{ "href": href }) : CT.dom.node(text, "style");
