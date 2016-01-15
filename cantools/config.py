@@ -35,7 +35,7 @@ for key, val in [[term.strip() for term in line.split(" = ")] for line in read("
 	elif key == "DB":
 		config.db.update(config.web_server, val)
 	elif key == "PUBSUB_BOTS":
-		config.db.update(config.pubsub.bots, val.split("|"))
+		config.pubsub.update("bots", val.split("|"))
 	else:
 		config.update(key.lower(), val)
 config.update("db", config.db[config.web_server])
