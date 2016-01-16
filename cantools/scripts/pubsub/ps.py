@@ -2,6 +2,9 @@ import json
 from datetime import datetime
 from dez.network.websocket import WebSocketDaemon
 from cantools import config
+from cantools.util import log
+from user import PubSubUser
+from channel import PubSubChannel
 
 class PubSub(WebSocketDaemon):
     def __init__(self, *args, **kwargs):
@@ -69,89 +72,3 @@ class PubSub(WebSocketDaemon):
 
     def connect(self, conn):
         PubSubUser(conn, self, self._log)
-
-class PubSubChannel(object):
-    def __init__(self, name, logger):
-        self._log = logger
-        self.name = name
-        self.users = set()
-        self.history = []
-        self._log('NEW CHANNEL: "%s"'%(name,), 1, True)
-
-    def _broadcast(self, obj):
-        for user in self.users:
-            user.write(obj)
-
-    def write(self, subobj):
-        subobj["channel"] = self.name
-        obj = {
-            "action": "publish",
-            "data": subobj
-        }
-        self._broadcast(obj)
-        self.history.append(subobj)
-        self.history = self.history[:config.pubsub.history]
-
-    def leave(self, user):
-        if user in self.users:
-            self.users.remove(user)
-            user.leave(self)
-            self._broadcast({
-                "action": "unsubscribe",
-                "data": {
-                    "user": user.name,
-                    "channel": self.name
-                }
-            })
-
-    def join(self, user):
-        self._broadcast({
-            "action": "subscribe",
-            "data": {
-                "user": user.name,
-                "channel": self.name
-            }
-        })
-        self.users.add(user)
-        user.join(self)
-
-class PubSubUser(object):
-    def __init__(self, conn, server, logger):
-        self.conn = conn
-        self.server = server
-        self._log = logger
-        self.channels = set()
-        self.conn.set_cb(self._register)
-        self._log('NEW CONNECTION', 1, True)
-
-    def join(self, channel):
-        self.channels.add(channel)
-
-    def leave(self, channel):
-        if channel in self.channels:
-            self.channels.remove(channel)
-
-    def write(self, data):
-        data["data"]["datetime"] = str(datetime.now()) # do a better job
-        dstring = json.dumps(data) # pre-encode so we can log
-        self._log('WRITE: "%s" -> "%s"'%(self.name, dstring), 3)
-        self.conn.write(dstring, noEncode=True)
-
-    def _read(self, obj):
-        if obj["action"] == "close":
-            return self.conn.close()
-        getattr(self.server, obj["action"])(obj["data"], self)
-
-    def _close(self):
-        for channel in list(self.channels):
-            channel.leave(self)
-        if self.name in self.server.clients: # _should_ be
-            del self.server.clients[self.name]
-
-    def _register(self, obj):
-        name = obj["data"]
-        self._log('REGISTER: "%s"'%(name,), 1, True)
-        self.name = name
-        self.server.clients[name] = self
-        self.conn.set_cb(self._read)
-        self.conn.set_close_cb(self._close)
