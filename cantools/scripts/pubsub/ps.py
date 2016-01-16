@@ -2,7 +2,6 @@ import json
 from datetime import datetime
 from dez.network.websocket import WebSocketDaemon
 from cantools import config
-from cantools.util import log
 
 class PubSub(WebSocketDaemon):
     def __init__(self, *args, **kwargs):
@@ -16,14 +15,11 @@ class PubSub(WebSocketDaemon):
         else:
             self.silent = False
         WebSocketDaemon.__init__(self, *args, **kwargs)
+        self.bots = {}
         self.clients = {}
         self.channels = {}
-        self.bots = {}
-        log("Initialized PubSub Server @ %s:%s"%(self.hostname, self.port), important=True)
         config.pubsub.loadBots()
-        for bname, bot in config.pubsub.bots.items():
-            log("Registering Bot: %s"%(bname,), 2)
-            self.bots[bname] = bot(self)
+        self._log("Initialized PubSub Server @ %s:%s"%(self.hostname, self.port), important=True)
 
     def subscribe(self, channel, user):
         self._check_channel(channel)
@@ -54,10 +50,17 @@ class PubSub(WebSocketDaemon):
             "user": user.name
         })
 
+    def _new_channel(self, channel):
+        self.channels[channel] = PubSubChannel(channel, self._log)
+        parts = channel.split("_")
+        if parts[0] in config.pubsub.bots:
+            self._log("Generating Bot '%s' in channel '%s'"%(parts[0], parts[1]), 2)
+            self.bots[channel] = config.pubsub.bots[parts[0]](self, parts[1])
+
     def _check_channel(self, channel, justBool=False):
         condition = channel in self.channels
         if not condition and not justBool:
-            self.channels[channel] = PubSubChannel(channel, self._log)
+            self._new_channel(channel)
         return condition
 
     def _log(self, data, level=0, important=False):
