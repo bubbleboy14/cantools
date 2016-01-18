@@ -1,3 +1,5 @@
+from cantools import config
+
 class PubSubChannel(object):
     def __init__(self, name, logger):
         self._log = logger
