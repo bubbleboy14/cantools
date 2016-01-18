@@ -1,7 +1,8 @@
 import json
 from datetime import datetime
+from actor import Actor
 
-class PubSubUser(object):
+class PubSubUser(Actor):
     def __init__(self, conn, server, logger):
         self.conn = conn
         self.server = server
@@ -10,17 +11,9 @@ class PubSubUser(object):
         self.conn.set_cb(self._register)
         self._log('NEW CONNECTION', 1, True)
 
-    def join(self, channel):
-        self.channels.add(channel)
-
-    def leave(self, channel):
-        if channel in self.channels:
-            self.channels.remove(channel)
-
     def write(self, data):
         data["data"]["datetime"] = str(datetime.now()) # do a better job
         dstring = json.dumps(data) # pre-encode so we can log
-        self._log('WRITE: "%s" -> "%s"'%(self.name, dstring), 3)
         self.conn.write(dstring, noEncode=True)
 
     def _read(self, obj):
