@@ -13,6 +13,9 @@ class Config(object):
 	def __getitem__(self, key):
 		return self._cfg[key]
 
+	def __contains__(self, key):
+		return key in self._cfg
+
 	# dict compabitility
 	def values(self):
 		return self._cfg.values()
@@ -36,12 +39,12 @@ for key, val in [[term.strip() for term in line.split(" = ")] for line in read("
 		config.db.update(config.web_server, val)
 	elif key == "PUBSUB_BOTS":
 		def lb():
+			import sys
 			from cantools.util import log
 			log("Loading Bots")
-			import sys
 			sys.path.insert(0, "bots") # for dynamically loading bot modules
 			for bname in config.pubsub._botNames:
-				log("Importing Bot: %s"%(bname.title(),), 2)
+				log("Importing Bot: %s"%(bname,), 2)
 				__import__(bname) # config modified in pubsub.bots.BotMeta.__new__()
 		config.pubsub.update("_botNames", val.split("|"))
 		config.pubsub.update("loadBots", lb)
