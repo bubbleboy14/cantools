@@ -37,3 +37,4 @@ class Bot(object):
 	on_publish = _default_handler
 	on_subscribe = _default_handler
 	on_unsubscribe = _default_handler
+	on_pm = _default_handler

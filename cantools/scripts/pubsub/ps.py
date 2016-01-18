@@ -24,9 +24,9 @@ class PubSub(WebSocketDaemon):
 
     def pm(self, data, user):
         recipient = data["user"]
-        if recipient not in self.users:
+        if recipient not in self.users and recipient not in self.bots:
             return self._error(user, "no such user!")
-        recipient.write({
+        self.users.get(recipient, self.bots[recipient]).write({
             "action": "pm",
             "data": {
                 "user": user.name,
