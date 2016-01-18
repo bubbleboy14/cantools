@@ -31,13 +31,13 @@ class PubSubUser(object):
     def _close(self):
         for channel in list(self.channels):
             channel.leave(self)
-        if self.name in self.server.clients: # _should_ be
-            del self.server.clients[self.name]
+        if self.name in self.server.users: # _should_ be
+            del self.server.users[self.name]
 
     def _register(self, obj):
         name = obj["data"]
         self._log('REGISTER: "%s"'%(name,), 1, True)
         self.name = name
-        self.server.clients[name] = self
+        self.server.users[name] = self
         self.conn.set_cb(self._read)
         self.conn.set_close_cb(self._close)

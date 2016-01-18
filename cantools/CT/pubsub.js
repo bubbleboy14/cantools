@@ -88,8 +88,18 @@ CT.pubsub = {
 	"set_reconnect": function(bool) {
 		CT.pubsub._.reconnect = bool;
 	},
-	"set_cb": function(action, cb) { // action: message|subscribe|join|leave|open|close|error
+	"set_cb": function(action, cb) {
+		// action: message|subscribe|join|leave|open|close|error|pm
 		CT.pubsub._.cb[action] = cb;
+	},
+	"pm": function(user, message) {
+		CT.pubsub._.write({
+			"action": "pm",
+			"data": {
+				"user": user,
+				"message": message
+			}
+		});
 	},
 	"publish": function(channel, message) {
 		CT.pubsub._.write({

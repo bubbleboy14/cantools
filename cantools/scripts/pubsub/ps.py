@@ -17,10 +17,22 @@ class PubSub(WebSocketDaemon):
             self.silent = False
         WebSocketDaemon.__init__(self, *args, **kwargs)
         self.bots = {}
-        self.clients = {}
+        self.users = {}
         self.channels = {}
         config.pubsub.loadBots()
         self._log("Initialized PubSub Server @ %s:%s"%(self.hostname, self.port), important=True)
+
+    def pm(self, data, user):
+        recipient = data["user"]
+        if recipient not in self.users:
+            return self._error(user, "no such user!")
+        recipient.write({
+            "action": "pm",
+            "data": {
+                "user": user.name,
+                "message": data["message"]
+            }
+        })
 
     def subscribe(self, channel, user):
         self._check_channel(channel)
@@ -49,6 +61,14 @@ class PubSub(WebSocketDaemon):
         self.channels[channel].write({
             "message": data["message"],
             "user": user.name
+        })
+
+    def _error(self, user, message):
+        user.write({
+            "action": "error",
+            "data": {
+                "message": message
+            }
         })
 
     def _new_channel(self, channel):
