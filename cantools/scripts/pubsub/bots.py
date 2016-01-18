@@ -11,13 +11,16 @@ class BotMeta(type):
 		return bc
 
 class Bot(object):
+	num = 0
 	__metaclass__ = BotMeta
 	def __init__(self, pubsub, channel):
+		Bot.num += 1
+		self.name = self.__class__.__name__ + Bot.num
 		self.pubsub = pubsub
-		self.name = self.__class__.__name__
 		self.channels = set()
-		log("Bot Spawned: '%s'"%(self.name,), 2)
 		channel.join(self)
+		self.pubsub.bots[self.name] = self
+		log("Bot Spawned: '%s'"%(self.name,), 2)
 
 	def join(self, channel):
 		log("Bot '%s' Joined '%s'"%(self.name, channel.name), 2)

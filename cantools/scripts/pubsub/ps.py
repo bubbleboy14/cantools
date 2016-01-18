@@ -73,10 +73,11 @@ class PubSub(WebSocketDaemon):
 
     def _new_channel(self, channel):
         self.channels[channel] = PubSubChannel(channel, self._log)
-        gametype = channel.split("_")[0]
-        if gametype in config.pubsub.bots:
-            self._log("Generating Bot '%s' for channel '%s'"%(gametype, channel), 2)
-            self.bots[channel] = config.pubsub.bots[gametype](self, self.channels[channel])
+        # check for bots...
+        botname = channel.split("_")[0]
+        if botname in config.pubsub.bots:
+            self._log("Generating Bot '%s' for channel '%s'"%(botname, channel), 2)
+            config.pubsub.bots[botname](self, self.channels[channel])
 
     def _check_channel(self, channel, justBool=False):
         condition = channel in self.channels
