@@ -6,8 +6,10 @@ cfg = {
 	},
 	"mailer": None, # (override w/ MAILER)
 	"pubsub": {
+		"host": "localhost",
 		"port": 8888,
-		"history": 10
+		"history": 10,
+		"bots": {}
 	},
 	"parse_error_segment_length": 100,
 	"build": {
