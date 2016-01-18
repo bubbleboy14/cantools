@@ -13,14 +13,14 @@ class BotMeta(type):
 class Bot(object):
 	num = 0
 	__metaclass__ = BotMeta
-	def __init__(self, pubsub, channel):
+	def __init__(self, server, channel, name=None):
 		Bot.num += 1
-		self.name = self.__class__.__name__ + Bot.num
-		self.pubsub = pubsub
+		self.name = name or (self.__class__.__name__ + str(Bot.num))
+		self.server = server
 		self.channels = set()
-		channel.join(self)
-		self.pubsub.bots[self.name] = self
 		log("Bot Spawned: '%s'"%(self.name,), 2)
+		channel.join(self)
+		self.server.bots[self.name] = self
 
 	def join(self, channel):
 		log("Bot '%s' Joined '%s'"%(self.name, channel.name), 2)

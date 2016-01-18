@@ -9,17 +9,17 @@ CT.pubsub = {
 		"log": CT.log.getLogger("CT.pubsub"),
 		"queue": [],
 		"channels": {},
-		"cb": {
-			"pm": CT.log.getLogger("CT.pubsub|pm"), // override w/ set_cb()
-			"message": CT.log.getLogger("CT.pubsub|message"), // override w/ set_cb()
-			"subscribe": CT.log.getLogger("CT.pubsub|subscribe"), // override w/ set_cb()
-			"join": CT.log.getLogger("CT.pubsub|join"), // override w/ set_cb()
-			"leave": CT.log.getLogger("CT.pubsub|leave"), // override w/ set_cb()
-			"open": CT.log.getLogger("CT.pubsub|open"), // override w/ set_cb()
-			"close": CT.log.getLogger("CT.pubsub|close"), // override w/ set_cb()
-			"error": CT.log.getLogger("CT.pubsub|error"), // override w/ set_cb()
+		"cb": { // default callbacks -- override w/ set_cb()
+			"pm": CT.log.getLogger("CT.pubsub|pm"),
+			"message": CT.log.getLogger("CT.pubsub|message"),
+			"subscribe": CT.log.getLogger("CT.pubsub|subscribe"),
+			"join": CT.log.getLogger("CT.pubsub|join"),
+			"leave": CT.log.getLogger("CT.pubsub|leave"),
+			"open": CT.log.getLogger("CT.pubsub|open"),
+			"close": CT.log.getLogger("CT.pubsub|close"),
+			"error": CT.log.getLogger("CT.pubsub|error")
 		},
-		"process": {
+		"process": { // pubsub events
 			"channel": function(data) {
 				CT.pubsub._.channels[data.channel] = data;
 				data.history.forEach(CT.pubsub._.process.publish);
@@ -40,7 +40,7 @@ CT.pubsub = {
 				CT.pubsub._.cb.pm(data.message, data.user);
 			}
 		},
-		"on": {
+		"on": { // websocket events
 			"open": function() {
 				CT.pubsub._.open = true;
 				CT.pubsub._.reconnect_interval = 250;

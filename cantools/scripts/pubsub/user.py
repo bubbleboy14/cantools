@@ -34,6 +34,14 @@ class PubSubUser(object):
         if self.name in self.server.users: # _should_ be
             del self.server.users[self.name]
 
+    def _error(self, message):
+        self.write({
+            "action": "error",
+            "data": {
+                "message": message
+            }
+        })
+
     def _register(self, obj):
         name = obj["data"]
         self._log('REGISTER: "%s"'%(name,), 1, True)

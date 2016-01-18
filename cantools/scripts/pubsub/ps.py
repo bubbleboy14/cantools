@@ -25,8 +25,8 @@ class PubSub(WebSocketDaemon):
     def pm(self, data, user):
         recipient = data["user"]
         if recipient not in self.users and recipient not in self.bots:
-            return self._error(user, "no such user!")
-        self.users.get(recipient, self.bots[recipient]).write({
+            return user._error("no such user!")
+        self.users.get(recipient, self.bots.get(recipient)).write({
             "action": "pm",
             "data": {
                 "user": user.name,
@@ -61,14 +61,6 @@ class PubSub(WebSocketDaemon):
         self.channels[channel].write({
             "message": data["message"],
             "user": user.name
-        })
-
-    def _error(self, user, message):
-        user.write({
-            "action": "error",
-            "data": {
-                "message": message
-            }
         })
 
     def _new_channel(self, channel):
