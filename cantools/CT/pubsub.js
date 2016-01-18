@@ -17,7 +17,8 @@ CT.pubsub = {
 			"leave": CT.log.getLogger("CT.pubsub|leave"),
 			"open": CT.log.getLogger("CT.pubsub|open"),
 			"close": CT.log.getLogger("CT.pubsub|close"),
-			"error": CT.log.getLogger("CT.pubsub|error")
+			"wserror": CT.log.getLogger("CT.pubsub|wserror"), // websocket -- almost same as close
+			"error": CT.log.getLogger("CT.pubsub|error") // non-fatal pubsub error
 		},
 		"process": { // pubsub events
 			"channel": function(data) {
@@ -38,6 +39,9 @@ CT.pubsub = {
 			},
 			"pm": function(data) {
 				CT.pubsub._.cb.pm(data.message, data.user);
+			},
+			"error": function(data) {
+				CT.pubsub._.cb.error(data.message);
 			}
 		},
 		"on": { // websocket events
@@ -61,7 +65,7 @@ CT.pubsub = {
 					CT.pubsub._.try_reconnect()
 			},
 			"error": function() {
-				CT.pubsub._.cb.error();
+				CT.pubsub._.cb.wserror();
 			},
 			"message": function(msg) {
 				var d = JSON.parse(atob(msg.data));
