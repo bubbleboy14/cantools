@@ -139,12 +139,35 @@ var CT = {
 			window.onload = CT._.triggerOnload;
 		CT._.onload.push(cb);
 	},
-	"log": function(msg, level) {
-		var s = Date() + " ::";
-		if (level) for (var i = 0; i < level; i++)
-			s += "  ";
-		console.log(s, msg);
+	"merge": function() { // properties on earlier objects trump those on later ones
+		var i, k, o = {};
+		for (i = arguments.length - 1; i > -1; i--) {
+			for (k in arguments[i])
+				o[k] = arguments[i][k];
+		}
+		return o;
+	},
+	"Class": function(obj, parent) {
+		var c = function() {
+			var instance = CT.merge(obj, parent && parent.prototype);
+			if (parent)
+				parent.prototype.fullInit.apply(instance, arguments);
+			if (obj.init)
+				obj.init.apply(instance, arguments);
+			return instance;
+		};
+		obj.fullInit = c;
+		c.prototype = obj;
+		return c;
 	}
+};
+
+// logging
+CT.log = function(msg, level) {
+	var s = Date() + " ::";
+	if (level) for (var i = 0; i < level; i++)
+		s += "  ";
+	console.log(s, msg);
 };
 CT.log._silent = false;
 CT.log.set = function(bool) {
