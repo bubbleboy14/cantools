@@ -147,6 +147,14 @@ var CT = {
 					o[k] = arguments[i][k];
 		return o;
 	},
+	"bind": function(ctx, obj) { // recursive bind
+		for (var p in obj) {
+			if (typeof obj[p] == "function")
+				obj[p] = obj[p].bind(ctx);
+			else if (typeof obj[p] == "object")
+				CT.bind(ctx, obj[p]);
+		}
+	},
 	"Class": function(obj, parent) {
 		obj.fullInit = function() {
 			if (parent)
@@ -156,9 +164,7 @@ var CT = {
 		};
 		var c = function() {
 			var instance = CT.merge(c.prototype);
-			for (var p in instance)
-				if (typeof instance[p] == "function")
-					instance[p] = instance[p].bind(instance);
+			CT.bind(instance, instance);
 			obj.fullInit.apply(instance, arguments);
 			return instance;
 		};
