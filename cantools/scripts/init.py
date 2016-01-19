@@ -24,6 +24,7 @@ class Builder(object):
 		mkdir(self.pname)
 		os.chdir(self.pname)
 		mkdir("js")
+		mkdir("css")
 		mkdir("html")
 
 	def make_files(self):
@@ -36,13 +37,16 @@ class Builder(object):
 
 	def generate_symlinks(self, refresh=False):
 		log("creating symlinks", 1)
-		if refresh and not os.path.isdir("js"):
-			mkdir("js")
+		if refresh:
+			if not os.path.isdir("js"):
+				mkdir("js")
+			if not os.path.isdir("css"):
+				mkdir("css")
 		ctroot = os.path.join(self.cantools_path, "cantools", "cantools")
 		if self.web_backend == "gae":
 			sym(ctroot, "cantools")
 		sym(os.path.join(ctroot, "CT"), os.path.join("js", "CT"))
-		sym(os.path.join(ctroot, "css", "ct.css"), os.path.join("html", "ct.css"))
+		sym(os.path.join(ctroot, "css", "ct.css"), os.path.join("css", "ct.css"))
 
 def parse_and_make():
 	parser = OptionParser("ctinit [projname] [--cantools_path=PATH] [--web_backend=BACKEND]")

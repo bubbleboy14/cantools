@@ -54,11 +54,15 @@ handlers:
 - url: /remote_api
   script: $PYTHON_LIB/google/appengine/ext/remote_api/handler.py
   login: admin""",
-  			"core": """## MODE SWITCHING -- DON'T MESS WITH (unless you know what you're doing)!
+  			"core": """
+- url: /css
+  static_dir: css
+
+## MODE SWITCHING -- DON'T MESS WITH (unless you know what you're doing)!
 # START mode: dynamic
 - url: /js
   static_dir: js
-- url: /.*\.(html|css)
+- url: /.*\.html
   static_dir: html
 # END mode: dynamic
 # START mode: static
