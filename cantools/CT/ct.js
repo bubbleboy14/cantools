@@ -148,15 +148,17 @@ var CT = {
 		return o;
 	},
 	"Class": function(obj, parent) {
+		obj.fullInit = function() {
+			if (parent)
+				parent.prototype.fullInit.apply(this, arguments);
+			if (obj.init)
+				obj.init.apply(this, arguments);
+		};
 		var c = function() {
 			var instance = CT.merge(c.prototype);
-			if (parent)
-				parent.prototype.fullInit.apply(instance, arguments);
-			if (obj.init)
-				obj.init.apply(instance, arguments);
+			obj.fullInit.apply(instance, arguments);
 			return instance;
 		};
-		obj.fullInit = c;
 		c.prototype = CT.merge(obj, parent && parent.prototype);
 		return c;
 	}
