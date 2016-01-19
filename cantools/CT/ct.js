@@ -141,10 +141,10 @@ var CT = {
 	},
 	"merge": function() { // properties on earlier objects trump those on later ones
 		var i, k, o = {};
-		for (i = arguments.length - 1; i > -1; i--) {
-			for (k in arguments[i])
-				o[k] = arguments[i][k];
-		}
+		for (i = arguments.length - 1; i > -1; i--)
+			if (arguments[i])
+				for (k in arguments[i])
+					o[k] = arguments[i][k];
 		return o;
 	},
 	"Class": function(obj, parent) {
@@ -156,6 +156,9 @@ var CT = {
 		};
 		var c = function() {
 			var instance = CT.merge(c.prototype);
+			for (var p in instance)
+				if (typeof instance[p] == "function")
+					instance[p] = instance[p].bind(instance);
 			obj.fullInit.apply(instance, arguments);
 			return instance;
 		};
