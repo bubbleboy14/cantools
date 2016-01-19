@@ -149,7 +149,7 @@ var CT = {
 	},
 	"Class": function(obj, parent) {
 		var c = function() {
-			var instance = CT.merge(obj, parent && parent.prototype);
+			var instance = CT.merge(c.prototype);
 			if (parent)
 				parent.prototype.fullInit.apply(instance, arguments);
 			if (obj.init)
@@ -157,7 +157,7 @@ var CT = {
 			return instance;
 		};
 		obj.fullInit = c;
-		c.prototype = obj;
+		c.prototype = CT.merge(obj, parent && parent.prototype);
 		return c;
 	}
 };
