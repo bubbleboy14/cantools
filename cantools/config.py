@@ -1,4 +1,4 @@
-from util import read
+from cantools.util import read
 from cfg import cfg
 
 class Config(object):
