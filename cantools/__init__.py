@@ -1,7 +1,6 @@
+import util
 import config as cfgmod
 config = cfgmod.config
-
-import util
 from scripts import builder, deploy, init, pubsub, start
 
 ctstart = start.go
