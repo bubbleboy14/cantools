@@ -22,11 +22,14 @@ class PubSub(WebSocketDaemon):
         config.pubsub.loadBots()
         self._log("Initialized PubSub Server @ %s:%s"%(self.hostname, self.port), important=True)
 
+    def _client(self, name):
+        return self.users.get(name) or self.bots.get(name)
+
     def pm(self, data, user):
-        recipient = data["user"]
-        if recipient not in self.users and recipient not in self.bots:
+        recipient = self._client(data["user"])
+        if not recipient:
             return user._error("no such user!")
-        self.users.get(recipient, self.bots.get(recipient)).write({
+        recipient.write({
             "action": "pm",
             "data": {
                 "user": user.name,
