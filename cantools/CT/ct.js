@@ -96,7 +96,8 @@ var CT = {
 	},
 	"scriptImport": function(modpath, cb, delay) {
 		var h = document.getElementsByTagName("head")[0],
-			fp = CT.net.fullPath(modpath.replace(/\./g, "/") + ".js");
+			fp = (modpath.slice(0, 4) == "http") && modpath
+				|| (CT.net.fullPath(modpath.replace(/\./g, "/") + ".js"));
 		if (!(fp in CT._.scriptImportCb)) {
 			CT._.scriptImportCb[fp] = [];
 			h.appendChild(CT.dom.script(fp));
@@ -107,7 +108,7 @@ var CT = {
 	},
 	"require": function(modname, lazy) { // lazy only matters compile-time
 		if (modname.slice(0, 4) == "http") {
-			if (!(modname in CT._extReqs)) {
+			if (!(modname in CT._.extReqs)) {
 				CT._.extReqs[modname] = true;
 				eval(CT.net.get(modname));
 			}
