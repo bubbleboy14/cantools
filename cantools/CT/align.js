@@ -7,12 +7,16 @@ CT.align = {
 	    // 8px padding
 	    return n.style.left = (8 + x) + "px";
 	},
-	"absed": function(node, leftpx, toppx) {
+	"absed": function(node, leftpx, toppx, rightpx, bottompx) {
 	    node.style.position = "absolute";
 	    CT.align._setLeft(node, leftpx);
 	    if (toppx != null)
 	        node.style.top = toppx + "px";
-	    CT.align.absers.push([node, leftpx]);
+	    if (rightpx != null)
+	        node.style.right = rightpx + "px";
+	    if (bottompx != null)
+	        node.style.bottom = bottompx + "px";
+	    CT.align.absers.push([node, leftpx, toppx, rightpx, bottompx]);
 	    return node;
 	},
 	"centernode": function(n) {
