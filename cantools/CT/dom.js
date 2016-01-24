@@ -374,7 +374,7 @@ CT.dom = {
 	    };
 	    return n;
 	},
-	"smartField": function(cb, id, value, classname, type) {
+	"smartField": function(cb, classname, id, value, type) {
 		id = id || ("sf" + Math.floor((Math.random() * 100000)));
 		return CT.dom.inputEnterCallback(CT.dom.field(id,
 			value, classname, type), cb, id);
