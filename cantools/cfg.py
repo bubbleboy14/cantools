@@ -68,11 +68,11 @@ handlers:
 # START mode: static
 #- url: /js
 #  static_dir: js
-#- url: /.*\.(html|css)
+#- url: /.*\.html
 #  static_dir: html-static
 # END mode: static
 # START mode: production
-#- url: /.*\.(html|css)
+#- url: /.*\.html
 #  static_dir: html-production
 # END mode: production"""
 		},
