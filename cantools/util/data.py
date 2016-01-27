@@ -17,7 +17,7 @@ def getcsv(data, mod=False):
 def getcsvmod(fname):
 	import csv
 	d = []
-	f = open(fname)
+	f = open(fname, "rU")
 	reader = csv.reader(f)
 	for row in reader:
 		d.append(row)
