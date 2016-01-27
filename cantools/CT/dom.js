@@ -497,6 +497,12 @@ CT.dom = {
 	    return (iframe.documentWindow || iframe.contentWindow || iframe.contentDocument).location;
 	},
 
+	// getters
+	"id": function(id) { return document.getElementById(id); },
+	"class": function(cname) { return document.getElementsByClassName(cname); },
+	"tag": function(tag) { return document.getElementsByTagName(tag); },
+	"Q": function(q, n) { return (n || document.body).querySelectorAll(q); },
+
 	// transitions
 	"_vender_prefixes": [
 	    "-webkit-",
