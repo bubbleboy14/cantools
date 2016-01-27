@@ -23,8 +23,8 @@ CT.pubsub = {
 		"process": { // pubsub events
 			"channel": function(data) {
 				CT.pubsub._.channels[data.channel] = data;
-				data.history.forEach(CT.pubsub._.process.publish);
 				CT.pubsub._.cb.subscribe(data);
+				data.history.forEach(CT.pubsub._.process.publish);
 			},
 			"publish": function(data) {
 				CT.pubsub._.cb.message(data);
