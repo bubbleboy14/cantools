@@ -60,6 +60,9 @@ class Key(object):
 	def __init__(self, urlsafe=None):
 		self.value = urlsafe
 
+	def __nonzero__(self):
+		return bool(self.value)
+
 	def get(self):
 		return get(self.value)
 
