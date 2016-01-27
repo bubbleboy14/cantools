@@ -62,9 +62,11 @@ class ModelBase(declarative_base()):
                 "index": self.index,
                 "model": self.polytype
             })))
+        session.commit()
 
     def rm(self):
         session.delete(self)
+        session.commit()
 
     def collection(self, entity_model, property_name, fetch=True, keys_only=False, data=False):
         q = entity_model.query(getattr(entity_model, property_name) == self.index)

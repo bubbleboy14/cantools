@@ -5,10 +5,14 @@ from cantools import config
 engine = create_engine(config.db)
 session = sessionmaker(bind=engine)()
 
-put_multi = session.add_all
+def put_multi(instances):
+	session.add_all(instances)
+	session.commit()
+
 def delete_multi(instances):
 	for instance in instances:
 		instance.rm()
+	session.commit()
 
 _passthru = ["count", "all"]
 _qmod = ["filter", "limit", "offset"]
