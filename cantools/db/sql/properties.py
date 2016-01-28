@@ -6,8 +6,13 @@ class DynamicType(sqlalchemy.TypeDecorator):
 		self.choices = kwargs.pop("choices", None)
 		sqlalchemy.TypeDecorator.__init__(self, *args, **kwargs)
 
-def basicType(colClass):
-	return type("%sWrapper"%(colClass.__name__,), (DynamicType,), { "impl": colClass })
+class StringType(DynamicType):
+	def __init__(self, *args, **kwargs):
+		# '500' (len) required for MySQL VARCHAR
+		DynamicType.__init__(self, 500, *args, **kwargs)
+
+def basicType(colClass, baseType=DynamicType):
+	return type("%sWrapper"%(colClass.__name__,), (baseType,), { "impl": colClass })
 
 _cparams = ["primary_key", "default"]
 
@@ -30,11 +35,12 @@ def _col(colClass, *args, **kwargs):
 def sqlColumn(colClass):
 	return lambda *args, **kwargs : _col(colClass, *args, **kwargs)
 
-for prop in ["Integer", "Float", "Boolean", "String", "Text", "Binary", "Date", "Time"]:
+for prop in ["Integer", "Float", "Boolean", "Text", "Binary", "Date", "Time"]:
 	sqlprop = getattr(sqlalchemy, prop)
 	globals()["sql%s"%(prop,)] = sqlprop
 	globals()[prop] = sqlColumn(basicType(sqlprop))
 
+# datetime
 BasicDT = basicType(sqlalchemy.DateTime)
 class DateTimeAutoStamper(BasicDT):
 	def __init__(self, *args, **kwargs):
@@ -47,7 +53,10 @@ class DateTimeAutoStamper(BasicDT):
 
 DateTime = sqlColumn(DateTimeAutoStamper)
 
-BasicString = basicType(sqlString)
+# strings, arrays, keys
+sqlString = sqlalchemy.String
+BasicString = basicType(sqlString, StringType)
+String = sqlColumn(BasicString)
 
 class ArrayType(BasicString):
 	def process_bind_param(self, value, dialect):
