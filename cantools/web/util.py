@@ -116,6 +116,13 @@ def set_close(f):
     global _close
     _close = f
 
+def _pre_close():
+    pass
+
+def set_pre_close(f):
+    global _pre_close
+    _pre_close = f
+
 def _header(hkey, hval):
     _send("%s: %s"%(hkey, hval))
 
@@ -127,7 +134,9 @@ def _write(data, exit=True, savename=None):
     if savename:
         setmem(savename, data, False)
     _send(data.encode('utf-8'))
-    exit and _close()
+    if exit:
+        _pre_close()
+        _close()
 
 def trysavedresponse(key=None):
     key = key or request_string
