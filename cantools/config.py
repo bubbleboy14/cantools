@@ -37,7 +37,8 @@ for key, val in [[term.strip() for term in line.split(" = ")] for line in read("
 		config.js.update("path", val)
 	elif key == "DB":
 		if "{PASSWORD}" in val:
-			val = val.replace("{PASSWORD}", raw_input("enter database password: "))
+			import getpass
+			val = val.replace("{PASSWORD}", getpass.getpass("enter database password: "))
 		config.db.update(config.web_server, val)
 	elif key == "PUBSUB_BOTS":
 		def lb():
