@@ -1,9 +1,4 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from cantools import config
-
-engine = create_engine(config.db)
-session = sessionmaker(bind=engine)()
+from session import session, engine
 
 def put_multi(instances):
 	session.add_all(instances)
@@ -11,7 +6,7 @@ def put_multi(instances):
 
 def delete_multi(instances):
 	for instance in instances:
-		instance.rm()
+		instance.rm(False)
 	session.commit()
 
 _passthru = ["count", "all"]
