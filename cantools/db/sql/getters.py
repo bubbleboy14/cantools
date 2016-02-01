@@ -3,20 +3,20 @@ from base64 import b64encode, b64decode
 
 modelsubs = {}
 
-def getall(entity=None, query=None, keys_only=False):
+def getall(entity=None, query=None, keys_only=False, session=None):
     if query:
         res = query.all()
     elif entity:
-        res = entity.query().all()
+        res = entity.query(session).all()
     if keys_only:
         return [r.key for r in res]
     return res
 
-def get(b64compkey):
+def get(b64compkey, session=None):
     compkey = json.loads(b64decode(b64compkey))
-    return modelsubs[compkey["model"]].query().query.get(compkey["index"])
+    return modelsubs[compkey["model"]].query(session).query.get(compkey["index"])
 
-def get_multi(keyobjs):
+def get_multi(keyobjs, session=None):
     b64keys = [k.urlsafe() for k in keyobjs]
     keys = [json.loads(b64decode(k)) for k in b64keys]
     ents = {}
@@ -31,6 +31,6 @@ def get_multi(keyobjs):
         ents[mod]["indices"].append(k["index"])
     for key, val in ents.items():
         mod = val["model"]
-        for r in mod.query().filter(mod.index.in_(val["indices"])).all():
+        for r in mod.query(session).filter(mod.index.in_(val["indices"])).all():
             res[r.id()] = r
     return [res[k] for k in b64keys]
