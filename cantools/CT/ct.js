@@ -140,6 +140,21 @@ var CT = {
 			window.onload = CT._.triggerOnload;
 		CT._.onload.push(cb);
 	},
+	"dmerge": function() {
+		var i, k, v, o = {};
+		for (i = arguments.length - 1; i > -1; i--) {
+			if (arguments[i]) {
+				for (k in arguments[i]) {
+					v = arguments[i][k];
+					if (typeof v == "object")
+						o[k] = Array.isArray(v) ? v.slice() : CT.dmerge(v);
+					else
+						o[k] = v;
+				}
+			}
+		}
+		return o;
+	},
 	"merge": function() { // properties on earlier objects trump those on later ones
 		var i, k, o = {};
 		for (i = arguments.length - 1; i > -1; i--)
@@ -164,7 +179,7 @@ var CT = {
 				obj.init.apply(this, arguments);
 		};
 		var c = function() {
-			var instance = CT.merge(c.prototype);
+			var instance = CT.dmerge(c.prototype);
 			CT.bind(instance, instance);
 			obj.fullInit.apply(instance, arguments);
 			return instance;
