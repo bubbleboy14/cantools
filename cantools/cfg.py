@@ -2,7 +2,8 @@ cfg = {
 	"web_server": "dez",
 	"db": { # switch on web backend (override w/ DB)
 		"gae": "data.db",
-		"dez": "sqlite:///data.db"
+		"dez": "sqlite:///data.db",
+		"test": "sqlite:///data_test.db"
 	},
 	"mailer": None, # (override w/ MAILER)
 	"pubsub": {

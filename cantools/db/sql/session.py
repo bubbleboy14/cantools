@@ -4,14 +4,15 @@ from cantools import config
 from cantools.util import log
 from cantools.web import cgi_dump, set_pre_close
 
-engine = create_engine(config.db, pool_recycle=7200)
+lastSession = None
 
 class Session(object):
-	def __init__(self):
-		self.generator = scoped_session(sessionmaker(bind=engine), scopefunc=cgi_dump)
-		set_pre_close(self.generator.remove)
+	def __init__(self, dbstring=config.db):
+		self.engine = create_engine(dbstring, pool_recycle=7200)
+		self.generator = scoped_session(sessionmaker(bind=self.engine), scopefunc=cgi_dump)
 		for fname in ["add", "add_all", "delete", "flush", "commit", "query"]:
 			setattr(self, fname, self._func(fname))
+		self._refresh()
 
 	def _func(self, fname):
 		def f(*args):
@@ -28,6 +29,19 @@ class Session(object):
 		return f
 
 	def _refresh(self):
+		global lastSession
+		lastSession = self
 		self.session = self.generator()
+
+def loadTables(cls):
+	cls.metadata.create_all(lastSession.engine)
+
+def testSession():
+	return Session(config.db_test)
+
+def closeSession():
+	lastSession.generator.remove()
+
+set_pre_close(closeSession)
 
 session = Session()

@@ -29,6 +29,12 @@ class Config(object):
 	def update(self, key, val):
 		self._cfg[key] = isinstance(val, dict) and Config(val) or val
 
+def dbupdate(dbprop, val):
+	if "{PASSWORD}" in val:
+		import getpass
+		val = val.replace("{PASSWORD}", getpass.getpass("enter database password (%s): "%(dbprop,)))
+	config.db.update(dbprop, val)
+
 config = Config(cfg)
 for key, val in [[term.strip() for term in line.split(" = ")] for line in read("ct.cfg", True)]:
 	if key == "ENCODE":
@@ -36,10 +42,9 @@ for key, val in [[term.strip() for term in line.split(" = ")] for line in read("
 	elif key == "JS_PATH":
 		config.js.update("path", val)
 	elif key == "DB":
-		if "{PASSWORD}" in val:
-			import getpass
-			val = val.replace("{PASSWORD}", getpass.getpass("enter database password: "))
-		config.db.update(config.web_server, val)
+		dbupdate(config.web_server, val)
+	elif key == "DB_TEST":
+		dbupdate("test", val)
 	elif key == "PUBSUB_BOTS":
 		def lb():
 			import sys
@@ -53,4 +58,5 @@ for key, val in [[term.strip() for term in line.split(" = ")] for line in read("
 		config.pubsub.update("loadBots", lb)
 	else:
 		config.update(key.lower(), val)
+config.update("db_test", config.db.test)
 config.update("db", config.db[config.web_server])

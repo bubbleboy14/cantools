@@ -11,9 +11,6 @@ def choice_validator(choices):
         return v
     return cval
 
-def loadTables(cls): # ensure tables exist
-    cls.metadata.create_all(engine)
-
 class CTMeta(DeclarativeMeta):
     def query(cls, *args, **kwargs):
         loadTables(cls)
@@ -50,7 +47,7 @@ class ModelBase(declarative_base()):
     def __ne__(self, other):
         return not self.__eq__(other)
 
-    def put(self):
+    def put(self, session=session):
         for key, val in self.__class__.__dict__.items():
             if getattr(val, "is_dt_autostamper", False) and val.should_stamp(not self.index):
                 setattr(self, key, datetime.now())
@@ -64,7 +61,7 @@ class ModelBase(declarative_base()):
             })))
         session.commit()
 
-    def rm(self, commit=True):
+    def rm(self, commit=True, session=session):
         session.delete(self)
         if commit:
             session.commit()

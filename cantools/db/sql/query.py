@@ -1,10 +1,13 @@
-from session import session, engine
+import session as seshmod
+session = seshmod.session
+testSession = seshmod.testSession
+loadTables = seshmod.loadTables
 
-def put_multi(instances):
+def put_multi(instances, session=session):
 	session.add_all(instances)
 	session.commit()
 
-def delete_multi(instances):
+def delete_multi(instances, session=session):
 	for instance in instances:
 		instance.rm(False)
 	session.commit()
@@ -14,7 +17,7 @@ _qmod = ["filter", "limit", "offset"]
 
 class Query(object):
 	def __init__(self, mod, *args, **kwargs):
-		self.query = session.query(mod)
+		self.query = kwargs.pop("session", session).query(mod)
 		for fname in _passthru:
 			setattr(self, fname, self._qplam(fname))
 		for fname in _qmod:
