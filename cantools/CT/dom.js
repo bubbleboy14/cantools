@@ -109,6 +109,23 @@ CT.dom = {
 			attrs.onplay = onplay;
 		return CT.dom.node("", "audio", className, id, attrs);
 	},
+	"iframe": function(src, className, id) {
+		var iframe = CT.dom.node("", "iframe", className, id, {
+			"src": src
+		});
+		iframe.setHash = function(txt) {
+			CT.dom.getLoc(iframe).hash = txt;
+		};
+		return iframe;
+	},
+
+	// iframe getters
+	"getDoc": function(iframe) {
+		return iframe.documentWindow || iframe.contentWindow || iframe.contentDocument;
+	},
+	"getLoc": function(iframe) {
+	    return CT.dom.getDoc(iframe).location;
+	},
 
 	// composite nodes
 	"checkboxAndLabel": function(cbid, ischecked, lname, lclass, cclass, onclick) {
@@ -490,11 +507,6 @@ CT.dom = {
 	    if (document.getElementById(id))
 	        return cb();
 	    setTimeout(CT.dom.doWhenNodeExists, 1000, id, cb);
-	},
-
-	// determine iframe location
-	"getLoc": function(iframe) {
-	    return (iframe.documentWindow || iframe.contentWindow || iframe.contentDocument).location;
 	},
 
 	// getters
