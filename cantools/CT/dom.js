@@ -26,6 +26,8 @@ CT.dom = {
 	            continue;
 	        if (["onclick", "value", "onplay"].indexOf(attr) != -1)
 	            d[attr] = attrs[attr];
+	        else if (attr == "onended")
+	        	d.addEventListener("ended", attrs[attr]);
 	        else
 	            d.setAttribute(attr, attrs[attr]);
 	    }
@@ -100,13 +102,15 @@ CT.dom = {
 	        wrapper.appendChild(nodes[i]);
 	    return wrapper;
 	},
-	"audio": function(src, autoplay, onplay, className, id, attrs) {
+	"audio": function(src, autoplay, onplay, onended, className, id, attrs) {
 		attrs = attrs || {};
 		attrs.src = src;
 		if (autoplay)
 			attrs.autoplay = "true";
 		if (onplay)
 			attrs.onplay = onplay;
+		if (onended)
+			attrs.onended = onended;
 		return CT.dom.node("", "audio", className, id, attrs);
 	},
 	"iframe": function(src, className, id) {
