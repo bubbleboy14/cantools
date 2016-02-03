@@ -4,7 +4,11 @@ testSession = seshmod.testSession
 loadTables = seshmod.loadTables
 
 def put_multi(instances, session=session):
-	session.add_all(instances)
+	i = 0
+	while i < len(instances):
+		session.add_all(instances[i:i+1000])
+		session.flush()
+		i += 1000
 	session.commit()
 
 def delete_multi(instances, session=session):
