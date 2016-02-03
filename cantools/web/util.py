@@ -1,4 +1,5 @@
 import sys, json
+from base64 import b64encode, b64decode
 from ..config import config
 
 DEBUG = True
@@ -59,7 +60,7 @@ def setdec(f):
 
 # request functions
 def deUnicodeDict(d):
-    if d.__class__.__name__ != "dict":
+    if not isinstance(d, dict):
         return d
     n = {}
     for v in d:
@@ -174,11 +175,38 @@ def set_env(f):
     global _env
     _env = f
 
+def rb64(data):
+    if isinstance(data, str):
+        return b64encode(data)
+    elif isinstance(data, dict):
+        n = {}
+        for k, v in data.items():
+            n[str(k)] = rb64(v)
+        return n
+    elif isinstance(data, list):
+        return [rb64(d) for d in data]
+    return data
+
+def processResponse(data, code):
+    if code == "1":
+        try:
+            data = json.dumps(data)
+        except:
+            data = json.dumps(rb64(data))
+            code = "3"
+    elif code == "0":
+        try:
+            json.dumps(data)
+        except:
+            data = rb64(data)
+            code = "2"
+    return "%s%s"%(code, data)
+
 def succeed(data="", html=False, noenc=False, savename=None, cache=False):
     if cache or cache_default:
         savename = request_string
     _header("Content-Type", "text/%s"%(html and "html" or "plain"))
-    draw = "1" + json.dumps(data)
+    draw = processResponse(data, "1")
     dstring = (config.encode and not noenc) and enc(draw) or draw
     _write(_env(html)%(dstring,), savename=savename)
 
@@ -192,7 +220,7 @@ def fail(data="failed", html=False, err=None, noenc=False, exit=True):
             # write it
             data = logdata
     _header("Content-Type", "text/%s"%(html and "html" or "plain"))
-    draw = "0" + data
+    draw = processResponse(data, "0")
     dstring = (config.encode and not noenc) and enc(draw) or draw
     _write(_env(html)%(dstring,), exit)
 

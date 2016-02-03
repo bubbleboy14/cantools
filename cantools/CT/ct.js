@@ -70,7 +70,22 @@ var CT = {
 			else
 				alert(msg);
 		},
+		"_b64rd": function(d) {
+			if (typeof d == "string")
+				return atob(d);
+			if (typeof d == "object") {
+				var k, o = Array.isArray(d) ? [] : {};
+				for (k in d)
+					o[k] = CT.net._b64rd(d[k]);
+				return o;
+			}
+			return d;
+		},
 		"post": function(path, params, errMsg, cb, eb, headers, cbarg, ebarg) {
+			cb = cb || function() {};
+			eb = eb || function(payload) {
+				CT.net._fallback_error(errMsg + ": " + payload);
+			};
 			CT.net.xhr(path, "POST", params, true, function(xhr) {
 		        if (xhr.readyState == 4) {
 		            if (xhr.status == 200) {
@@ -78,12 +93,17 @@ var CT = {
 		                if (CT.net._encode)
 		                    data = CT.net._decoder(data);
 		                var payload = data.slice(1);
-		                if (data.charAt(0) == '0') {
-		                    if (eb) eb(payload, ebarg);
-		                    else CT.net._fallback_error(errMsg + ": " + payload);
-		                }
-		                else if (cb != null)
+		                var code = data.charAt(0);
+		                if (code == '0')
+		                	eb(payload, ebarg);
+		                else if (code == "1")
 		                    cb(JSON.parse(payload), cbarg);
+		                else if (code == "2")
+		                	eb(atob(payload), ebarg);
+		                else if (code == "3")
+		                	cb(CT.net._b64rd(JSON.parse(payload)), cbarg);
+		                else
+		                	CT.log("what? bad response code: " + code);
 		            }
 		            else if (!CT.net._encode)
 		                CT.net._fallback_error("request to " + path + " failed!");
