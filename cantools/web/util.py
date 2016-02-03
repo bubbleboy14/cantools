@@ -1,6 +1,6 @@
 import sys, json
 from base64 import b64encode, b64decode
-from ..config import config
+from cantools import config
 
 DEBUG = True
 request = None
@@ -77,13 +77,23 @@ def set_read(f):
     global cgi_read
     cgi_read = f
 
+def rb64(data, de=False):
+    if isinstance(data, basestring):
+        return (de and b64decode or b64encode)(data)
+    elif isinstance(data, dict):
+        for k, v in data.items():
+            data[str(k)] = rb64(v, de)
+    elif isinstance(data, list):
+        return [rb64(d, de) for d in data]
+    return data
+
 def cgi_load(force=False):
     global request
     global request_string
     request_string = cgi_read()
     data = config.encode and dec(request_string) or request_string
     try:
-        request = deUnicodeDict(json.loads(data))
+        request = rb64(json.loads(data), True)
     except:
         import cgi
         request = cgi.FieldStorage()
@@ -174,18 +184,6 @@ def _env(html):
 def set_env(f):
     global _env
     _env = f
-
-def rb64(data):
-    if isinstance(data, str):
-        return b64encode(data)
-    elif isinstance(data, dict):
-        n = {}
-        for k, v in data.items():
-            n[str(k)] = rb64(v)
-        return n
-    elif isinstance(data, list):
-        return [rb64(d) for d in data]
-    return data
 
 def processResponse(data, code):
     if code == "1":

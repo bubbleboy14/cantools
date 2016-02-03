@@ -56,7 +56,7 @@ var CT = {
 		    	xhr.setRequestHeader(header, headers[header]);
 		    xhr.onreadystatechange = cb && function() { cb(xhr); };
 		    if (params) {
-		    	params = JSON.stringify(params);
+		    	params = JSON.stringify(CT.net._b64rd(params, true));
 		    	if (CT.net._encode)
 		    		params = CT.net._encoder(params)
 		    }
@@ -70,13 +70,13 @@ var CT = {
 			else
 				alert(msg);
 		},
-		"_b64rd": function(d) {
+		"_b64rd": function(d, enc) {
 			if (typeof d == "string")
-				return atob(d);
+				return (enc ? btoa : atob)(d);
 			if (typeof d == "object") {
 				var k, o = Array.isArray(d) ? [] : {};
 				for (k in d)
-					o[k] = CT.net._b64rd(d[k]);
+					o[k] = CT.net._b64rd(d[k], enc);
 				return o;
 			}
 			return d;
