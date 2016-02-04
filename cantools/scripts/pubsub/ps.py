@@ -27,11 +27,23 @@ class PubSub(WebSocketDaemon):
     def newUser(self, u):
         if u.name.startswith("admin_") and u.name.endswith(b64encode(config.admin)):
             self.admins[u.name] = u
+            self.snapshot(u)
         else:
             self.users[u.name] = u
 
     def client(self, name):
         return self.users.get(name) or self.bots.get(name) or self.admins.get(name)
+
+    def snapshot(self, admin):
+        admin.write({
+            "action": "snapshot",
+            "data": {
+                "bots": [b.data() for b in self.bots],
+                "users": [u.data() for u in self.users],
+                "admins": [a.data() for a in self.admins],
+                "channels": [c.data() for c in self.channels]
+            }
+        })
 
     def pm(self, data, user):
         recipient = self.client(data["user"])

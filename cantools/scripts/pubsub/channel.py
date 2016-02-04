@@ -9,6 +9,12 @@ class PubSubChannel(object):
         self.history = []
         self._log('NEW CHANNEL: "%s"'%(name,), 1, True)
 
+    def data(self):
+        return {
+            "name": self.name,
+            "users": [u.name for u in self.users]
+        }
+
     def _broadcast(self, obj):
         for user in self.users:
             user.write(obj)
