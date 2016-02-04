@@ -154,15 +154,25 @@ def trysavedresponse(key=None):
     response = getmem(key, False)
     response and _write(response, exit=True)
 
-def do_respond(responseFunc, failMsg="failed", failHtml=False, failNoEnc=False, noLoad=False):
-    try:
-        noLoad or cgi_load()
-        responseFunc()
-        succeed()
-    except Exception, e:
-        fail(data=failMsg, html=failHtml, err=e, noenc=failNoEnc, exit=False)
-    except SystemExit:
-        pass
+def _respond(responseFunc, failMsg="failed", failHtml=False, failNoEnc=False):
+    def f():
+        try:
+            responseFunc()
+            succeed()
+        except Exception, e:
+            fail(data=failMsg, html=failHtml, err=e, noenc=failNoEnc, exit=False)
+        except SystemExit:
+            pass
+    return f
+
+def do_respond(responseFunc, failMsg="failed", failHtml=False, failNoEnc=False, noLoad=False, threaded=False):
+    noLoad or cgi_load()
+    resp = _respond(responseFunc, failMsg=failMsg, failHtml=failHtml, failNoEnc=failNoEnc)
+    if threaded:
+        from thread import start_new_thread
+        start_new_thread(resp, ())
+    else:
+        resp()
 
 def redirect(addr, msg="", noscript=False, exit=True):
     a = "<script>"
