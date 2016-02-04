@@ -29,10 +29,8 @@ class Config(object):
 	def update(self, key, val):
 		self._cfg[key] = isinstance(val, dict) and Config(val) or val
 
-def _getpass(val=None, ptype="admin"):
+def _getpass(val, ptype):
 	import getpass
-	if ptype == "admin":
-		return getpass.getpass("enter password (admin): ")
 	if "{PASSWORD}" in val:
 		val = val.replace("{PASSWORD}", getpass.getpass("enter password (%s): "%(ptype,)))
 	return val
@@ -41,12 +39,8 @@ config = Config(cfg)
 for key, val in [[term.strip() for term in line.split(" = ")] for line in read("ct.cfg", True)]:
 	if key == "ENCODE":
 		config.update("encode", val == "True")
-	elif key == "JS_PATH":
-		config.js.update("path", val)
-	elif key == "ADMIN":
-		config.update("admin", _getpass())
 	elif key == "DB":
-		config.db.update(config.web_server, _getpass(val, "db"))
+		config.db.update(config.web.server, _getpass(val, "db"))
 	elif key == "DB_TEST":
 		config.db.update("test", _getpass(val, "test db"))
 	elif key == "PUBSUB_BOTS":
@@ -61,6 +55,12 @@ for key, val in [[term.strip() for term in line.split(" = ")] for line in read("
 		config.pubsub.update("_botNames", val.split("|"))
 		config.pubsub.update("loadBots", lb)
 	else:
-		config.update(key.lower(), val)
+		target = key.lower()
+		c = config
+		if "_" in target:
+			path, target = target.rsplit("_", 1)
+			for part in path.split("_"):
+				c = getattr(c, part)
+		c.update(target, val)
 config.update("db_test", config.db.test)
-config.update("db", config.db[config.web_server])
+config.update("db", config.db[config.web.server])

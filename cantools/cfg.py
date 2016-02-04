@@ -1,6 +1,13 @@
 cfg = {
-	"admin": False, # override w/ ADMIN (True makes server ask on startup)
-	"web_server": "dez",
+	"admin": {
+		"host": "localhost",
+		"port": 8002
+	},
+	"web": {
+		"server": "dez",
+		"host": "0.0.0.0",
+		"port": 8080
+	},
 	"db": { # switch on web backend (override w/ DB)
 		"gae": "data.db",
 		"dez": "sqlite:///data.db",
@@ -57,12 +64,6 @@ handlers:
   script: $PYTHON_LIB/google/appengine/ext/remote_api/handler.py
   login: admin""",
   			"core": """
-- url: /admin
-  script: admin.py
-
-- url: /_
-  static_dir: admin
-
 - url: /css
   static_dir: css
 
