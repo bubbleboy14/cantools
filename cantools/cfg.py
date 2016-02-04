@@ -57,6 +57,12 @@ handlers:
   script: $PYTHON_LIB/google/appengine/ext/remote_api/handler.py
   login: admin""",
   			"core": """
+- url: /admin
+  script: admin.py
+
+- url: /_
+  static_dir: admin
+
 - url: /css
   static_dir: css
 
