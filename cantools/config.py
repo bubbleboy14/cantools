@@ -8,10 +8,10 @@ class Config(object):
 			self.update(key, val)
 
 	def __getattr__(self, key):
-		return self._cfg[key]
+		return self._cfg.get(key)
 
 	def __getitem__(self, key):
-		return self._cfg[key]
+		return self._cfg.get(key)
 
 	def __contains__(self, key):
 		return key in self._cfg
