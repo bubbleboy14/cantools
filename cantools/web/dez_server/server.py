@@ -34,7 +34,7 @@ class Web(HTTPApplication):
 		self.logger.info("setting handler: %s %s"%(rule, target))
 		def h(req):
 			resp = HTTPResponse(req)
-			set_read(lambda : req.body or json.dumps(req.qs_params))
+			set_read(lambda : req.body or json.dumps(rb64(req.qs_params)))
 			set_header(resp.__setitem__)
 			set_send(resp.write)
 			set_close(lambda : resp.dispatch(abort_branch))

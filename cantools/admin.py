@@ -1,4 +1,4 @@
-from cantools.web import respond, success, fail, cgi_get, getcache
+from cantools.web import respond, succeed, fail, cgi_get, getcache
 from cantools.db import get_model, get_schema
 from cantools import config
 
