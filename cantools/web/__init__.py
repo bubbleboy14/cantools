@@ -1,8 +1,8 @@
 from util import config
 
-if config.web_server == "gae":
+if config.web.server == "gae":
 	from gae_server import *
-elif config.web_server == "dez":
+elif config.web.server == "dez":
 	from dez_server import *
 else:
 	from cantools import util
