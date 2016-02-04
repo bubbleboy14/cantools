@@ -81,6 +81,9 @@ def delmem(key):
 def clearmem():
 	DWEB.memcache.clear()
 
+def getcache():
+	return DWEB.memcache.cache
+
 set_getmem(getmem)
 set_setmem(setmem)
 set_delmem(delmem)
