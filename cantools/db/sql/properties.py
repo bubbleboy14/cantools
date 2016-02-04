@@ -30,6 +30,7 @@ def _col(colClass, *args, **kwargs):
 	if colClass is DateTimeAutoStamper:
 		col.is_dt_autostamper = True
 		col.should_stamp = typeInstance.should_stamp
+	col._ct_type = colClass.__name__.lower()
 	return col
 
 def sqlColumn(colClass):
