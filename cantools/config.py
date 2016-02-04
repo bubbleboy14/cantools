@@ -1,4 +1,4 @@
-from cantools.util import read
+from util import read
 from cfg import cfg
 
 class Config(object):
@@ -29,11 +29,13 @@ class Config(object):
 	def update(self, key, val):
 		self._cfg[key] = isinstance(val, dict) and Config(val) or val
 
-def dbupdate(dbprop, val):
+def _getpass(val=None, ptype="admin"):
+	import getpass
+	if ptype == "admin":
+		return getpass.getpass("enter password (admin): ")
 	if "{PASSWORD}" in val:
-		import getpass
-		val = val.replace("{PASSWORD}", getpass.getpass("enter database password (%s): "%(dbprop,)))
-	config.db.update(dbprop, val)
+		val = val.replace("{PASSWORD}", getpass.getpass("enter password (%s): "%(ptype,)))
+	return val
 
 config = Config(cfg)
 for key, val in [[term.strip() for term in line.split(" = ")] for line in read("ct.cfg", True)]:
@@ -41,10 +43,12 @@ for key, val in [[term.strip() for term in line.split(" = ")] for line in read("
 		config.update("encode", val == "True")
 	elif key == "JS_PATH":
 		config.js.update("path", val)
+	elif key == "ADMIN":
+		config.update("admin", _getpass())
 	elif key == "DB":
-		dbupdate(config.web_server, val)
+		config.db.update(config.web_server, _getpass(val, "db"))
 	elif key == "DB_TEST":
-		dbupdate("test", val)
+		config.db.update("test", _getpass(val, "test db"))
 	elif key == "PUBSUB_BOTS":
 		def lb():
 			import sys

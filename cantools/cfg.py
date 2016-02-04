@@ -1,4 +1,5 @@
 cfg = {
+	"admin": False, # override w/ ADMIN (True makes server ask on startup)
 	"web_server": "dez",
 	"db": { # switch on web backend (override w/ DB)
 		"gae": "data.db",
