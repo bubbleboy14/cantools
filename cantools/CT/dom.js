@@ -88,6 +88,16 @@ CT.dom = {
 	        s.value = ovalues.indexOf(curvalue) != -1 && curvalue || defaultvalue;
 	    return s;
 	},
+	"range": function(onchange, min, max, value, step, classname, id) {
+		return CT.dom.node("", "input", classname, id, {
+			"type": "range",
+			"onchange": onchange,
+			"min": min,
+			"max": max,
+			"value": value,
+			"step": step
+		});
+	},
 	"checkbox": function(id, ischecked) {
 	    var cbdata = {"type": "checkbox"};
 	    if (ischecked)
