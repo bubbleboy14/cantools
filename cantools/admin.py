@@ -4,7 +4,7 @@ from cantools import config
 
 def response():
 	action = cgi_get("action", choices=["db", "memcache", "pubsub"])
-	if cgi_get("pw") != config.admin:
+	if cgi_get("pw") != config.admin.pw:
 		fail("wrong");
 	if action == "db":
 		mname = cgi_get("modelName", required=False)
