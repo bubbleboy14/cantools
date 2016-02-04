@@ -11,6 +11,7 @@ def choice_validator(choices):
 
 class CTMeta(DeclarativeMeta):
     def query(cls, *args, **kwargs):
+        loadTables(cls)
         return Query(cls, *args, **kwargs)
 
     def __new__(cls, name, bases, attrs):
@@ -25,7 +26,6 @@ class CTMeta(DeclarativeMeta):
             if getattr(val, "choices", None):
                 attrs["%s_validator"%(key,)] = sqlalchemy.orm.validates(key)(choice_validator(val.choices))
         modelsubs[lname] = super(CTMeta, cls).__new__(cls, name, bases, attrs)
-        loadTables(modelsubs[lname])
         return modelsubs[lname]
 
 class ModelBase(declarative_base()):

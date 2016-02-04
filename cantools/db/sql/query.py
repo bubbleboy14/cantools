@@ -4,11 +4,17 @@ from properties import *
 import session as seshmod
 session = seshmod.session
 testSession = seshmod.testSession
+loadTables = seshmod.loadTables
 
 def init_multi(instances, session=session):
 	now = datetime.now()
+	classes = set()
 	for instance in instances:
-		for key, val in instance.__class__.__dict__.items():
+		cls = instance.__class__
+		if cls not in classes:
+			classes.add(cls)
+			loadTables(cls)
+		for key, val in cls.__dict__.items():
 			if getattr(val, "is_dt_autostamper", False) and val.should_stamp(not instance.index):
 				setattr(instance, key, now)
 	session.add_all(instances)
