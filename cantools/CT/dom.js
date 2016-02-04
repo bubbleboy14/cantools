@@ -251,6 +251,33 @@ CT.dom = {
 	    }
 	    return table;
 	},
+	"timer": function(start, cb, classname, id, attrs) {
+		var n = CT.dom.node(start, "div", classname, id, attrs);
+		n._sec = start;
+		n._check = function() {
+			n._sec -= 1;
+			n.innerHTML = n._sec;
+			if (n._sec == 0) {
+				n.stop();
+				cb();
+			}
+		};
+		n.set = function(val) {
+			n.innerHTML = n._sec = val;
+		};
+		n.start = function() {
+			n.stop();
+			n._interval = setInterval(n._check, 1000);
+		};
+		n.stop = function() {
+			if (n._interval) {
+				clearInterval(n._interval);
+				n._interval = null;
+			}
+		};
+		n.start();
+		return n;
+	},
 
 	// date selector
 	"_monthnames": ["January", "February",
