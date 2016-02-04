@@ -1,6 +1,7 @@
-import json
+import json, base64
 from datetime import datetime
 from actor import Actor
+from cantools import config
 
 class PubSubUser(Actor):
     def __init__(self, conn, server, logger):
@@ -12,9 +13,8 @@ class PubSubUser(Actor):
         self._log('NEW CONNECTION', 1, True)
 
     def write(self, data):
-        data["data"]["datetime"] = str(datetime.now()) # do a better job
-        dstring = json.dumps(data) # pre-encode so we can log
-        self.conn.write(dstring, noEncode=True)
+        data["data"]["datetime"] = str(datetime.now())
+        self.conn.write(data)
 
     def _read(self, obj):
         if obj["action"] == "close":
@@ -24,8 +24,10 @@ class PubSubUser(Actor):
     def _close(self):
         for channel in list(self.channels):
             channel.leave(self)
-        if self.name in self.server.users: # _should_ be
+        if self.name in self.server.users:
             del self.server.users[self.name]
+        elif self.name in self.server.admins:
+            del self.server.admins[self.name]
 
     def _error(self, message):
         self.write({
@@ -38,7 +40,8 @@ class PubSubUser(Actor):
     def _register(self, obj):
         name = obj["data"]
         self._log('REGISTER: "%s"'%(name,), 1, True)
-        self.name = name
-        self.server.users[name] = self
+        if name.startswith("__admin__:") and name.split(":")[1] == config.admin:
+            self.name = "admin_%s_%s"%(self.conn.id, base64.b64encode(config.admin))
+        self.server.addUser(self)
         self.conn.set_cb(self._read)
         self.conn.set_close_cb(self._close)

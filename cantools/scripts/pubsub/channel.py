@@ -1,8 +1,9 @@
 from cantools import config
 
 class PubSubChannel(object):
-    def __init__(self, name, logger):
-        self._log = logger
+    def __init__(self, name, server):
+        self._log = server._log
+        self.server = server
         self.name = name
         self.users = set()
         self.history = []
@@ -10,6 +11,8 @@ class PubSubChannel(object):
 
     def _broadcast(self, obj):
         for user in self.users:
+            user.write(obj)
+        for user in self.server.admins:
             user.write(obj)
 
     def write(self, subobj):

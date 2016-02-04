@@ -1,3 +1,4 @@
+from base64 import b64encode
 from dez.network.websocket import WebSocketDaemon
 from cantools import config
 from cantools.util import log
@@ -18,12 +19,19 @@ class PubSub(WebSocketDaemon):
         WebSocketDaemon.__init__(self, *args, **kwargs)
         self.bots = {}
         self.users = {}
+        self.admins = {}
         self.channels = {}
         config.pubsub.loadBots()
         self._log("Initialized PubSub Server @ %s:%s"%(self.hostname, self.port), important=True)
 
+    def newUser(self, u):
+        if u.name.startswith("admin_") and u.name.endswith(b64encode(config.admin)):
+            self.admins[u.name] = u
+        else:
+            self.users[u.name] = u
+
     def client(self, name):
-        return self.users.get(name) or self.bots.get(name)
+        return self.users.get(name) or self.bots.get(name) or self.admins.get(name)
 
     def pm(self, data, user):
         recipient = self.client(data["user"])
@@ -67,7 +75,7 @@ class PubSub(WebSocketDaemon):
         })
 
     def _new_channel(self, channel):
-        self.channels[channel] = PubSubChannel(channel, self._log)
+        self.channels[channel] = PubSubChannel(channel, self)
         # check for bots...
         botname = channel.split("_")[0]
         if botname in config.pubsub.bots:
