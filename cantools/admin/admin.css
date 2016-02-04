@@ -1,0 +1,13 @@
+.rcol {
+	float: right;
+	width: 20%;
+	height: 100%;
+	background: black;
+	color: green;
+}
+
+.data {
+	width: 80%;
+	height: 100%;
+	background: gray;
+}
