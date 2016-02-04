@@ -1,15 +1,17 @@
 CT.admin.db = {
 	"init": function() {
 		CT.log("acquiring db schema");
-		CT.require("admin.dbcfg", true);
-		CT.log("got it");
-		CT.panel.simple("db", Object.keys(admin.dbcfg));
+		CT.core.init("db", function(schema) {
+			var skeys = Object.keys(schema);
+			CT.log("got schema with " + skeys.length + " tables");
+			CT.panel.simple("db", skeys);
+		});
 	},
 	"get": function(modelName, cb, limit, offset) {
 		limit = limit || 20;
 		offset  = offset || 0;
 		CT.admin.core.q("db", cb,
-			"failed to get " + modelName + " (limit " + limit + "; offset " + offset, {
+			"failed to get " + modelName + " (limit " + limit + "; offset " + offset + ")", {
 				"modelName": modelName,
 				"limit": limit,
 				"offset": offset
