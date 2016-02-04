@@ -1,6 +1,4 @@
-from datetime import datetime
 from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
-from properties import *
 from query import *
 from cantools import util
 
@@ -13,7 +11,6 @@ def choice_validator(choices):
 
 class CTMeta(DeclarativeMeta):
     def query(cls, *args, **kwargs):
-        loadTables(cls)
         return Query(cls, *args, **kwargs)
 
     def __new__(cls, name, bases, attrs):
@@ -28,6 +25,7 @@ class CTMeta(DeclarativeMeta):
             if getattr(val, "choices", None):
                 attrs["%s_validator"%(key,)] = sqlalchemy.orm.validates(key)(choice_validator(val.choices))
         modelsubs[lname] = super(CTMeta, cls).__new__(cls, name, bases, attrs)
+        loadTables(modelsubs[lname])
         return modelsubs[lname]
 
 class ModelBase(declarative_base()):
@@ -48,17 +46,7 @@ class ModelBase(declarative_base()):
         return not self.__eq__(other)
 
     def put(self, session=session):
-        for key, val in self.__class__.__dict__.items():
-            if getattr(val, "is_dt_autostamper", False) and val.should_stamp(not self.index):
-                setattr(self, key, datetime.now())
-        loadTables(self.__class__)
-        session.add(self)
-        if not self.key:
-            session.flush()
-            self.key = Key(b64encode(json.dumps({
-                "index": self.index,
-                "model": self.polytype
-            })))
+        init_multi([self], session)
         session.commit()
 
     def rm(self, commit=True, session=session):
