@@ -10,6 +10,7 @@ CT.pubsub = {
 		"queue": [],
 		"channels": {},
 		"cb": { // default callbacks -- override w/ set_cb()
+			"snapshot": CT.log.getLogger("CT.pubsub|snapshot"),
 			"pm": CT.log.getLogger("CT.pubsub|pm"),
 			"message": CT.log.getLogger("CT.pubsub|message"),
 			"subscribe": CT.log.getLogger("CT.pubsub|subscribe"),
@@ -42,6 +43,9 @@ CT.pubsub = {
 			},
 			"error": function(data) {
 				CT.pubsub._.cb.error(data.message);
+			},
+			"snapshot": function(data) {
+				CT.pubsub._.cb.snapshot(data);
 			}
 		},
 		"on": { // websocket events
