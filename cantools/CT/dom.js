@@ -499,6 +499,12 @@ CT.dom = {
 	    for (var i = 0; i < nodes.length; i++)
 	        CT.dom.showHide(nodes[i], juston, justoff, dstyle);
 	},
+	"show": function(n) {
+		CT.dom.showHide(n, true);
+	},
+	"hide": function(n) {
+		CT.dom.showHide(n, false, true);
+	},
 
 	// ALLNODE stuff
 	"ALLNODE": null,
