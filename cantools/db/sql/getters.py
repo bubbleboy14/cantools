@@ -9,7 +9,8 @@ def get_model(modelName):
 def get_schema():
     s = {}
     for key, val in modelsubs.items():
-        s[key] = val._schema
+        if key != "modelbase":
+            s[key] = val._schema
     return s
 
 def getall(entity=None, query=None, keys_only=False, session=None):
