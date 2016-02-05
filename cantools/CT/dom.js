@@ -572,8 +572,8 @@ CT.dom = {
 
 	// getters
 	"id": function(id) { return document.getElementById(id); },
-	"class": function(cname) { return document.getElementsByClassName(cname); },
-	"tag": function(tag) { return document.getElementsByTagName(tag); },
+	"class": function(cname, n) { return (n || document).getElementsByClassName(cname); },
+	"tag": function(tag, n) { return (n || document).getElementsByTagName(tag); },
 	"Q": function(q, n) { return (n || document.body).querySelectorAll(q); },
 
 	// transitions
