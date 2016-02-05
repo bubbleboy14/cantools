@@ -14,6 +14,9 @@ def go():
 		help="select your datastore file (default=%s)"%(config.db,))
 	options, args = parser.parse_args()
 
+	config.web.update("port", int(options.port))
+	config.admin.update("port", int(options.admin_port))
+
 	if options.web_backend == "gae":
 		import subprocess
 		cmd = 'dev_appserver.py . --host=%s --port=%s --admin_port=%s --datastore_path=%s'%(config.web.host,
@@ -22,7 +25,7 @@ def go():
 		subprocess.call(cmd, shell=True)
 	elif options.web_backend == "dez":
 		from cantools.web import run_dez_webserver
-		run_dez_webserver(port=int(options.port))
+		run_dez_webserver()
 	else:
 		error("invalid web_backend: %s"%(options.web_backend,))
 
