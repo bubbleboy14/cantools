@@ -20,14 +20,20 @@ CT.dom = {
 	        d.className = classname;
 	    if (id)
 	        d.id = id;
+	    d.on = function(e, func) {
+	    	if (func)
+	    		return d.addEventListener(e, func);
+	    	for (var k in e)
+	    		d.addEventListener(k, e[k]);
+	    };
 	    attrs = attrs || {};
 	    for (var attr in attrs) {
 	        if (attrs[attr] == null)
 	            continue;
-	        if (["onclick", "value", "onplay"].indexOf(attr) != -1)
-	            d[attr] = attrs[attr];
-	        else if (attr == "onended")
-	        	d.addEventListener("ended", attrs[attr]);
+	        if (attr == "value")
+	        	d.value = attrs.value;
+	        else if (attr.slice(0, 2) == "on")
+	        	d.on(attr.slice(2), attrs[attr]);
 	        else
 	            d.setAttribute(attr, attrs[attr]);
 	    }
@@ -89,14 +95,15 @@ CT.dom = {
 	    return s;
 	},
 	"range": function(onchange, min, max, value, step, classname, id) {
-		return CT.dom.node("", "input", classname, id, {
+		var r = CT.dom.node("", "input", classname, id, {
 			"type": "range",
-			"onchange": onchange,
+			"oninput": function() { onchange(r.value); },
 			"min": min,
 			"max": max,
 			"value": value,
 			"step": step
 		});
+		return r;
 	},
 	"checkbox": function(id, ischecked) {
 	    var cbdata = {"type": "checkbox"};
