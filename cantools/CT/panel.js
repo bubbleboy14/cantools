@@ -39,11 +39,11 @@ CT.panel = {
 	"add": function(key, trysidepanel, keystring, itemnode, panelnode, nospace, icon, cb) {
 	    nospace = nospace || key.replace(/ /g, "");
 	    keystring = keystring || "sb";
-	    if (!document.getElementById(keystring+"panel"+nospace)) {
+	    if (!CT.dom.id(keystring+"panel"+nospace)) {
 	        var n = CT.dom.node("", "div", keystring+"panel", keystring+"panel"+nospace);
 	        n.appendChild(CT.dom.node(key, "div", CT.style.panel.title));
 	        n.appendChild(CT.dom.node("", "div", "", keystring+"content"+nospace));
-	        (panelnode || document.getElementById(keystring+"panels")).appendChild(n);
+	        (panelnode || CT.dom.id(keystring+"panels")).appendChild(n);
 	    }
 	    var i = document.getElementById(keystring+"item"+nospace);
 	    if (i)
@@ -55,9 +55,9 @@ CT.panel = {
 	            cb && cb();
 	         };
 	        if (icon)
-	            itemnode.appendChild(CT.dom.wrapped(CT.dom.img(icon,
+	            itemnode.appendChild(CT.dom.node(CT.dom.img(icon,
 	                null, clickfunc), "div", "lfloat shiftleft"));
-	        itemnode.appendChild(CT.dom.wrapped(CT.dom.link(key, clickfunc),
+	        itemnode.appendChild(CT.dom.node(CT.dom.link(key, clickfunc),
 	            "div", keystring+"item", keystring+"item"+nospace));
 	        if (icon)
 	            itemnode.appendChild(CT.dom.node("", "div", "clearnode"));
@@ -65,15 +65,15 @@ CT.panel = {
 	},
 	"remove": function(key, keystring) {
 	    var nospace = key.replace(/ /g, "");
-	    var p = document.getElementById(keystring+"panel"+nospace);
+	    var p = CT.dom.id(keystring+"panel"+nospace);
 	    if (p) p.style.display = "none";
-	    var l = document.getElementById(keystring+"item"+nospace);
+	    var l = CT.dom.id(keystring+"item"+nospace);
 	    if (l) l.style.display = "none";
 	},
 	"load": function(pnames, trysidepanel, keystring, itemnode, panelnode, nospaces, icons, noclear, stillswap, cbs) {
 	    keystring = keystring || "sb";
 	    if (!noclear)
-	        (itemnode || document.getElementById(keystring+"items")).innerHTML = "";
+	        (itemnode || CT.dom.id(keystring+"items")).innerHTML = "";
 	    for (var i = 0; i < pnames.length; i++)
 	        CT.panel.add(pnames[i], trysidepanel, keystring, itemnode,
 	            panelnode, nospaces && nospaces[i] || null,
@@ -81,8 +81,8 @@ CT.panel = {
 	    if (stillswap || (!itemnode && !noclear))
 	        CT.panel.swap(pnames[0], trysidepanel, keystring);
 	},
-	"simple": function(keystring, pnames, cbs) {
-		CT.panel.load(pnames, null, keystring, null, null, null, null, null, null, cbs);
+	"simple": function(pnames, keystring, itemnode, panelnode, cbs) {
+		CT.panel.load(pnames, null, keystring, itemnode, panelnode, null, null, null, null, cbs);
 	},
 	"alternatebg": function(n, watchforicons, resetonbreak) {
 	    n = n || document.getElementById("sbitems");
