@@ -2,7 +2,13 @@ CT.dom = {
 	// basic nodes
 	"node": function(content, type, classname, id, attrs) {
 	    var d = document.createElement(type || "div");
-	    if (content !== "" && content != null) {
+	    if (Array.isArray(content)) { // array of nodes
+	    	content.forEach(function(item) {
+	    		d.appendChild(item);
+	    	});
+	    } else if (typeof content == "object") // single node
+	    	d.appendChild(content);
+	    else if (typeof content == "string" && content.length) {
 	        if (type == "table")
 	            alert("illegal innerHTML set on table! content: "+content);
 	        else if (type == "style") {
@@ -112,12 +118,13 @@ CT.dom = {
 	    return CT.dom.node("", "input", "", id, cbdata);
 	},
 	"wrapped": function(nodes, type, className, id, attrs) {
-	    var wrapper = CT.dom.node("", type, className, id, attrs);
-	    if (!Array.isArray(nodes))
-	        nodes = [nodes];
-	    for (var i = 0; i < nodes.length; i++)
-	        wrapper.appendChild(nodes[i]);
-	    return wrapper;
+		CT.log("[DEPRECATION WARNING] CT.dom.wrapped() is deprecated. Use CT.dom.node().");
+		var wrapper = CT.dom.node("", type, className, id, attrs);
+		if (!Array.isArray(nodes))
+			nodes = [nodes];
+		for (var i = 0; i < nodes.length; i++)
+			wrapper.appendChild(nodes[i]);
+		return wrapper;
 	},
 	"audio": function(src, autoplay, onplay, onended, className, id, attrs) {
 		attrs = attrs || {};
