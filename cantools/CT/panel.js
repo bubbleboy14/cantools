@@ -82,7 +82,7 @@ CT.panel = {
 	        CT.panel.swap(pnames[0], trysidepanel, keystring);
 	},
 	"simple": function(keystring, pnames, cbs) {
-		CT.panel.load(pnames, null, keystring, null, null null, null, null, null, cbs);
+		CT.panel.load(pnames, null, keystring, null, null, null, null, null, null, cbs);
 	},
 	"alternatebg": function(n, watchforicons, resetonbreak) {
 	    n = n || document.getElementById("sbitems");
