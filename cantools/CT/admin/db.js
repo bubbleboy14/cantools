@@ -1,7 +1,7 @@
 CT.admin.db = {
 	"init": function() {
 		CT.log("acquiring db schema");
-		CT.core.init("db", function(schema) {
+		CT.admin.core.init("db", function(schema) {
 			var skeys = Object.keys(schema);
 			CT.log("got schema with " + skeys.length + " tables");
 			CT.panel.simple("db", skeys);
