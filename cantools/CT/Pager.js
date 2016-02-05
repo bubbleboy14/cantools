@@ -3,6 +3,8 @@ CT.Pager = CT.Class({
 	"limit": 20,
 	"data": [],
 	"init": function(renderCb, requestCb, limit) {
+		this.id = CT.Pager._id;
+		CT.Pager._id += 1;
 		this._renderCb = renderCb;
 		this._requestCb = requestCb;
 		if (limit)
@@ -54,3 +56,4 @@ CT.Pager = CT.Class({
 		}
 	}
 });
+CT.Pager._id = 0;
