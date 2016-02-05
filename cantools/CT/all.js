@@ -1,3 +1,4 @@
+CT.require("CT.Pager");
 CT.require("CT.align");
 CT.require("CT.data");
 CT.require("CT.dom");
