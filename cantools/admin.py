@@ -7,6 +7,7 @@ def response():
 	if cgi_get("pw") != config.admin.pw:
 		fail("wrong");
 	if action == "db":
+		import model
 		mname = cgi_get("modelName", required=False)
 		if mname:
 			mod = get_model(cgi_get("modelName"))

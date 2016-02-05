@@ -25,7 +25,7 @@ CT.panel = {
 	        document.getElementById(keystring+"item"+key).className += " activetab";
 	        CT.panel.lastClicked[keystring] = key;
 	    }
-	    CT.mobile.mobileSnap();
+	    CT.mobile && CT.mobile.mobileSnap();
 	},
 	"selectLister": function(newkey, oldkey, newhtml) {
 	    if (oldkey)
@@ -34,7 +34,7 @@ CT.panel = {
 	    newnode.className = "activetab";
 	    if (newhtml)
 	        newnode.firstChild.innerHTML = newhtml;
-	    CT.mobile.mobileSnap();
+	    CT.mobile && CT.mobile.mobileSnap();
 	},
 	"add": function(key, trysidepanel, keystring, itemnode, panelnode, nospace, icon, cb) {
 	    nospace = nospace || key.replace(/ /g, "");
