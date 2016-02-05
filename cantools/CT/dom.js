@@ -259,7 +259,7 @@ CT.dom = {
 			n.innerHTML = n._sec;
 			if (n._sec == 0) {
 				n.stop();
-				cb();
+				cb && cb();
 			}
 		};
 		n.set = function(val) {
