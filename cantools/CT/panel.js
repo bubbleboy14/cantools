@@ -29,9 +29,9 @@ CT.panel = {
 	},
 	"selectLister": function(newkey, oldkey, newhtml) {
 	    if (oldkey)
-	        document.getElementById("ll" + oldkey).className = "";
+	        document.getElementById("ll" + oldkey).className = "pointer";
 	    var newnode = document.getElementById("ll" + newkey);
-	    newnode.className = "activetab";
+	    newnode.className = "pointer activetab";
 	    if (newhtml)
 	        newnode.firstChild.innerHTML = newhtml;
 	    CT.mobile && CT.mobile.mobileSnap();
@@ -53,12 +53,12 @@ CT.panel = {
 	        var clickfunc = function() {
 	            CT.panel.swap(nospace, trysidepanel, keystring);
 	            cb && cb();
-	         };
+	        };
 	        if (icon)
 	            itemnode.appendChild(CT.dom.node(CT.dom.img(icon,
 	                null, clickfunc), "div", "lfloat shiftleft"));
 	        itemnode.appendChild(CT.dom.node(CT.dom.link(key, clickfunc),
-	            "div", keystring+"item", keystring+"item"+nospace));
+	            "div", keystring + "item pointer", keystring + "item" + nospace));
 	        if (icon)
 	            itemnode.appendChild(CT.dom.node("", "div", "clearnode"));
 	    }
