@@ -4,7 +4,11 @@ CT.admin.db = {
 		CT.admin.core.init("db", function(schema) {
 			var skeys = Object.keys(schema);
 			CT.log("got schema with " + skeys.length + " tables");
-			CT.panel.simple("db", skeys);
+			CT.admin.db.schema = schema;
+			CT.panel.simple(skeys, "db");
+			for (var i = 0; i < skeys.length; i++)
+				CT.dom.id("dbcontent" + skeys[i], true).appendChild(CT.panel.pager(CT.admin.db._build,
+					CT.admin.db._refill(skeys[i])));
 		});
 	},
 	"get": function(modelName, cb, limit, offset) {
@@ -17,16 +21,13 @@ CT.admin.db = {
 				"offset": offset
 			});
 	},
-	"load": function(modelName) {
-		var panel = CT.dom.id("dbcontent" + modelName);
-		CT.admin.db.get(modelName, function(d) {
-			CT.log("got " + d.length + " " + modelName + " records");
-			var n = [];
-			d.forEach(function(p) {
-				n.push(p.name);
-			});
-			CT.panel.simple(modelName, n);
-			CT.log(modelName + "s loaded");
-		});
+	"_refill": function(modelName) {
+		var f = function(obj, cb) {
+			CT.admin.db.get(modelName, cb, obj.limit, obj.offset);
+		};
+		return f;
+	},
+	"_build": function(obj) {
+		return CT.dom.node(JSON.stringify(obj));
 	}
 };
