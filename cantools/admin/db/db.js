@@ -1,3 +1,4 @@
+CT.require("CT.Pager");
 CT.require("CT.dom");
 CT.require("CT.panel");
 CT.require("CT.admin.core");
