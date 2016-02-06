@@ -86,7 +86,7 @@ CT.dom = {
 	        if (_linkid)
 	            l.id = _linkid;
 	        if (wclass)
-	            n = CT.dom.wrapped(n, "div", wclass);
+	            n = CT.dom.node(n, "div", wclass);
 	        l.appendChild(n);
 	        return l;
 	    }
@@ -245,7 +245,7 @@ CT.dom = {
 	        nlink.appendChild(labelNode);
 	    }
 	    nlink.title = nlink.alt = _alt || label;
-	    var w = CT.dom.wrapped(nlink, "div", _wcl);
+	    var w = CT.dom.node(nlink, "div", _wcl);
 	    if (href) {
 	        nlink.href = href;
 	        nlink.target = "_blank";
@@ -467,7 +467,7 @@ CT.dom = {
 	    charlimit = charlimit || 500;
 	    var cbody = CT.dom.textArea(taid, content, "fullwidth");
 	    CT.dom.blurField(cbody, blurs);
-	    inputnode.appendChild(CT.dom.wrapped(cbody));
+	    inputnode.appendChild(CT.dom.node(cbody));
 	    var charcount = CT.dom.node("(" + charlimit
 	    	+ " chars left)", "div", "right", taid + "cc");
 	    cbody.onkeyup = function(e) {

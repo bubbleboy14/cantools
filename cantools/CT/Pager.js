@@ -15,7 +15,7 @@ CT.Pager = CT.Class({
 		this.content = CT.dom.node();
 		this.next = CT.dom.button("next", this._next);
 		this.previous = CT.dom.button("previous", this._previous);
-		this.node = CT.dom.wrapped([
+		this.node = CT.dom.node([
 			this.content, this.next, this.previous
 		]);
 		this.node.pager = this;

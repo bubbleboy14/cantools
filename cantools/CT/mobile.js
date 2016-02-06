@@ -54,7 +54,7 @@ CT.mobile = {
             "button_row bottom_out", "bottom_buttons");
 
         var mobile_search = CT.dom.field("mobile_search");
-        mmbtn.tops.appendChild(CT.dom.wrapped(CT.dom.wrapped(
+        mmbtn.tops.appendChild(CT.dom.node(CT.dom.node(
             [CT.dom.node("CAN Smart Search"), mobile_search], "div",
             "round bordered padded", "mobile_search_node"), "label", null,
             null, {"for": "mobile_search", "htmlFor": "mobile_search"}));
