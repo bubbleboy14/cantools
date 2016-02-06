@@ -1,5 +1,6 @@
 CT.dom = {
 	// basic nodes
+	"_nodes": {}, // node()-generated nodes with ids
 	"node": function(content, type, classname, id, attrs) {
 	    var d = document.createElement(type || "div");
 	    if (Array.isArray(content)) { // array of nodes
@@ -24,8 +25,10 @@ CT.dom = {
 	    }
 	    if (classname)
 	        d.className = classname;
-	    if (id)
+	    if (id) {
 	        d.id = id;
+	        CT.dom._nodes[id] = d;
+	    }
 	    d.on = function(e, func) {
 	    	if (func)
 	    		return d.addEventListener(e, func);
@@ -571,7 +574,9 @@ CT.dom = {
 	},
 
 	// getters
-	"id": function(id) { return document.getElementById(id); },
+	"id": function(id, all) { // 'all' means search free-floating nodes
+		return document.getElementById(id) || all && CT.dom._nodes[id];
+	},
 	"class": function(cname, n) { return (n || document).getElementsByClassName(cname); },
 	"tag": function(tag, n) { return (n || document).getElementsByTagName(tag); },
 	"Q": function(q, n) { return (n || document.body).querySelectorAll(q); },
