@@ -84,6 +84,26 @@ CT.panel = {
 	"simple": function(pnames, keystring, itemnode, panelnode, cbs) {
 		CT.panel.load(pnames, null, keystring, itemnode, panelnode, null, null, null, null, cbs);
 	},
+	"pager": function(getContent, request, limit) {
+		var content = CT.dom.node(),
+			sideBar = CT.dom.node(),
+			pager = new CT.Pager(function(data) {
+				var dnames = [],
+					keystring = "p" + pager.id;
+				data.forEach(function(d) {
+					dnames.push(d.key);
+				});
+				CT.panel.simple(dnames, keystring, sideBar, content);
+				data.forEach(function(d) {
+					CT.dom.id(keystring + "content" + d.key,
+						true).appendChild(getContent(d));
+				});
+				return sideBar;
+			}, request, limit);
+		var n = CT.dom.node([pager.node, content]);
+		n.pager = pager;
+		return n;
+	},
 	"alternatebg": function(n, watchforicons, resetonbreak) {
 	    n = n || document.getElementById("sbitems");
 	    if (watchforicons) {
