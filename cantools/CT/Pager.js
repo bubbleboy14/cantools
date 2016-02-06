@@ -18,6 +18,7 @@ CT.Pager = CT.Class({
 		this.node = CT.dom.wrapped([
 			this.content, this.next, this.previous
 		]);
+		this.node.pager = this;
 		this._load();
 	},
 	"_next": function() {
@@ -38,7 +39,8 @@ CT.Pager = CT.Class({
 	},
 	"_render": function() {
 		this.content.innerHTML = "";
-		this.content.appendChild(this._renderCb(this.data.slice(this.offset, this.offset + this.limit)));
+		this.content.appendChild(this._renderCb(this.data.slice(this.offset,
+			this.offset + this.limit)));
 	},
 	"_refill": function(data) {
 		this.data = this.data.concat(data);
