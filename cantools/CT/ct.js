@@ -58,7 +58,7 @@ var CT = {
 		    if (params) {
 		    	params = JSON.stringify(CT.net._b64rd(params, true));
 		    	if (CT.net._encode)
-		    		params = CT.net._encoder(params)
+		    		params = CT.net._encoder(params);
 		    }
 		    xhr.send(params);
 		    if (!async)
