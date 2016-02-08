@@ -1,5 +1,6 @@
 import sys, json
 from base64 import b64encode, b64decode
+from rel.errors import AbortBranch
 from cantools import config
 
 DEBUG = True
@@ -159,10 +160,12 @@ def _respond(responseFunc, failMsg="failed", failHtml=False, failNoEnc=False):
         try:
             responseFunc()
             succeed()
-        except Exception, e:
-            fail(data=failMsg, html=failHtml, err=e, noenc=failNoEnc, exit=False)
+        except AbortBranch, e:
+            raise AbortBranch() # handled in rel
         except SystemExit:
             pass
+        except Exception, e:
+            fail(data=failMsg, html=failHtml, err=e, noenc=failNoEnc, exit=False)
     return f
 
 def do_respond(responseFunc, failMsg="failed", failHtml=False, failNoEnc=False, noLoad=False, threaded=False):
