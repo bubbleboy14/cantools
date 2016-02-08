@@ -13,6 +13,9 @@ def get_schema():
             s[key] = val._schema
     return s
 
+def get_page(modelName, limit, offset):
+    return [d.data() for d in get_model(modelName).query().fetch(limit, offset)]
+
 def getall(entity=None, query=None, keys_only=False, session=None):
     if query:
         res = query.all()
