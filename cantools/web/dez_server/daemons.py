@@ -62,7 +62,6 @@ class CTWebBase(HTTPApplication):
 				self.logger.info("importing module: %s"%(target,))
 				__import__(target)
 			Response(req).set_cbs()
-			self.logger.info("invoking handler: %s"%(rule,))
 			self.handlers[rule]()
 		return h
 
