@@ -52,11 +52,13 @@ CT.Pager = CT.Class({
 	"_refill": function(data) {
 		this.log("_refill");
 		this.data = this.data.concat(data);
+		if (data.length < this.limit)
+			this.max = data.length;
 		this._load();
 	},
 	"_load": function() {
 		this.log("_load");
-		if ((this.offset + this.limit) <= this.data.length) {
+		if (this.max || (this.offset + this.limit) <= this.data.length) {
 			this._render();
 			this._updateButtons();
 		} else {
