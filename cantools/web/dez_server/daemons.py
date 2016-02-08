@@ -1,5 +1,5 @@
 import sys
-from rel import abort_branch
+from rel import abort_branch, timeout
 from dez.logging import get_logger_getter
 from dez.memcache import get_memcache
 from dez.http.server import HTTPResponse
@@ -12,6 +12,31 @@ sys.path.insert(0, ".") # for dynamically loading modules
 logger_getter = get_logger_getter("dez", syslog)
 A_STATIC = { "/": "_", "/js/CT/": "js/CT" }
 A_CB = { "/admin": "admin" }
+
+class Response(object):
+	def __init__(self, request):
+		self.id = request.id
+		self.request = request
+		self.response = HTTPResponse(request)
+
+	def _read(self):
+		return self.request.body or json.dumps(rb64(self.request.qs_params))
+
+	def _send(self, *args, **kwargs):
+		self.response.write(*args, **kwargs)
+
+	def _close(self):
+		timeout(.001, self.response.dispatch_now)
+		abort_branch()
+
+	def _header(self, *args, **kwargs):
+		self.response.__setitem__(*args, **kwargs)
+
+	def set_cbs(self):
+		set_read(self._read)
+		set_header(self._header)
+		set_send(self._send)
+		set_close(self._close)
 
 class CTWebBase(HTTPApplication):
 	def __init__(self, bind_address, port, static=static, cb=cb):
@@ -31,16 +56,12 @@ class CTWebBase(HTTPApplication):
 	def _handler(self, rule, target):
 		self.logger.info("setting handler: %s %s"%(rule, target))
 		def h(req):
-			resp = HTTPResponse(req)
-			set_read(lambda : req.body or json.dumps(rb64(req.qs_params)))
-			set_header(resp.__setitem__)
-			set_send(resp.write)
-			set_close(lambda : resp.dispatch(abort_branch))
 			self.curpath = rule
 			self.controller.current = self
 			if rule not in self.handlers:
 				self.logger.info("importing module: %s"%(target,))
 				__import__(target)
+			Response(req).set_cbs()
 			self.logger.info("invoking handler: %s"%(rule,))
 			self.handlers[rule]()
 		return h
