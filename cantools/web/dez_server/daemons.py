@@ -4,12 +4,13 @@ from dez.logging import get_logger_getter
 from dez.memcache import get_memcache
 from dez.http.server import HTTPResponse
 from dez.http.application import HTTPApplication
+from cantools import config
 from routes import static, cb
 from ..util import *
 from ...util import log as syslog
 sys.path.insert(0, ".") # for dynamically loading modules
 
-logger_getter = get_logger_getter("dez", syslog)
+logger_getter = get_logger_getter("dez", syslog, config.log.allow)
 A_STATIC = { "/": "_", "/js/CT/": "js/CT" }
 A_CB = { "/admin": "admin" }
 

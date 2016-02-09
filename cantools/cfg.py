@@ -1,4 +1,7 @@
 cfg = {
+	"log": {
+		"allow": ["info"]
+	},
 	"admin": {
 		"host": "localhost",
 		"port": 8002
