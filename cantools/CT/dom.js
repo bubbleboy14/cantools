@@ -1,14 +1,29 @@
 CT.dom = {
 	// basic nodes
 	"_nodes": {}, // node()-generated nodes with ids
+	"_obj2node": function(attrs) {
+		var args = [];
+		["content", "type", "classname", "id"].forEach(function(a) {
+			args.push(attrs[a]);
+			delete attrs[a];
+		});
+		args.push(attrs);
+		if (attrs.style) {
+			args.push(attrs.style);
+			delete attrs.style;
+		}
+		return CT.dom.node.apply(null, args);
+	},
 	"node": function(content, type, classname, id, attrs, style) {
 	    var d = document.createElement(type || "div");
 	    if (Array.isArray(content)) { // array of nodes
 	    	content.forEach(function(item) {
 	    		d.appendChild(item);
 	    	});
-	    } else if (typeof content == "object") // single node
+	    } else if (content instanceof Node) // single node
 	    	d.appendChild(content);
+		else if (typeof content == "object")
+			return CT.dom._obj2node(content);
 	    else if (typeof content == "string" && content.length) {
 	        if (type == "table")
 	            alert("illegal innerHTML set on table! content: "+content);
