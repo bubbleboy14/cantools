@@ -1,7 +1,7 @@
 CT.dom = {
 	// basic nodes
 	"_nodes": {}, // node()-generated nodes with ids
-	"node": function(content, type, classname, id, attrs) {
+	"node": function(content, type, classname, id, attrs, style) {
 	    var d = document.createElement(type || "div");
 	    if (Array.isArray(content)) { // array of nodes
 	    	content.forEach(function(item) {
@@ -35,18 +35,22 @@ CT.dom = {
 	    	for (var k in e)
 	    		d.addEventListener(k, e[k]);
 	    };
-	    attrs = attrs || {};
-	    for (var attr in attrs) {
-	        if (attrs[attr] == null)
-	            continue;
-	        if (attr == "value")
-	        	d.value = attrs.value;
-	        else if (attr.slice(0, 2) == "on")
-	        	d.on(attr.slice(2), attrs[attr]);
-	        else
-	            d.setAttribute(attr, attrs[attr]);
-	    }
-	    return d;
+		if (attrs) {
+			for (var attr in attrs) {
+				if (attrs[attr] == null)
+					continue;
+				if (attr == "value")
+					d.value = attrs.value;
+				else if (attr.slice(0, 2) == "on")
+					d.on(attr.slice(2), attrs[attr]);
+				else
+					d.setAttribute(attr, attrs[attr]);
+			}
+		}
+		if (style)
+			for (var rule in style)
+				d.style[rule] = style[rule];
+		return d;
 	},
 	"script": function(src, content, delay) {
 	    if (delay)
