@@ -7,8 +7,9 @@ CT.admin.db = {
 			CT.admin.db.schema = schema;
 			CT.panel.simple(skeys, "db");
 			for (var i = 0; i < skeys.length; i++)
-				CT.dom.id("dbcontent" + skeys[i], true).appendChild(CT.panel.pager(CT.admin.db._build,
-					CT.admin.db._refill(skeys[i])));
+				CT.dom.id("dbcontent" + skeys[i],
+					true).appendChild(CT.panel.pager(CT.admin.db._build,
+					CT.admin.db._refill(skeys[i]), 10, "rcol", "data"));
 		});
 	},
 	"get": function(modelName, cb, limit, offset) {
