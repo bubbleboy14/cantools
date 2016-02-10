@@ -1,4 +1,3 @@
-import json, base64
 from datetime import datetime
 from actor import Actor
 from cantools import config
@@ -41,8 +40,6 @@ class PubSubUser(Actor):
         name = obj["data"]
         self._log('REGISTER: "%s"'%(name,), 1, True)
         self.name = name
-        if name.startswith("__admin__:") and name.split(":")[1] == config.admin:
-            self.name = "admin_%s_%s"%(self.conn.id, base64.b64encode(config.admin))
         self.server.newUser(self)
         self.conn.set_cb(self._read)
         self.conn.set_close_cb(self._close)
