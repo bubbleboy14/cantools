@@ -16,28 +16,30 @@ CT.dom = {
 	},
 	"node": function(content, type, classname, id, attrs, style) {
 	    var d = document.createElement(type || "div");
-	    if (Array.isArray(content)) { // array of nodes or objects
-	    	content.forEach(function(item) {
-	    		d.appendChild(item instanceof Node ? item : CT.dom._obj2node(item));
-	    	});
-	    } else if (content instanceof Node) // single node
-	    	d.appendChild(content);
-		else if (typeof content == "object")
-			return CT.dom._obj2node(content); // do this without creating 'd' node?
-	    else if (typeof content == "string" && content.length) {
-	        if (type == "table")
-	            alert("illegal innerHTML set on table! content: "+content);
-	        else if (type == "style") {
-	            d.type = 'text/css';
-	            if (d.styleSheet) {
-	                d.styleSheet.cssText = content;
-	            } else {
-	                d.appendChild(document.createTextNode(content));
-	            }
-	        }
-	        else
-	            d.innerHTML = content;
-	    }
+	    if (content) {
+		    if (Array.isArray(content)) { // array of nodes or objects
+		    	content.forEach(function(item) {
+		    		d.appendChild(item instanceof Node ? item : CT.dom._obj2node(item));
+		    	});
+		    } else if (content instanceof Node) // single node
+		    	d.appendChild(content);
+			else if (typeof content == "object")
+				return CT.dom._obj2node(content); // do this without creating 'd' node?
+		    else if (typeof content == "string") {
+		        if (type == "table")
+		            alert("illegal innerHTML set on table! content: " + content);
+		        else if (type == "style") {
+		            d.type = 'text/css';
+		            if (d.styleSheet) {
+		                d.styleSheet.cssText = content;
+		            } else {
+		                d.appendChild(document.createTextNode(content));
+		            }
+		        }
+		        else
+		            d.innerHTML = content;
+		    }
+		}
 	    if (classname)
 	        d.className = classname;
 	    if (id) {
