@@ -1,4 +1,6 @@
-from util import read
+import json, getpass
+from base64 import b64encode, b64decode
+from util import read, write
 from cfg import cfg
 
 class Config(object):
@@ -29,10 +31,29 @@ class Config(object):
 	def update(self, key, val):
 		self._cfg[key] = isinstance(val, dict) and Config(val) or val
 
+class PCache(object):
+	def __init__(self, cfg):
+		self.fname = cfg
+		self._cache = json.loads(b64decode(read(cfg, default="")) or "{}")
+
+	def _save(self):
+		write(b64encode(json.dumps(self._cache)), self.fname)
+
+	def __call__(self, key):
+		dk = b64encode(key)
+		if dk not in self._cache:
+			p = getpass.getpass(key)
+			if raw_input("store password? [Y/n]: ").lower().startswith("n"):
+				return p
+			self._cache[dk] = b64encode(p)
+			self._save()
+		return b64decode(self._cache[dk])
+
+pc = PCache(".ctp")
+
 def _getpass(val, ptype):
-	import getpass
 	if "{PASSWORD}" in val:
-		val = val.replace("{PASSWORD}", getpass.getpass("enter password (%s): "%(ptype,)))
+		val = val.replace("{PASSWORD}", pc("enter password (%s): "%(ptype,)))
 	return val
 
 config = Config(cfg)
@@ -55,3 +76,4 @@ for key, val in [[term.strip() for term in line.split(" = ")] for line in read("
 		c.update(target, val)
 config.update("db_test", config.db.test)
 config.update("db", config.db[config.web.server])
+config.update("cache", pc)
