@@ -1,13 +1,17 @@
 .rcol {
+	border: 1px solid black;
 	float: right;
 	width: 20%;
 	height: 100%;
 	background: black;
 	color: green;
+	opacity: 0.8;
 }
 
 .data {
+	border: 1px solid black;
 	width: 80%;
 	height: 100%;
 	background: gray;
+	opacity: 0.8;
 }
