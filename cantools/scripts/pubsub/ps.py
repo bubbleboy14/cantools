@@ -23,6 +23,7 @@ class PubSub(WebSocketDaemon):
         self.admins = {}
         self.channels = {}
         self.loadBots()
+        config.admin.update("pw", config.cache("admin password? "))
         self._log("Initialized PubSub Server @ %s:%s"%(self.hostname, self.port), important=True)
 
     def loadBots(self):
@@ -33,7 +34,7 @@ class PubSub(WebSocketDaemon):
             __import__(bname) # config modified in pubsub.bots.BotMeta.__new__()
 
     def newUser(self, u):
-        if u.name.startswith("admin_") and u.name.endswith(b64encode(config.admin)):
+        if u.name.startswith("__admin__") and u.name.endswith(b64encode(config.admin.pw)):
             self.admins[u.name] = u
             self.snapshot(u)
         else:
@@ -46,10 +47,10 @@ class PubSub(WebSocketDaemon):
         admin.write({
             "action": "snapshot",
             "data": {
-                "bots": [b.data() for b in self.bots],
-                "users": [u.data() for u in self.users],
-                "admins": [a.data() for a in self.admins],
-                "channels": [c.data() for c in self.channels]
+                "bots": [b.data() for b in self.bots.values()],
+                "users": [u.data() for u in self.users.values()],
+                "admins": [a.data() for a in self.admins.values()],
+                "channels": [c.data() for c in self.channels.values()]
             }
         })
 

@@ -10,7 +10,8 @@ CT.admin.pubsub = {
 		CT.admin.core.init("pubsub", function(loc) {
 			CT.log("acquired location: " + loc.host + ":" + loc.port);
 			CT.pubsub.set_cb("snapshot", CT.admin.pubsub.onsnapshot);
-			CT.pubsub.connect(loc.host, loc.port, "__admin__:" + CT.admin.core.pw);
+			CT.pubsub.connect(loc.host, loc.port,
+				"__admin__" + Math.floor(Math.random() * 1000) + btoa(CT.admin.core.pw));
 		});
 	}
 };
