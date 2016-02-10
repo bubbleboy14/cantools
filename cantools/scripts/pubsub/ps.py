@@ -1,3 +1,4 @@
+import sys
 from base64 import b64encode
 from dez.network.websocket import WebSocketDaemon
 from cantools import config
@@ -21,8 +22,15 @@ class PubSub(WebSocketDaemon):
         self.users = {}
         self.admins = {}
         self.channels = {}
-        config.pubsub.loadBots()
+        self.loadBots()
         self._log("Initialized PubSub Server @ %s:%s"%(self.hostname, self.port), important=True)
+
+    def loadBots(self):
+        self._log("Loading Bots")
+        sys.path.insert(0, "bots") # for dynamically loading bot modules
+        for bname in config.pubsub.botnames:
+            self._log("Importing Bot: %s"%(bname,), 2)
+            __import__(bname) # config modified in pubsub.bots.BotMeta.__new__()
 
     def newUser(self, u):
         if u.name.startswith("admin_") and u.name.endswith(b64encode(config.admin)):

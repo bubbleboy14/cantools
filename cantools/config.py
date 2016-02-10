@@ -44,16 +44,7 @@ for key, val in [[term.strip() for term in line.split(" = ")] for line in read("
 	elif key == "DB_TEST":
 		config.db.update("test", _getpass(val, "test db"))
 	elif key == "PUBSUB_BOTS":
-		def lb():
-			import sys
-			from cantools.util import log
-			log("Loading Bots")
-			sys.path.insert(0, "bots") # for dynamically loading bot modules
-			for bname in config.pubsub._botNames:
-				log("Importing Bot: %s"%(bname,), 2)
-				__import__(bname) # config modified in pubsub.bots.BotMeta.__new__()
-		config.pubsub.update("_botNames", val.split("|"))
-		config.pubsub.update("loadBots", lb)
+		config.pubsub.update("botnames", val.split("|"))
 	else:
 		target = key.lower()
 		c = config
