@@ -72,3 +72,6 @@ class ModelBase(declarative_base()):
         if not self.key:
             util.error("can't get id -- not saved!")
         return self.key.urlsafe()
+
+    def label(self):
+        return getattr(self, "name", self.key)
