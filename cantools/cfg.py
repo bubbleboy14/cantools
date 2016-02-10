@@ -21,6 +21,7 @@ cfg = {
 		"host": "localhost",
 		"port": 8888,
 		"history": 10,
+		"botnames": [],
 		"bots": {}
 	},
 	"parse_error_segment_length": 100,
