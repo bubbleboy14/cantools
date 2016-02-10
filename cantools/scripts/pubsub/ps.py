@@ -1,3 +1,5 @@
+import sys
+from base64 import b64encode
 from dez.network.websocket import WebSocketDaemon
 from cantools import config
 from cantools.util import log
@@ -18,12 +20,39 @@ class PubSub(WebSocketDaemon):
         WebSocketDaemon.__init__(self, *args, **kwargs)
         self.bots = {}
         self.users = {}
+        self.admins = {}
         self.channels = {}
-        config.pubsub.loadBots()
+        self.loadBots()
+        config.admin.update("pw", config.cache("admin password? "))
         self._log("Initialized PubSub Server @ %s:%s"%(self.hostname, self.port), important=True)
 
+    def loadBots(self):
+        self._log("Loading Bots")
+        sys.path.insert(0, "bots") # for dynamically loading bot modules
+        for bname in config.pubsub.botnames:
+            self._log("Importing Bot: %s"%(bname,), 2)
+            __import__(bname) # config modified in pubsub.bots.BotMeta.__new__()
+
+    def newUser(self, u):
+        if u.name.startswith("__admin__") and u.name.endswith(b64encode(config.admin.pw)):
+            self.admins[u.name] = u
+            self.snapshot(u)
+        else:
+            self.users[u.name] = u
+
     def client(self, name):
-        return self.users.get(name) or self.bots.get(name)
+        return self.users.get(name) or self.bots.get(name) or self.admins.get(name)
+
+    def snapshot(self, admin):
+        admin.write({
+            "action": "snapshot",
+            "data": {
+                "bots": [b.data() for b in self.bots.values()],
+                "users": [u.data() for u in self.users.values()],
+                "admins": [a.data() for a in self.admins.values()],
+                "channels": [c.data() for c in self.channels.values()]
+            }
+        })
 
     def pm(self, data, user):
         recipient = self.client(data["user"])
@@ -67,7 +96,7 @@ class PubSub(WebSocketDaemon):
         })
 
     def _new_channel(self, channel):
-        self.channels[channel] = PubSubChannel(channel, self._log)
+        self.channels[channel] = PubSubChannel(channel, self)
         # check for bots...
         botname = channel.split("_")[0]
         if botname in config.pubsub.bots:

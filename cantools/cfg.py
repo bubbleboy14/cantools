@@ -1,5 +1,16 @@
 cfg = {
-	"web_server": "dez",
+	"log": {
+		"allow": ["info"]
+	},
+	"admin": {
+		"host": "localhost",
+		"port": 8002
+	},
+	"web": {
+		"server": "dez",
+		"host": "0.0.0.0",
+		"port": 8080
+	},
 	"db": { # switch on web backend (override w/ DB)
 		"gae": "data.db",
 		"dez": "sqlite:///data.db",
@@ -10,6 +21,7 @@ cfg = {
 		"host": "localhost",
 		"port": 8888,
 		"history": 10,
+		"botnames": [],
 		"bots": {}
 	},
 	"parse_error_segment_length": 100,

@@ -1,4 +1,6 @@
-from cantools.util import read
+import json, getpass
+from base64 import b64encode, b64decode
+from util import read, write
 from cfg import cfg
 
 class Config(object):
@@ -8,10 +10,10 @@ class Config(object):
 			self.update(key, val)
 
 	def __getattr__(self, key):
-		return self._cfg[key]
+		return self._cfg.get(key)
 
 	def __getitem__(self, key):
-		return self._cfg[key]
+		return self._cfg.get(key)
 
 	def __contains__(self, key):
 		return key in self._cfg
@@ -29,34 +31,49 @@ class Config(object):
 	def update(self, key, val):
 		self._cfg[key] = isinstance(val, dict) and Config(val) or val
 
-def dbupdate(dbprop, val):
+class PCache(object):
+	def __init__(self, cfg):
+		self.fname = cfg
+		self._cache = json.loads(b64decode(read(cfg, default="")) or "{}")
+
+	def _save(self):
+		write(b64encode(json.dumps(self._cache)), self.fname)
+
+	def __call__(self, key):
+		dk = b64encode(key)
+		if dk not in self._cache:
+			p = getpass.getpass(key)
+			if raw_input("store password? [Y/n]: ").lower().startswith("n"):
+				return p
+			self._cache[dk] = b64encode(p)
+			self._save()
+		return b64decode(self._cache[dk])
+
+pc = PCache(".ctp")
+
+def _getpass(val, ptype):
 	if "{PASSWORD}" in val:
-		import getpass
-		val = val.replace("{PASSWORD}", getpass.getpass("enter database password (%s): "%(dbprop,)))
-	config.db.update(dbprop, val)
+		val = val.replace("{PASSWORD}", pc("enter password (%s): "%(ptype,)))
+	return val
 
 config = Config(cfg)
 for key, val in [[term.strip() for term in line.split(" = ")] for line in read("ct.cfg", True)]:
 	if key == "ENCODE":
 		config.update("encode", val == "True")
-	elif key == "JS_PATH":
-		config.js.update("path", val)
 	elif key == "DB":
-		dbupdate(config.web_server, val)
+		config.db.update(config.web.server, _getpass(val, "db"))
 	elif key == "DB_TEST":
-		dbupdate("test", val)
+		config.db.update("test", _getpass(val, "test db"))
 	elif key == "PUBSUB_BOTS":
-		def lb():
-			import sys
-			from cantools.util import log
-			log("Loading Bots")
-			sys.path.insert(0, "bots") # for dynamically loading bot modules
-			for bname in config.pubsub._botNames:
-				log("Importing Bot: %s"%(bname,), 2)
-				__import__(bname) # config modified in pubsub.bots.BotMeta.__new__()
-		config.pubsub.update("_botNames", val.split("|"))
-		config.pubsub.update("loadBots", lb)
+		config.pubsub.update("botnames", val.split("|"))
 	else:
-		config.update(key.lower(), val)
+		target = key.lower()
+		c = config
+		if "_" in target:
+			path, target = target.rsplit("_", 1)
+			for part in path.split("_"):
+				c = getattr(c, part)
+		c.update(target, val)
 config.update("db_test", config.db.test)
-config.update("db", config.db[config.web_server])
+config.update("db", config.db[config.web.server])
+config.update("cache", pc)

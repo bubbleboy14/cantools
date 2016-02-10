@@ -22,9 +22,12 @@ class CTMeta(DeclarativeMeta):
                 "polymorphic_identity": lname
             }
             attrs["index"] = sqlForeignKey(bases[0], primary_key=True)
-        for key, val in attrs.items():
-            if getattr(val, "choices", None):
-                attrs["%s_validator"%(key,)] = sqlalchemy.orm.validates(key)(choice_validator(val.choices))
+            schema = attrs["_schema"] = {}
+            for key, val in attrs.items():
+                if getattr(val, "_ct_type", None):
+                    schema[key] = val._ct_type
+                if getattr(val, "choices", None):
+                    attrs["%s_validator"%(key,)] = sqlalchemy.orm.validates(key)(choice_validator(val.choices))
         modelsubs[lname] = super(CTMeta, cls).__new__(cls, name, bases, attrs)
         return modelsubs[lname]
 
@@ -69,3 +72,6 @@ class ModelBase(declarative_base()):
         if not self.key:
             util.error("can't get id -- not saved!")
         return self.key.urlsafe()
+
+    def label(self):
+        return getattr(self, "name", self.key)

@@ -1,5 +1,6 @@
 import sys, json
 from base64 import b64encode, b64decode
+from rel.errors import AbortBranch
 from cantools import config
 
 DEBUG = True
@@ -99,7 +100,7 @@ def cgi_load(force=False):
         request = cgi.FieldStorage()
         setattr(request, "get", lambda x, y: request.getvalue(x, y))
     if not request:
-        if force or config.web_server == "dez":
+        if force or config.web.server == "dez":
             request = {}
         else:
             fail('no request data!')
@@ -159,10 +160,12 @@ def _respond(responseFunc, failMsg="failed", failHtml=False, failNoEnc=False):
         try:
             responseFunc()
             succeed()
-        except Exception, e:
-            fail(data=failMsg, html=failHtml, err=e, noenc=failNoEnc, exit=False)
+        except AbortBranch, e:
+            raise AbortBranch() # handled in rel
         except SystemExit:
             pass
+        except Exception, e:
+            fail(data=failMsg, html=failHtml, err=e, noenc=failNoEnc, exit=False)
     return f
 
 def do_respond(responseFunc, failMsg="failed", failHtml=False, failNoEnc=False, noLoad=False, threaded=False):
@@ -235,7 +238,7 @@ def fail(data="failed", html=False, err=None, noenc=False, exit=True):
 def _headers(headers):
     for k, v in headers.items():
         _header(k, v)
-    if config.web_server == "gae":
+    if config.web.server == "gae":
         _send("")
 
 def send_pdf(data, title=None):

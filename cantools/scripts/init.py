@@ -47,6 +47,8 @@ class Builder(object):
 			sym(ctroot, "cantools")
 		sym(os.path.join(ctroot, "CT"), os.path.join("js", "CT"))
 		sym(os.path.join(ctroot, "css", "ct.css"), os.path.join("css", "ct.css"))
+		sym(os.path.join(ctroot, "admin"), "_")
+		sym(os.path.join(ctroot, "admin.py"), "admin.py")
 
 def parse_and_make():
 	parser = OptionParser("ctinit [projname] [--cantools_path=PATH] [--web_backend=BACKEND]")

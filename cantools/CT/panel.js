@@ -3,35 +3,35 @@ CT.panel = {
 	"swap": function(key, trysidepanel, keystring, noitem) {
 	    keystring = keystring || "sb";
 	    key = key.replace(/ /g, "");
-	    var items = document.getElementsByClassName(keystring+"panel");
+	    var items = CT.dom.class(keystring + "panel");
 	    for (var i = 0; i < items.length; i++)
-	        items[i].className = keystring+"panel hidden";
-	    document.getElementById(keystring+"panel"+key).className = keystring+"panel";
+	        items[i].className = keystring + "panel hidden";
+	    CT.dom.id(keystring +  "panel" + key).className = keystring + "panel";
 	    if (trysidepanel) {
-	        var n = document.getElementById(keystring+"panel"+key+"Side");
+	        var n = CT.dom.id(keystring + "panel" + key + "Side");
 	        if (n) n.className = keystring+"panel";
-	        var n2 = document.getElementById(keystring+"panel"+key+"Side2");
-	        if (n2) n2.className = keystring+"panel";
+	        var n2 = CT.dom.id(keystring + "panel" + key + "Side2");
+	        if (n2) n2.className = keystring + "panel";
 	    }
 	    if (!noitem)
 	        CT.panel.select(key, keystring);
 	},
 	"select": function(key, keystring) {
 	    keystring = keystring || "sb";
-	    var items = document.getElementsByClassName(keystring+"item");
+	    var items = CT.dom.class(keystring + "item");
 	    for (var i = 0; i < items.length; i++)
 	        items[i].className = items[i].className.replace(" activetab", "");
 	    if (key) {
-	        document.getElementById(keystring+"item"+key).className += " activetab";
+	        CT.dom.id(keystring + "item" + key, true).className += " activetab";
 	        CT.panel.lastClicked[keystring] = key;
 	    }
 	    CT.mobile && CT.mobile.mobileSnap();
 	},
 	"selectLister": function(newkey, oldkey, newhtml) {
 	    if (oldkey)
-	        document.getElementById("ll" + oldkey).className = "";
-	    var newnode = document.getElementById("ll" + newkey);
-	    newnode.className = "activetab";
+	        CT.dom.id("ll" + oldkey).className = "pointer";
+	    var newnode = CT.dom.id("ll" + newkey);
+	    newnode.className = "pointer activetab";
 	    if (newhtml)
 	        newnode.firstChild.innerHTML = newhtml;
 	    CT.mobile && CT.mobile.mobileSnap();
@@ -39,41 +39,41 @@ CT.panel = {
 	"add": function(key, trysidepanel, keystring, itemnode, panelnode, nospace, icon, cb) {
 	    nospace = nospace || key.replace(/ /g, "");
 	    keystring = keystring || "sb";
-	    if (!document.getElementById(keystring+"panel"+nospace)) {
-	        var n = CT.dom.node("", "div", keystring+"panel", keystring+"panel"+nospace);
+	    if (!CT.dom.id(keystring + "panel" + nospace)) {
+	        var n = CT.dom.node("", "div", keystring + "panel", keystring + "panel" + nospace);
 	        n.appendChild(CT.dom.node(key, "div", CT.style.panel.title));
 	        n.appendChild(CT.dom.node("", "div", "", keystring+"content"+nospace));
-	        (panelnode || document.getElementById(keystring+"panels")).appendChild(n);
+	        (panelnode || CT.dom.id(keystring+"panels")).appendChild(n);
 	    }
-	    var i = document.getElementById(keystring+"item"+nospace);
+	    var i = CT.dom.id(keystring+"item"+nospace);
 	    if (i)
 	        i.style.display = "block";
 	    else {
-	        itemnode = itemnode || document.getElementById(keystring+"items");
+	        itemnode = itemnode || CT.dom.id(keystring+"items");
 	        var clickfunc = function() {
 	            CT.panel.swap(nospace, trysidepanel, keystring);
 	            cb && cb();
-	         };
+	        };
 	        if (icon)
-	            itemnode.appendChild(CT.dom.wrapped(CT.dom.img(icon,
+	            itemnode.appendChild(CT.dom.node(CT.dom.img(icon,
 	                null, clickfunc), "div", "lfloat shiftleft"));
-	        itemnode.appendChild(CT.dom.wrapped(CT.dom.link(key, clickfunc),
-	            "div", keystring+"item", keystring+"item"+nospace));
+	        itemnode.appendChild(CT.dom.node(CT.dom.link(key, clickfunc),
+	            "div", keystring + "item pointer", keystring + "item" + nospace));
 	        if (icon)
 	            itemnode.appendChild(CT.dom.node("", "div", "clearnode"));
 	    }
 	},
 	"remove": function(key, keystring) {
 	    var nospace = key.replace(/ /g, "");
-	    var p = document.getElementById(keystring+"panel"+nospace);
+	    var p = CT.dom.id(keystring+"panel"+nospace);
 	    if (p) p.style.display = "none";
-	    var l = document.getElementById(keystring+"item"+nospace);
+	    var l = CT.dom.id(keystring+"item"+nospace);
 	    if (l) l.style.display = "none";
 	},
 	"load": function(pnames, trysidepanel, keystring, itemnode, panelnode, nospaces, icons, noclear, stillswap, cbs) {
 	    keystring = keystring || "sb";
 	    if (!noclear)
-	        (itemnode || document.getElementById(keystring+"items")).innerHTML = "";
+	        (itemnode || CT.dom.id(keystring+"items")).innerHTML = "";
 	    for (var i = 0; i < pnames.length; i++)
 	        CT.panel.add(pnames[i], trysidepanel, keystring, itemnode,
 	            panelnode, nospaces && nospaces[i] || null,
@@ -81,8 +81,30 @@ CT.panel = {
 	    if (stillswap || (!itemnode && !noclear))
 	        CT.panel.swap(pnames[0], trysidepanel, keystring);
 	},
-	"simple": function(keystring, pnames, cbs) {
-		CT.panel.load(pnames, null, keystring, null, null, null, null, null, null, cbs);
+	"simple": function(pnames, keystring, itemnode, panelnode, cbs) {
+		CT.panel.load(pnames, null, keystring, itemnode, panelnode, null, null, null, true, cbs);
+	},
+	"pager": function(getContent, request, limit, colClass, dataClass) {
+		var content = CT.dom.node(null, null, dataClass),
+			sideBar = CT.dom.node(),
+			pager = new CT.Pager(function(data) {
+				var dnames = [],
+					keystring = "p" + pager.id;
+				data.forEach(function(d) {
+					d._label = (d.label || d.key);
+					d._labelns = d._label.replace(/ /g, "");
+					dnames.push(d._label);
+				});
+				CT.panel.simple(dnames, keystring, sideBar, content);
+				data.forEach(function(d) {
+					CT.dom.id(keystring + "content" + d._labelns,
+						true).appendChild(getContent(d));
+				});
+				return sideBar;
+			}, request, limit, colClass),
+			n = CT.dom.node([pager.node, content]);
+		n.pager = pager;
+		return n;
 	},
 	"alternatebg": function(n, watchforicons, resetonbreak) {
 	    n = n || document.getElementById("sbitems");

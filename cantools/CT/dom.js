@@ -1,49 +1,73 @@
 CT.dom = {
 	// basic nodes
-	"node": function(content, type, classname, id, attrs) {
+	"_nodes": {}, // node()-generated nodes with ids
+	"_obj2node": function(attrs) {
+		var args = [];
+		["content", "type", "classname", "id"].forEach(function(a) {
+			args.push(attrs[a]);
+			delete attrs[a];
+		});
+		args.push(attrs);
+		if (attrs.style) {
+			args.push(attrs.style);
+			delete attrs.style;
+		}
+		return CT.dom.node.apply(null, args);
+	},
+	"node": function(content, type, classname, id, attrs, style) {
 	    var d = document.createElement(type || "div");
-	    if (Array.isArray(content)) { // array of nodes
-	    	content.forEach(function(item) {
-	    		d.appendChild(item);
-	    	});
-	    } else if (typeof content == "object") // single node
-	    	d.appendChild(content);
-	    else if (typeof content == "string" && content.length) {
-	        if (type == "table")
-	            alert("illegal innerHTML set on table! content: "+content);
-	        else if (type == "style") {
-	            d.type = 'text/css';
-	            if (d.styleSheet) {
-	                d.styleSheet.cssText = content;
-	            } else {
-	                d.appendChild(document.createTextNode(content));
-	            }
-	        }
-	        else
-	            d.innerHTML = content;
-	    }
+	    if (content) {
+		    if (Array.isArray(content)) { // array of nodes or objects
+		    	content.forEach(function(item) {
+		    		d.appendChild(item instanceof Node ? item : CT.dom._obj2node(item));
+		    	});
+		    } else if (content instanceof Node) // single node
+		    	d.appendChild(content);
+			else if (typeof content == "object")
+				return CT.dom._obj2node(content); // do this without creating 'd' node?
+		    else if (typeof content == "string") {
+		        if (type == "table")
+		            alert("illegal innerHTML set on table! content: " + content);
+		        else if (type == "style") {
+		            d.type = 'text/css';
+		            if (d.styleSheet) {
+		                d.styleSheet.cssText = content;
+		            } else {
+		                d.appendChild(document.createTextNode(content));
+		            }
+		        }
+		        else
+		            d.innerHTML = content;
+		    }
+		}
 	    if (classname)
 	        d.className = classname;
-	    if (id)
+	    if (id) {
 	        d.id = id;
+	        CT.dom._nodes[id] = d;
+	    }
 	    d.on = function(e, func) {
 	    	if (func)
 	    		return d.addEventListener(e, func);
 	    	for (var k in e)
 	    		d.addEventListener(k, e[k]);
 	    };
-	    attrs = attrs || {};
-	    for (var attr in attrs) {
-	        if (attrs[attr] == null)
-	            continue;
-	        if (attr == "value")
-	        	d.value = attrs.value;
-	        else if (attr.slice(0, 2) == "on")
-	        	d.on(attr.slice(2), attrs[attr]);
-	        else
-	            d.setAttribute(attr, attrs[attr]);
-	    }
-	    return d;
+		if (attrs) {
+			for (var attr in attrs) {
+				if (attrs[attr] == null)
+					continue;
+				if (attr == "value")
+					d.value = attrs.value;
+				else if (attr.slice(0, 2) == "on")
+					d.on(attr.slice(2), attrs[attr]);
+				else
+					d.setAttribute(attr, attrs[attr]);
+			}
+		}
+		if (style)
+			for (var rule in style)
+				d.style[rule] = style[rule];
+		return d;
 	},
 	"script": function(src, content, delay) {
 	    if (delay)
@@ -83,7 +107,7 @@ CT.dom = {
 	        if (_linkid)
 	            l.id = _linkid;
 	        if (wclass)
-	            n = CT.dom.wrapped(n, "div", wclass);
+	            n = CT.dom.node(n, "div", wclass);
 	        l.appendChild(n);
 	        return l;
 	    }
@@ -242,7 +266,7 @@ CT.dom = {
 	        nlink.appendChild(labelNode);
 	    }
 	    nlink.title = nlink.alt = _alt || label;
-	    var w = CT.dom.wrapped(nlink, "div", _wcl);
+	    var w = CT.dom.node(nlink, "div", _wcl);
 	    if (href) {
 	        nlink.href = href;
 	        nlink.target = "_blank";
@@ -464,7 +488,7 @@ CT.dom = {
 	    charlimit = charlimit || 500;
 	    var cbody = CT.dom.textArea(taid, content, "fullwidth");
 	    CT.dom.blurField(cbody, blurs);
-	    inputnode.appendChild(CT.dom.wrapped(cbody));
+	    inputnode.appendChild(CT.dom.node(cbody));
 	    var charcount = CT.dom.node("(" + charlimit
 	    	+ " chars left)", "div", "right", taid + "cc");
 	    cbody.onkeyup = function(e) {
@@ -513,8 +537,8 @@ CT.dom = {
 	    for (var i = 0; i < nodes.length; i++)
 	        CT.dom.showHide(nodes[i], juston, justoff, dstyle);
 	},
-	"show": function(n) {
-		CT.dom.showHide(n, true);
+	"show": function(n, dstyle) {
+		CT.dom.showHide(n, true, false, dstyle);
 	},
 	"hide": function(n) {
 		CT.dom.showHide(n, false, true);
@@ -571,9 +595,11 @@ CT.dom = {
 	},
 
 	// getters
-	"id": function(id) { return document.getElementById(id); },
-	"class": function(cname) { return document.getElementsByClassName(cname); },
-	"tag": function(tag) { return document.getElementsByTagName(tag); },
+	"id": function(id, all) { // 'all' means search free-floating nodes
+		return document.getElementById(id) || all && CT.dom._nodes[id];
+	},
+	"class": function(cname, n) { return (n || document).getElementsByClassName(cname); },
+	"tag": function(tag, n) { return (n || document).getElementsByTagName(tag); },
 	"Q": function(q, n) { return (n || document.body).querySelectorAll(q); },
 
 	// transitions

@@ -1,15 +1,24 @@
 from cantools import config
 
 class PubSubChannel(object):
-    def __init__(self, name, logger):
-        self._log = logger
+    def __init__(self, name, server):
+        self._log = server._log
+        self.server = server
         self.name = name
         self.users = set()
         self.history = []
         self._log('NEW CHANNEL: "%s"'%(name,), 1, True)
 
+    def data(self):
+        return {
+            "name": self.name,
+            "users": [u.name for u in self.users]
+        }
+
     def _broadcast(self, obj):
         for user in self.users:
+            user.write(obj)
+        for user in self.server.admins:
             user.write(obj)
 
     def write(self, subobj):
