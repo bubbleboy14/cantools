@@ -2,7 +2,7 @@ CT.Pager = CT.Class({
 	"offset": 0,
 	"limit": 20,
 	"data": [],
-	"init": function(renderCb, requestCb, limit) {
+	"init": function(renderCb, requestCb, limit, nodeClass) {
 		this.id = CT.Pager._id;
 		CT.Pager._id += 1;
 		this.log = CT.log.getLogger("CT.Pager(" + this.id + ")");
@@ -11,16 +11,16 @@ CT.Pager = CT.Class({
 		this._requestCb = requestCb;
 		if (limit)
 			this.limit = limit;
-		this._build();
+		this._build(nodeClass);
 	},
-	"_build": function() {
+	"_build": function(nodeClass) {
 		this.log("_build");
 		this.content = CT.dom.node();
 		this.next = CT.dom.button("next", this._next);
 		this.previous = CT.dom.button("previous", this._previous);
 		this.node = CT.dom.node([
-			this.content, this.next, this.previous
-		]);
+			this.content, this.previous, this.next
+		], null, nodeClass);
 		this.node.pager = this;
 		this._load();
 	},
@@ -39,9 +39,9 @@ CT.Pager = CT.Class({
 		if (this.offset == 0)
 			CT.dom.hide(this.previous);
 		else if (this.offset == this.limit)
-			CT.dom.show(this.previous);
+			CT.dom.show(this.previous, "inline");
 		if (this.max)
-			CT.dom[((this.offset + this.limit) >= this.max) ? "hide" : "show"](this.next);
+			CT.dom[((this.offset + this.limit) >= this.max) ? "hide" : "show"](this.next, "inline");
 	},
 	"_render": function() {
 		this.log("_render");
