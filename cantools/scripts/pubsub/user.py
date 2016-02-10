@@ -1,6 +1,5 @@
 from datetime import datetime
 from actor import Actor
-from cantools import config
 
 class PubSubUser(Actor):
     def __init__(self, conn, server, logger):
