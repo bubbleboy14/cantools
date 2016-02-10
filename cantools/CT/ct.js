@@ -110,8 +110,16 @@ var CT = {
 		        }
 		    }, headers);
 		},
-		"get": function(path) {
-			return CT.net.xhr(path, "GET");
+		"get": function(path, qsp, isjson) {
+			var d, qs, key;
+			if (qsp) {
+				qs = [];
+				for (key in qsp)
+					qs.push(key + "=" + qsp[key]);
+				path += "?" + qs.join("&");
+			}
+			d = CT.net.xhr(path, "GET");
+			return isjson ? JSON.parse(d) : d;
 		}
 	},
 	"scriptImport": function(modpath, cb, delay) {
