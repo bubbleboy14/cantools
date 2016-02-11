@@ -93,7 +93,7 @@ handlers:
 <html>
   <head>
     <title>%s</title>
-    <link rel="stylesheet" href="ct.css">
+    <link rel="stylesheet" href="/css/ct.css">
     <script src="/js/CT/ct.js"></script>
   </head>
   <body>
