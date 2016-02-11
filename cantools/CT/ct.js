@@ -228,3 +228,5 @@ if (!window.sessionStorage)
 	CT.require("CT.lib.shims.sessionStorage", true);
 if (!document.createElement("div").classList)
 	CT.require("CT.lib.shims.classList", true);
+if (!window.requestAnimationFrame)
+	CT.require("CT.lib.shims.requestAnimationFrame", true);
