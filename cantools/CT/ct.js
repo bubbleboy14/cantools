@@ -116,7 +116,7 @@ var CT = {
 				qs = [];
 				for (key in qsp)
 					qs.push(key + "=" + qsp[key]);
-				path += "?" + qs.join("&");
+				path += "?" + encodeURI(qs.join("&"));
 			}
 			d = CT.net.xhr(path, "GET");
 			return isjson ? JSON.parse(d) : d;
