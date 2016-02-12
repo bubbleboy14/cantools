@@ -173,8 +173,14 @@
 .italic {
     font-style: italic;
 }
+.margined {
+    margin: 5px;
+}
 .pointer {
     cursor: pointer;
+}
+.scroller {
+    overflow: scroll;
 }
 .smaller {
     font-size: 60%;
