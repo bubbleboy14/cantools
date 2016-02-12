@@ -1,4 +1,4 @@
-import os
+import os, subprocess
 from reporting import log
 from io import write
 
@@ -32,3 +32,7 @@ def rm(pname):
 		os.remove(pname)
 	else:
 		log("can't remove file (doesn't exist): %s"%(pname,), 2)
+
+def cmd(cline):
+	log('issuing command: "%s"'%(cline,), 2)
+	subprocess.call(cline, shell=True)				
