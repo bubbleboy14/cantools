@@ -316,6 +316,36 @@ CT.dom = {
 		n.start();
 		return n;
 	},
+	"choices": function(nodes, multi, cellClass, selectedClass, onchange) {
+		selectedClass = selectedClass || "grayback";
+		var n = CT.dom.node();
+		n._sel = null;
+		n.value = multi ? [] : -1;
+		nodes.forEach(function(node, i) {
+			node.onclick = function() {
+				if (!multi && n._sel)
+					n._sel.classList.remove(selectedClass);
+				n._sel = node;
+				if (node.classList.contains(selectedClass)) {
+					node.classList.remove(selectedClass);
+					if (multi)
+						CT.data.remove(n.value, i);
+					else
+						n.value = [];
+				} else {
+					node.classList.add(selectedClass);
+					if (multi)
+						CT.data.append(n.value, i);
+					else
+						n.value = i;
+				}
+				onchange && onchange(i);
+			};
+			node.classList.add(cellClass || "choice_cell");
+			n.appendChild(node);
+		});
+		return n;
+	},
 
 	// date selector
 	"_monthnames": ["January", "February",
