@@ -2,10 +2,10 @@ CT.Prompt = CT.Class({
 	"_": {
 		"input": {
 			"string": function() {
-				return CT.dom.smartField(this._submit);
+				return CT.dom.smartField(this._.submit);
 			},
 			"password": function() {
-				return CT.dom.smartField(this._submit,
+				return CT.dom.smartField(this._.submit,
 					null, null, null, "password");
 			},
 			"single-choice": function(data) {
