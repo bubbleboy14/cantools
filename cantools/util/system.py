@@ -21,7 +21,10 @@ def mkdir(pname):
 	os.mkdir(pname)
 
 def rm(pname):
-	if os.path.isdir(pname):
+	if os.path.islink(pname):
+		log("removing symlink: %s"%(pname,), 2)
+		os.remove(pname)
+	elif os.path.isdir(pname):
 		log("removing folder: %s"%(pname,), 2)
 		os.rmdir(pname)
 	elif os.path.exists(pname):
