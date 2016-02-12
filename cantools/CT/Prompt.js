@@ -8,11 +8,11 @@ CT.Prompt = CT.Class({
 				return CT.dom.smartField(this._submit,
 					null, null, null, "password");
 			},
-			"single-choice": function(data) { // node array
-				return CT.dom.node("not implemented");
+			"single-choice": function(data) {
+				return CT.dom.choices(data);
 			},
-			"multiple-choice": function(data) { // node array
-				return CT.dom.node("not implemented");
+			"multiple-choice": function(data) {
+				return CT.dom.choices(data, true);
 			}
 		},
 		"submit": function() {
@@ -23,6 +23,7 @@ CT.Prompt = CT.Class({
 			CT.dom.remove(this.node);
 		},
 		"buildFrame": function() {
+			this.input = this._.input[this.style](this.data);
 			this.node = CT.dom.node([
 				CT.dom.node(this.prompt), this.input,
 				CT.dom.button("Continue", this._.submit),
@@ -30,10 +31,11 @@ CT.Prompt = CT.Class({
 			], "div", "centeredpopup");
 		}
 	},
-	"init": function(cb, prompt, pstyle, data) {
+	"init": function(cb, prompt, style, data) {
 		this.cb = cb;
 		this.prompt = prompt;
-		this.input = this._.input[pstyle](data);
+		this.style = style || "string";
+		this.data = data || [];
 		this._.buildFrame();
 	}
 });
