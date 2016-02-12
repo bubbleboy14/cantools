@@ -1,7 +1,7 @@
-import os
+import os, subprocess
 from optparse import OptionParser
 from cantools import config
-from cantools.util import log, cp, sym, mkdir
+from cantools.util import log, cp, sym, mkdir, rm
 
 HOME = os.environ.get("HOME", ".")
 
@@ -17,6 +17,7 @@ class Builder(object):
 			self.build_dirs()
 			self.make_files()
 		self.generate_symlinks(refresh_symlinks)
+		self.vcignore()
 		log("done! goodbye.", 1)
 
 	def build_dirs(self):
@@ -49,6 +50,17 @@ class Builder(object):
 		sym(os.path.join(ctroot, "css", "ct.css"), os.path.join("css", "ct.css"))
 		sym(os.path.join(ctroot, "admin"), "_")
 		sym(os.path.join(ctroot, "admin.py"), "admin.py")
+
+	def vcignore(self):
+		log("configuring version control file exclusion", 1)
+		itype = raw_input("would you like to exclude symlinks and dot files from your repository? [NO/git/svn] ")
+		if itype in ["git", "svn"]:
+			cp(config.init.vcignore, ".gitignore")
+			if itype == "svn":
+				cmd = "svn propset svn:ignore -F .gitignore ."
+				log(cmd, 2)
+				subprocess.call(cmd, shell=True)
+				rm(".gitignore")
 
 def parse_and_make():
 	parser = OptionParser("ctinit [projname] [--cantools_path=PATH] [--web_backend=BACKEND]")
