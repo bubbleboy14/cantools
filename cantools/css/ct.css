@@ -66,6 +66,15 @@
     margin-left: -250px;
     text-align: center;
 }
+.choice_cell {
+    border: 1px solid black;
+    margin: 5px;
+    padding: 10px;
+    cursor: pointer;
+}
+.choice_cell:hover {
+    background: lightgray;
+}
 .clearnode {
     clear: both;
 }
@@ -74,6 +83,9 @@
 }
 .gray {
     color: gray;
+}
+.grayback {
+    background: gray;
 }
 .hidden {
     display: none;
