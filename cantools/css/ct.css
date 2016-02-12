@@ -52,6 +52,20 @@
     margin-left: auto;
     margin-right: auto;
 }
+.centeredpopup {
+    z-index: 5;
+    position: fixed;
+    padding: 10px;
+    background: white;
+    border: 1px solid black;
+    top: 50%;
+    left: 50%;
+    max-height: 400px;
+    width: 400px;
+    margin-top: -150px;
+    margin-left: -250px;
+    text-align: center;
+}
 .clearnode {
     clear: both;
 }
