@@ -56,14 +56,11 @@ cfg = {
 		</noscript>
 	""",
 	"init": {
-		"vcignore": """*pyc
-*~
-.*
-_
-admin.py
-css/ct.css
-js/CT
-""",
+		"vcignore": {
+			".": ["*pyc", "*~", ".*", "_", "admin.py"],
+			"css": ["ct.css"],
+			"js": ["CT"]
+		},
 		"yaml": {
 			"gae": """application: %s
 version: 1
