@@ -1,7 +1,7 @@
-import os, subprocess
+import os
 from optparse import OptionParser
 from cantools import config
-from cantools.util import log, cp, sym, mkdir, rm
+from cantools.util import log, cp, sym, mkdir, rm, cmd
 
 HOME = os.environ.get("HOME", ".")
 
@@ -54,13 +54,19 @@ class Builder(object):
 	def vcignore(self):
 		log("configuring version control path exclusion", 1)
 		itype = raw_input("would you like to exclude symlinks and dot files from your repository? [NO/git/svn] ")
-		if itype in ["git", "svn"]:
-			cp(config.init.vcignore, ".gitignore")
-			if itype == "svn":
-				cmd = "svn propset svn:ignore -F .gitignore ."
-				log(cmd, 2)
-				subprocess.call(cmd, shell=True)
-				rm(".gitignore")
+		if itype == "git":
+			log("configuring git", 2)
+			cfg = config.init.vcignore["."]
+			for path in ["css", "js"]:
+				for fname in config.init.vcignore[path]:
+					cfg.append(os.path.join(path, fname))
+			cp("\n".join(cfg), ".gitignore")
+		elif itype == "svn":
+			log("configuring svn", 2)
+			for root, files in config.init.vcignore.items():
+				cp("\n".join(files), "_tmp")
+				cmd("svn propset svn:ignore -F _tmp %s"%(root,))
+				rm("_tmp")
 
 def parse_and_make():
 	parser = OptionParser("ctinit [projname] [--cantools_path=PATH] [--web_backend=BACKEND]")
