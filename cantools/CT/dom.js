@@ -632,9 +632,21 @@ CT.dom = {
 	"id": function(id, all) { // 'all' means search free-floating nodes
 		return document.getElementById(id) || all && CT.dom._nodes[id];
 	},
-	"class": function(cname, n) { return (n || document).getElementsByClassName(cname); },
-	"tag": function(tag, n) { return (n || document).getElementsByTagName(tag); },
-	"Q": function(q, n) { return (n || document.body).querySelectorAll(q); },
+	"_narr2arr": function(nodeArray) {
+		var arr = [];
+		for (var i = 0; i < nodeArray.length; i++)
+			arr.push(nodeArray[i]);
+		return arr;
+	},
+	"class": function(cname, n) {
+		return CT.dom._narr2arr((n || document).getElementsByClassName(cname));
+	},
+	"tag": function(tag, n) {
+		return CT.dom._narr2arr((n || document).getElementsByTagName(tag));
+	},
+	"Q": function(q, n) {
+		return CT.dom._narr2arr((n || document.body).querySelectorAll(q));
+	},
 
 	// transitions
 	"_vender_prefixes": [
