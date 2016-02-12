@@ -52,7 +52,7 @@ class Builder(object):
 		sym(os.path.join(ctroot, "admin.py"), "admin.py")
 
 	def vcignore(self):
-		log("configuring version control file exclusion", 1)
+		log("configuring version control path exclusion", 1)
 		itype = raw_input("would you like to exclude symlinks and dot files from your repository? [NO/git/svn] ")
 		if itype in ["git", "svn"]:
 			cp(config.init.vcignore, ".gitignore")
@@ -69,7 +69,7 @@ def parse_and_make():
 	parser.add_option("-w", "--web_backend", dest="web_backend", default="dez",
 		help="web backend. options: dez, gae. (default: dez)")
 	parser.add_option("-r", "--refresh_symlinks", action="store_true",
-		dest="refresh_symlinks", default=False, help="add symlinks to project")
+		dest="refresh_symlinks", default=False, help="add symlinks to project and configure version control path exclusion (if desired)")
 	options, args = parser.parse_args()
 	Builder(len(args) and args[0], options.cantools_path,
 		options.web_backend, options.refresh_symlinks)
