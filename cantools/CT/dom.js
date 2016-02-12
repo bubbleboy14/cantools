@@ -354,6 +354,7 @@ CT.dom = {
 	// password prompt
 	"_pwpcb": null,
 	"passwordPrompt": function(cb) {
+		CT.log("[DEPRECATION WARNING] CT.dom.passwordPrompt() is deprecated. Use CT.Prompt instead.");
 	    CT.dom._pwpcb = cb;
 	    var pwprompt = document.getElementById("passwordprompt");
 	    var pwpfield = document.getElementById("pwpfield");
@@ -542,6 +543,9 @@ CT.dom = {
 	},
 	"hide": function(n) {
 		CT.dom.showHide(n, false, true);
+	},
+	"remove": function(n) {
+		n.parentNode.removeChild(n);
 	},
 
 	// ALLNODE stuff
