@@ -148,7 +148,7 @@ CT.gesture = {
 				CT.gesture.triggerHold(node, t.hold.interval * v.holdCount);
 			}, t.hold.interval);
 		}
-		return CT.gesture.triggerDown(node);
+		return CT.gesture.triggerDown(node, CT.gesture.getPos(e));
 	},
 	onStop: function(e, node, delayed) {
 		var v = node.gvars;
@@ -304,11 +304,11 @@ CT.gesture = {
 			returnVal = handlers[i](delayed) || returnVal;
 		return returnVal;
 	},
-	triggerDown: function(node) {
+	triggerDown: function(node, pos) {
 		var returnVal = false;
 		var handlers = CT.gesture.handlers.down[node.gid];
 		if (handlers) for (var i = 0; i < handlers.length; i++)
-			returnVal = handlers[i]() || returnVal;
+			returnVal = handlers[i](pos) || returnVal;
 		return returnVal;
 	}
 };
