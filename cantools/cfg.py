@@ -57,7 +57,7 @@ cfg = {
 	""",
 	"init": {
 		"vcignore": {
-			".": ["*pyc", "*~", ".*", "_", "admin.py"],
+			".": ["*pyc", "*~", ".ctp", "_", "admin.py"],
 			"css": ["ct.css"],
 			"js": ["CT"]
 		},
