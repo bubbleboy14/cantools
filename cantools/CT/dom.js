@@ -3,6 +3,13 @@ CT.dom = {
 	"_nodes": {}, // node()-generated nodes with ids
 	"_obj2node": function(attrs) {
 		var args = [];
+		if (attrs.builder) {
+			attrs.content = attrs.items.map(function(item) {
+				return attrs.builder(item);
+			});
+			delete attrs.builder;
+			delete attrs.items;
+		}
 		["content", "type", "classname", "id"].forEach(function(a) {
 			args.push(attrs[a]);
 			delete attrs[a];
