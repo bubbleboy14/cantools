@@ -575,7 +575,7 @@ CT.dom = {
 		CT.dom.showHide(n, false, true);
 	},
 	"remove": function(n) {
-		n.parentNode.removeChild(n);
+		n.parentNode && n.parentNode.removeChild(n);
 	},
 
 	// ALLNODE stuff
