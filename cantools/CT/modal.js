@@ -7,8 +7,16 @@ CT.modal.Modal = CT.Class({
 	"addClose": function() {
 		this.node.appendChild(CT.dom.node(CT.dom.link("X", this.close), "div", "right"));
 	},
-	"build":  function() { // override
+	"build": function() { // override
 		this.addClose();
+	},
+	"clear": function() {
+		this.node.innerHTML = "";
+	},
+	"set": function(node, addClose) {
+		this.clear();
+		addClose && this.addClose();
+		this.node.appendChild(node);
 	},
 	"init": function(opts) {
 		this.opts = opts;
