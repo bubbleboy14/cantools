@@ -38,7 +38,7 @@ CT.admin.db = {
 
 CT.admin.db.Editor = CT.Class({
 	"_submit": function() {
-		CT.log("submit");
+		this.log("_submit");
 	},
 	"_input": function(f, ptype) {
 		return function() {
@@ -52,14 +52,16 @@ CT.admin.db.Editor = CT.Class({
 		};
 	},
 	"_modal": function(key) {
+		this.log("_modal", key);
 		(new CT.modal.Modal({
 			"node": CT.dom.node(JSON.stringify(CT.data.get(key)))
 		})).show();
 	},
 	"_entity": function(key) {
 		var vdata = CT.data.get(key);
-		return vdata ? CT.dom.node(CT.dom.link(vdata.label, function() {
-			this._modal(key); }.bind(this))) : CT.dom.node(key);
+		this.log("_entity", key, vdata);
+		return vdata ? CT.dom.node(CT.dom.link((vdata.label || vdata.key),
+			function() { this._modal(key); }.bind(this))) : CT.dom.node(key);
 	},
 	"_row": function(k) {
 		var val = this.data[k], valcell, ptype,
@@ -67,7 +69,7 @@ CT.admin.db.Editor = CT.Class({
 		rownode.appendChild(CT.dom.node(k + ":", "div", "keycell"));
 		ptype = rownode.ptype = this.schema[k];
 		if (ptype == "keytype")
-			valcell = this._entity(k);
+			valcell = this._entity(val);
 		else if (ptype) {
 			if (ptype == "string")
 				valcell = CT.dom.field(null, val);
@@ -77,7 +79,6 @@ CT.admin.db.Editor = CT.Class({
 				valcell = CT.parse.numOnly(CT.dom.field(null, val), true);
 			else if (ptype == "integer")
 				valcell = CT.parse.numOnly(CT.dom.field(null, val));
-			CT.log(k + " " + ptype);
 			valcell.getValue = this._input(valcell, ptype);
 		} else
 			valcell = CT.dom.node(val, "span");
@@ -97,6 +98,7 @@ CT.admin.db.Editor = CT.Class({
 		n.appendChild(CT.dom.button("Submit", this._submit));
 	},
 	"init": function(model, data) {
+		this.log = CT.log.getLogger("Editor(" + model + ")");
 		this.schema = CT.admin.db.schema[model];
 		this.data = data;
 		this._table();
