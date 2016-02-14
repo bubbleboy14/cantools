@@ -60,6 +60,24 @@ CT.parse = {
 	    return s && s.length > 5;
 	},
 
+	// input filter
+	"_nchars": "0123456789",
+	"numOnly": function(n, allowDot) {
+	    n.onkeyup = function() {
+	        var i, c, v = "", hasdot = false;
+	        for (i = 0; i < n.value.length; i++) {
+	            c = n.value.charAt(i);
+	            if (allowDot && !hasdot && c == ".")
+	                hasdot = true;
+	            else if (_nchars.indexOf(c) == -1)
+	                continue;
+	            v += c;
+	        }
+	        n.value = v;
+	    };
+	    return n;
+	},
+
 	// generic conversions
 	"capitalize": function(word) {
 	    return word.slice(0,1).toUpperCase() + word.slice(1);
