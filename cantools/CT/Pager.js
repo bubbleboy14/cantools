@@ -51,6 +51,7 @@ CT.Pager = CT.Class({
 	},
 	"_refill": function(data) {
 		this.log("_refill");
+		CT.data.addSet(data);
 		this.data = this.data.concat(data);
 		if (data.length < this.limit)
 			this.max = data.length;
