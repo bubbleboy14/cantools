@@ -15,3 +15,16 @@
 	background: gray;
 	opacity: 0.8;
 }
+
+.lister {
+	border: 1px solid darkgray;
+	margin: 2px;
+	padding: 2px;
+	cursor: pointer;
+}
+
+.keycell {
+	float: left;
+	width: 180px;
+	font-weight: bold;
+}
