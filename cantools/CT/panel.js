@@ -88,16 +88,12 @@ CT.panel = {
 		var content = CT.dom.node(null, null, dataClass),
 			sideBar = CT.dom.node(),
 			pager = new CT.Pager(function(data) {
-				var dnames = [],
+				var dnames = data.map(function(d) { return (d.label || d.key); }),
 					keystring = "p" + pager.id;
-				data.forEach(function(d) {
-					d._label = (d.label || d.key);
-					d._labelns = d._label.replace(/ /g, "");
-					dnames.push(d._label);
-				});
 				CT.panel.simple(dnames, keystring, sideBar, content);
 				data.forEach(function(d) {
-					CT.dom.id(keystring + "content" + d._labelns,
+					CT.dom.id(keystring + "content"
+						+ (d.label || d.key).replace(/ /g, ""),
 						true).appendChild(getContent(d));
 				});
 				return sideBar;
