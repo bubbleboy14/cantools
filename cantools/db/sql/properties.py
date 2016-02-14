@@ -12,7 +12,7 @@ class StringType(DynamicType):
 		DynamicType.__init__(self, 500, *args, **kwargs)
 
 def basicType(colClass, baseType=DynamicType):
-	return type("%sWrapper"%(colClass.__name__,), (baseType,), { "impl": colClass })
+	return type("%s"%(colClass.__name__,), (baseType,), { "impl": colClass })
 
 _cparams = ["primary_key", "default"]
 
