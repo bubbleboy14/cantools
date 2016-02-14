@@ -1,11 +1,14 @@
 CT.modal = {};
 
 CT.modal.Modal = CT.Class({
-	"close": function() {
+	"hide": function() {
 		CT.dom.remove(this.node);
 	},
+	"show": function() {
+		document.body.appendChild(this.node);
+	},
 	"addClose": function() {
-		this.node.appendChild(CT.dom.node(CT.dom.link("X", this.close), "div", "right"));
+		this.add(CT.dom.node(CT.dom.link("X", this.hide), "div", "right pointer"));
 	},
 	"build": function() { // override
 		this.addClose();
@@ -13,15 +16,20 @@ CT.modal.Modal = CT.Class({
 	"clear": function() {
 		this.node.innerHTML = "";
 	},
+	"add": function(node) {
+		this.node.appendChild(node);
+	},
 	"set": function(node, addClose) {
 		this.clear();
 		addClose && this.addClose();
-		this.node.appendChild(node);
+		this.add(node);
 	},
 	"init": function(opts) {
 		this.opts = opts;
 		this.node = CT.dom.node("", "div", "centeredpopup");
 		this.build();
+		if (opts.node)
+			this.add(opts.node);
 	}
 });
 
@@ -43,13 +51,13 @@ CT.modal.Prompt = CT.Class({
 	},
 	"submit": function() {
 		this.opts.cb(this.input.value);
-		this.close();
+		this.hide();
 	},
 	"build": function() {
 		this.input = this._input[this.opts.style || "string"](this.opts.data || []);
 		this.node.appendChild(CT.dom.node(this.opts.prompt));
 		this.node.appendChild(this.input);
 		this.node.appendChild(CT.dom.button("Continue", this.submit));
-		this.node.appendChild(CT.dom.button("Cancel", this.close));
+		this.node.appendChild(CT.dom.button("Cancel", this.hide));
 	}
 }, CT.modal.Modal);
