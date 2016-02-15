@@ -77,3 +77,6 @@ for key, val in [[term.strip() for term in line.split(" = ")] for line in read("
 config.update("db_test", config.db.test)
 config.update("db", config.db[config.web.server])
 config.update("cache", pc)
+if config.log.file:
+	from cantools.util import set_log
+	set_log(config.log.file)
