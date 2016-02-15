@@ -15,12 +15,12 @@ CT.admin.db = {
 	"get": function(modelName, cb, limit, offset) {
 		limit = limit || 20;
 		offset  = offset || 0;
-		CT.admin.core.q("db", cb,
-			"failed to get " + modelName + " (limit " + limit + "; offset " + offset + ")", {
-				"modelName": modelName,
-				"limit": limit,
-				"offset": offset
-			});
+		CT.admin.core.q("db", cb, ["failed to get", modelName,
+			"- limit", limit, "offset", offset].join(" "), {
+			"modelName": modelName,
+			"limit": limit,
+			"offset": offset
+		});
 	},
 	"_refill": function(modelName) {
 		var f = function(obj, cb) {
@@ -58,10 +58,22 @@ CT.admin.db.Editor = CT.Class({
 		})).show();
 	},
 	"_entity": function(key) {
-		var vdata = CT.data.get(key);
+		if (!key) return CT.dom.node("null");
+		var that = this, n = CT.dom.node(),
+			vdata = CT.data.get(key);
 		this.log("_entity", key, vdata);
-		return vdata ? CT.dom.node(CT.dom.link((vdata.label || vdata.key),
-			function() { this._modal(key); }.bind(this))) : CT.dom.node(key);
+		var fill = function(d) {
+			n.appendChild(CT.dom.link((d.label || d.key),
+				function() { that._modal(key); }));
+		};
+		if (vdata)
+			fill(vdata);
+		else
+			CT.admin.core.q("db", function(d) {
+				CT.data.add(d);
+				fill(d);
+			}, "failed to get " + key, { "key": key });
+		return n;
 	},
 	"_row": function(k) {
 		var val = this.data[k], valcell, ptype,
