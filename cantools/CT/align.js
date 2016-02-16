@@ -75,10 +75,10 @@ CT.align = {
 	    return o;
 	},
 
-	"height": function() {
-	    return window.innerHeight || document.body.clientHeight;
+	"height": function(n) {
+	    return (n || window.innerHeight || document.body).clientHeight;
 	},
-	"width": function() {
-	    return window.innerWidth || document.body.clientWidth;
+	"width": function(n) {
+	    return (n || window.innerWidth || document.body).clientWidth;
 	}
 };
