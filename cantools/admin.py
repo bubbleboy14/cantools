@@ -7,7 +7,7 @@ def response():
 	if cgi_get("pw") != config.admin.pw:
 		fail("wrong");
 	if action == "db":
-		key = cg_get("key", required=False)
+		key = cgi_get("key", required=False)
 		if key:
 			succeed(get(key).data())
 		import model # load up all models
