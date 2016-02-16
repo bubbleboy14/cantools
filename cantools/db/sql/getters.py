@@ -1,5 +1,6 @@
 import json
-from base64 import b64encode, b64decode
+from base64 import b64decode
+from session import session
 
 modelsubs = {}
 
@@ -16,20 +17,20 @@ def get_schema():
 def get_page(modelName, limit, offset):
     return [d.data() for d in get_model(modelName).query().fetch(limit, offset)]
 
-def getall(entity=None, query=None, keys_only=False, session=None):
+def getall(entity=None, query=None, keys_only=False, session=session):
     if query:
         res = query.all()
     elif entity:
-        res = entity.query(session).all()
+        res = entity.query(session=session).all()
     if keys_only:
         return [r.key for r in res]
     return res
 
-def get(b64compkey, session=None):
+def get(b64compkey, session=session):
     compkey = json.loads(b64decode(b64compkey))
-    return modelsubs[compkey["model"]].query(session).query.get(compkey["index"])
+    return modelsubs[compkey["model"]].query(session=session).query.get(compkey["index"])
 
-def get_multi(keyobjs, session=None):
+def get_multi(keyobjs, session=session):
     b64keys = [k.urlsafe() for k in keyobjs]
     keys = [json.loads(b64decode(k)) for k in b64keys]
     ents = {}
@@ -44,6 +45,6 @@ def get_multi(keyobjs, session=None):
         ents[mod]["indices"].append(k["index"])
     for key, val in ents.items():
         mod = val["model"]
-        for r in mod.query(session).filter(mod.index.in_(val["indices"])).all():
+        for r in mod.query(session=session).filter(mod.index.in_(val["indices"])).all():
             res[r.id()] = r
     return [res[k] for k in b64keys]
