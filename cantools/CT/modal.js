@@ -1,11 +1,14 @@
 CT.modal = {};
 
 CT.modal.Modal = CT.Class({
+	"visible": false,
 	"hide": function() {
 		CT.dom.remove(this.node);
+		this.visible = false;
 	},
-	"show": function() {
-		document.body.appendChild(this.node);
+	"show": function(n) {
+		(n || document.body).appendChild(this.node);
+		this.visible = true;
 	},
 	"addClose": function() {
 		this.add(CT.dom.node(CT.dom.link("X", this.hide), "div", "right pointer"));
