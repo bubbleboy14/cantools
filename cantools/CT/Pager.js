@@ -5,8 +5,6 @@ CT.Pager = CT.Class({
 	"init": function(renderCb, requestCb, limit, nodeClass) {
 		this.id = CT.Pager._id;
 		CT.Pager._id += 1;
-		this.log = CT.log.getLogger("CT.Pager(" + this.id + ")");
-		this.log("init");
 		this._renderCb = renderCb;
 		this._requestCb = requestCb;
 		if (limit)
@@ -14,7 +12,6 @@ CT.Pager = CT.Class({
 		this._build(nodeClass);
 	},
 	"_build": function(nodeClass) {
-		this.log("_build");
 		this.content = CT.dom.node();
 		this.next = CT.dom.button("next", this._next);
 		this.previous = CT.dom.button("previous", this._previous);
@@ -26,16 +23,13 @@ CT.Pager = CT.Class({
 	},
 	"_next": function() {
 		this.offset += this.limit;
-		this.log("_next", "offset", this.offset, "limit", this.limit);
 		this._load();
 	},
 	"_previous": function() {
 		this.offset -= this.limit;
-		this.log("_previous", "offset", this.offset, "limit", this.limit);
 		this._load();
 	},
 	"_updateButtons": function() {
-		this.log("_updateButtons");
 		if (this.offset == 0)
 			CT.dom.hide(this.previous);
 		else if (this.offset == this.limit)
@@ -44,13 +38,11 @@ CT.Pager = CT.Class({
 			CT.dom[((this.offset + this.limit) >= this.max) ? "hide" : "show"](this.next, "inline");
 	},
 	"_render": function() {
-		this.log("_render");
 		this.content.innerHTML = "";
 		this.content.appendChild(this._renderCb(this.data.slice(this.offset,
 			this.offset + this.limit)));
 	},
 	"_refill": function(data) {
-		this.log("_refill");
 		CT.data.addSet(data);
 		this.data = this.data.concat(data);
 		if (data.length < this.limit)
@@ -58,7 +50,6 @@ CT.Pager = CT.Class({
 		this._load();
 	},
 	"_load": function() {
-		this.log("_load");
 		if (this.max || (this.offset + this.limit) <= this.data.length) {
 			this._render();
 			this._updateButtons();
