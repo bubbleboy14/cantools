@@ -1,6 +1,7 @@
 cfg = {
 	"log": {
-		"allow": ["info"]
+		"allow": ["info"],
+		"file": None
 	},
 	"admin": {
 		"host": "localhost",
