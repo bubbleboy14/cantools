@@ -80,7 +80,7 @@ CT.admin.db.Editor = CT.Class({
 			rownode = CT.dom.node("", "div", "lister");
 		rownode.appendChild(CT.dom.node(k + ":", "div", "keycell"));
 		ptype = rownode.ptype = this.schema[k];
-		if (ptype == "keytype")
+		if (ptype == "key")
 			valcell = this._entity(val);
 		else if (ptype) {
 			if (ptype == "string")
@@ -99,7 +99,7 @@ CT.admin.db.Editor = CT.Class({
 	},
 	"_table": function() {
 		var k, r, n = this.node = CT.dom.node(); // TODO: list, maybe zipcode
-		["string", "integer", "float", "bool", "keytype"].forEach(function(t) {
+		["string", "integer", "float", "bool", "key"].forEach(function(t) {
 			n[t] = CT.dom.node();
 			n.appendChild(n[t]);
 		});
