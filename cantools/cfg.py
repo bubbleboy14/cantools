@@ -1,6 +1,6 @@
 cfg = {
 	"log": {
-		"allow": ["info"],
+		"allow": ["info", "log", "error"],
 		"file": None
 	},
 	"admin": {
