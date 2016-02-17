@@ -76,9 +76,9 @@ CT.align = {
 	},
 
 	"height": function(n) {
-	    return (n || window.innerHeight || document.body).clientHeight;
+		return n ? n.clientHeight : window.innerHeight;
 	},
 	"width": function(n) {
-	    return (n || window.innerWidth || document.body).clientWidth;
+		return n ? n.clientWidth : window.innerWidth;
 	}
 };
