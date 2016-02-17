@@ -1,7 +1,6 @@
 cfg = {
 	"log": {
-		"allow": ["info", "log", "error"],
-		"file": None
+		"allow": ["info", "log", "error"]
 	},
 	"admin": {
 		"host": "localhost",
@@ -10,7 +9,8 @@ cfg = {
 	"web": {
 		"server": "dez",
 		"host": "0.0.0.0",
-		"port": 8080
+		"port": 8080,
+		"log": None
 	},
 	"db": { # switch on web backend (override w/ DB)
 		"gae": "data.db",
@@ -23,7 +23,8 @@ cfg = {
 		"port": 8888,
 		"history": 10,
 		"botnames": [],
-		"bots": {}
+		"bots": {},
+		"log": None
 	},
 	"parse_error_segment_length": 100,
 	"build": {
