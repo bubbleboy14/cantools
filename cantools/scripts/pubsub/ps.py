@@ -36,7 +36,10 @@ class PubSub(WebSocketDaemon):
             __import__(bname) # config modified in pubsub.bots.BotMeta.__new__()
 
     def newUser(self, u):
-        if u.name.startswith("__admin__") and u.name.endswith(b64encode(config.admin.pw)):
+        if not u.name: # on dc?
+            self._log("user disconnected without registering")
+            u.conn.close()
+        elif u.name.startswith("__admin__") and u.name.endswith(b64encode(config.admin.pw)):
             self.admins[u.name] = u
             self.snapshot(u)
         else:
