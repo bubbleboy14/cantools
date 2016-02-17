@@ -1,12 +1,14 @@
 import requests
 from dez.http import fetch as dfetch
 from ..util import *
+from ...util import set_error
 from mail import send_mail
 from controller import getController
 
 def run_dez_webserver():
 	c = getController()
 	setlog(c.web.logger.simple)
+	set_error(fail)
 	c.start()
 
 def dweb():
