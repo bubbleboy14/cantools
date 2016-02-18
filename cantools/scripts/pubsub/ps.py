@@ -2,12 +2,14 @@ import sys
 from base64 import b64encode
 from dez.network.websocket import WebSocketDaemon
 from cantools import config
-from cantools.util import log
+from cantools.util import log, set_log
 from user import PubSubUser
 from channel import PubSubChannel
 
 class PubSub(WebSocketDaemon):
     def __init__(self, *args, **kwargs):
+        if config.pubsub.log:
+            set_log(config.pubsub.log)
         kwargs["b64"] = True
         kwargs["isJSON"] = True
         kwargs["report_cb"] = self._log

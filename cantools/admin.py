@@ -1,5 +1,5 @@
 from cantools.web import respond, succeed, fail, cgi_get, getcache
-from cantools.db import get_schema, get_page
+from cantools.db import get, get_schema, get_page
 from cantools import config
 
 def response():
@@ -7,6 +7,9 @@ def response():
 	if cgi_get("pw") != config.admin.pw:
 		fail("wrong");
 	if action == "db":
+		key = cgi_get("key", required=False)
+		if key:
+			succeed(get(key).data())
 		import model # load up all models
 		mname = cgi_get("modelName", required=False)
 		if mname:

@@ -2,6 +2,7 @@ import sys
 from datetime import datetime
 
 LOG_FILE = None
+ERROR_CB = None
 
 def set_log(fname):
 	global LOG_FILE
@@ -21,9 +22,16 @@ def log(msg, level=0, important=False):
     	LOG_FILE.write("%s\n"%(s,))
     print s
 
+def set_error(f):
+    global ERROR_CB
+    ERROR_CB = f
+
 def error(msg, *lines):
     log("error: %s"%(msg,), important=True)
     for line in lines:
         log(line, 1)
     log("goodbye")
-    sys.exit()
+    if ERROR_CB:
+        ERROR_CB(msg)
+    else:
+        sys.exit()

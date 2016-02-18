@@ -1,5 +1,4 @@
 import sqlalchemy
-from getters import *
 
 class DynamicType(sqlalchemy.TypeDecorator):
 	def __init__(self, *args, **kwargs):
@@ -12,7 +11,7 @@ class StringType(DynamicType):
 		DynamicType.__init__(self, 500, *args, **kwargs)
 
 def basicType(colClass, baseType=DynamicType):
-	return type("%sWrapper"%(colClass.__name__,), (baseType,), { "impl": colClass })
+	return type("%s"%(colClass.__name__,), (baseType,), { "impl": colClass })
 
 _cparams = ["primary_key", "default"]
 
@@ -66,7 +65,7 @@ class ArrayType(BasicString):
 	def process_result_value(self, value, dialect):
 		return json.loads(value)
 
-class Key(object):
+class KeyWrapper(object):
 	def __init__(self, urlsafe=None):
 		self.value = urlsafe
 
@@ -74,6 +73,7 @@ class Key(object):
 		return bool(self.value)
 
 	def get(self):
+		from cantools.db import get
 		return get(self.value)
 
 	def delete(self):
@@ -82,15 +82,15 @@ class Key(object):
 	def urlsafe(self):
 		return self.value
 
-class KeyType(BasicString):
+class Key(BasicString):
 	def process_bind_param(self, value, dialect):
 		return value and value.urlsafe()
 
 	def process_result_value(self, value, dialect):
-		return Key(value)
+		return KeyWrapper(value)
 
-CompositeKey = sqlColumn(KeyType)
-ForeignKey = sqlColumn(KeyType)
+CompositeKey = sqlColumn(Key)
+ForeignKey = sqlColumn(Key)
 
 def sqlForeignKey(targetClass, **kwargs):
 	return sqlalchemy.Column(sqlInteger,

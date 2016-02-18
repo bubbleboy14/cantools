@@ -8,19 +8,19 @@ CT.admin.db = {
 			CT.panel.simple(skeys, "db");
 			for (var i = 0; i < skeys.length; i++)
 				CT.dom.id("dbcontent" + skeys[i],
-					true).appendChild(CT.panel.pager(CT.admin.db._build,
+					true).appendChild(CT.panel.pager(CT.admin.db._build(skeys[i]),
 					CT.admin.db._refill(skeys[i]), 10, "rcol", "data"));
 		});
 	},
 	"get": function(modelName, cb, limit, offset) {
 		limit = limit || 20;
 		offset  = offset || 0;
-		CT.admin.core.q("db", cb,
-			"failed to get " + modelName + " (limit " + limit + "; offset " + offset + ")", {
-				"modelName": modelName,
-				"limit": limit,
-				"offset": offset
-			});
+		CT.admin.core.q("db", cb, ["failed to get", modelName,
+			"- limit", limit, "offset", offset].join(" "), {
+			"modelName": modelName,
+			"limit": limit,
+			"offset": offset
+		});
 	},
 	"_refill": function(modelName) {
 		var f = function(obj, cb) {
@@ -28,7 +28,91 @@ CT.admin.db = {
 		};
 		return f;
 	},
-	"_build": function(obj) {
-		return CT.dom.node(JSON.stringify(obj));
+	"_build": function(modelName) {
+		var f = function(obj) {
+			return (new CT.admin.db.Editor(modelName, obj)).node;
+		};
+		return f;
 	}
 };
+
+CT.admin.db.Editor = CT.Class({
+	"_submit": function() {
+		this.log("_submit");
+	},
+	"_input": function(f, ptype) {
+		return function() {
+			if (ptype == "boolean")
+				return f.checked;
+			if (ptype == "integer")
+				return parseInt(f.value) || null;
+			if (ptype == "float")
+				return parseFloat(f.value) || null;
+			return f.value; // string
+		};
+	},
+	"_modal": function(key) {
+		this.log("_modal", key);
+		(new CT.modal.Modal({
+			"node": CT.dom.node(JSON.stringify(CT.data.get(key)))
+		})).show();
+	},
+	"_entity": function(key) {
+		if (!key) return CT.dom.node("null");
+		var that = this, n = CT.dom.node(),
+			vdata = CT.data.get(key);
+		this.log("_entity", key, vdata);
+		var fill = function(d) {
+			n.appendChild(CT.dom.link((d.label || d.key),
+				function() { that._modal(key); }));
+		};
+		if (vdata)
+			fill(vdata);
+		else
+			CT.admin.core.q("db", function(d) {
+				CT.data.add(d);
+				fill(d);
+			}, "failed to get " + key, { "key": key });
+		return n;
+	},
+	"_row": function(k) {
+		var val = this.data[k], valcell, ptype,
+			rownode = CT.dom.node("", "div", "lister");
+		rownode.appendChild(CT.dom.node(k + ":", "div", "keycell"));
+		ptype = rownode.ptype = this.schema[k];
+		if (ptype == "key")
+			valcell = this._entity(val);
+		else if (ptype) {
+			if (ptype == "string")
+				valcell = CT.dom.field(null, val);
+			else if (ptype == "boolean")
+				valcell = CT.dom.checkbox(null, val);
+			else if (ptype == "float")
+				valcell = CT.parse.numOnly(CT.dom.field(null, val), true);
+			else if (ptype == "integer")
+				valcell = CT.parse.numOnly(CT.dom.field(null, val));
+			valcell.getValue = this._input(valcell, ptype);
+		} else
+			valcell = CT.dom.node(val, "span");
+		rownode.appendChild(valcell);
+		return rownode;
+	},
+	"_table": function() {
+		var k, r, n = this.node = CT.dom.node(); // TODO: list, maybe zipcode
+		["string", "integer", "float", "bool", "key"].forEach(function(t) {
+			n[t] = CT.dom.node();
+			n.appendChild(n[t]);
+		});
+		for (k in this.data) {
+			r = this._row(k);
+			(n[r.ptype] || n).appendChild(r);
+		}
+		n.appendChild(CT.dom.button("Submit", this._submit));
+	},
+	"init": function(model, data) {
+		this.log = CT.log.getLogger("Editor(" + model + ")");
+		this.schema = CT.admin.db.schema[model];
+		this.data = data;
+		this._table();
+	}
+});

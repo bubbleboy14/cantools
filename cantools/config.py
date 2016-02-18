@@ -64,8 +64,6 @@ for key, val in [[term.strip() for term in line.split(" = ")] for line in read("
 		config.db.update(config.web.server, _getpass(val, "db"))
 	elif key == "DB_TEST":
 		config.db.update("test", _getpass(val, "test db"))
-	elif key == "PUBSUB_BOTS":
-		config.pubsub.update("botnames", val.split("|"))
 	else:
 		target = key.lower()
 		c = config
@@ -73,6 +71,8 @@ for key, val in [[term.strip() for term in line.split(" = ")] for line in read("
 			path, target = target.rsplit("_", 1)
 			for part in path.split("_"):
 				c = getattr(c, part)
+		if "target" in ["pubsub_botnames", "log_allow"]:
+			val = val.split("|")
 		c.update(target, val)
 config.update("db_test", config.db.test)
 config.update("db", config.db[config.web.server])
