@@ -71,7 +71,7 @@ for key, val in [[term.strip() for term in line.split(" = ")] for line in read("
 			path, target = target.rsplit("_", 1)
 			for part in path.split("_"):
 				c = getattr(c, part)
-		if "target" in ["pubsub_botnames", "log_allow"]:
+		if target in ["pubsub_botnames", "log_allow"]:
 			val = val.split("|")
 		c.update(target, val)
 config.update("db_test", config.db.test)
