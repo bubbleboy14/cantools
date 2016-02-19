@@ -29,7 +29,7 @@ class PubSub(WebSocketDaemon):
         self._log("Initialized PubSub Server @ %s:%s"%(self.hostname, self.port), important=True)
 
     def loadBots(self):
-        self._log("Loading Bots")
+        self._log("Loading Bots: %s"%(config.pubsub.botnames,))
         sys.path.insert(0, "bots") # for dynamically loading bot modules
         for bname in config.pubsub.botnames:
             self._log("Importing Bot: %s"%(bname,), 2)
