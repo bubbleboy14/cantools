@@ -1,4 +1,5 @@
 CT.canvas.Canvas = CT.Class({
+	"CLASSNAME": "CT.canvas.Canvas",
 	"_": {
 		"controllers": {}, // for different types of view nodes
 		"propagate": function(ename, args) {
@@ -81,7 +82,6 @@ CT.canvas.Canvas = CT.Class({
 		_v.height = _ca.height = Math.max(_v.height, controller.dimensions.height);
 	},
 	"init": function() {
-		this.log = CT.log.getLogger("Canvas");
 		var _v = this._.vars = CT.merge(this._.vars, {
 			"width": CT.align.width(_v.view), // if no view, measures window
 			"height": CT.align.height(_v.view)

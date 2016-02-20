@@ -1,6 +1,7 @@
 CT.modal = {};
 
 CT.modal.Modal = CT.Class({
+	"CLASSNAME": "CT.modal.Modal",
 	"visible": false,
 	"hide": function() {
 		CT.dom.remove(this.node);
@@ -37,6 +38,7 @@ CT.modal.Modal = CT.Class({
 });
 
 CT.modal.Prompt = CT.Class({
+	"CLASSNAME": "CT.modal.Prompt",
 	"_input": {
 		"string": function() {
 			return CT.dom.smartField(this.submit);

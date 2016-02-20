@@ -1,4 +1,5 @@
 CT.canvas.Text = CT.Class({
+	"CLASSNAME": "CT.canvas.Text",
 	"components": {
 		"text": function(ctx) {
 			var _v = this._.vars, i = 0,
@@ -30,7 +31,7 @@ CT.canvas.Text = CT.Class({
 						});
 					line = words[i];
 					lastMetrics = ctx.measureText(line);
-				}else {
+				} else {
 					lastMetrics = metrics;
 					line = testLine;
 				}

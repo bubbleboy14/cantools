@@ -209,6 +209,12 @@ var CT = {
 		var c = function() {
 			var instance = CT.dmerge(c.prototype);
 			CT.bind(instance, instance);
+			if (!instance.CLASSNAME) {
+				instance.CLASSNAME = "CT Class";
+				CT.log("Class missing CLASSNAME property -- falling back to 'CT Class'");
+			}
+			if (!instance.log)
+				instance.log = CT.log.getLogger(instance.CLASSNAME);
 			obj.fullInit.apply(instance, arguments);
 			return instance;
 		};

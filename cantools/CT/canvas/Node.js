@@ -1,4 +1,5 @@
 CT.canvas.Node = CT.Class({
+	"CLASSNAME": "CT.canvas.Node",
 	"_": {
 		"mids": function() {
 			var _v = this._.vars;
@@ -71,7 +72,6 @@ CT.canvas.Node = CT.Class({
 	"init": function(vars) {
 		this.id = CT.canvas.Node.id;
 		CT.canvas.Node.id += 1;
-		this.log = CT.log.getLogger("CT.canvas.Node(" + this.id + ")");
 		this._.vars = CT.merge(vars, {
 			"border": 1,
 			"radius": 5,
