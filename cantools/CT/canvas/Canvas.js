@@ -41,9 +41,8 @@ CT.canvas.Canvas = CT.Class({
 	},
 	"draw": function(dt) {
 		this._.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-		this._.controllers.forEach(function(c) {
-			c.draw(this._.ctx);
-		}.bind(this));
+		for (var k in this._.controllers)
+			this._.controllers[k].draw(this._.ctx);
 	},
 	"render": function() {
 		requestAnimationFrame(this.render);
@@ -77,16 +76,19 @@ CT.canvas.Canvas = CT.Class({
 	"register": function(name, controller) {
 		var _v = this._.vars,
 			_co = this._.controllers,
-			_ca = this.canvas,
 			_d = controller.getDimensions();
 		_co[name] = controller;
-		_v.width = _ca.width = Math.max(_v.width, _d.width);
-		_v.height = _ca.height = Math.max(_v.height, _d.height);
+		_v.width = Math.max(_v.width, _d.width);
+		_v.height = Math.max(_v.height, _d.height);
+		if (this.canvas) {
+			this.canvas.width = _v.width;
+			this.canvas.height = _v.height;
+		}
 	},
-	"init": function() {
-		this._.vars = CT.merge(this._.vars, {
-			"width": CT.align.width(this._.vars.view), // if no view, measures window
-			"height": CT.align.height(this._.vars.view),
+	"init": function(vars) {
+		this._.vars = CT.merge(vars, {
+			"width": CT.align.width(vars.view), // if no view, measures window
+			"height": CT.align.height(vars.view),
 			"controllers": {}
 		});
 		for (var cname in this._.vars.controllers)
