@@ -177,7 +177,7 @@
 .margined {
     margin: 5px;
 }
-.pointer {
+button, .pointer {
     cursor: pointer;
 }
 .scroller {
