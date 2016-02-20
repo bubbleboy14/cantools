@@ -3,13 +3,32 @@ CT.canvas.Controller = CT.Class({
 	"INPUT": true,
 	"DRAGGABLE": false,
 	"_": {
+		"on": {
+			"up": function(node) {
+				this.log("up callback");
+			},
+			"hover": function(node) {
+				this.log("hover callback");
+			},
+			"down": function(node) {
+				this.log("down callback");
+			},
+			"drag": function(node) {
+				this.log("drag callback");
+			}
+		},
 		"propagate": function(ename, args) {
 			var rval;
 			if (this.INPUT) this.nodes.forEach(function(n) {
 				rval = n[ename].apply(n, args)  && n || rval;
 			});
+			if (rval)
+				this._.on[ename](rval);
 			return rval;
 		}
+	},
+	"on": function(evt, cb) {
+		this._.on[evt] = cb;
 	},
 	"up": function() {
 		this.log("up");
