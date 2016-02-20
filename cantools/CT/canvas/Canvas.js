@@ -88,5 +88,6 @@ CT.canvas.Canvas = CT.Class({
 			"height": CT.align.height(this._.vars.view)
 		});
 		this.view = this._.vars.view;
+		this.build();
 	}
 });

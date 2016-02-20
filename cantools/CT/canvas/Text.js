@@ -12,10 +12,10 @@ CT.canvas.Text = CT.Class({
 				words = _v.label.split(' '),
 				yStart, xStart, lastMetrics, 
 				testLine, metrics, testWidth;
-			ctx.shadowColor = _v.shadowColor;
-			ctx.shadowBlur = _v.shadowBlur;
-			ctx.shadowOffsetX = _v.shadowOffsetX;
-			ctx.shadowOffsetY = _v.shadowOffsetY;
+			ctx.shadowColor = _v.textShadowColor;
+			ctx.shadowBlur = _v.textShadowBlur;
+			ctx.shadowOffsetX = _v.textShadowOffsetX;
+			ctx.shadowOffsetY = _v.textShadowOffsetY;
 			ctx.fillStyle = _v.fillStyle;
 			ctx.textBaseline = _v.textBaseline;
 			for (; i < words.length; ++i) {
@@ -45,7 +45,7 @@ CT.canvas.Text = CT.Class({
 				}
 			}
 			yStart = y + (height - lineHeight * lines.length) / 2;
-			ctx.font = "Bold 8pt Sans-Serif";
+			ctx.font = _v.font;
 			lines.forEach(function(l) {
 				ctx.fillText(l.line, l.xStart, yStart);
 				yStart += lineHeight;
@@ -58,10 +58,11 @@ CT.canvas.Text = CT.Class({
 			"lineHeight": 12,
 			"fillStyle": "black",
 			"textBaseline": "top",
-			"shadowColor": "none",
-			"shadowBlur": 0,
-			"shadowOffsetX": 0,
-			"shadowOffsetY": 0
+			"textShadowColor": "none",
+			"textShadowBlur": 0,
+			"textShadowOffsetX": 0,
+			"textShadowOffsetY": 0,
+			"font": "Bold 8pt Sans-Serif"
 		});
 		this._.vars.label = this._.vars.label.replace(/(?:\r\n|\r|\n)/g, ' ');
 	}

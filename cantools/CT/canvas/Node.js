@@ -32,10 +32,10 @@ CT.canvas.Node = CT.Class({
 			gradient.addColorStop(1, _v.color);
 			ctx.fillStyle = gradient;
 
-			ctx.shadowColor = "#99AAAA";
-			ctx.shadowBlur = 10;
-			ctx.shadowOffsetX = 4;
-			ctx.shadowOffsetY = 4;
+			ctx.shadowColor = _v.shadowColor;
+			ctx.shadowBlur = _v.shadowBlur;
+			ctx.shadowOffsetX = _v.shadowOffsetX;
+			ctx.shadowOffsetY = _v.shadowOffsetY;
 
 			ctx.fill();
 			ctx.stroke();
@@ -73,12 +73,17 @@ CT.canvas.Node = CT.Class({
 		this.id = CT.canvas.Node.id;
 		CT.canvas.Node.id += 1;
 		this._.vars = CT.merge(vars, {
+			"inputPadding": 5,
 			"border": 1,
 			"radius": 5,
 			"over": false,
 			"selected": false,
 			"color_selected": "red",
-			"color_unselected": "#0023AA"
+			"color_unselected": "#0023AA",
+			"shadowColor": "99AAAA",
+			"shadowBlur": 10,
+			"shadowOffsetX": 4,
+			"shadowOffsetY": 4
 		});
 		this._.mids()
 	}
