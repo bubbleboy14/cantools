@@ -27,6 +27,12 @@ CT.canvas.Controller = CT.Class({
 			return rval;
 		}
 	},
+	"getDimensions": function() {
+		return {
+			"width": this._.vars.width,
+			"height": this._.vars.height
+		};
+	},
 	"on": function(evt, cb) {
 		this._.on[evt] = cb;
 	},

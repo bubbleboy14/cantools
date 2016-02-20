@@ -85,7 +85,7 @@ CT.canvas.Node = CT.Class({
 			"shadowOffsetX": 4,
 			"shadowOffsetY": 4
 		});
-		this._.mids()
+		this._.mids();
 	}
 });
 CT.canvas.Node.id = 0;

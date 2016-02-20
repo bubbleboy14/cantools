@@ -77,10 +77,11 @@ CT.canvas.Canvas = CT.Class({
 	"register": function(name, controller) {
 		var _v = this._.vars,
 			_co = this._.controllers,
-			_ca = this.canvas;
+			_ca = this.canvas,
+			_d = controller.getDimensions();
 		_co[name] = controller;
-		_v.width = _ca.width = Math.max(_v.width, controller.dimensions.width);
-		_v.height = _ca.height = Math.max(_v.height, controller.dimensions.height);
+		_v.width = _ca.width = Math.max(_v.width, _d.width);
+		_v.height = _ca.height = Math.max(_v.height, _d.height);
 	},
 	"init": function() {
 		this._.vars = CT.merge(this._.vars, {
