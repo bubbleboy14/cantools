@@ -6,7 +6,7 @@ CT.canvas.Canvas = CT.Class({
 			this.log("propagate", ename, args);
 			var _c = this._.vars.controllers, cname, c, rval;
 			for (cname in _c) {
-				c = _c[controller];
+				c = _c[cname];
 				rval = c[ename].apply(c, args) || rval;
 			}
 			return rval;
@@ -14,21 +14,22 @@ CT.canvas.Canvas = CT.Class({
 		"on": {
 			"up": function() {
 				this.log("up");
-				this._.propagate("up");
+				return this._.propagate("up");
 			},
 			"hover": function(pos) {
 				this.log("hover");
-				this._.propagate("hover", [this._.where(pos)]);
+				return this._.propagate("hover", [this._.where(pos)]);
 			},
 			"down": function(pos) {
 				this.log("down");
 				this.canvas.noDrag = this._.propagate("down", [this._.where(pos)]);
+				return this.canvas.noDrag;
 			},
 			"drag": function(dir, dist, dx, dy, dt) {
 				this.log("drag");
-				this._.propagate("drag", [dir, dist, dx, dy, dt]);
+				return this._.propagate("drag", [dir, dist, dx, dy, dt]);
 			}
-		}
+		},
 		"where": function(e) {
 			var xo = this.canvas.offsetLeft + this.view.offsetLeft,
 				yo = this.canvas.offsetTop + this.view.offsetTop;
@@ -82,10 +83,10 @@ CT.canvas.Canvas = CT.Class({
 		_v.height = _ca.height = Math.max(_v.height, controller.dimensions.height);
 	},
 	"init": function() {
-		var _v = this._.vars = CT.merge(this._.vars, {
-			"width": CT.align.width(_v.view), // if no view, measures window
-			"height": CT.align.height(_v.view)
+		this._.vars = CT.merge(this._.vars, {
+			"width": CT.align.width(this._.vars.view), // if no view, measures window
+			"height": CT.align.height(this._.vars.view)
 		});
-		this.view = _v.view;
+		this.view = this._.vars.view;
 	}
 });
