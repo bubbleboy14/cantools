@@ -59,7 +59,7 @@ CT.gesture = {
 		Stop: "mouseup",
 		Move: "mousemove"
 	},
-	handlers: { drag: {}, swipe: {}, tap: {}, up: {}, down: {}, hold: {}, pinch: {} },
+	handlers: { drag: {}, swipe: {}, tap: {}, up: {}, down: {}, hold: {}, pinch: {}, hover: {} },
 	tuneThresholds: function() {
 		if (!CT.info.iOs)
 			for (var gest in CT.gesture.thresholds)
@@ -184,25 +184,27 @@ CT.gesture = {
 		return CT.gesture.triggerUp(node, delayed);
 	},
 	onMove: function(e, node) {
-		var v = node.gvars;
+		var v = node.gvars, pos = CT.gesture.getPos(e);
 		if (v.active) {
-			var pos = CT.gesture.getPos(e), pdiff,
+			var pdiff,
 				diff = CT.gesture.getDiff(v.lastPos, pos),
 				now = Date.now(),
 				tdiff = now - v.dragTime;
 			v.lastPos = pos;
 			v.dragTime = now;
-			if (!CT.gesture.isMulti(e))
+			if (!CT.gesture.isMulti(e)) {
+				var rval = CT.info.mobile && CT.gesture.triggerHover(node, pos);
 				return CT.gesture.triggerDrag(node, diff.direction,
 					diff.distance, diff.x, diff.y,
-					CT.gesture.pixelsPerSecond(diff.distance, tdiff, "drag"));
-			if (CT.info.android)
-			{
+					CT.gesture.pixelsPerSecond(diff.distance, tdiff, "drag")) || rval;
+			}
+			if (CT.info.android) {
 				pdiff = CT.gesture.pinchDiff(e);
 				CT.gesture.triggerPinch(node,
 				 	pdiff.distance / v.firstPinch.distance, pdiff.midpoint);
 			}
-		}
+		} else
+			return CT.gesture.triggerHover(node, pos);
 	},
 	gWrap: function(node) {
 		var e = {};
@@ -235,7 +237,7 @@ CT.gesture = {
 			var e = node.listeners = CT.gesture.eWrap(node);
 			for (var evName in CT.gesture.events)
 				node.addEventListener(CT.gesture.events[evName], e[evName]);
-			node.gvars = JSON.parse(JSON.stringify(CT.gesture._vars));
+			node.gvars = CT.merge(CT.gesture._vars);
 		}
 		if (eventName == "pinch" && CT.info.iOs) {
 			var _e = CT.gesture.gWrap(node);
@@ -290,6 +292,13 @@ CT.gesture = {
 		var handlers = CT.gesture.handlers.drag[node.gid];
 		if (handlers) for (var i = 0; i < handlers.length; i++)
 			returnVal = handlers[i](direction, distance, dx, dy, pixelsPerSecond) || returnVal;
+		return returnVal;
+	},
+	triggerHover: function(node, pos) {
+		var returnVal = false;
+		var handlers = CT.gesture.handlers.hover[node.gid];
+		if (handlers) for (var i = 0; i < handlers.length; i++)
+			returnVal = handlers[i](pos) || returnVal;
 		return returnVal;
 	},
 	triggerHold: function(node, duration) {
