@@ -56,7 +56,7 @@ CT.canvas.Node = CT.Class({
 			(e.y >= y) && (e.y <= y + h));
 	},
 	"hover": function(e) {
-		this._.vars.over = this.contains(e) ? true : false;
+		this._.vars.over = this.contains(e);
 	},
 	"up": function(e) {
 	},
