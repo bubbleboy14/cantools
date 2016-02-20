@@ -35,28 +35,7 @@ CT.canvas.Canvas = CT.Class({
 				x: e.x + this.view.scrollLeft - xo,
 				y: e.y + this.view.scrollTop - yo
 			};
-		},
-		"dismantle": function() {
-			if (this.canvas) {
-				CT.gesture.unlisten('hover', this.canvas);
-				CT.gesture.unlisten('drag', this.canvas);
-				CT.gesture.unlisten('down', this.canvas);
-				CT.gesture.unlisten('up', this.canvas);
-				CT.dom.remove(this.canvas);
-				this.canvas = null;
-			}
-		},
-		"build": function() {
-			this.canvas = CT.dom.node("", "canvas", "", "", {
-				"width": this._.vars.width,
-				"height": this._.vars.height
-			});
-			this._.ctx = this.canvas.getContext('2d');
-			CT.gesture.listen('hover', this.canvas, this._.on.hover);
-			CT.gesture.listen('drag', this.canvas, this._.on.drag);
-			CT.gesture.listen('down', this.canvas, this._.on.down);
-			CT.gesture.listen('up', this.canvas, this._.on.up);
-		},
+		}
 	},
 	"draw": function(dt) {
 		this._.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -72,17 +51,41 @@ CT.canvas.Canvas = CT.Class({
 		this.startTime = now;
 		this.draw(deltaTime);
 	},
-	"register": function(name, nodes) {
-		this._.controllers[name] = nodes;
+	"dismantle": function() {
+		if (this.canvas) {
+			CT.gesture.unlisten('hover', this.canvas);
+			CT.gesture.unlisten('drag', this.canvas);
+			CT.gesture.unlisten('down', this.canvas);
+			CT.gesture.unlisten('up', this.canvas);
+			CT.dom.remove(this.canvas);
+			this.canvas = null;
+		}
 	},
-	"init": function(vars) {
+	"build": function() {
+		this.canvas = CT.dom.node("", "canvas", "", "", {
+			"width": this._.vars.width,
+			"height": this._.vars.height
+		});
+		this._.ctx = this.canvas.getContext('2d');
+		CT.gesture.listen('hover', this.canvas, this._.on.hover);
+		CT.gesture.listen('drag', this.canvas, this._.on.drag);
+		CT.gesture.listen('down', this.canvas, this._.on.down);
+		CT.gesture.listen('up', this.canvas, this._.on.up);
+	},
+	"register": function(name, controller) {
+		var _v = this._.vars,
+			_co = this._.controllers,
+			_ca = this.canvas;
+		_co[name] = controller;
+		_v.width = _ca.width = Math.max(_v.width, controller.dimensions.width);
+		_v.height = _ca.height = Math.max(_v.height, controller.dimensions.height);
+	},
+	"init": function() {
 		this.log = CT.log.getLogger("Canvas");
-		var _v = this._.vars = CT.merge(vars, {
-			"view": CT.dom.id("view")
+		var _v = this._.vars = CT.merge(this._.vars, {
+			"width": CT.align.width(_v.view), // if no view, measures window
+			"height": CT.align.height(_v.view)
 		});
 		this.view = _v.view;
-		_v.width = Math.max(_v.width, CT.align.width(this.view));
-		_v.height = Math.max(_v.height, CT.align.height(this.view));
-		this._.build();
 	}
 });
