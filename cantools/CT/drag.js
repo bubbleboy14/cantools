@@ -32,6 +32,7 @@ CT.drag = {
 			}, 100);
 		};
 		CT.gesture.listen("drag", n, function (direction, distance, dx, dy) {
+			if (n.noDrag) return;
 			var atBottom = (n.parentNode.scrollHeight - n.parentNode.scrollTop 
 				=== n.parentNode.clientHeight), atTop = (n.parentNode.scrollTop === 0),
 				atLeft = (n.parentNode.scrollLeft === 0), atRight = (n.parentNode.clientWidth 
@@ -152,11 +153,9 @@ CT.drag = {
 					if (direction)
 					{
 						node.animating = true;
-						trans(node, function () { node.animating = false;},
-							"-webkit-transform 300ms ease-out");
-						node.style['-webkit-transform'] = 
-							"translate3d(" + node.xDrag + "px," + 
-							node.yDrag + "px,0)";
+						CT.dom.trans(node, function () { node.animating = false; },
+							"transform", 300, "ease-out", "translate3d("
+								+ node.xDrag + "px," + node.yDrag + "px,0)", true);
 					}
 				}
 				else	//boundary checking
@@ -202,10 +201,9 @@ CT.drag = {
 								opts.drag(direction, 0, 0, 0);
 							if (opts.scroll)
 								opts.scroll();
-						}, "-webkit-transform 300ms ease-out");
-						node.style['-webkit-transform'] = 
-							"translate3d(" + node.xDrag + "px," + 
-							node.yDrag + "px,0)";
+						}, "transform", 300, "ease-out",
+						"translate3d(" + node.xDrag + "px," + 
+							node.yDrag + "px,0)", true);
 					}
 				}
 				if (opts.up)
@@ -215,7 +213,7 @@ CT.drag = {
 			}
 		};
 		dragCallback = function (direction, distance, dx, dy) {
-			if (node.touchedDown)
+			if (node.touchedDown && !node.noDrag)
 			{
 				node.dragging = true;
 				if (opts.constraint != "vertical")
@@ -235,9 +233,9 @@ CT.drag = {
 						node.xDrag += dx;
 					}
 				}
-				node.style['-webkit-transform'] = 
+				CT.dom.setVenderPrefixed(node, "transform",
 					"translate3d(" + node.xDrag + "px," + 
-					node.yDrag + "px,0)";
+					node.yDrag + "px,0)");
 				if (opts.drag) 
 					opts.drag(direction, distance, dx, dy);
 				if (opts.scroll)
@@ -284,14 +282,13 @@ CT.drag = {
 						return;
 					}
 				}
+				node.animating = true;
 				CT.dom.trans(node, function() {
 					node.animating = false;
 					upCallback(direction);//legit?
-				}, "-webkit-transform 300ms ease-out");
-				node.animating = true;
-				node.style['-webkit-transform'] = 
+				}, "transform", 300, "ease-out",
 					"translate3d(" + node.xDrag + "px," + 
-					node.yDrag + "px,0)";
+					node.yDrag + "px,0)", true);
 			}
 		};
 
