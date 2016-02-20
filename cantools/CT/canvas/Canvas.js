@@ -85,8 +85,11 @@ CT.canvas.Canvas = CT.Class({
 	"init": function() {
 		this._.vars = CT.merge(this._.vars, {
 			"width": CT.align.width(this._.vars.view), // if no view, measures window
-			"height": CT.align.height(this._.vars.view)
+			"height": CT.align.height(this._.vars.view),
+			"controllers": {}
 		});
+		for (var cname in this._.vars.controllers)
+			this.register(cname, this._.vars.controllers[cname]);
 		this.view = this._.vars.view;
 		this.build();
 	}
