@@ -1,7 +1,7 @@
 CT.canvas.Controller = CT.Class({
 	"CLASSNAME": "CT.canvas.Controller",
-	"INPUT": true,
-	"DRAGGABLE": false,
+	"nodes": [],
+	"nodesByName": {},
 	"_": {
 		"on": {
 			"up": function(node) {
@@ -19,7 +19,7 @@ CT.canvas.Controller = CT.Class({
 		},
 		"propagate": function(ename, args) {
 			var rval;
-			if (this.INPUT) this.nodes.forEach(function(n) {
+			if (this._.vars.input) this.nodes.forEach(function(n) {
 				rval = n[ename].apply(n, args)  && n || rval;
 			});
 			if (rval)
@@ -52,21 +52,32 @@ CT.canvas.Controller = CT.Class({
 	},
 	"drag": function(dir, dist, dx, dy, dt) {
 		this.log("drag");
-		if (this.selected && this.DRAGGABLE)
+		if (this.selected && this._.vars.draggable) {
 			this.selected.move(dx, dy);
 			return true;
 		}
 	},
 	"get": function(name) {
-		return this.nodes[name];
+		return this.nodesByName[name];
 	},
 	"draw": function(ctx) {
 		this.nodes.forEach(function(n) {
 			n.draw(ctx);
 		});
 	},
+	"addNode": function(n) {
+		this.nodes.push(n);
+		this.nodesByName[n.name] = n;
+	},
+	"rmNode": function(n) {
+		CT.data.remove(this.nodes, n);
+		delete this.nodesByName[n.name];
+	},
 	"init": function(vars) {
-		this._.vars = vars;
-		this.nodes = vars.nodes;
+		this._.vars = CT.merge(vars, {
+			"input": true,
+			"draggable": true
+		});
+		vars.nodes.forEach(this.addNode);
 	}
 });
