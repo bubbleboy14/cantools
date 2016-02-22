@@ -39,17 +39,17 @@ CT.admin.db = {
 CT.admin.db.Editor = CT.Class({
 	"_submit": function() {
 		this.log("_submit");
-		var changes = {}, params = {
+		var data = this.data, changes = {}, params = {
 			"key": "edit",
 			"data": changes
 		};
-		if (this.data.key)
-			changes.key = this.data.key;
+		if (data.key)
+			changes.key = data.key;
 		else
 			changes.modelName = this.modelName;
 		this.inputs.forEach(function(ip) {
 			var val = ip.getValue();
-			if (val != this.data[ip.rowKey])
+			if (val != data[ip.rowKey])
 				changes[ip.rowKey] = val;
 		});
 		CT.admin.core.q("db", function() {
