@@ -6,7 +6,6 @@
 	bottom: 10px;
 	left: 100px;
 	background: gray;
-	opacity: 0.8;
 }
 
 #dbitems {
@@ -16,7 +15,7 @@
 	left: 10px;
 	bottom: 10px;
 	width: 90px;
-	background: gray;
+	background: darkgray;
 	color: darkgreen;
 }
 
