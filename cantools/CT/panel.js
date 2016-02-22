@@ -78,7 +78,7 @@ CT.panel = {
 	        CT.panel.add(pnames[i], trysidepanel, keystring, itemnode,
 	            panelnode, nospaces && nospaces[i] || null,
 	            icons && icons[i] || null, cbs && cbs[i] || null);
-	    if (stillswap || (!itemnode && !noclear))
+	    if (pnames.length && (stillswap || (!itemnode && !noclear)))
 	        CT.panel.swap(pnames[0], trysidepanel, keystring);
 	},
 	"simple": function(pnames, keystring, itemnode, panelnode, cbs) {
