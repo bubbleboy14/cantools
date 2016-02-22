@@ -39,6 +39,6 @@ def edit(data, session=session):
 	ent = "key" in data and get(data["key"], session) or get_model(data["modelName"])
 	for propname, proptype in ent._schema.items():
 		if propname in data: # check proptype....
-			setattr(ent, key, data["propname"])
+			setattr(ent, propname, data[propname])
 	ent.put()
 	return ent.key

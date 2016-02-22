@@ -10,7 +10,7 @@ def response():
 		key = cgi_get("key", required=False)
 		if key:
 			if key == "edit":
-				succeed({ "key": edit(cgi_get("data")) })
+				succeed({ "key": edit(cgi_get("data")).urlsafe() })
 			succeed(get(key).data())
 		import model # load up all models
 		mname = cgi_get("modelName", required=False)
