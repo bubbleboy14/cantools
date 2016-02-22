@@ -46,12 +46,14 @@ CT.Pager = CT.Class({
 	"_refill": function(data) {
 		CT.data.addSet(data);
 		this.data = this.data.concat(data);
-		if (data.length < this.limit)
-			this.max = data.length;
+		if (data.length < this.limit) {
+			this.max = this.data.length;
+			this.full = true;
+		}
 		this._load();
 	},
 	"_load": function() {
-		if (this.max || (this.offset + this.limit) <= this.data.length) {
+		if (this.full || (this.offset + this.limit) <= this.data.length) {
 			this._render();
 			this._updateButtons();
 		} else {

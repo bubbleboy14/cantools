@@ -1,5 +1,5 @@
 from cantools.web import respond, succeed, fail, cgi_get, getcache
-from cantools.db import get, get_schema, get_page
+from cantools.db import get, get_schema, get_page, edit
 from cantools import config
 
 def response():
@@ -9,6 +9,8 @@ def response():
 	if action == "db":
 		key = cgi_get("key", required=False)
 		if key:
+			if key == "edit":
+				succeed({ "key": edit(cgi_get("data")).urlsafe() })
 			succeed(get(key).data())
 		import model # load up all models
 		mname = cgi_get("modelName", required=False)
