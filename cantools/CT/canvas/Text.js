@@ -7,7 +7,7 @@ CT.canvas.Text = CT.Class({
 				x = _v.x + _v.padding,
 				y = _v.y + _v.padding,
 				width = _v.width - _v.padding * 2,
-				height = _v.height - _v.padding * 2
+				height = _v.height - _v.padding * 2,
 				lineHeight = _v.lineHeight,
 				words = _v.label.split(' '),
 				yStart, xStart, lastMetrics, 
