@@ -39,6 +39,22 @@ CT.admin.db = {
 CT.admin.db.Editor = CT.Class({
 	"_submit": function() {
 		this.log("_submit");
+		var data = this.data, changes = {}, params = {
+			"key": "edit",
+			"data": changes
+		};
+		if (data.key)
+			changes.key = data.key;
+		else
+			changes.modelName = this.modelName;
+		this.inputs.forEach(function(ip) {
+			var val = ip.getValue();
+			if (val != data[ip.rowKey])
+				changes[ip.rowKey] = val;
+		});
+		CT.admin.core.q("db", function() {
+			alert("you did it");
+		}, "edit failed", params);
 	},
 	"_input": function(f, ptype) {
 		return function() {
@@ -92,6 +108,8 @@ CT.admin.db.Editor = CT.Class({
 			else if (ptype == "integer")
 				valcell = CT.parse.numOnly(CT.dom.field(null, val));
 			valcell.getValue = this._input(valcell, ptype);
+			valcell.rowKey = k;
+			this.inputs.push(valcell);
 		} else
 			valcell = CT.dom.node(val, "span");
 		rownode.appendChild(valcell);
@@ -111,8 +129,10 @@ CT.admin.db.Editor = CT.Class({
 	},
 	"init": function(model, data) {
 		this.log = CT.log.getLogger("Editor(" + model + ")");
+		this.modelName = model;
 		this.schema = CT.admin.db.schema[model];
 		this.data = data;
+		this.inputs = [];
 		this._table();
 	}
 });
