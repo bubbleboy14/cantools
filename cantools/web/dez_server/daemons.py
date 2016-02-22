@@ -27,7 +27,7 @@ class Response(object):
 		self.response.write(*args, **kwargs)
 
 	def _close(self):
-		timeout(.001, self.response.dispatch_now)
+		timeout(.001, self.response.dispatch)
 		abort_branch()
 
 	def _header(self, *args, **kwargs):
