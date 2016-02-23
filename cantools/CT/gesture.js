@@ -25,7 +25,12 @@ CT.gesture = {
 		up: {
 			androidDelay: 600
 		},
-		pinch: {}
+		pinch: {},
+		zoom: {
+			slow: 2,
+			min: 0.5,
+			max: 4
+		}
 	},
 	_vars: {
 		active: false,
@@ -35,6 +40,7 @@ CT.gesture = {
 		lastPos: null,
 		tapCount: 0,
 		holdCount: 0,
+		zoomLevel: 1,
 		tapTimeout: null,
 		holdInterval: null,
 		stopTimeout: null,
@@ -163,9 +169,6 @@ CT.gesture = {
 		var timeDiff = Date.now() - v.startTime;
 		v.active = !!(e.touches && e.touches.length);
 
-		if (e.touches && e.touches.length == 1) // multitouch ended
-			CT.gesture.triggerPinch(node);
-
 		if (!v.active && !v.iosPinching) { // last finger raised
 			if ( (timeDiff < t.swipe.maxTime)
 				&& (diff.distance > t.swipe.minDistance) ) // swipe
@@ -230,6 +233,13 @@ CT.gesture = {
 		if (CT.gesture.events.Cancel)
 			e.Cancel = e.Stop;
 		return e;
+	},
+	pinch2zoom: function(node) {
+		var t = CT.gesture.thresholds.zoom, v = node.gvars;
+		CT.gesture.listen('pinch', node, function(normalizedDistance, midpoint) {
+			v.zoomLevel = node.style.zoom = Math.max(t.min, Math.min(t.max,
+				Math.pow(normalizedDistance * v.zoomLevel, 1 / t.slow)));
+		});
 	},
 	listen: function(eventName, node, cb, stopPropagation, preventDefault) {
 		if (!node.gid) {
