@@ -27,9 +27,13 @@ CT.gesture = {
 		},
 		pinch: {},
 		zoom: {
+			min: 0.25,
+			max: 18,
 			slow: 2,
-			min: 0.5,
-			max: 4
+			wheel: {
+				enabled: !CT.info.mobile,
+				slow: 300
+			}
 		}
 	},
 	_vars: {
@@ -234,11 +238,18 @@ CT.gesture = {
 			e.Cancel = e.Stop;
 		return e;
 	},
-	pinch2zoom: function(node) {
+	zoom: function(node, normalizedDistance, midpoint) {
 		var t = CT.gesture.thresholds.zoom, v = node.gvars;
+		v.zoomLevel = node.style.zoom = Math.max(t.min, Math.min(t.max,
+			Math.pow(normalizedDistance * v.zoomLevel, 1 / t.slow)));
+	},
+	pinch2zoom: function(node) {
+		var t = CT.gesture.thresholds.zoom;
 		CT.gesture.listen('pinch', node, function(normalizedDistance, midpoint) {
-			v.zoomLevel = node.style.zoom = Math.max(t.min, Math.min(t.max,
-				Math.pow(normalizedDistance * v.zoomLevel, 1 / t.slow)));
+			CT.gesture.zoom(node, normalizedDistance, midpoint);
+		});
+		t.wheel.enabled && node.addEventListener("wheel", function(e) {
+			CT.gesture.zoom(node, 1 + e.deltaY / t.wheel.slow);
 		});
 	},
 	listen: function(eventName, node, cb, stopPropagation, preventDefault) {
