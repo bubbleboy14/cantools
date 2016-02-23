@@ -28,10 +28,10 @@ CT.gesture = {
 		pinch: {},
 		zoom: {
 			min: 0.25,
-			max: 18,
+			max: 8,
 			slow: 2,
 			wheel: {
-				enabled: !CT.info.mobile,
+				enabled: !CT.info.mobile && !CT.info.isMac,
 				jump: 0.2
 			}
 		}
@@ -247,9 +247,9 @@ CT.gesture = {
 		var t = CT.gesture.thresholds.zoom, v = node.gvars;
 		CT.gesture.listen('pinch', node, function(normalizedDistance, midpoint) {
 			CT.gesture.zoom(node, normalizedDistance, midpoint);
-		});
+		}, true, true);
 		t.wheel.enabled && node.addEventListener("wheel", function(e) {
-			CT.gesture.zoom(node, v.zoomLevel * (1 + (e.deltaY < 0 ? -t.wheel.jump : t.wheel.jump)));
+			CT.gesture.zoom(node, v.zoomLevel * (1 + (e.deltaY > 0 ? -t.wheel.jump : t.wheel.jump)));
 		});
 	},
 	listen: function(eventName, node, cb, stopPropagation, preventDefault) {
