@@ -230,6 +230,7 @@ CT.info.isStockAndroid = (CT.info.userAgent.indexOf("Mozilla/5.0") != -1)
     && (CT.info.userAgent.indexOf("Android ") != -1)
     && (CT.info.userAgent.indexOf("AppleWebKit") != -1)
     && (CT.info.userAgent.indexOf("Chrome") == -1);
+CT.info.isMac = /Macintosh/.test(CT.info.userAgent);
 
 CT.require("CT.log");
 
