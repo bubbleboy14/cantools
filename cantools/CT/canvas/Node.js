@@ -64,10 +64,14 @@ CT.canvas.Node = CT.Class({
 		this._.vars.selected = this.contains(e);
 		return this._.vars.selected && this;
 	},
+	"build": function() {}, // override
 	"draw": function(ctx) {
-		this._.draw_box(ctx);
-		for (var c in this.components)
-			this.components[c](ctx);
+		var v = this._.vars, c = this.components;
+		this.build();
+		v.box && this._.draw_box(ctx);
+		v.drawOrder.forEach(function(component) {
+			c[component](ctx);
+		});
 	},
 	"init": function(vars) {
 		this.id = CT.canvas.Node.id;
@@ -76,6 +80,7 @@ CT.canvas.Node = CT.Class({
 			"inputPadding": 5,
 			"border": 1,
 			"radius": 5,
+			"box": true,
 			"over": false,
 			"selected": false,
 			"color_selected": "red",
@@ -83,7 +88,8 @@ CT.canvas.Node = CT.Class({
 			"shadowColor": "99AAAA",
 			"shadowBlur": 10,
 			"shadowOffsetX": 4,
-			"shadowOffsetY": 4
+			"shadowOffsetY": 4,
+			"drawOrder": Object.keys(this.components)
 		});
 		this._.mids();
 	}
