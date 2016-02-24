@@ -90,20 +90,25 @@ CT.canvas.Controller = CT.Class({
 	},
 	"addNode": function(n) {
 		this.nodes.push(n);
-		this.nodesByName[n.name] = n;
+		this.nodesByName[n._.vars.name] = n;
 	},
 	"rmNode": function(n) {
 		CT.data.remove(this.nodes, n);
 		delete this.nodesByName[n.name];
 	},
 	"init": function(vars) {
-		this._.vars = CT.merge(vars, {
+		var v = this._.vars = CT.merge(vars, {
 			"input": true,
 			"draggable": true,
 			"normalize": true,
 			"padding": 5
 		});
-		vars.nodes.forEach(this.addNode);
-		this._.bounds(this._.vars.normalize);
+		v.nodes.forEach(this.addNode);
+		if (v.dimensions) {
+			v.width = v.dimensions.width;
+			v.height = v.dimensions.height;
+			delete v.dimensions;
+		} else
+			this._.bounds(v.normalize);
 	}
 });
