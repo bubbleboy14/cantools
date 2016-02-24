@@ -72,6 +72,7 @@ CT.canvas.Canvas = CT.Class({
 		CT.gesture.listen('drag', this.canvas, this._.on.drag);
 		CT.gesture.listen('down', this.canvas, this._.on.down);
 		CT.gesture.listen('up', this.canvas, this._.on.up);
+		this._.vars.zoom && CT.gesture.pinch2zoom(this.canvas);
 	},
 	"register": function(name, controller) {
 		var _v = this._.vars,
@@ -89,7 +90,8 @@ CT.canvas.Canvas = CT.Class({
 		this._.vars = CT.merge(vars, {
 			"width": CT.align.width(vars.view), // if no view, measures window
 			"height": CT.align.height(vars.view),
-			"controllers": {}
+			"controllers": {},
+			"zoom": true
 		});
 		for (var cname in this._.vars.controllers)
 			this.register(cname, this._.vars.controllers[cname]);
