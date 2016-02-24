@@ -62,7 +62,7 @@ CT.canvas.Node = CT.Class({
 	},
 	"down": function(e) {
 		this._.vars.selected = this.contains(e);
-		return this._.vars.selected;
+		return this._.vars.selected && this;
 	},
 	"draw": function(ctx) {
 		this._.draw_box(ctx);
