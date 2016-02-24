@@ -3,7 +3,6 @@ CT.canvas.Canvas = CT.Class({
 	"_": {
 		"controllers": {}, // for different types of view nodes
 		"propagate": function(ename, args) {
-			this.log("propagate", ename, args);
 			var _c = this._.vars.controllers, cname, c, rval;
 			for (cname in _c) {
 				c = _c[cname];
@@ -13,19 +12,15 @@ CT.canvas.Canvas = CT.Class({
 		},
 		"on": {
 			"up": function() {
-				this.log("up");
 				this._.propagate("up");
 			},
 			"hover": function(pos) {
-				this.log("hover");
 				this._.propagate("hover", [this._.where(pos)]);
 			},
 			"down": function(pos) {
-				this.log("down");
 				this.canvas.noDrag = this._.propagate("down", [this._.where(pos)]);
 			},
 			"drag": function(dir, dist, dx, dy, dt) {
-				this.log("drag");
 				this._.propagate("drag", [dir, dist, dx, dy, dt]);
 			}
 		},
