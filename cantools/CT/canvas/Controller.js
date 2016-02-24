@@ -25,6 +25,29 @@ CT.canvas.Controller = CT.Class({
 			if (rval)
 				this._.on[ename](rval);
 			return rval;
+		},
+		bounds: function(normalize) {
+			var n, padding = this._.vars.padding,
+				endNodeX, endNodeY,
+				maxX = maxY = minX = minY = 0;
+			this.nodes.forEach(function(node) {
+				n = node._.vars;
+				endNodeX = n.x + n.width;
+				endNodeY = n.y + n.height;
+				if (maxX < endNodeX + padding)
+					maxX = endNodeX + padding;
+				if (maxY < endNodeY + padding)
+					maxY = endNodeY + padding;
+				if (minX == 0 || (n.x - padding) < minX)
+					minX = n.x - padding;
+				if (minY == 0 || (n.y - padding) < minY)
+					minY = n.y - padding;
+			});
+			normalize && this.nodes.forEach(function(n) {
+				n.move(-minX, -minY);
+			});
+			this._.vars.width = maxX - minX;
+			this._.vars.height = maxY - minY;
 		}
 	},
 	"getDimensions": function() {
@@ -76,8 +99,11 @@ CT.canvas.Controller = CT.Class({
 	"init": function(vars) {
 		this._.vars = CT.merge(vars, {
 			"input": true,
-			"draggable": true
+			"draggable": true,
+			"normalize": true,
+			"padding": 5
 		});
 		vars.nodes.forEach(this.addNode);
+		this._.bounds(this._.vars.normalize);
 	}
 });
