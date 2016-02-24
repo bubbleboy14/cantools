@@ -14,20 +14,19 @@ CT.canvas.Canvas = CT.Class({
 		"on": {
 			"up": function() {
 				this.log("up");
-				return this._.propagate("up");
+				this._.propagate("up");
 			},
 			"hover": function(pos) {
 				this.log("hover");
-				return this._.propagate("hover", [this._.where(pos)]);
+				this._.propagate("hover", [this._.where(pos)]);
 			},
 			"down": function(pos) {
 				this.log("down");
 				this.canvas.noDrag = this._.propagate("down", [this._.where(pos)]);
-				return this.canvas.noDrag;
 			},
 			"drag": function(dir, dist, dx, dy, dt) {
 				this.log("drag");
-				return this._.propagate("drag", [dir, dist, dx, dy, dt]);
+				this._.propagate("drag", [dir, dist, dx, dy, dt]);
 			}
 		},
 		"where": function(e) {
@@ -91,7 +90,7 @@ CT.canvas.Canvas = CT.Class({
 			"width": CT.align.width(vars.view), // if no view, measures window
 			"height": CT.align.height(vars.view),
 			"controllers": {},
-			"zoom": true
+			"zoom": false // disabled until integration is improved
 		});
 		for (var cname in this._.vars.controllers)
 			this.register(cname, this._.vars.controllers[cname]);
