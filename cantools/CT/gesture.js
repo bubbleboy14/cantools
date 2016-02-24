@@ -69,7 +69,7 @@ CT.gesture = {
 		Stop: "mouseup",
 		Move: "mousemove"
 	},
-	handlers: { drag: {}, swipe: {}, tap: {}, up: {}, down: {}, hold: {}, pinch: {}, hover: {} },
+	handlers: { drag: {}, swipe: {}, tap: {}, up: {}, down: {}, hold: {}, pinch: {}, hover: {}, wheel: {} },
 	tuneThresholds: function() {
 		if (!CT.info.iOs)
 			for (var gest in CT.gesture.thresholds)
@@ -213,6 +213,9 @@ CT.gesture = {
 		} else
 			return CT.gesture.triggerHover(node, pos);
 	},
+	onWheel: function(e, node) {
+		CT.gesture.triggerWheel(node, CT.gesture.getPos(e), e.deltaY);
+	},
 	gWrap: function(node) {
 		var e = {};
 		['GestureStart', 'GestureChange', 'GestureEnd'].forEach(function(eName) {
@@ -244,12 +247,13 @@ CT.gesture = {
 			Math.pow(normalizedDistance * v.zoomLevel, 1 / t.slow)));
 	},
 	pinch2zoom: function(node) {
-		var t = CT.gesture.thresholds.zoom, v = node.gvars;
+		var w = CT.gesture.thresholds.zoom.wheel, v = node.gvars;
 		CT.gesture.listen('pinch', node, function(normalizedDistance, midpoint) {
 			CT.gesture.zoom(node, normalizedDistance, midpoint);
 		}, true, true);
-		t.wheel.enabled && node.addEventListener("wheel", function(e) {
-			CT.gesture.zoom(node, v.zoomLevel * (1 + (e.deltaY > 0 ? -t.wheel.jump : t.wheel.jump)));
+		w.enabled && CT.gesture.listen("wheel", node, function(pos, delta) {
+			CT.gesture.zoom(node, v.zoomLevel * (1 +
+				(delta > 0 ? -w.jump : w.jump)), pos);
 		});
 	},
 	listen: function(eventName, node, cb, stopPropagation, preventDefault) {
@@ -268,6 +272,10 @@ CT.gesture = {
 				node.listeners[k] = _e[k];
 			node.gvars.iosPinch = true;
 		}
+		else if (eventName == "wheel" && !node.listeners.wheel) {
+			node.listeners.wheel = function(e) { CT.gesture.onWheel(e, node); };
+			node.addEventListener("wheel", node.listeners.wheel);
+		}
 		node.gvars.stopPropagation = stopPropagation;
 		node.gvars.preventDefault = preventDefault;
 		if (!CT.gesture.handlers[eventName][node.gid])
@@ -283,6 +291,8 @@ CT.gesture = {
 				for (var evName in CT.gesture.gevents)
 					node.removeEventListener(CT.gesture.gevents[evName], e[evName]);
 			}
+			if (e.wheel)
+				node.removeEventListener("wheel", e.wheel);
 			for (var eventName in CT.gesture.handlers)
 				if (node.gid in CT.gesture.handlers[eventName])
 					delete CT.gesture.handlers[eventName][node.gid];
@@ -321,6 +331,11 @@ CT.gesture = {
 		if (handlers) for (var i = 0; i < handlers.length; i++)
 			returnVal = handlers[i](pos) || returnVal;
 		return returnVal;
+	},
+	triggerWheel: function(node, pos, delta) {
+		var handlers = CT.gesture.handlers.wheel[node.gid];
+		if (handlers) for (var i = 0; i < handlers.length; i++)
+			handlers[i](pos, delta);
 	},
 	triggerHold: function(node, duration) {
 		var handlers = CT.gesture.handlers.hold[node.gid];
