@@ -39,6 +39,7 @@ CT.canvas.Canvas = CT.Class({
 			this._.controllers[k].draw(this._.ctx);
 	},
 	"render": function() {
+		if (!this.canvas) return;
 		requestAnimationFrame(this.render);
 		var now = new Date().getTime(),
 			deltaTime = now - (this.startTime || now);
