@@ -3,7 +3,7 @@ CT.panel = {
 	"swap": function(key, trysidepanel, keystring, noitem) {
 	    keystring = keystring || "sb";
 	    key = key.replace(/ /g, "");
-	    var items = CT.dom.class(keystring + "panel");
+	    var items = CT.dom.className(keystring + "panel");
 	    for (var i = 0; i < items.length; i++)
 	        items[i].className = keystring + "panel hidden";
 	    CT.dom.id(keystring +  "panel" + key).className = keystring + "panel";
@@ -18,7 +18,7 @@ CT.panel = {
 	},
 	"select": function(key, keystring) {
 	    keystring = keystring || "sb";
-	    var items = CT.dom.class(keystring + "item");
+	    var items = CT.dom.className(keystring + "item");
 	    for (var i = 0; i < items.length; i++)
 	        items[i].className = items[i].className.replace(" activetab", "");
 	    if (key) {

@@ -209,6 +209,12 @@ var CT = {
 		var c = function() {
 			var instance = CT.dmerge(c.prototype);
 			CT.bind(instance, instance);
+			if (!instance.CLASSNAME) {
+				instance.CLASSNAME = "CT Class";
+				CT.log("Class missing CLASSNAME property -- falling back to 'CT Class'");
+			}
+			if (!instance.log)
+				instance.log = CT.log.getLogger(instance.CLASSNAME);
 			obj.fullInit.apply(instance, arguments);
 			return instance;
 		};
@@ -226,7 +232,8 @@ CT.info.isStockAndroid = (CT.info.userAgent.indexOf("Mozilla/5.0") != -1)
     && (CT.info.userAgent.indexOf("Chrome") == -1);
 CT.info.isMac = /Macintosh/.test(CT.info.userAgent);
 
-CT.require("CT.log");
+// dynamic, so that compiler doesn't stick before ct.js :)
+CT.require("CT.log", true);
 
 // shims (fallbacks for old browsers)
 if (!window.JSON)

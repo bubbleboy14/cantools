@@ -37,6 +37,7 @@ CT.admin.db = {
 };
 
 CT.admin.db.Editor = CT.Class({
+	"CLASSNAME": "CT.admin.db.Editor",
 	"_submit": function() {
 		this.log("_submit");
 		var data = this.data, changes = {}, params = {
@@ -128,7 +129,6 @@ CT.admin.db.Editor = CT.Class({
 		n.appendChild(CT.dom.button("Submit", this._submit));
 	},
 	"init": function(model, data) {
-		this.log = CT.log.getLogger("Editor(" + model + ")");
 		this.modelName = model;
 		this.schema = CT.admin.db.schema[model];
 		this.data = data;

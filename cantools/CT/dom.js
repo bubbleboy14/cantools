@@ -645,7 +645,7 @@ CT.dom = {
 			arr.push(nodeArray[i]);
 		return arr;
 	},
-	"class": function(cname, n) {
+	"className": function(cname, n) { // can't call it "class"...
 		return CT.dom._narr2arr((n || document).getElementsByClassName(cname));
 	},
 	"tag": function(tag, n) {

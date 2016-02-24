@@ -1,4 +1,5 @@
 CT.Pager = CT.Class({
+	"CLASSNAME": "CT.Pager",
 	"offset": 0,
 	"limit": 20,
 	"data": [],
