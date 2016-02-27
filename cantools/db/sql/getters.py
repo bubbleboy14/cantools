@@ -14,7 +14,7 @@ def get_schema():
             s[key] = val._schema
     return s
 
-def get_page(modelName, limit, offset, order='id'):
+def get_page(modelName, limit, offset, order='index'):
     #SAWarning: Can't resolve label reference '-draw_num'; converting to text()
     #'-column_name' or 'column_name desc' work but give this warning
     return [d.data() for d in get_model(modelName).query().order(order).fetch(limit, offset)]
