@@ -14,7 +14,6 @@ class Query(object):
 		for fname in _qmod:
 			setattr(self, fname, self._qmlam(fname))
 		setattr(self, "order", self._qmlam("order_by"))
-		self.get = self.query.first
 		self.filter(*args, **kwargs)
 
 	def _qplam(self, fname):
@@ -26,6 +25,9 @@ class Query(object):
 	def _qmod(self, modname, *args, **kwargs):
 		self.query = getattr(self.query, modname)(*args, **kwargs)
 		return self
+
+	def get(self):
+		return self.query.first()
 
 	def fetch(self, limit, offset=0, keys_only=False):
 		self.limit(limit)
