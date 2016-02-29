@@ -15,8 +15,10 @@ cfg = {
 	"db": { # switch on web backend (override w/ DB)
 		"gae": "data.db",
 		"dez": "sqlite:///data.db",
-		"test": "sqlite:///data_test.db"
+		"test": "sqlite:///data_test.db",
+		"echo": False
 	},
+	"encode": False,
 	"mailer": None, # (override w/ MAILER)
 	"pubsub": {
 		"host": "localhost",

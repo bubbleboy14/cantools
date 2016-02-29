@@ -8,7 +8,7 @@ lastSession = None
 
 class Session(object):
 	def __init__(self, dbstring=config.db):
-		self.engine = create_engine(dbstring, pool_recycle=7200)
+		self.engine = create_engine(dbstring, pool_recycle=7200, echo=config.db_echo)
 		self.generator = scoped_session(sessionmaker(bind=self.engine), scopefunc=cgi_dump)
 		for fname in ["add", "add_all", "delete", "flush", "commit", "query"]:
 			setattr(self, fname, self._func(fname))
