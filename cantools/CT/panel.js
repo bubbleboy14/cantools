@@ -92,9 +92,9 @@ CT.panel = {
 					keystring = "p" + pager.id;
 				CT.panel.simple(dnames, keystring, sideBar, content);
 				data.forEach(function(d) {
-					CT.dom.id(keystring + "content"
+					CT.dom.setContent(CT.dom.id(keystring + "content"
 						+ (d.label || d.key).replace(/ /g, ""),
-						true).appendChild(getContent(d));
+						true), getContent(d));
 				});
 				return sideBar;
 			}, request, limit, colClass),
