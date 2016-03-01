@@ -61,9 +61,9 @@
     top: 50%;
     left: 50%;
     max-height: 400px;
-    width: 300px;
+    width: 500px;
     margin-top: -200px;
-    margin-left: -150px;
+    margin-left: -250px;
     text-align: center;
     overflow-y: auto;
 }

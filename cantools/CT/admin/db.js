@@ -71,8 +71,17 @@ CT.admin.db.Editor = CT.Class({
 	"_modal": function(key) {
 		this.log("_modal", key);
 		(new CT.modal.Modal({
-			"node": CT.dom.node(JSON.stringify(CT.data.get(key)))
+			"node": this._mtable(key)
 		})).show();
+	},
+	"_mtable": function(key) {
+		var k, d = CT.data.get(key), n = CT.dom.node();
+		for (k in d)
+			n.appendChild(CT.dom.node([
+				CT.dom.node(k + ":", "div", "keycell"),
+				CT.dom.node(d[k] || "(none)", "span")
+			], "div", "lister"));
+		return n;
 	},
 	"_entity": function(key) {
 		if (!key) return CT.dom.node("null");
