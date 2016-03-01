@@ -84,12 +84,12 @@ CT.panel = {
 	"simple": function(pnames, keystring, itemnode, panelnode, cbs) {
 		CT.panel.load(pnames, null, keystring, itemnode, panelnode, null, null, null, true, cbs);
 	},
-	"pager": function(getContent, request, limit, colClass, dataClass) {
+	"pager": function(getContent, request, limit, colClass, dataClass, ks) {
 		var content = CT.dom.node(null, null, dataClass),
 			sideBar = CT.dom.node(),
 			pager = new CT.Pager(function(data) {
 				var dnames = data.map(function(d) { return (d.label || d.key); }),
-					keystring = "p" + pager.id;
+					keystring = ks || ("p" + pager.id);
 				CT.panel.simple(dnames, keystring, sideBar, content);
 				data.forEach(function(d) {
 					CT.dom.setContent(CT.dom.id(keystring + "content"
