@@ -1,6 +1,7 @@
 CT.admin.db = {
 	"init": function() {
 		CT.log("acquiring db schema");
+		CT.admin.db.starred = CT.dom.id("dbstarred");
 		CT.admin.core.init("db", function(schema) {
 			var skeys = Object.keys(schema);
 			CT.log("got schema with " + skeys.length + " tables");
@@ -33,6 +34,27 @@ CT.admin.db = {
 			return (new CT.admin.db.Editor(modelName, obj)).node;
 		};
 		return f;
+	},
+	"star": function(k) {
+		CT.log("CT.admin.db.star: " + k);
+		var d = CT.data.get(k), key = d.key + "starred",
+			b = CT.dom.button(CT.dom.id(key) ? "Unstar" : "Star", function() {
+				if (b.innerHTML == "Star") {
+					b.innerHTML = "Unstar";
+					CT.admin.db.starLink(d);
+				} else {
+					b.innerHTML = "Star";
+					CT.dom.remove(CT.dom.id(key));
+				}
+			});
+		return b;
+	},
+	"starLink": function(d, check) {
+		var k = d.key + "starred";
+		if (check && CT.dom.id(k))
+			return;
+		CT.admin.db.starred.appendChild(CT.dom.node(
+			CT.dom.link(d.label || d.key), "div", "pointer", k));
 	}
 };
 
@@ -81,6 +103,10 @@ CT.admin.db.Editor = CT.Class({
 				CT.dom.node(k + ":", "div", "keycell"),
 				CT.dom.node(d[k] || "(none)", "span")
 			], "div", "lister"));
+		n.appendChild(CT.dom.button("change"));
+		n.appendChild(CT.dom.button("edit", function() {
+			CT.admin.db.starLink(d, true);
+		}));
 		return n;
 	},
 	"_entity": function(key) {
@@ -136,6 +162,7 @@ CT.admin.db.Editor = CT.Class({
 			(n[r.ptype] || n).appendChild(r);
 		}
 		n.appendChild(CT.dom.button("Submit", this._submit));
+		n.appendChild(CT.admin.db.star(this.data.key));
 	},
 	"init": function(model, data) {
 		this.modelName = model;
