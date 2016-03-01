@@ -584,6 +584,10 @@ CT.dom = {
 	"remove": function(n) {
 		n && n.parentNode && n.parentNode.removeChild(n);
 	},
+	"setContent": function(targetNode, contentNode) {
+		targetNode.innerHTML = "";
+		targetNode.appendChild(contentNode);
+	},
 
 	// ALLNODE stuff
 	"ALLNODE": null,
