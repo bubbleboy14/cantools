@@ -1,6 +1,7 @@
 CT.admin.db = {
 	"init": function() {
 		CT.log("acquiring db schema");
+		CT.admin.db.starred = CT.dom.id("dbstarred");
 		CT.admin.core.init("db", function(schema) {
 			var skeys = Object.keys(schema);
 			CT.log("got schema with " + skeys.length + " tables");
@@ -9,7 +10,7 @@ CT.admin.db = {
 			for (var i = 0; i < skeys.length; i++)
 				CT.dom.id("dbcontent" + skeys[i],
 					true).appendChild(CT.panel.pager(CT.admin.db._build(skeys[i]),
-					CT.admin.db._refill(skeys[i]), 10, "rcol", "data"));
+					CT.admin.db._refill(skeys[i]), 10, "rcol", "data", skeys[i]));
 		});
 	},
 	"get": function(modelName, cb, limit, offset) {
@@ -33,6 +34,43 @@ CT.admin.db = {
 			return (new CT.admin.db.Editor(modelName, obj)).node;
 		};
 		return f;
+	},
+	"star": function(k) {
+		CT.log("CT.admin.db.star: " + k);
+		var d = CT.data.get(k), key = d.key + "starred",
+			b = CT.dom.button(CT.dom.id(key) ? "Unstar" : "Star", function() {
+				if (b.innerHTML == "Star") {
+					b.innerHTML = "Unstar";
+					CT.admin.db.starLink(d);
+				} else {
+					b.innerHTML = "Star";
+					CT.dom.remove(CT.dom.id(key));
+				}
+			});
+		return b;
+	},
+	"key2model": function(key) {
+		return JSON.parse(atob(key)).model;
+	},
+	"starLink": function(d) {
+		var label = d.label || d.key,
+			k = label + "starred",
+			slink = CT.dom.id(k);
+		if (!slink) {
+			slink = CT.dom.node(CT.dom.link(label, function() {
+				var dobj = {};
+				dobj.db = CT.admin.db.key2model(d.key);
+				dobj[dobj.db] = d.label;
+				if (!CT.dom.id(dobj.db + "panel" + d.label.replace(/ /g, ""))) {
+					CT.panel.add(d.label, false, dobj.db);
+					CT.dom.id(dobj.db + "content" + d.label.replace(/ /g,
+						"")).appendChild(CT.admin.db._build(dobj.db)(d));
+				}
+				CT.panel.drill(dobj);
+			}), "div", "pointer", k);
+			CT.admin.db.starred.appendChild(slink);
+		}
+		return slink.firstChild;
 	}
 };
 
@@ -75,12 +113,18 @@ CT.admin.db.Editor = CT.Class({
 		})).show();
 	},
 	"_mtable": function(key) {
-		var k, d = CT.data.get(key), n = CT.dom.node();
+		var k, d = CT.data.get(key), my_d = this.data, n = CT.dom.node();
 		for (k in d)
 			n.appendChild(CT.dom.node([
 				CT.dom.node(k + ":", "div", "keycell"),
 				CT.dom.node(d[k] || "(none)", "span")
 			], "div", "lister"));
+		n.appendChild(CT.dom.button("change"));
+		n.appendChild(CT.dom.button("edit", function() {
+			CT.admin.db.starLink(my_d);
+			CT.admin.db.starLink(d).onclick();
+			n.parentNode.modal.hide();
+		}));
 		return n;
 	},
 	"_entity": function(key) {
@@ -136,6 +180,7 @@ CT.admin.db.Editor = CT.Class({
 			(n[r.ptype] || n).appendChild(r);
 		}
 		n.appendChild(CT.dom.button("Submit", this._submit));
+		n.appendChild(CT.admin.db.star(this.data.key));
 	},
 	"init": function(model, data) {
 		this.modelName = model;

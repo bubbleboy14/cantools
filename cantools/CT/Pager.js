@@ -3,22 +3,22 @@ CT.Pager = CT.Class({
 	"offset": 0,
 	"limit": 20,
 	"data": [],
-	"init": function(renderCb, requestCb, limit, nodeClass) {
+	"init": function(renderCb, requestCb, limit, nodeClass, nodeId) {
 		this.id = CT.Pager._id;
 		CT.Pager._id += 1;
 		this._renderCb = renderCb;
 		this._requestCb = requestCb;
 		if (limit)
 			this.limit = limit;
-		this._build(nodeClass);
+		this._build(nodeClass, nodeId);
 	},
-	"_build": function(nodeClass) {
+	"_build": function(nodeClass, nodeId) {
 		this.content = CT.dom.node();
 		this.next = CT.dom.button("next", this._next);
 		this.previous = CT.dom.button("previous", this._previous);
 		this.node = CT.dom.node([
 			this.content, this.previous, this.next
-		], null, nodeClass);
+		], null, nodeClass, nodeId);
 		this.node.pager = this;
 		this._load();
 	},

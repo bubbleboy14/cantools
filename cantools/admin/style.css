@@ -19,6 +19,16 @@
 	color: darkgreen;
 }
 
+#dbstarred {
+	border: 1px solid black;
+	position: absolute;
+	bottom: 0px;
+	right: 0px;
+	width: 20%;
+	background: darkgray;
+	color: blue;
+}
+
 .rcol {
 	border: 1px solid black;
 	float: right;
