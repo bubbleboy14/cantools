@@ -16,6 +16,10 @@ CT.panel = {
 	    if (!noitem)
 	        CT.panel.select(key, keystring);
 	},
+	"drill": function(keymap) { // keystring: key
+		for (var k in keymap)
+			CT.panel.swap(keymap[k], false, k);
+	},
 	"select": function(key, keystring) {
 	    keystring = keystring || "sb";
 	    var items = CT.dom.className(keystring + "item");
