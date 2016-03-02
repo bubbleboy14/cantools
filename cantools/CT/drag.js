@@ -153,9 +153,10 @@ CT.drag = {
 					if (direction)
 					{
 						node.animating = true;
-						CT.dom.trans(node, function () { node.animating = false; },
-							"transform", 300, "ease-out", "translate3d("
-								+ node.xDrag + "px," + node.yDrag + "px,0)", true);
+						CT.dom.trans(node, "transform", "translate3d(" + node.xDrag
+							+ "px," + node.yDrag + "px,0)", function () {
+								node.animating = false;
+							}, 300, "ease-out", true);
 					}
 				}
 				else	//boundary checking
@@ -195,15 +196,14 @@ CT.drag = {
 					if (boundaryReached)
 					{
 						node.animating = true;
-						CT.dom.trans(node, function () {
-							node.animating = false;
-							if (opts.drag)
-								opts.drag(direction, 0, 0, 0);
-							if (opts.scroll)
-								opts.scroll();
-						}, "transform", 300, "ease-out",
-						"translate3d(" + node.xDrag + "px," + 
-							node.yDrag + "px,0)", true);
+						CT.dom.trans(node, "transform", "translate3d(" + node.xDrag
+							+ "px," + node.yDrag + "px,0)", function () {
+								node.animating = false;
+								if (opts.drag)
+									opts.drag(direction, 0, 0, 0);
+								if (opts.scroll)
+									opts.scroll();
+							}, 300, "ease-out", true);
 					}
 				}
 				if (opts.up)
@@ -283,12 +283,11 @@ CT.drag = {
 					}
 				}
 				node.animating = true;
-				CT.dom.trans(node, function() {
-					node.animating = false;
-					upCallback(direction);//legit?
-				}, "transform", 300, "ease-out",
-					"translate3d(" + node.xDrag + "px," + 
-					node.yDrag + "px,0)", true);
+				CT.dom.trans(node, "transform", "translate3d(" + node.xDrag
+					+ "px," + node.yDrag + "px,0)", function() {
+						node.animating = false;
+						upCallback(direction);//legit?
+					}, 300, "ease-out", true);
 			}
 		};
 

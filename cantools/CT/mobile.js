@@ -14,10 +14,10 @@ CT.mobile = {
             tline = "scale(" + (w / CT.dom.ALLNODE.clientWidth) + ")";
         CT.dom.setVenderPrefixed(CT.dom.ALLNODE, "transform-origin",
             o ? o : (w < CT.dom.ALLNODE.clientWidth ? "0% 0%" : "50% 0%"));
-        CT.dom.trans(CT.dom.ALLNODE, function() {
+        CT.dom.trans(CT.dom.ALLNODE, "transform", t ? t : tline, function() {
             n && n.scrollIntoView(true, { "behavior": "smooth" }); // for initial load
             cb && cb();
-        }, "transform", 1000, null, t ? t : tline, true);
+        }, 1000, null, true);
     },
     "fitAndSnap": function(n, cb) {
         if (CT.dom.ALLNODE.mobileNode) // smoothest way once we're loaded
