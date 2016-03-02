@@ -49,12 +49,23 @@ CT.admin.db = {
 			});
 		return b;
 	},
-	"starLink": function(d, check) {
-		var k = d.key + "starred";
-		if (check && CT.dom.id(k))
-			return;
-		CT.admin.db.starred.appendChild(CT.dom.node(
-			CT.dom.link(d.label || d.key), "div", "pointer", k));
+	"key2model": function(key) {
+		return JSON.parse(atob(key)).model;
+	},
+	"starLink": function(d) {
+		var label = d.label || d.key,
+			k = label + "starred",
+			slink = CT.dom.id(k);
+		if (!slink) {
+			slink = CT.dom.node(CT.dom.link(label), function() {
+				var dobj = {};
+				dobj.db = CT.admin.db.key2model(d.key);
+				dobj[dobj.db] = d.label;
+				CT.panel.drill(dobj);
+			}, "div", "pointer", k);
+			CT.admin.db.starred.appendChild(slink);
+		}
+		return slink;
 	}
 };
 
@@ -105,7 +116,7 @@ CT.admin.db.Editor = CT.Class({
 			], "div", "lister"));
 		n.appendChild(CT.dom.button("change"));
 		n.appendChild(CT.dom.button("edit", function() {
-			CT.admin.db.starLink(d, true);
+			CT.admin.db.starLink(d).onclick();
 		}));
 		return n;
 	},
