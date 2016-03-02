@@ -31,6 +31,7 @@ CT.modal.Modal = CT.Class({
 	"init": function(opts) {
 		this.opts = opts;
 		this.node = CT.dom.node("", "div", "centeredpopup");
+		this.node.modal = this;
 		this.build();
 		if (opts.node)
 			this.add(opts.node);
