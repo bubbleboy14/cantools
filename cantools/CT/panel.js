@@ -89,7 +89,7 @@ CT.panel = {
 		CT.panel.load(pnames, null, keystring, itemnode, panelnode, null, null, null, true, cbs);
 	},
 	"pager": function(getContent, request, limit, colClass, dataClass, ks) {
-		var content = CT.dom.node(null, null, dataClass),
+		var content = CT.dom.node(null, null, dataClass, ks + "panels"),
 			sideBar = CT.dom.node(),
 			pager = new CT.Pager(function(data) {
 				var dnames = data.map(function(d) { return (d.label || d.key); }),
@@ -101,7 +101,7 @@ CT.panel = {
 						true), getContent(d));
 				});
 				return sideBar;
-			}, request, limit, colClass),
+			}, request, limit, colClass, ks + "items"),
 			n = CT.dom.node([pager.node, content]);
 		n.pager = pager;
 		return n;
