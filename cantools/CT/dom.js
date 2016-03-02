@@ -672,7 +672,7 @@ CT.dom = {
 	        node.style[CT.dom._vender_prefixes[i] + property] = value;
 	},
 	"_tswap": { "transform": "-webkit-transform" }, // mobile safari transitions
-	"trans": function(node, cb, property, duration, ease, value, prefix) {
+	"trans": function(node, property, value, cb, duration, ease, prefix) {
 	    duration = duration || 500;
 	    property && CT.dom.setVenderPrefixed(node, "transition",
 	        (CT.dom._tswap[property] || property)
