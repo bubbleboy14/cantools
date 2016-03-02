@@ -18,8 +18,9 @@ CT.modal.Modal = CT.Class({
 		"fade": function() {
 			var n = this.node;
 			n.show = function(parent) {
+				n.style.opacity = 0;
 				(parent || document.body).appendChild(n);
-				CT.dom.trans(n, "opacity", 1);
+				CT.dom.trans(n, "opacity", "1");
 			};
 			n.hide = function() {
 				CT.dom.trans(n, "opacity", "0", function() {
@@ -29,42 +30,40 @@ CT.modal.Modal = CT.Class({
 		},
 		"slide": function() {
 			var n = this.node,
-				origin = this.opts.origin,
-				center = this.opts.center;
-			n.show = function(parent) {
-				var ver = true, hor = true;
-				if (origin.startsWith("top")) {
-					n.top_out = n.style.top = -n.clientHeight + "px";
-					n.top_in = center ? "50%" : "0px";
-				}
-				else if (origin.startsWith("bottom")) {
-					n.top_out = n.style.top = parent.clientHeight + "px";
-					n.top_in = center ? "50%" : ((parent.clientHeight - n.clientHeight) + "px");
-				}
-				else
-					ver = false;
-				if (origin.endsWith("left")) {
-					n.left_out = n.style.left = -n.clientWidth + "px";
-					n.left_in = center ? "50%" : "0px";
-				}
-				else if (origin.endsWith("right")) {
-					n.left_out = n.style.left = parent.clientWidth + "px";
-					n.left_in = center ? "50%" : ((parent.clientWidth - n.clientWidth) + "px");
-				}
-				else
-					hor = false;
+				origin = this.opts.slide.origin,
+				center = this.opts.slide.center,
+				ver = true, hor = true;
 
+			if (origin.startsWith("top")) {
+				n.top_out = n.style.top = -n.clientHeight + "px";
+				n.top_in = center ? "50%" : "0px";
+			}
+			else if (origin.startsWith("bottom")) {
+				n.top_out = n.style.top = parent.clientHeight + "px";
+				n.top_in = center ? "50%" : ((parent.clientHeight - n.clientHeight) + "px");
+			}
+			else
+				ver = false;
+			if (origin.endsWith("left")) {
+				n.left_out = n.style.left = -n.clientWidth + "px";
+				n.left_in = center ? "50%" : "0px";
+			}
+			else if (origin.endsWith("right")) {
+				n.left_out = n.style.left = parent.clientWidth + "px";
+				n.left_in = center ? "50%" : ((parent.clientWidth - n.clientWidth) + "px");
+			}
+			else
+				hor = false;
+			n.style.opacity = 1;
+
+			n.show = function(parent) {
 				(parent || document.body).appendChild(n);
-				n.style.opacity = 1;
 				ver && CT.dom.trans(n, "top", n.top_in);
 				hor && CT.dom.trans(n, "left", n.left_in);
 			};
 			n.hide = function() {
 				ver && CT.dom.trans(n, "top", n.top_out);
 				hor && CT.dom.trans(n, "left", n.left_out);
-				CT.dom.trans(n, "opacity", "0", function() {
-					CT.dom.remove(n);
-				});
 			};
 		}
 	},
