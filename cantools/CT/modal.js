@@ -94,7 +94,7 @@ CT.modal.Modal = CT.Class({
 		this.add(node);
 	},
 	"init": function(opts) {
-		this.opts = CT.merge(opts, {
+		this.opts = opts = CT.merge(opts, {
 			"nodeClass": "centeredpopup",
 			"transition": "none",
 			"slide": { // only applies if transition is 'slide'
