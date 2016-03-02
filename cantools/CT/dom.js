@@ -63,8 +63,8 @@ CT.dom = {
 			for (var attr in attrs) {
 				if (attrs[attr] == null)
 					continue;
-				if (attr == "value")
-					d.value = attrs.value;
+				if (attr == "value" || attr == "onclick")
+					d[attr] = attrs[attr];
 				else if (attr.slice(0, 2) == "on")
 					d.on(attr.slice(2), attrs[attr]);
 				else

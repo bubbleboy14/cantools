@@ -16,6 +16,10 @@ CT.panel = {
 	    if (!noitem)
 	        CT.panel.select(key, keystring);
 	},
+	"drill": function(keymap) { // keystring: key
+		for (var k in keymap)
+			CT.panel.swap(keymap[k], false, k);
+	},
 	"select": function(key, keystring) {
 	    keystring = keystring || "sb";
 	    var items = CT.dom.className(keystring + "item");
@@ -84,12 +88,12 @@ CT.panel = {
 	"simple": function(pnames, keystring, itemnode, panelnode, cbs) {
 		CT.panel.load(pnames, null, keystring, itemnode, panelnode, null, null, null, true, cbs);
 	},
-	"pager": function(getContent, request, limit, colClass, dataClass) {
-		var content = CT.dom.node(null, null, dataClass),
+	"pager": function(getContent, request, limit, colClass, dataClass, ks) {
+		var content = CT.dom.node(null, null, dataClass, ks + "panels"),
 			sideBar = CT.dom.node(),
 			pager = new CT.Pager(function(data) {
 				var dnames = data.map(function(d) { return (d.label || d.key); }),
-					keystring = "p" + pager.id;
+					keystring = ks || ("p" + pager.id);
 				CT.panel.simple(dnames, keystring, sideBar, content);
 				data.forEach(function(d) {
 					CT.dom.setContent(CT.dom.id(keystring + "content"
@@ -97,7 +101,7 @@ CT.panel = {
 						true), getContent(d));
 				});
 				return sideBar;
-			}, request, limit, colClass),
+			}, request, limit, colClass, ks + "items"),
 			n = CT.dom.node([pager.node, content]);
 		n.pager = pager;
 		return n;

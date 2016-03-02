@@ -102,8 +102,9 @@ CT.modal.Modal = CT.Class({
 				"center": true
 			}
 		});
-		this.node = CT.dom.node("", "div",
-			opts.nodeClass, null, null, { "opacity": 0 });
+		this.node = CT.dom.node("", "div", opts.nodeClass);
+		this.node.style.opacity = 0;
+		this.node.modal = this;
 		this.setup[opts.transition]();
 		this.build();
 		if (opts.node)
