@@ -10,7 +10,11 @@ def response():
 		key = cgi_get("key", required=False)
 		if key:
 			if key == "edit":
-				succeed({ "key": edit(cgi_get("data")).urlsafe() })
+				ent = edit(cgi_get("data"))
+				succeed({ "key": ent.key.urlsafe(), "label": ent.label() })
+			elif key == "delete":
+				get(cgi_get("data")).rm()
+				succeed()
 			succeed(get(key).data())
 		import model # load up all models
 		mname = cgi_get("modelName", required=False)

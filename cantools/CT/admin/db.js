@@ -1,4 +1,11 @@
 CT.admin.db = {
+	"_d": {
+		"string": "",
+		"integer": 0,
+		"float": 0.0,
+		"boolean": false,
+		"key": null
+	},
 	"init": function() {
 		CT.log("acquiring db schema");
 		CT.admin.db.starred = CT.dom.id("dbstarred");
@@ -7,10 +14,14 @@ CT.admin.db = {
 			CT.log("got schema with " + skeys.length + " tables");
 			CT.admin.db.schema = schema;
 			CT.panel.simple(skeys, "db");
-			for (var i = 0; i < skeys.length; i++)
-				CT.dom.id("dbcontent" + skeys[i],
-					true).appendChild(CT.panel.pager(CT.admin.db._build(skeys[i]),
-					CT.admin.db._refill(skeys[i]), 10, "rcol", "data", skeys[i]));
+			skeys.forEach(function(modelName) {
+				var pnode = CT.dom.id("dbpanel" + modelName);
+				CT.dom.id("dbcontent" + modelName).appendChild(CT.panel.pager(CT.admin.db._build(modelName),
+					CT.admin.db._refill(modelName), 10, "rcol", "data", modelName));
+				pnode.insertBefore(CT.dom.node(CT.dom.button("new " + modelName, function() {
+					CT.admin.db.starLink(CT.admin.db._defaults(modelName), modelName).onclick();
+				}), "div", "right"), pnode.firstChild);
+			});
 		});
 	},
 	"get": function(modelName, cb, limit, offset) {
@@ -22,6 +33,13 @@ CT.admin.db = {
 			"limit": limit,
 			"offset": offset
 		});
+	},
+	"_defaults": function(modelName) {
+		var k, d = { "label": "new " + modelName },
+			schema = CT.admin.db.schema[modelName];
+		for (k in schema)
+			d[k] = CT.admin.db._d[schema[k]];
+		return d;
 	},
 	"_refill": function(modelName) {
 		var f = function(obj, cb) {
@@ -35,9 +53,14 @@ CT.admin.db = {
 		};
 		return f;
 	},
+	"_add": function(modelName, d) {
+		CT.panel.add(d.label, false, modelName);
+		CT.dom.id(modelName + "content" + d.label.replace(/ /g,
+			"")).appendChild(CT.admin.db._build(modelName)(d));
+	},
 	"star": function(k) {
 		CT.log("CT.admin.db.star: " + k);
-		var d = CT.data.get(k), key = (d.label || d.key) + "starred",
+		var d = CT.data.get(k), key = "starreditem" + (d.label || d.key).replace(/ /g, ""),
 			b = CT.dom.button(CT.dom.id(key) ? "Unstar" : "Star", function() {
 				if (b.innerHTML == "Star") {
 					b.innerHTML = "Unstar";
@@ -52,20 +75,17 @@ CT.admin.db = {
 	"key2model": function(key) {
 		return JSON.parse(atob(key)).model;
 	},
-	"starLink": function(d) {
+	"starLink": function(d, modelName) {
 		var label = d.label || d.key,
-			k = label + "starred",
+			k = "starreditem" + label.replace(/ /g, ""),
 			slink = CT.dom.id(k);
 		if (!slink) {
 			slink = CT.dom.node(CT.dom.link(label, function() {
-				var dobj = {};
-				dobj.db = CT.admin.db.key2model(d.key);
+				var dobj = {}, nslabel = (d.label || d.key).replace(/ /g, "");
+				dobj.db = modelName || CT.admin.db.key2model(d.key);
 				dobj[dobj.db] = d.label;
-				if (!CT.dom.id(dobj.db + "panel" + d.label.replace(/ /g, ""))) {
-					CT.panel.add(d.label, false, dobj.db);
-					CT.dom.id(dobj.db + "content" + d.label.replace(/ /g,
-						"")).appendChild(CT.admin.db._build(dobj.db)(d));
-				}
+				if (!CT.dom.id(dobj.db + "panel" + nslabel))
+					CT.admin.db._add(dobj.db, d);
 				CT.panel.drill(dobj);
 			}), "div", "pointer", k);
 			CT.admin.db.starred.appendChild(slink);
@@ -91,7 +111,18 @@ CT.admin.db.Editor = CT.Class({
 			if (val != data[ip.rowKey])
 				changes[ip.rowKey] = val;
 		});
-		CT.admin.core.q("db", function() {
+		CT.admin.core.q("db", function(resp) {
+			for (var k in changes)
+				data[k] = changes[k];
+			if (!data.key) {
+				data.key = resp.key;
+				CT.data.add(data);
+			}
+			if (data.label != resp.label) {
+				CT.panel.rename(data.label, resp.label, changes.modelName, "starred");
+				CT.dom.id()
+				data.label = resp.label;
+			}
 			alert("you did it");
 		}, "edit failed", params);
 	},
@@ -100,9 +131,9 @@ CT.admin.db.Editor = CT.Class({
 			if (ptype == "boolean")
 				return f.checked;
 			if (ptype == "integer")
-				return parseInt(f.value) || null;
+				return parseInt(f.value);
 			if (ptype == "float")
-				return parseFloat(f.value) || null;
+				return parseFloat(f.value);
 			return f.value; // string
 		};
 	},
@@ -147,12 +178,13 @@ CT.admin.db.Editor = CT.Class({
 	},
 	"_row": function(k) {
 		var val = this.data[k], valcell, ptype,
-			rownode = CT.dom.node("", "div", "lister");
+			rownode = CT.dom.node("", "div", "lister"),
+			unimplemented = ["datetimeautostamper", "list"]; // for now!!
 		rownode.appendChild(CT.dom.node(k + ":", "div", "keycell"));
 		ptype = rownode.ptype = this.schema[k];
 		if (ptype == "key")
 			valcell = this._entity(val);
-		else if (ptype) {
+		else if (ptype && unimplemented.indexOf(ptype) == -1) {
 			if (ptype == "string")
 				valcell = CT.dom.field(null, val);
 			else if (ptype == "boolean")
@@ -165,22 +197,36 @@ CT.admin.db.Editor = CT.Class({
 			valcell.rowKey = k;
 			this.inputs.push(valcell);
 		} else
-			valcell = CT.dom.node(val, "span");
+			valcell = CT.dom.node(val || "null", "span");
 		rownode.appendChild(valcell);
 		return rownode;
 	},
 	"_table": function() {
-		var k, r, n = this.node = CT.dom.node(); // TODO: list, maybe zipcode
+		var k, r, d = this.data, n = this.node = CT.dom.node();
 		["string", "integer", "float", "bool", "key"].forEach(function(t) {
+			// TODO: list, datetimeautostamper (when they work)
 			n[t] = CT.dom.node();
 			n.appendChild(n[t]);
 		});
-		for (k in this.data) {
+		for (k in d) {
 			r = this._row(k);
 			(n[r.ptype] || n).appendChild(r);
 		}
+		d.key && n.appendChild(CT.dom.node(CT.dom.button("Delete", function() {
+			var label = d.label || d.key;
+			if (!confirm("really delete " + label + "?"))
+				return;
+			CT.dom.remove(CT.dom.id("starreditem" + label.replace(/ /g, "")));
+			CT.admin.core.q("db", function() {
+				n.parentNode.parentNode.parentNode.parentNode.pager.remove(d);
+				alert("deleted: " + label);
+			}, "failed to delete " + label, {
+				"key": "delete",
+				"data": d.key
+			});
+		}, "red"), "div", "right"));
 		n.appendChild(CT.dom.button("Submit", this._submit));
-		n.appendChild(CT.admin.db.star(this.data.key));
+		d.key && n.appendChild(CT.admin.db.star(d.key));
 	},
 	"init": function(model, data) {
 		this.modelName = model;

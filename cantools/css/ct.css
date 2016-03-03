@@ -104,6 +104,9 @@
 .padded {
     padding: 10px;
 }
+.red {
+    color: red;
+}
 .right {
     float: right;
 }

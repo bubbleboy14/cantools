@@ -12,6 +12,10 @@ CT.Pager = CT.Class({
 			this.limit = limit;
 		this._build(nodeClass, nodeId);
 	},
+	"remove": function(d) {
+		CT.data.remove(this.data, d);
+		this._load();
+	},
 	"_build": function(nodeClass, nodeId) {
 		this.content = CT.dom.node();
 		this.next = CT.dom.button("next", this._next);
