@@ -41,4 +41,4 @@ def edit(data, session=session):
 		if propname in data: # check proptype....
 			setattr(ent, propname, data[propname])
 	ent.put()
-	return ent.key
+	return ent
