@@ -37,7 +37,7 @@ CT.admin.db = {
 	},
 	"star": function(k) {
 		CT.log("CT.admin.db.star: " + k);
-		var d = CT.data.get(k), key = d.key + "starred",
+		var d = CT.data.get(k), key = (d.label || d.key) + "starred",
 			b = CT.dom.button(CT.dom.id(key) ? "Unstar" : "Star", function() {
 				if (b.innerHTML == "Star") {
 					b.innerHTML = "Unstar";
