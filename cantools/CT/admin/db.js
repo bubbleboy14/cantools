@@ -8,11 +8,9 @@ CT.admin.db = {
 	},
 	"unimplemented": ["datetimeautostamper", "list"], // no editing (yet) :)
 	"init": function() {
-		CT.log("acquiring db schema");
 		CT.admin.db.starred = CT.dom.id("dbstarred");
 		CT.admin.core.init("db", function(schema) {
 			var skeys = Object.keys(schema);
-			CT.log("got schema with " + skeys.length + " tables");
 			CT.admin.db.schema = schema;
 			CT.panel.simple(skeys, "db");
 			skeys.forEach(function(modelName) {
@@ -65,7 +63,6 @@ CT.admin.db = {
 			"")).appendChild(CT.admin.db._build(modelName)(d));
 	},
 	"star": function(k) {
-		CT.log("CT.admin.db.star: " + k);
 		var d = CT.data.get(k), key = "starreditem" + (d.label || d.key).replace(/ /g, ""),
 			b = CT.dom.button(CT.dom.id(key) ? "Unstar" : "Star", function() {
 				if (b.innerHTML == "Star") {
@@ -132,24 +129,43 @@ CT.admin.db = {
 
 CT.admin.db.Query = CT.Class({
 	"CLASSNAME": "CT.admin.db.Query",
-	"_filters": [],
 	"_filter": function() {
 		var valcell = CT.dom.node(null, "span"), schema = this.schema,
 			selectcell = CT.dom.select(Object.keys(schema).filter(function(prop) {
 				return CT.admin.db.unimplemented.indexOf(schema[prop]) == -1;
 			}));
 		selectcell.onchange = function() {
-			CT.log(selectcell.value);
 			CT.dom.setContent(valcell,
 				CT.admin.db.input(selectcell.value, schema[selectcell.value]));
 		};
 		selectcell.onchange();
-		this.node.appendChild(CT.dom.node([selectcell, valcell]));
+		this.filters.appendChild(CT.dom.node([selectcell, valcell]));
+	},
+	"_order": function() {
+		var selectcell = CT.dom.select(["None"].concat(Object.keys(this.schema))),
+			dircell = CT.dom.select(["ascending", "descending"]);
+		dircell.className = "hidden";
+		selectcell.onchange = function() {
+			if (selectcell.value == "None")
+				dircell.classList.add("hidden");
+			else
+				dircell.classList.remove("hidden");
+		};
+		return CT.dom.node([selectcell, dircell]);
+	},
+	"_submit": function() {
+		return CT.dom.button("submit");
 	},
 	"_build": function() {
+		this.filters = CT.dom.node();
 		this.node = CT.dom.node([
 			CT.dom.node(CT.dom.button("add filter", this._filter), "div", "right"),
-			CT.dom.node(this.modelName + " query", "div", "big bold")
+			CT.dom.node("Query: " + this.modelName, "div", "bigger bold"),
+			CT.dom.node("Order", "div", "big bold"),
+			this._order(),
+			CT.dom.node("Filters", "div", "big bold"),
+			this.filters,
+			this._submit()
 		]);
 	},
 	"init": function(modelName) {
