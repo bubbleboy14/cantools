@@ -36,7 +36,7 @@ def delete_multi(instances, session=session):
 
 def edit(data, session=session):
 	from cantools.db import get, get_model
-	ent = "key" in data and get(data["key"], session) or get_model(data["modelName"])
+	ent = "key" in data and get(data["key"], session) or get_model(data["modelName"])()
 	for propname, proptype in ent._schema.items():
 		if propname in data: # check proptype....
 			setattr(ent, propname, data[propname])

@@ -49,8 +49,7 @@ class ModelBase(declarative_base()):
         return not self.__eq__(other)
 
     def put(self, session=session):
-        init_multi([self], session)
-        session.commit()
+        put_multi([self], session)
 
     def rm(self, commit=True, session=session):
         session.delete(self)
