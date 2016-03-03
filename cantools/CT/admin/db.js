@@ -6,6 +6,7 @@ CT.admin.db = {
 		"boolean": false,
 		"key": null
 	},
+	"unimplemented": ["datetimeautostamper", "list"], // no editing (yet) :)
 	"init": function() {
 		CT.log("acquiring db schema");
 		CT.admin.db.starred = CT.dom.id("dbstarred");
@@ -18,9 +19,14 @@ CT.admin.db = {
 				var pnode = CT.dom.id("dbpanel" + modelName);
 				CT.dom.id("dbcontent" + modelName).appendChild(CT.panel.pager(CT.admin.db._build(modelName),
 					CT.admin.db._refill(modelName), 10, "rcol", "data", modelName));
-				pnode.insertBefore(CT.dom.node(CT.dom.button("new " + modelName, function() {
-					CT.admin.db.starLink(CT.admin.db._defaults(modelName), modelName).onclick();
-				}), "div", "right"), pnode.firstChild);
+				pnode.insertBefore(CT.dom.node([
+					CT.dom.button("new query", function() {
+						CT.admin.db.query(modelName);
+					}),
+					CT.dom.button("new " + modelName, function() {
+						CT.admin.db.starLink(CT.admin.db._defaults(modelName), modelName).onclick();
+					})
+				], "div", "right"), pnode.firstChild);
 			});
 		});
 	},
@@ -91,8 +97,67 @@ CT.admin.db = {
 			CT.admin.db.starred.appendChild(slink);
 		}
 		return slink.firstChild;
+	},
+	"query": function(modelName) {
+		(new CT.modal.Modal({
+			"node": (new CT.admin.db.Query(modelName)).node
+		})).show();
+	},
+	"_val": function(f, ptype) {
+		return function() {
+			if (ptype == "boolean")
+				return f.checked;
+			if (ptype == "integer")
+				return parseInt(f.value);
+			if (ptype == "float")
+				return parseFloat(f.value);
+			return f.value; // string
+		};
+	},
+	"input": function(k, ptype, val) {
+		var valcell;
+		if (ptype == "string")
+			valcell = CT.dom.field(null, val);
+		else if (ptype == "boolean")
+			valcell = CT.dom.checkbox(null, val);
+		else if (ptype == "float")
+			valcell = CT.parse.numOnly(CT.dom.field(null, val), true);
+		else if (ptype == "integer")
+			valcell = CT.parse.numOnly(CT.dom.field(null, val));
+		valcell.getValue = CT.admin.db._val(valcell, ptype);
+		valcell.rowKey = k;
+		return valcell;
 	}
 };
+
+CT.admin.db.Query = CT.Class({
+	"CLASSNAME": "CT.admin.db.Query",
+	"_filters": [],
+	"_filter": function() {
+		var valcell = CT.dom.node(null, "span"), schema = this.schema,
+			selectcell = CT.dom.select(Object.keys(schema).filter(function(prop) {
+				return CT.admin.db.unimplemented.indexOf(schema[prop]) == -1;
+			}));
+		selectcell.onchange = function() {
+			CT.log(selectcell.value);
+			CT.dom.setContent(valcell,
+				CT.admin.db.input(selectcell.value, schema[selectcell.value]));
+		};
+		selectcell.onchange();
+		this.node.appendChild(CT.dom.node([selectcell, valcell]));
+	},
+	"_build": function() {
+		this.node = CT.dom.node([
+			CT.dom.node(CT.dom.button("add filter", this._filter), "div", "right"),
+			CT.dom.node(this.modelName + " query", "div", "big bold")
+		]);
+	},
+	"init": function(modelName) {
+		this.modelName = modelName;
+		this.schema = CT.admin.db.schema[modelName];
+		this._build();
+	}
+});
 
 CT.admin.db.Editor = CT.Class({
 	"CLASSNAME": "CT.admin.db.Editor",
@@ -125,17 +190,6 @@ CT.admin.db.Editor = CT.Class({
 			}
 			alert("you did it");
 		}, "edit failed", params);
-	},
-	"_input": function(f, ptype) {
-		return function() {
-			if (ptype == "boolean")
-				return f.checked;
-			if (ptype == "integer")
-				return parseInt(f.value);
-			if (ptype == "float")
-				return parseFloat(f.value);
-			return f.value; // string
-		};
 	},
 	"_modal": function(key) {
 		this.log("_modal", key);
@@ -178,23 +232,13 @@ CT.admin.db.Editor = CT.Class({
 	},
 	"_row": function(k) {
 		var val = this.data[k], valcell, ptype,
-			rownode = CT.dom.node("", "div", "lister"),
-			unimplemented = ["datetimeautostamper", "list"]; // for now!!
+			rownode = CT.dom.node("", "div", "lister");
 		rownode.appendChild(CT.dom.node(k + ":", "div", "keycell"));
 		ptype = rownode.ptype = this.schema[k];
 		if (ptype == "key")
 			valcell = this._entity(val);
-		else if (ptype && unimplemented.indexOf(ptype) == -1) {
-			if (ptype == "string")
-				valcell = CT.dom.field(null, val);
-			else if (ptype == "boolean")
-				valcell = CT.dom.checkbox(null, val);
-			else if (ptype == "float")
-				valcell = CT.parse.numOnly(CT.dom.field(null, val), true);
-			else if (ptype == "integer")
-				valcell = CT.parse.numOnly(CT.dom.field(null, val));
-			valcell.getValue = this._input(valcell, ptype);
-			valcell.rowKey = k;
+		else if (ptype && CT.admin.db.unimplemented.indexOf(ptype) == -1) {
+			valcell = CT.admin.db.input(k, ptype, val);
 			this.inputs.push(valcell);
 		} else
 			valcell = CT.dom.node(val || "null", "span");
