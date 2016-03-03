@@ -211,6 +211,9 @@ CT.admin.db.Editor = CT.Class({
 			r = this._row(k);
 			(n[r.ptype] || n).appendChild(r);
 		}
+		this.data.key && n.appendChild(CT.dom.node(CT.dom.button("Delete", function() {
+			alert("ok");
+		}, "red"), "div", "right"));
 		n.appendChild(CT.dom.button("Submit", this._submit));
 		this.data.key && n.appendChild(CT.admin.db.star(this.data.key));
 	},
