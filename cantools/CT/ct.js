@@ -244,3 +244,5 @@ if (!document.createElement("div").classList)
 	CT.require("CT.lib.shims.classList", true);
 if (!window.requestAnimationFrame)
 	CT.require("CT.lib.shims.requestAnimationFrame", true);
+if (!Object.values)
+	CT.require("CT.lib.shims.ObjectValues", true);
