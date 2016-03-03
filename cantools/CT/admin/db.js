@@ -202,20 +202,34 @@ CT.admin.db.Editor = CT.Class({
 		return rownode;
 	},
 	"_table": function() {
-		var k, r, n = this.node = CT.dom.node(); // TODO: list, datetimeautostamper
+		var k, r, d = this.data, n = this.node = CT.dom.node();
 		["string", "integer", "float", "bool", "key"].forEach(function(t) {
+			// TODO: list, datetimeautostamper (when they work)
 			n[t] = CT.dom.node();
 			n.appendChild(n[t]);
 		});
-		for (k in this.data) {
+		for (k in d) {
 			r = this._row(k);
 			(n[r.ptype] || n).appendChild(r);
 		}
-		this.data.key && n.appendChild(CT.dom.node(CT.dom.button("Delete", function() {
-			alert("ok");
+		d.key && n.appendChild(CT.dom.node(CT.dom.button("Delete", function() {
+			var label = d.label || d.key;
+			CT.dom.remove(CT.dom.id("starreditem" + label.replace(/ /g, "")));
+			CT.admin.core.q("db", function() {
+
+
+				// remove from pager data
+				// refresh page
+				
+
+				alert("deleted");
+			}, "failed to delete " + label, {
+				"key": "delete",
+				"data": d.key
+			});
 		}, "red"), "div", "right"));
 		n.appendChild(CT.dom.button("Submit", this._submit));
-		this.data.key && n.appendChild(CT.admin.db.star(this.data.key));
+		d.key && n.appendChild(CT.admin.db.star(d.key));
 	},
 	"init": function(model, data) {
 		this.modelName = model;
