@@ -7,11 +7,9 @@ CT.modal.Modal = CT.Class({
 		"none": function() {
 			var n = this.node;
 			n.show = function(parent) {
-				n.style.opacity = 1;
 				(parent || document.body).appendChild(n);
 			};
 			n.hide = function() {
-				n.style.opacity = 0;
 				CT.dom.remove(n);
 			};
 		},
@@ -20,7 +18,9 @@ CT.modal.Modal = CT.Class({
 			n.show = function(parent) {
 				n.style.opacity = 0;
 				(parent || document.body).appendChild(n);
-				CT.dom.trans(n, "opacity", "1");
+				setTimeout(function() {
+					CT.dom.trans(n, "opacity", "1");
+				}, 100);
 			};
 			n.hide = function() {
 				CT.dom.trans(n, "opacity", "0", function() {
@@ -54,16 +54,20 @@ CT.modal.Modal = CT.Class({
 			}
 			else
 				hor = false;
-			n.style.opacity = 1;
 
 			n.show = function(parent) {
 				(parent || document.body).appendChild(n);
-				ver && CT.dom.trans(n, "top", n.top_in);
-				hor && CT.dom.trans(n, "left", n.left_in);
+				setTimeout(function() {
+					ver && CT.dom.trans(n, "top", n.top_in);
+					hor && CT.dom.trans(n, "left", n.left_in);
+				}, 100);
 			};
 			n.hide = function() {
 				ver && CT.dom.trans(n, "top", n.top_out);
 				hor && CT.dom.trans(n, "left", n.left_out);
+				CT.dom.trans(null, null, null, function() {
+					CT.dom.remove(n);
+				});
 			};
 		}
 	},
@@ -102,7 +106,6 @@ CT.modal.Modal = CT.Class({
 			}
 		});
 		this.node = CT.dom.node("", "div", opts.nodeClass);
-		this.node.style.opacity = 0;
 		this.node.modal = this;
 		this.setup[opts.transition]();
 		this.build();
