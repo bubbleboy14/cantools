@@ -22,11 +22,15 @@ var CT = {
 	"net": {
 		// defaults
 		"_path": "",
+		"_cache": false,
 		"_encode": false,
 		"_encoder": function (d) { return d; },
 		"_decoder": function (d) { return d; },
 		"_silentFail": true,
 		// functions
+		"setCache": function(bool) {
+			CT.net._cache = bool; // works for json gets
+		},
 		"setEncoder": function(func) {
 			CT.net._encoder = func;
 		},
@@ -111,15 +115,24 @@ var CT = {
 		    }, headers);
 		},
 		"get": function(path, qsp, isjson) {
-			var d, qs, key;
+			var d, qs, key, cachedVersion, cache = CT.net._cache && isjson;
 			if (qsp) {
 				qs = [];
 				for (key in qsp)
 					qs.push(key + "=" + qsp[key]);
 				path += "?" + encodeURI(qs.join("&"));
 			}
+			if (cache) {
+				cachedVersion = CT.storage.get(path);
+				if (cachedVersion)
+					return cachedVersion;
+			}
 			d = CT.net.xhr(path, "GET");
-			return isjson ? JSON.parse(d) : d;
+			if (isjson)
+				d = JSON.parse(d);
+			if (cache)
+				CT.storage.set(path, d);
+			return d;
 		}
 	},
 	"scriptImport": function(modpath, cb, delay) {
