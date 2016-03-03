@@ -3,12 +3,80 @@ CT.modal = {};
 CT.modal.Modal = CT.Class({
 	"CLASSNAME": "CT.modal.Modal",
 	"visible": false,
+	"setup": {
+		"none": function() {
+			var n = this.node;
+			n.show = function(parent) {
+				(parent || document.body).appendChild(n);
+			};
+			n.hide = function() {
+				CT.dom.remove(n);
+			};
+		},
+		"fade": function() {
+			var n = this.node;
+			n.show = function(parent) {
+				n.style.opacity = 0;
+				(parent || document.body).appendChild(n);
+				setTimeout(function() {
+					CT.dom.trans(n, "opacity", "1");
+				}, 100);
+			};
+			n.hide = function() {
+				CT.dom.trans(n, "opacity", "0", function() {
+					CT.dom.remove(n);
+				});
+			};
+		},
+		"slide": function() {
+			var n = this.node,
+				origin = this.opts.slide.origin,
+				center = this.opts.slide.center,
+				ver = true, hor = true;
+
+			if (origin.startsWith("top")) {
+				n.top_out = n.style.top = -n.clientHeight + "px";
+				n.top_in = center ? "50%" : "0px";
+			}
+			else if (origin.startsWith("bottom")) {
+				n.top_out = n.style.top = parent.clientHeight + "px";
+				n.top_in = center ? "50%" : ((parent.clientHeight - n.clientHeight) + "px");
+			}
+			else
+				ver = false;
+			if (origin.endsWith("left")) {
+				n.left_out = n.style.left = -n.clientWidth + "px";
+				n.left_in = center ? "50%" : "0px";
+			}
+			else if (origin.endsWith("right")) {
+				n.left_out = n.style.left = parent.clientWidth + "px";
+				n.left_in = center ? "50%" : ((parent.clientWidth - n.clientWidth) + "px");
+			}
+			else
+				hor = false;
+
+			n.show = function(parent) {
+				(parent || document.body).appendChild(n);
+				setTimeout(function() {
+					ver && CT.dom.trans(n, "top", n.top_in);
+					hor && CT.dom.trans(n, "left", n.left_in);
+				}, 100);
+			};
+			n.hide = function() {
+				ver && CT.dom.trans(n, "top", n.top_out);
+				hor && CT.dom.trans(n, "left", n.left_out);
+				CT.dom.trans(null, null, null, function() {
+					CT.dom.remove(n);
+				});
+			};
+		}
+	},
 	"hide": function() {
-		CT.dom.remove(this.node);
+		this.node.hide();
 		this.visible = false;
 	},
 	"show": function(n) {
-		(n || document.body).appendChild(this.node);
+		this.node.show(n);
 		this.visible = true;
 	},
 	"addClose": function() {
@@ -29,9 +97,17 @@ CT.modal.Modal = CT.Class({
 		this.add(node);
 	},
 	"init": function(opts) {
-		this.opts = opts;
-		this.node = CT.dom.node("", "div", "centeredpopup");
+		this.opts = opts = CT.merge(opts, {
+			"nodeClass": "centeredpopup",
+			"transition": "none",
+			"slide": { // only applies if transition is 'slide'
+				"origin": "top",
+				"center": true
+			}
+		});
+		this.node = CT.dom.node("", "div", opts.nodeClass);
 		this.node.modal = this;
+		this.setup[opts.transition]();
 		this.build();
 		if (opts.node)
 			this.add(opts.node);

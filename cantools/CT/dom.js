@@ -672,7 +672,7 @@ CT.dom = {
 	        node.style[CT.dom._vender_prefixes[i] + property] = value;
 	},
 	"_tswap": { "transform": "-webkit-transform" }, // mobile safari transitions
-	"trans": function(node, cb, property, duration, ease, value, prefix) {
+	"trans": function(node, property, value, cb, duration, ease, prefix) {
 	    duration = duration || 500;
 	    property && CT.dom.setVenderPrefixed(node, "transition",
 	        (CT.dom._tswap[property] || property)
@@ -682,16 +682,20 @@ CT.dom = {
 	            property && CT.dom.setVenderPrefixed(node, "transition", "");
 	            clearTimeout(transTimeout);
 	            transTimeout = null;
-	            node.removeEventListener("webkitTransitionEnd", wrapper, false);
-	            node.removeEventListener("mozTransitionEnd", wrapper, false);
-	            node.removeEventListener("oTransitionEnd", wrapper, false);
-	            node.removeEventListener("transitionend", wrapper, false);
+	            if (node) { // node is optional for use as a timer
+		            node.removeEventListener("webkitTransitionEnd", wrapper, false);
+		            node.removeEventListener("mozTransitionEnd", wrapper, false);
+		            node.removeEventListener("oTransitionEnd", wrapper, false);
+		            node.removeEventListener("transitionend", wrapper, false);
+		        }
 	            cb();
 	        }
-	        node.addEventListener("webkitTransitionEnd", wrapper, false);
-	        node.addEventListener("mozTransitionEnd", wrapper, false);
-	        node.addEventListener("oTransitionEnd", wrapper, false);
-	        node.addEventListener("transitionend", wrapper, false);
+	        if (node) {
+		        node.addEventListener("webkitTransitionEnd", wrapper, false);
+		        node.addEventListener("mozTransitionEnd", wrapper, false);
+		        node.addEventListener("oTransitionEnd", wrapper, false);
+		        node.addEventListener("transitionend", wrapper, false);
+		    }
 	        transTimeout = setTimeout(wrapper, duration);
 	    }
 	    if (value && property) {
