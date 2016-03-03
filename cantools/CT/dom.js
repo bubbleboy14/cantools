@@ -682,16 +682,20 @@ CT.dom = {
 	            property && CT.dom.setVenderPrefixed(node, "transition", "");
 	            clearTimeout(transTimeout);
 	            transTimeout = null;
-	            node.removeEventListener("webkitTransitionEnd", wrapper, false);
-	            node.removeEventListener("mozTransitionEnd", wrapper, false);
-	            node.removeEventListener("oTransitionEnd", wrapper, false);
-	            node.removeEventListener("transitionend", wrapper, false);
+	            if (node) { // node is optional for use as a timer
+		            node.removeEventListener("webkitTransitionEnd", wrapper, false);
+		            node.removeEventListener("mozTransitionEnd", wrapper, false);
+		            node.removeEventListener("oTransitionEnd", wrapper, false);
+		            node.removeEventListener("transitionend", wrapper, false);
+		        }
 	            cb();
 	        }
-	        node.addEventListener("webkitTransitionEnd", wrapper, false);
-	        node.addEventListener("mozTransitionEnd", wrapper, false);
-	        node.addEventListener("oTransitionEnd", wrapper, false);
-	        node.addEventListener("transitionend", wrapper, false);
+	        if (node) {
+		        node.addEventListener("webkitTransitionEnd", wrapper, false);
+		        node.addEventListener("mozTransitionEnd", wrapper, false);
+		        node.addEventListener("oTransitionEnd", wrapper, false);
+		        node.addEventListener("transitionend", wrapper, false);
+		    }
 	        transTimeout = setTimeout(wrapper, duration);
 	    }
 	    if (value && property) {
