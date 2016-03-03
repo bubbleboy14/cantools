@@ -67,6 +67,21 @@ CT.panel = {
 	            itemnode.appendChild(CT.dom.node("", "div", "clearnode"));
 	    }
 	},
+	"rename": function(oldkey, newkey, keystring, item2keystring) {
+		keystring = keystring || "sb";
+		var nsold = oldkey.replace(/ /g, ""),
+			nsnew = newkey.replace(/ /g, ""),
+			item = CT.dom.id(keystring + "item" + nsold),
+			panel = CT.dom.id(keystring + "panel" + nsold);
+		item.id = keystring + "item" + nsnew;
+		panel.id = keystring + "panel" + nsnew;
+		item.firstChild.innerHTML = panel.firstChild.innerHTML = newkey;
+		if (item2keystring) {
+			var item2 = CT.dom.id(item2keystring + "item" + nsold);
+			item2.id = nsnew;
+			item2.firstChild.innerHTML = newkey;
+		}
+	},
 	"remove": function(key, keystring) {
 	    var nospace = key.replace(/ /g, "");
 	    var p = CT.dom.id(keystring+"panel"+nospace);
