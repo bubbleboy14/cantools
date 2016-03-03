@@ -214,15 +214,12 @@ CT.admin.db.Editor = CT.Class({
 		}
 		d.key && n.appendChild(CT.dom.node(CT.dom.button("Delete", function() {
 			var label = d.label || d.key;
+			if (!confirm("really delete " + label + "?"))
+				return;
 			CT.dom.remove(CT.dom.id("starreditem" + label.replace(/ /g, "")));
 			CT.admin.core.q("db", function() {
-
-
-				// remove from pager data
-				// refresh page
-				
-
-				alert("deleted");
+				n.parentNode.parentNode.parentNode.parentNode.pager.remove(d);
+				alert("deleted: " + label);
 			}, "failed to delete " + label, {
 				"key": "delete",
 				"data": d.key
