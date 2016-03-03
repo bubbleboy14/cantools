@@ -112,7 +112,13 @@ CT.admin.db.Editor = CT.Class({
 			if (val != data[ip.rowKey])
 				changes[ip.rowKey] = val;
 		});
-		CT.admin.core.q("db", function() {
+		CT.admin.core.q("db", function(key) {
+			for (var k in changes)
+				data[k] = changes[k];
+			if (!data.key) {
+				data.key = key;
+				CT.data.add(data);
+			}
 			alert("you did it");
 		}, "edit failed", params);
 	},
