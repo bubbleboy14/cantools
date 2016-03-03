@@ -16,7 +16,7 @@ CT.storage = {
 			val = opts.backend.getItem(key);
 		if (opts.compress)
 			val = LZString.decompress(val);
-		return opts.json ? JSON.parse(val) : val;
+		return opts.json ? (val ? JSON.parse(val) : null) : val;
 	},
 	"set": function(key, val) {
 		var opts = CT.storage.init();
@@ -25,5 +25,8 @@ CT.storage = {
 		if (opts.compress)
 			val = LZString.compress(val);
 		opts.backend.setItem(key, val);
+	},
+	"clear": function() {
+		CT.storage.init().backend.clear();
 	}
 };
