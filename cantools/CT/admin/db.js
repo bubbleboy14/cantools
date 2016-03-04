@@ -116,7 +116,10 @@ CT.admin.db = {
 		if (ptype == "string")
 			valcell = CT.dom.field(null, val);
 		else if (ptype == "boolean")
-			valcell = CT.dom.checkbox(null, val);
+			valcell = CT.dom.checkbox(null, val, {
+				"display": "inline-block",
+				"width": "160px"
+			});
 		else if (ptype == "float")
 			valcell = CT.parse.numOnly(CT.dom.field(null, val), true);
 		else if (ptype == "integer")
@@ -133,13 +136,16 @@ CT.admin.db.Query = CT.Class({
 		var valcell = CT.dom.node(null, "span"), schema = this.schema,
 			selectcell = CT.dom.select(Object.keys(schema).filter(function(prop) {
 				return CT.admin.db.unimplemented.indexOf(schema[prop]) == -1;
-			}));
+			})),
+			rmcell = CT.dom.button("remove", function() {
+				CT.dom.remove(selectcell.parentNode);
+			});
 		selectcell.onchange = function() {
 			CT.dom.setContent(valcell,
 				CT.admin.db.input(selectcell.value, schema[selectcell.value]));
 		};
 		selectcell.onchange();
-		this.filters.appendChild(CT.dom.node([selectcell, valcell]));
+		this.filters.appendChild(CT.dom.node([selectcell, valcell, rmcell]));
 	},
 	"_order": function() {
 		var selectcell = CT.dom.select(["None"].concat(Object.keys(this.schema))),
@@ -154,16 +160,20 @@ CT.admin.db.Query = CT.Class({
 		return CT.dom.node([selectcell, dircell]);
 	},
 	"_submit": function() {
-		return CT.dom.button("submit");
+		return CT.dom.button("submit", function() {
+
+		});
 	},
 	"_build": function() {
 		this.filters = CT.dom.node();
 		this.node = CT.dom.node([
-			CT.dom.node(CT.dom.button("add filter", this._filter), "div", "right"),
 			CT.dom.node("Query: " + this.modelName, "div", "bigger bold"),
 			CT.dom.node("Order", "div", "big bold"),
 			this._order(),
-			CT.dom.node("Filters", "div", "big bold"),
+			CT.dom.node([
+				CT.dom.node("Filters", "span", "big bold"),
+				CT.dom.button("add", this._filter)
+			]),
 			this.filters,
 			this._submit()
 		]);
