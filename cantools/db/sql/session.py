@@ -1,3 +1,4 @@
+import threading
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from cantools import config
@@ -9,10 +10,13 @@ lastSession = None
 class Session(object):
 	def __init__(self, dbstring=config.db):
 		self.engine = create_engine(dbstring, pool_recycle=7200, echo=config.db_echo)
-		self.generator = scoped_session(sessionmaker(bind=self.engine), scopefunc=cgi_dump)
+		self.generator = scoped_session(sessionmaker(bind=self.engine), scopefunc=self._scope)
 		for fname in ["add", "add_all", "delete", "flush", "commit", "query"]:
 			setattr(self, fname, self._func(fname))
 		self._refresh()
+
+	def _scope(self):
+		return "%s%s"%(threading.currentThread().getName(), cgi_dump())
 
 	def _func(self, fname):
 		def f(*args):

@@ -50,9 +50,13 @@ class CTWebBase(HTTPApplication):
 		for key, val in cb.items():
 			self.add_cb_rule(key, self._handler(key, val))
 
+	def _respond(self, resp, *args, **kwargs):
+		kwargs["response"] = resp
+		do_respond(*args, **kwargs)
+
 	def register_handler(self, args, kwargs):
 		self.logger.info("register handler: %s"%(self.curpath,))
-		self.handlers[self.curpath] = lambda : do_respond(*args, **kwargs)
+		self.handlers[self.curpath] = lambda resp : self._respond(resp, *args, **kwargs)
 
 	def _handler(self, rule, target):
 		self.logger.info("setting handler: %s %s"%(rule, target))
@@ -62,8 +66,7 @@ class CTWebBase(HTTPApplication):
 			if rule not in self.handlers:
 				self.logger.info("importing module: %s"%(target,))
 				__import__(target)
-			Response(req).set_cbs()
-			self.handlers[rule]()
+			self.handlers[rule](Response(req))
 		return h
 
 class Web(CTWebBase):
