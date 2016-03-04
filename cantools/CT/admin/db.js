@@ -14,9 +14,13 @@ CT.admin.db = {
 			CT.admin.db.schema = schema;
 			CT.panel.simple(skeys, "db");
 			skeys.forEach(function(modelName) {
-				CT.admin.db._pager(modelName);
+				CT.admin.db.pager(modelName);
 			});
 		});
+	},
+	"canEdit": function(ptype) {
+		// implement key/datetimeautostamper/list editing soon!!
+		return ptype != "key" && ptype in CT.admin.db._d;
 	},
 	"get": function(modelName, cb, limit, offset, order, filters) {
 		var qdata = {
@@ -32,7 +36,7 @@ CT.admin.db = {
 			"- limit", limit, "offset", offset, "order", order,
 			"filters", filters].join(" "), qdata);
 	},
-	"_pager": function(modelName, order, filters) {
+	"pager": function(modelName, order, filters) {
 		var pnode = CT.dom.id("dbpanel" + modelName);
 		CT.dom.id("dbcontent" + modelName).appendChild(CT.panel.pager(CT.admin.db._build(modelName),
 			CT.admin.db._refill(modelName, order, filters), 10, "rcol", "data", modelName));
@@ -141,9 +145,7 @@ CT.admin.db.Query = CT.Class({
 	"CLASSNAME": "CT.admin.db.Query",
 	"_filter": function() {
 		var valcell = CT.dom.node(null, "span"), schema = this.schema,
-			selectcell = CT.dom.select(Object.keys(schema).filter(function(prop) {
-				return CT.admin.db.unimplemented.indexOf(schema[prop]) == -1;
-			})),
+			selectcell = CT.dom.select(this.filterables),
 			rmcell = CT.dom.button("remove", function() {
 				CT.dom.remove(selectcell.parentNode);
 			});
@@ -155,7 +157,7 @@ CT.admin.db.Query = CT.Class({
 		this.filters.appendChild(CT.dom.node([selectcell, valcell, rmcell]));
 	},
 	"_order": function() {
-		var selectcell = CT.dom.select(["None"].concat(Object.keys(this.schema))),
+		var selectcell = CT.dom.select(["None"].concat(this.filterables)),
 			dircell = CT.dom.select(["ascending", "descending"]);
 		dircell.className = "hidden";
 		selectcell.onchange = function() {
@@ -167,27 +169,42 @@ CT.admin.db.Query = CT.Class({
 		return CT.dom.node([selectcell, dircell]);
 	},
 	"_submit": function() {
-		return CT.dom.button("submit", function() {
-
+		var order = null, filters = [], osel = this.order.firstChild;
+		if (osel.value != "None")
+			order = osel.nextSibling.value == "descending"
+				? "-" + osel.value : osel.value;
+		CT.dom.each(this.filters, function(fnode) {
+			var fc = fnode.firstChild;
+			filters.push([fc.value, fc.nextSibling.firstChild.getValue()]);
 		});
+		CT.admin.db.pager(this.modelName, order, filters);
+		debugger;
 	},
 	"_build": function() {
 		this.filters = CT.dom.node();
+		this.order = this._order();
 		this.node = CT.dom.node([
 			CT.dom.node("Query: " + this.modelName, "div", "bigger bold"),
 			CT.dom.node("Order", "div", "big bold"),
-			this._order(),
+			this.order,
 			CT.dom.node([
 				CT.dom.node("Filters", "span", "big bold"),
 				CT.dom.button("add", this._filter)
 			]),
 			this.filters,
-			this._submit()
+			CT.dom.button("submit", this._submit)
 		]);
+	},
+	"_filterables": function() {
+		this.filterables = [];
+		for (var k in this.schema)
+			if (CT.admin.db.canEdit(this.schema[k]))
+				this.filterables.push(k);
 	},
 	"init": function(modelName) {
 		this.modelName = modelName;
 		this.schema = CT.admin.db.schema[modelName];
+		this._filterables();
 		this._build();
 	}
 });
