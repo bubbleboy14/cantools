@@ -16,12 +16,7 @@ class Session(object):
 		self._refresh()
 
 	def _scope(self):
-		scope = "%s%s"%(threading.currentThread().getName(), cgi_dump())
-		log("SCOPE: " + scope, important=True)
-
-#		return threading.currentThread().getName()
-
-		return scope
+		return "%s%s"%(threading.currentThread().getName(), cgi_dump())
 
 	def _func(self, fname):
 		def f(*args):
