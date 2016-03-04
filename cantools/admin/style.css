@@ -19,6 +19,16 @@
 	color: darkgreen;
 }
 
+#dbqueries {
+	border: 1px solid black;
+	position: absolute;
+	bottom: 10px;
+	left: 10px;
+	width: 90px;
+	background: black;
+	color: green;
+}
+
 #dbstarred {
 	border: 1px solid black;
 	position: absolute;

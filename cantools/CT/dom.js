@@ -142,11 +142,11 @@ CT.dom = {
 		});
 		return r;
 	},
-	"checkbox": function(id, ischecked) {
+	"checkbox": function(id, ischecked, style) {
 	    var cbdata = {"type": "checkbox"};
 	    if (ischecked)
 	        cbdata.checked = ischecked;
-	    return CT.dom.node("", "input", "", id, cbdata);
+	    return CT.dom.node("", "input", "", id, cbdata, style);
 	},
 	"wrapped": function(nodes, type, className, id, attrs) {
 		CT.log("[DEPRECATION WARNING] CT.dom.wrapped() is deprecated. Use CT.dom.node().");
@@ -657,6 +657,10 @@ CT.dom = {
 	},
 	"Q": function(q, n) {
 		return CT.dom._narr2arr((n || document.body).querySelectorAll(q));
+	},
+	"each": function(p, f) {
+		for (var i = 0; i < p.childNodes.length; i++)
+			f(p.childNodes[i]);
 	},
 
 	// transitions

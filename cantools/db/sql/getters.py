@@ -14,10 +14,14 @@ def get_schema():
             s[key] = val._schema
     return s
 
-def get_page(modelName, limit, offset, order='index'):
+def get_page(modelName, limit, offset, order='index', filters=[]):
     #SAWarning: Can't resolve label reference '-draw_num'; converting to text()
     #'-column_name' or 'column_name desc' work but give this warning
-    return [d.data() for d in get_model(modelName).query().order(order).fetch(limit, offset)]
+    mod = get_model(modelName)
+    query = mod.query()
+    for filt in filters:
+        query.filter(getattr(mod, filt[0]) == filt[1])
+    return [d.data() for d in query.order(order).fetch(limit, offset)]
 
 def getall(entity=None, query=None, keys_only=False, session=session):
     if query:
