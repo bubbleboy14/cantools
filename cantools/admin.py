@@ -19,7 +19,9 @@ def response():
 		import model # load up all models
 		mname = cgi_get("modelName", required=False)
 		if mname:
-			succeed(get_page(mname, cgi_get("limit"), cgi_get("offset")))
+			succeed(get_page(mname, cgi_get("limit"), cgi_get("offset"),
+				cgi_get("order", default="index"),
+				cgi_get("filters", default=[])))
 		succeed(get_schema())
 	elif action == "memcache":
 		succeed(getcache())
