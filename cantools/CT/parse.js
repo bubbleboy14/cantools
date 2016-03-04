@@ -69,7 +69,7 @@ CT.parse = {
 	            c = n.value.charAt(i);
 	            if (allowDot && !hasdot && c == ".")
 	                hasdot = true;
-	            else if (_nchars.indexOf(c) == -1)
+	            else if (CT.parse._nchars.indexOf(c) == -1)
 	                continue;
 	            v += c;
 	        }
