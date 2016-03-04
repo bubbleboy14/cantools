@@ -36,10 +36,11 @@ CT.admin.db = {
 			"- limit", limit, "offset", offset, "order", order,
 			"filters", filters].join(" "), qdata);
 	},
-	"pager": function(modelName, order, filters) {
-		var pnode = CT.dom.id("dbpanel" + modelName);
-		CT.dom.id("dbcontent" + modelName).appendChild(CT.panel.pager(CT.admin.db._build(modelName),
-			CT.admin.db._refill(modelName, order, filters), 10, "rcol", "data", modelName));
+	"pager": function(modelName, order, filters, k) {
+		var key = k || modelName,
+			pnode = CT.dom.id("dbpanel" + key);
+		CT.dom.id("dbcontent" + key).appendChild(CT.panel.pager(CT.admin.db._build(modelName),
+			CT.admin.db._refill(modelName, order, filters), 10, "rcol", "data", key));
 		pnode.insertBefore(CT.dom.node([
 			CT.dom.button("new query", function() {
 				CT.admin.db.query(modelName);
@@ -177,8 +178,12 @@ CT.admin.db.Query = CT.Class({
 			var fc = fnode.firstChild;
 			filters.push([fc.value, fc.nextSibling.firstChild.getValue()]);
 		});
-		CT.admin.db.pager(this.modelName, order, filters);
-		debugger;
+		var key = this.modelName + "query" + this.id;
+		CT.panel.add(this.modelName + " (" + this.id + ")",
+			false, "db", CT.dom.id("dbqueries"), null, key);
+		CT.admin.db.pager(this.modelName, order, filters, key);
+		CT.panel.swap(key, false, "db");
+		this.node.parentNode.modal.hide();
 	},
 	"_build": function() {
 		this.filters = CT.dom.node();
@@ -202,12 +207,15 @@ CT.admin.db.Query = CT.Class({
 				this.filterables.push(k);
 	},
 	"init": function(modelName) {
+		this.id = CT.admin.db.Query._id;
+		CT.admin.db.Query._id += 1;
 		this.modelName = modelName;
 		this.schema = CT.admin.db.schema[modelName];
 		this._filterables();
 		this._build();
 	}
 });
+CT.admin.db.Query._id = 0;
 
 CT.admin.db.Editor = CT.Class({
 	"CLASSNAME": "CT.admin.db.Editor",
