@@ -658,6 +658,10 @@ CT.dom = {
 	"Q": function(q, n) {
 		return CT.dom._narr2arr((n || document.body).querySelectorAll(q));
 	},
+	"each": function(p, f) {
+		for (var i = 0; i < p.childNodes.length; i++)
+			f(p.childNodes[i]);
+	},
 
 	// transitions
 	"_vender_prefixes": [
