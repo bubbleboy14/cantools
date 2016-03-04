@@ -1,11 +1,10 @@
-import sys, json
+import sys, json, threading
 from base64 import b64encode, b64decode
+from rel import thread
 from rel.errors import AbortBranch
 from cantools import config
 
 DEBUG = True
-request = None
-request_string = None
 cache_default = False
 
 # memcache stuff -- overwrite with setters
@@ -59,6 +58,11 @@ def setdec(f):
     global dec
     dec = f
 
+# threading
+localvars = threading.local()
+def local(key, fallback=None):
+    return getattr(localvars, key, fallback)
+
 # request functions
 def deUnicodeDict(d):
     if not isinstance(d, dict):
@@ -69,14 +73,13 @@ def deUnicodeDict(d):
     return n
 
 def cgi_dump():
-    return request_string
+    return local("request_string")
 
 def cgi_read():
-    return sys.stdin.read()
+    return local("read", sys.stdin.read)()
 
 def set_read(f):
-    global cgi_read
-    cgi_read = f
+    localvars.read = f
 
 def rb64(data, de=False):
     if isinstance(data, basestring):
@@ -89,23 +92,22 @@ def rb64(data, de=False):
     return data
 
 def cgi_load(force=False):
-    global request
-    global request_string
-    request_string = cgi_read()
-    data = config.encode and dec(request_string) or request_string
+    localvars.request_string = cgi_read()
+    data = config.encode and dec(localvars.request_string) or localvars.request_string
     try:
-        request = rb64(json.loads(data), True)
+        localvars.request = rb64(json.loads(data), True)
     except:
         import cgi
-        request = cgi.FieldStorage()
-        setattr(request, "get", lambda x, y: request.getvalue(x, y))
-    if not request:
+        localvars.request = cgi.FieldStorage()
+        setattr(localvars.request, "get", lambda x, y: localvars.request.getvalue(x, y))
+    if not localvars.request:
         if force or config.web.server == "dez":
-            request = {}
+            localvars.request = {}
         else:
             fail('no request data!')
 
 def cgi_get(key, choices=None, required=True, default=None):
+    request = local("request")
     val = request.get(key, default)
     if val is None and required:
         fail('no value submitted for required field: "%s" [%s]'%(key, request))
@@ -115,18 +117,20 @@ def cgi_get(key, choices=None, required=True, default=None):
 
 # response functions
 def _send(data):
-    print data
+    send = local("send")
+    if send:
+        send(data)
+    else:
+        print data
 
 def set_send(f):
-    global _send
-    _send = f
+    localvars.send = f
 
 def _close():
-    sys.exit()
+    local("close", sys.exit)()
 
 def set_close(f):
-    global _close
-    _close = f
+    localvars.close = f
 
 def _pre_close():
     pass
@@ -136,11 +140,14 @@ def set_pre_close(f):
     _pre_close = f
 
 def _header(hkey, hval):
-    _send("%s: %s"%(hkey, hval))
+    header = local("header")
+    if header:
+        header(hkey, hval)
+    else:
+        _send("%s: %s"%(hkey, hval))
 
 def set_header(f):
-    global _header
-    _header = f
+    localvars.header = f
 
 def _write(data, exit=True, savename=None):
     if savename:
@@ -151,13 +158,15 @@ def _write(data, exit=True, savename=None):
         _close()
 
 def trysavedresponse(key=None):
-    key = key or request_string
+    key = key or local("request_string")
     response = getmem(key, False)
     response and _write(response, exit=True)
 
-def _respond(responseFunc, failMsg="failed", failHtml=False, failNoEnc=False):
-    def f():
+def do_respond(responseFunc, failMsg="failed", failHtml=False, failNoEnc=False, noLoad=False, threaded=False, response=None):
+    def resp():
         try:
+            response and response.set_cbs()
+            noLoad or cgi_load()
             responseFunc()
             succeed()
         except AbortBranch, e:
@@ -166,14 +175,8 @@ def _respond(responseFunc, failMsg="failed", failHtml=False, failNoEnc=False):
             pass
         except Exception, e:
             fail(data=failMsg, html=failHtml, err=e, noenc=failNoEnc, exit=False)
-    return f
-
-def do_respond(responseFunc, failMsg="failed", failHtml=False, failNoEnc=False, noLoad=False, threaded=False):
-    noLoad or cgi_load()
-    resp = _respond(responseFunc, failMsg=failMsg, failHtml=failHtml, failNoEnc=failNoEnc)
     if threaded:
-        from thread import start_new_thread
-        start_new_thread(resp, ())
+        thread(resp)
     else:
         resp()
 
@@ -215,7 +218,7 @@ def processResponse(data, code):
 
 def succeed(data="", html=False, noenc=False, savename=None, cache=False):
     if cache or cache_default:
-        savename = request_string
+        savename = local("request_string")
     _header("Content-Type", "text/%s"%(html and "html" or "plain"))
     draw = processResponse(data, "1")
     dstring = (config.encode and not noenc) and enc(draw) or draw
