@@ -14,29 +14,36 @@ CT.admin.db = {
 			CT.admin.db.schema = schema;
 			CT.panel.simple(skeys, "db");
 			skeys.forEach(function(modelName) {
-				var pnode = CT.dom.id("dbpanel" + modelName);
-				CT.dom.id("dbcontent" + modelName).appendChild(CT.panel.pager(CT.admin.db._build(modelName),
-					CT.admin.db._refill(modelName), 10, "rcol", "data", modelName));
-				pnode.insertBefore(CT.dom.node([
-					CT.dom.button("new query", function() {
-						CT.admin.db.query(modelName);
-					}),
-					CT.dom.button("new " + modelName, function() {
-						CT.admin.db.starLink(CT.admin.db._defaults(modelName), modelName).onclick();
-					})
-				], "div", "right"), pnode.firstChild);
+				CT.admin.db._pager(modelName);
 			});
 		});
 	},
-	"get": function(modelName, cb, limit, offset) {
-		limit = limit || 20;
-		offset  = offset || 0;
-		CT.admin.core.q("db", cb, ["failed to get", modelName,
-			"- limit", limit, "offset", offset].join(" "), {
+	"get": function(modelName, cb, limit, offset, order, filters) {
+		var qdata = {
 			"modelName": modelName,
-			"limit": limit,
-			"offset": offset
-		});
+			"limit": limit || 20,
+			"offset": offset || 0
+		};
+		if (order)
+			qdata.order = order;
+		if (filters)
+			qdata.filters = filters;
+		CT.admin.core.q("db", cb, ["failed to get", modelName,
+			"- limit", limit, "offset", offset, "order", order,
+			"filters", filters].join(" "), qdata);
+	},
+	"_pager": function(modelName, order, filters) {
+		var pnode = CT.dom.id("dbpanel" + modelName);
+		CT.dom.id("dbcontent" + modelName).appendChild(CT.panel.pager(CT.admin.db._build(modelName),
+			CT.admin.db._refill(modelName, order, filters), 10, "rcol", "data", modelName));
+		pnode.insertBefore(CT.dom.node([
+			CT.dom.button("new query", function() {
+				CT.admin.db.query(modelName);
+			}),
+			CT.dom.button("new " + modelName, function() {
+				CT.admin.db.starLink(CT.admin.db._defaults(modelName), modelName).onclick();
+			})
+		], "div", "right"), pnode.firstChild);
 	},
 	"_defaults": function(modelName) {
 		var k, d = { "label": "new " + modelName },
@@ -45,9 +52,9 @@ CT.admin.db = {
 			d[k] = CT.admin.db._d[schema[k]];
 		return d;
 	},
-	"_refill": function(modelName) {
+	"_refill": function(modelName, order, filters) {
 		var f = function(obj, cb) {
-			CT.admin.db.get(modelName, cb, obj.limit, obj.offset);
+			CT.admin.db.get(modelName, cb, obj.limit, obj.offset, order, filters);
 		};
 		return f;
 	},
