@@ -1,7 +1,5 @@
 import sys, json, threading
 from base64 import b64encode, b64decode
-from rel import thread
-from rel.errors import AbortBranch
 from cantools import config
 
 DEBUG = True
@@ -162,23 +160,47 @@ def trysavedresponse(key=None):
     response = getmem(key, False)
     response and _write(response, exit=True)
 
-def do_respond(responseFunc, failMsg="failed", failHtml=False, failNoEnc=False, noLoad=False, threaded=False, response=None):
-    def resp():
+def dez_wrap(resp, failure):
+    from rel.errors import AbortBranch
+    def f():
         try:
-            response and response.set_cbs()
-            noLoad or cgi_load()
-            responseFunc()
-            succeed()
+            resp()
         except AbortBranch, e:
             raise AbortBranch() # handled in rel
         except SystemExit:
             pass
         except Exception, e:
-            fail(data=failMsg, html=failHtml, err=e, noenc=failNoEnc, exit=False)
-    if threaded:
-        thread(resp)
+            failure(e)
+    return f
+
+def gae_wrap(resp, failure):
+    def f():
+        try:
+            resp()
+        except SystemExit:
+            pass
+        except Exception, e:
+            failure(e)
+    return f
+
+resp_wrap = { "dez": dez_wrap, "gae": gae_wrap }
+
+def do_respond(responseFunc, failMsg="failed", failHtml=False, failNoEnc=False, noLoad=False, threaded=False, response=None):
+    def resp():
+        response and response.set_cbs()
+        noLoad or cgi_load()
+        responseFunc()
+        succeed()
+
+    def failure(e):
+        fail(data=failMsg, html=failHtml, err=e, noenc=failNoEnc, exit=False)
+
+    wrapped_response = resp_wrap[config.web.server](resp, failure)
+    if threaded: # dez only!!!
+        from rel import thread
+        thread(wrapped_response)
     else:
-        resp()
+        wrapped_response()
 
 def redirect(addr, msg="", noscript=False, exit=True):
     a = "<script>"
