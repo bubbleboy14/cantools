@@ -178,7 +178,7 @@ var CT = {
 	},
 	"onload": function(cb) {
 		if (!CT._.onload.length)
-			window.onload = CT._.triggerOnload;
+			window.addEventListener('load', CT._.triggerOnload);
 		CT._.onload.push(cb);
 	},
 	"dmerge": function() {
@@ -259,3 +259,5 @@ if (!window.requestAnimationFrame)
 	CT.require("CT.lib.shims.requestAnimationFrame", true);
 if (!Object.values)
 	CT.require("CT.lib.shims.ObjectValues", true);
+if (!window.addEventListener)
+	window.addEventListener = window.attachEvent;
