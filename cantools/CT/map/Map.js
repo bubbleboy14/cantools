@@ -2,6 +2,9 @@ CT.map.latlng = function(position) { // {lat,lng}
 	return position instanceof google.maps.LatLng
 		? position : new google.maps.LatLng(position);
 };
+CT.map.addr2latlng = function(addr) {
+
+};
 
 CT.map.Map = CT.Class({
 	CLASSNAME: "CT.map.Map",
@@ -38,6 +41,19 @@ CT.map.Map = CT.Class({
 			longitude: Math.max(p1.lng(), p2.lng())
 		}));
 	},
+	_build: function() {
+		var k;
+		this.opts.center = CT.map.latlng(this.opts.center);
+		this.map = new google.maps.Map(this.opts.node, this.opts);
+		for (k in this.opts.markers)
+			this.addMarker(this.opts.markers[k]);
+		for (k in this.opts.lines)
+			this.addLine(this.opts.lines[k]);
+		for (k in this.opts.shapes)
+			this.addShape(this.opts.shapes[k]);
+		if (this.opts.geojson)
+			this.geoJson(this.opts.geojson);
+	},
 	init: function(opts) { // required: node, center{lat,lng}
 		this.opts = opts = CT.merge(opts, {
 			zoom: 12,
@@ -47,15 +63,12 @@ CT.map.Map = CT.Class({
 			lines: {},
 			shapes: {}
 		});
-		opts.center = CT.map.latlng(opts.center);
-		this.map = new google.maps.Map(opts.node, opts);
-		for (var k in opts.markers)
-			this.addMarker(opts.markers[k]);
-		for (var k in opts.lines)
-			this.addLine(opts.lines[k]);
-		for (var k in opts.shapes)
-			this.addShape(opts.shapes[k]);
-		if (opts.geojson)
-			this.geoJson(opts.geojson);
+		if (opts.center)
+			this._build();
+		else
+		    navigator.geolocation.getCurrentPosition(function(pos) {
+		        opts.center = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+		        this._build();
+		    }.bind(this));
 	}
 });
