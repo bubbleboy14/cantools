@@ -47,6 +47,9 @@ CT.map.Node = CT.Class({
 			Object.keys(listeners).forEach(this._regEvt);
 		}
 	},
+	clearListeners: function() {
+		this.setListeners({});
+	},
 	addListener: function(evt, listener) {
 		this.opts.listeners[evt] = listener;
 		this._regEvt(evt);
