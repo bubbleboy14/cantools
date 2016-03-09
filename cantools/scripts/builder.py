@@ -63,11 +63,9 @@ def require(line, jspaths, block, inits):
     if jspath not in jspaths:
         prefixes = []
         fullp = "window"
-        for rword in rsplit[:-1]:
+        for rword in rsplit:
             fullp = ".".join([fullp, rword])
             tryinit("%s = %s || {}"%(fullp, fullp), inits, prefixes)
-        if rline.endswith(".all"):
-            tryinit("%s.all = %s.all || true"%(fullp, fullp), inits, prefixes)
         pblock = ";".join(prefixes)
         if pblock:
             jspaths.append(pblock)

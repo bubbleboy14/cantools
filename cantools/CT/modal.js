@@ -1,5 +1,3 @@
-CT.modal = {};
-
 CT.modal.Modal = CT.Class({
 	"CLASSNAME": "CT.modal.Modal",
 	"visible": false,
