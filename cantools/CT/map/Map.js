@@ -38,14 +38,14 @@ CT.map.Map = CT.Class({
 	},
 	init: function(opts) { // required: node, center{lat,lng}
 		this.opts = opts = CT.merge(opts, {
-			zoom: 20,
+			zoom: 12,
 			disableDefaultUI: true,
 			zoomControl: true,
 			markers: {},
 			lines: {},
 			shapes: {}
 		});
-		opts.center = new google.maps.LatLng(opts.center);
+		opts.center = this.latlng(opts.center);
 		this.map = new google.maps.Map(opts.node, opts);
 		for (var k in opts.markers)
 			this.addMarker(opts.markers[k]);
