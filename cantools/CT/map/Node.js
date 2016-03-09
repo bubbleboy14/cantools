@@ -1,14 +1,14 @@
 CT.map.Node = CT.Class({
 	CLASSNAME: "CT.map.Node",
 	_regEvt: function(evt) {
-		if (this.opts[evt])
-			google.maps.event.addDomListener(this.content, evt, this.opts[evt]);
+		if (this.opts.listeners[evt])
+			google.maps.event.addDomListener(this.content, evt, this.opts.listeners[evt]);
 	},
 	_add: function() {
 		this.content = CT.dom.node(this.opts.content, "div", this.opts.className);
 		this.projection = this.overlay.getProjection();
 		CT.dom.setContent(this.overlay.getPanes().floatPane, this.content);
-		Object.keys(handers).forEach(this._regEvt);
+		Object.keys(this.opts.listeners).forEach(this._regEvt);
 	},
 	_remove: function() {
 		google.maps.event.clearListeners(this.content);
@@ -40,12 +40,16 @@ CT.map.Node = CT.Class({
 		if (this.content)
 			CT.dom.setContent(this.content, content);
 	},
-	setHandlers: function(handlers) { // click, mouseover, mouseout
-		this.opts.handlers = handlers;
+	setListeners: function(listeners) { // click, mouseover, mouseout
+		this.opts.listeners = listeners;
 		if (this.content) {
 			google.maps.event.clearListeners(this.content);
-			Object.keys(handlers).forEach(this._regEvt);
+			Object.keys(listeners).forEach(this._regEvt);
 		}
+	},
+	addListener: function(evt, listener) {
+		this.opts.listeners[evt] = listener;
+		this._regEvt(evt);
 	},
 	addUpdater: function(property, cb) {
 		this.opts.updaters[property] = cb;
@@ -58,8 +62,8 @@ CT.map.Node = CT.Class({
 			this.setPosition(opts.position);
 		if (opts.content)
 			this.setContent(opts.content);
-		if (opts.handlers)
-			this.setHandlers(opts.handlers);
+		if (opts.listeners)
+			this.setListeners(opts.listeners);
 		Object.keys(o.updaters).forEach(function(uprop) {
 			if (uprop in opts)
 				o.updaters[uprop](opts[uprop]);
@@ -72,9 +76,10 @@ CT.map.Node = CT.Class({
 		this.overlay.setMap(null);
 	},
 	init: function(opts) {
-		this.opts = CT.merge(opts, {
+		this.opts = opts = CT.merge(opts, {
 			visible: true,
-			updaters: {}
+			updaters: {},
+			listeners: {}
 		});
 		this.overlay = new google.maps.OverlayView();
 		this.overlay.onAdd = this._add;
