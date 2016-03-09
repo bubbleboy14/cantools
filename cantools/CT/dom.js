@@ -586,9 +586,10 @@ CT.dom = {
 	"remove": function(n) {
 		n && n.parentNode && n.parentNode.removeChild(n);
 	},
-	"setContent": function(targetNode, contentNode) {
+	"setContent": function(targetNode, content) {
 		targetNode.innerHTML = "";
-		targetNode.appendChild(contentNode);
+		targetNode.appendChild(typeof content == "function"
+			? content() : content);
 	},
 
 	// ALLNODE stuff
