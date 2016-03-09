@@ -64,11 +64,9 @@ CT.map.Marker = CT.Class({
 		google.maps.event.addListener(this.marker, evt, cb);
 	},
 	_buildMarker: function() {
-		var opts = this.opts;
-		this.marker = new google.maps.Marker(opts);
-		Object.keys(opts.listeners).forEach(function(evt) {
-			this._addMarkerListener(evt, opts.listeners[evt]);
-		});
+		this.marker = new google.maps.Marker(this.opts);
+		for (var evt in this.opts.listeners)
+			this._addMarkerListener(evt, this.opts.listeners[evt]);
 	},
 	_buildCustomMarker: function() {
 		this.marker = new CT.map.DOMMarker(this.opts);
