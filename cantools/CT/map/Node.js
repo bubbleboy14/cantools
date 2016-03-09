@@ -27,23 +27,35 @@ CT.map.Node = CT.Class({
 		this.opts.position = latlng;
 		this._draw();
 	},
+	setVisible: function(vis) {
+		this.opts.visible = vis;
+		if (this.content) {
+			this.content.style.display = vis ? "block" : "none";
+			this._draw();
+		}
+	},
 	setContent: function(content) {
 		this.opts.content = content;
 		if (this.content)
 			CT.dom.setContent(this.content, content);
 	},
-	setVisible: function(vis) {
-		this.opts.visible = vis;
-		if (this.content)
-			this.content.style.display = vis ? "block" : "none";
-		this._draw();
-	},
-	update: function(opts) {
-		this.opts = CT.merge(opts, this.opts);
+	setHandlers: function(handlers) {
+		this.opts.handlers = handlers;
 		if (this.content) {
 			google.maps.event.clearListeners(this.content);
 			["click", "mouseover", "mouseout"].forEach(this._regEvt);
 		}
+	},
+	update: function(opts) {
+		this.opts = CT.merge(opts, this.opts);
+		if ("visible" in opts)
+			this.setVisible(opts.visible);
+		if (opts.position)
+			this.setPosition(opts.position);
+		if (opts.content)
+			this.setContent(opts.content);
+		if (opts.handlers)
+			this.setHandlers(opts.handlers);
 	},
 	show: function() {
 		this.overlay.setMap(this.opts.map);
