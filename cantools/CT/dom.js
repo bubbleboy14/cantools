@@ -24,12 +24,14 @@ CT.dom = {
 	"node": function(content, type, classname, id, attrs, style) {
 	    var d = document.createElement(type || "div");
 	    if (content) {
-		    if (Array.isArray(content)) { // array of nodes or objects
+		    if (Array.isArray(content)) // array of nodes or objects
 		    	content.forEach(function(item) {
 		    		d.appendChild(item instanceof Node ? item : CT.dom._obj2node(item));
 		    	});
-		    } else if (content instanceof Node) // single node
+		    else if (content instanceof Node) // single node
 		    	d.appendChild(content);
+		    else if (typeof content == "function")
+		    	d.appendChild(content());
 			else if (typeof content == "object")
 				return CT.dom._obj2node(content); // do this without creating 'd' node?
 		    else if (typeof content == "string") {
