@@ -39,6 +39,9 @@ CT.map.DOMMarker = CT.Class({
 
 CT.map.Marker = CT.Class({
 	CLASSNAME: "CT.map.Marker",
+	_converters: {
+		position: CT.map.latlng
+	},
 	add: function(map) {
 		this.opts.map = map;
 		this.marker.setMap(map);
@@ -54,11 +57,24 @@ CT.map.Marker = CT.Class({
 		var iw = this._infoWindow = this._infoWindow
 			|| new google.maps.InfoWindow();
 		iw.setContent(this.opts.info);
-		iw.setPosition(this.marker.getPosition());
+		iw.setPosition(this.getPosition());
 		iw.open(this.opts.map);
 	},
 	hideInfo: function() {
 		this._infoWindow.close();
+	},
+	_wrap: function(k) {
+		var m = this, kup = CT.parse.capitalize(k);
+		this["get" + kup] = function() {
+			return m.opts[k];
+		};
+		this["set" + kup] = function(val) {
+			m.opts[k] = m._converters[k] ? m._converters[k](val) : val;
+			m.marker["set" + kup](m.opts[k]);
+		};
+	},
+	_buildWrappers: function() {
+		["title", "icon", "map", "content", "position", "visible"].forEach(this._wrap);
 	},
 	_addMarkerListener:  function(evt, cb) { // gmMarker only
 		google.maps.event.addListener(this.marker, evt, cb);
@@ -80,6 +96,7 @@ CT.map.Marker = CT.Class({
 			listeners: opts.info && { click: this.showInfo } || {}
 		});
 		opts.content ? this._buildCustomMarker() : this._buildMarker();
+		this._buildWrappers();
 		if (this.opts.map)
 			this.add(this.opts.map);
 	}
