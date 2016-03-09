@@ -1,4 +1,5 @@
 CT.map.Node = CT.Class({
+	CLASSNAME: "CT.map.Node",
 	_regEvt: function(evt) {
 		if (this.opts[evt])
 			google.maps.event.addDomListener(this.content, evt, this.opts[evt]);
@@ -7,7 +8,7 @@ CT.map.Node = CT.Class({
 		this.content = CT.dom.node(this.opts.content, "div", this.opts.className);
 		this.projection = this.overlay.getProjection();
 		CT.dom.setContent(this.overlay.getPanes().floatPane, this.content);
-		["click", "mouseover", "mouseout"].forEach(this._regEvt);
+		Object.keys(handers).forEach(this._regEvt);
 	},
 	_remove: function() {
 		google.maps.event.clearListeners(this.content);
@@ -39,15 +40,18 @@ CT.map.Node = CT.Class({
 		if (this.content)
 			CT.dom.setContent(this.content, content);
 	},
-	setHandlers: function(handlers) {
+	setHandlers: function(handlers) { // click, mouseover, mouseout
 		this.opts.handlers = handlers;
 		if (this.content) {
 			google.maps.event.clearListeners(this.content);
-			["click", "mouseover", "mouseout"].forEach(this._regEvt);
+			Object.keys(handlers).forEach(this._regEvt);
 		}
 	},
+	addUpdater: function(property, cb) {
+		this.opts.updaters[property] = cb;
+	},
 	update: function(opts) {
-		this.opts = CT.merge(opts, this.opts);
+		var o = this.opts = CT.merge(opts, this.opts);
 		if ("visible" in opts)
 			this.setVisible(opts.visible);
 		if (opts.position)
@@ -56,6 +60,10 @@ CT.map.Node = CT.Class({
 			this.setContent(opts.content);
 		if (opts.handlers)
 			this.setHandlers(opts.handlers);
+		Object.keys(o.updaters).forEach(function(uprop) {
+			if (uprop in opts)
+				o.updaters[uprop](opts[uprop]);
+		});
 	},
 	show: function() {
 		this.overlay.setMap(this.opts.map);
@@ -65,7 +73,8 @@ CT.map.Node = CT.Class({
 	},
 	init: function(opts) {
 		this.opts = CT.merge(opts, {
-			visible: true
+			visible: true,
+			updaters: {}
 		});
 		this.overlay = new google.maps.OverlayView();
 		this.overlay.onAdd = this._add;

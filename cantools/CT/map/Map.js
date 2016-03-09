@@ -1,4 +1,5 @@
-CT.map.Map = CT.class({
+CT.map.Map = CT.Class({
+	CLASSNAME: "CT.map.Map",
 	markers: {},
 	lines: {},
 	shapes: {},
@@ -35,7 +36,7 @@ CT.map.Map = CT.class({
 			longitude: Math.max(p1.lng(), p2.lng())
 		}));
 	},
-	init: function(opts) { // required: center{lat,lng}
+	init: function(opts) { // required: node, center{lat,lng}
 		this.opts = opts = CT.merge(opts, {
 			zoom: 20,
 			disableDefaultUI: true,
