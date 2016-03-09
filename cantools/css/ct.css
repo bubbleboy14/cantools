@@ -1,4 +1,7 @@
 /* required CT classes */
+.abs {
+    position: absolute;
+}
 .activetab a {
     color: #670002;
 }
@@ -123,6 +126,12 @@
 }
 .small {
     font-size: 80%;
+}
+.tooltip {
+    position: absolute;
+    border: 1px solid gray;
+    background: white;
+    padding: 2px;
 }
 .top_out {
     top: -250px !important;
