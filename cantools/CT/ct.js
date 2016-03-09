@@ -10,7 +10,6 @@ var CT = {
 			CT._.onload.forEach(function(cb) { cb(); });
 		}
 	},
-	"config": {},
 	"style": {
 		"panel": {
 			"title": "bigger blue bold bottompadded"
