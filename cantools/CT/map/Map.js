@@ -18,14 +18,17 @@ CT.map.Map = CT.Class({
 	addMarker: function(data) {
 		var m = this.markers[data.key] = new CT.map.Marker(data);
 		m.add(this.map);
+		return m;
 	},
 	addLine: function(data) {
 		var m = this.lines[data.key] = new CT.map.Line(data);
 		m.add(this.map);
+		return m;
 	},
 	addShape: function(data) {
 		var m = this.shapes[data.key] = new CT.map.Shape(data);
 		m.add(this.map);
+		return m;
 	},
 	geoJson: function(gj) { // path or json obj (right?)
 		this.map.data.loadGeoJSON(gj);
