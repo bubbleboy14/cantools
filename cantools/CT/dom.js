@@ -24,15 +24,17 @@ CT.dom = {
 	"node": function(content, type, classname, id, attrs, style) {
 	    var d = document.createElement(type || "div");
 	    if (content) {
-		    if (Array.isArray(content)) { // array of nodes or objects
+		    if (Array.isArray(content)) // array of nodes or objects
 		    	content.forEach(function(item) {
 		    		d.appendChild(item instanceof Node ? item : CT.dom._obj2node(item));
 		    	});
-		    } else if (content instanceof Node) // single node
+		    else if (content instanceof Node) // single node
 		    	d.appendChild(content);
+		    else if (typeof content == "function")
+		    	d.appendChild(content());
 			else if (typeof content == "object")
 				return CT.dom._obj2node(content); // do this without creating 'd' node?
-		    else if (typeof content == "string") {
+		    else if (typeof content == "string" || typeof content == "number") {
 		        if (type == "table")
 		            alert("illegal innerHTML set on table! content: " + content);
 		        else if (type == "style") {
@@ -584,9 +586,10 @@ CT.dom = {
 	"remove": function(n) {
 		n && n.parentNode && n.parentNode.removeChild(n);
 	},
-	"setContent": function(targetNode, contentNode) {
+	"setContent": function(targetNode, content) {
 		targetNode.innerHTML = "";
-		targetNode.appendChild(contentNode);
+		targetNode.appendChild(typeof content == "function"
+			? content() : content);
 	},
 
 	// ALLNODE stuff

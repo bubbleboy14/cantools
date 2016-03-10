@@ -16,4 +16,4 @@ CT.require("CT.storage");
 CT.require("CT.upload");
 CT.require("CT.video");
 
-// import CT.rte as needed (large script import)
+// import CT.map and CT.rte as needed (large script imports)

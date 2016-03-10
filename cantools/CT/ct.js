@@ -163,10 +163,7 @@ var CT = {
 				else {
 					modpath.unshift(curpath);
 					modpath.forEach(function(p, i) {
-						if (i == modpath.length - 1)
-							curmod[p] = true; // mark module as imported
-						else
-							curmod = curmod[p] = {};
+						curmod = curmod[p] = {};
 					});
 					modpath.length = 0;
 					curmod = null;

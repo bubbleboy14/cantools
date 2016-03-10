@@ -1,5 +1,19 @@
 CT.panel = {
 	"lastClicked": {},
+	"trigger": function(data, cb) {
+		var n = CT.dom.node(CT.dom.link(data.title, function() {
+			CT.dom.each(n.parentNode, function(c) {
+				c.className = (c == n) ? "activetab" : "";
+			});
+			cb(data);
+		}));
+		return n;
+	},
+	"triggerList": function(data, cb, node) {
+		data.forEach(function(d) {
+			node.appendChild(CT.panel.trigger(d, cb));
+		});
+	},
 	"swap": function(key, trysidepanel, keystring, noitem) {
 	    keystring = keystring || "sb";
 	    key = key.replace(/ /g, "");
