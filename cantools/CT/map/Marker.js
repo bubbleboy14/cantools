@@ -88,14 +88,14 @@ CT.map.Marker = CT.Class({
 		this.marker = new CT.map.DOMMarker(this.opts);
 	},
 	init: function(opts) {
-		// required: position{lat,lng}
-		// suggested: title"", map
+		// required: position{lat,lng} or address""
+		// suggested: title"", info"", map
 		// if content, build custom dom marker
 		this.opts = opts = CT.merge(opts, {
 			icon: "http://maps.google.com/mapfiles/ms/icons/purple-dot.png",
 			listeners: opts.info && { click: this.showInfo } || {}
 		});
-		opts.position = CT.map.latlng(opts.position);
+		opts.position = CT.map.latlng(opts.position || CT.map.addr2latlng(opts.address));
 		opts.content ? this._buildCustomMarker() : this._buildMarker();
 		this._buildWrappers();
 		if (this.opts.map)

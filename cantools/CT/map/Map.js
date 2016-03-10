@@ -2,8 +2,12 @@ CT.map.latlng = function(position) { // {lat,lng}
 	return position instanceof google.maps.LatLng
 		? position : new google.maps.LatLng(position);
 };
+CT.map._llcache = {};
 CT.map.addr2latlng = function(addr) {
-
+	if (! (addr in CT.map._llcache))
+		CT.map._llcache[addr] = CT.net.get("http://maps.googleapis.com/maps/api/geocode/json",
+			{ address: addr }, true).results[0].geometry.location;
+	return CT.map._llcache[addr];
 };
 
 CT.map.Map = CT.Class({
