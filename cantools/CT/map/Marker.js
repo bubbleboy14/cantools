@@ -89,7 +89,7 @@ CT.map.Marker = CT.Class({
 	},
 	init: function(opts) {
 		// required: position{lat,lng} or address""
-		// suggested: title"", info"", map
+		// suggested: title"", info"" || info(node), map
 		// if content, build custom dom marker
 		this.opts = opts = CT.merge(opts, {
 			icon: "http://maps.google.com/mapfiles/ms/icons/purple-dot.png",
