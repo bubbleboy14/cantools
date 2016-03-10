@@ -1,15 +1,3 @@
-CT.map.latlng = function(position) { // {lat,lng}
-	return position instanceof google.maps.LatLng
-		? position : new google.maps.LatLng(position);
-};
-CT.map._llcache = {};
-CT.map.addr2latlng = function(addr) {
-	if (! (addr in CT.map._llcache))
-		CT.map._llcache[addr] = CT.net.get("http://maps.googleapis.com/maps/api/geocode/json",
-			{ address: addr }, true).results[0].geometry.location;
-	return CT.map._llcache[addr];
-};
-
 CT.map.Map = CT.Class({
 	CLASSNAME: "CT.map.Map",
 	markers: {},
@@ -34,8 +22,8 @@ CT.map.Map = CT.Class({
 		this.map.data.loadGeoJSON(gj);
 	},
 	bounds: function(sw, ne) {
-		return new google.maps.LatLngBounds(CT.map.latlng(sw),
-			CT.map.latlng(ne));
+		return new google.maps.LatLngBounds(CT.map.util.latlng(sw),
+			CT.map.util.latlng(ne));
 	},
 	frame: function(m1, m2) {
 		var p1 = m1.getPosition(),
@@ -50,7 +38,7 @@ CT.map.Map = CT.Class({
 	},
 	_build: function() {
 		var k;
-		this.opts.center = CT.map.latlng(this.opts.center);
+		this.opts.center = CT.map.util.latlng(this.opts.center);
 		this.map = new google.maps.Map(this.opts.node, this.opts);
 		for (k in this.opts.markers)
 			this.addMarker(this.opts.markers[k]);

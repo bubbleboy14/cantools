@@ -40,7 +40,7 @@ CT.map.DOMMarker = CT.Class({
 CT.map.Marker = CT.Class({
 	CLASSNAME: "CT.map.Marker",
 	_converters: {
-		position: CT.map.latlng
+		position: CT.map.util.latlng
 	},
 	add: function(map) {
 		this.opts.map = map;
@@ -95,7 +95,7 @@ CT.map.Marker = CT.Class({
 			icon: "http://maps.google.com/mapfiles/ms/icons/purple-dot.png",
 			listeners: opts.info && { click: this.showInfo } || {}
 		});
-		opts.position = CT.map.latlng(opts.position || CT.map.addr2latlng(opts.address));
+		opts.position = CT.map.util.latlng(opts.position || CT.map.util.addr2latlng(opts.address));
 		opts.content ? this._buildCustomMarker() : this._buildMarker();
 		this._buildWrappers();
 		if (this.opts.map)
