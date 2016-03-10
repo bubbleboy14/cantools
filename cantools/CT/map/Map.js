@@ -1,8 +1,18 @@
 CT.map.Map = CT.Class({
 	CLASSNAME: "CT.map.Map",
 	markers: {},
-	lines: {},
-	shapes: {},
+	addTriggers: function(data, dtype, datacb, newcb, mlist) {
+		var marker = this.addMarker;
+        mlist = mlist || CT.dom.id("map" + dtype + "s");
+        newcb && mlist.appendChild(CT.panel.trigger({"title": "new " + dtype}, newcb));
+        CT.panel.triggerList(data.map(function(d) {
+            d = datacb(d);
+            d.marker = marker(d);
+            return d;
+        }), function(d) {
+            d.marker.showInfo();
+        }, mlist);
+    },
 	addMarker: function(data) {
 		var m = this.markers[data.key] = new CT.map.Marker(data);
 		m.add(this.map);
