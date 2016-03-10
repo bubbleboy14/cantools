@@ -5,8 +5,9 @@ CT.map.Map = CT.Class({
 		var marker = this.addMarker;
 		mlist = mlist || CT.dom.id("map" + dtype + "s");
 		newcb && mlist.appendChild(CT.panel.trigger({"title": "new " + dtype}, newcb));
-		CT.panel.triggerList(data.map(function(d) {
-			d = datacb(d);
+		CT.panel.triggerList(data.map(function(orig) {
+			d = datacb(orig);
+			d.key = orig.key;
 			d.marker = marker(d);
 			return d;
 		}), function(d) {
