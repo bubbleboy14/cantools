@@ -12,5 +12,9 @@ CT.map.util = {
 			CT.storage.set("addr2latlng", c);
 		}
 		return c[addr];
+	},
+	bounds: function(sw, ne) {
+		return new google.maps.LatLngBounds(CT.map.util.latlng(sw),
+			CT.map.util.latlng(ne));
 	}
 };

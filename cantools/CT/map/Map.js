@@ -8,27 +8,13 @@ CT.map.Map = CT.Class({
 		m.add(this.map);
 		return m;
 	},
-	addLine: function(data) {
-		var m = this.lines[data.key] = new CT.map.Line(data);
-		m.add(this.map);
-		return m;
-	},
-	addShape: function(data) {
-		var m = this.shapes[data.key] = new CT.map.Shape(data);
-		m.add(this.map);
-		return m;
-	},
 	geoJson: function(gj) { // path or json obj (right?)
 		this.map.data.loadGeoJSON(gj);
-	},
-	bounds: function(sw, ne) {
-		return new google.maps.LatLngBounds(CT.map.util.latlng(sw),
-			CT.map.util.latlng(ne));
 	},
 	frame: function(m1, m2) {
 		var p1 = m1.getPosition(),
 			p2 = m2.getPosition();
-		this.map.fitBounds(this.bounds({
+		this.map.fitBounds(CT.map.util.bounds({
 			latitude: Math.min(p1.lat(), p2.lat()),
 			longitude: Math.min(p1.lng(), p2.lng())
 		}, {
