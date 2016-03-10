@@ -11,7 +11,13 @@ setup(
     long_description='This is the application-neutral backbone of CivilActionNetwork.org. It provides basic functions for interacting with the DOM, fixes for common browser inconsistencies, and a simple model for communication with a Python backend.',
     packages=[
         'cantools',
-        'cantools.scripts'
+        'cantools.db',
+        'cantools.db.gae',
+        'cantools.db.sql',
+        'cantools.scripts',
+        'cantools.util',
+        'cantools.web',
+        'cantools.web.dez_server'
     ],
     zip_safe = False,
     install_requires = [
