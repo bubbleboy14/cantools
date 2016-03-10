@@ -58,7 +58,10 @@ CT.map.Map = CT.Class({
 		if (this.opts.geojson)
 			this.geoJson(this.opts.geojson);
 	},
-	init: function(opts) { // required: node, center{lat,lng}
+	refresh: function() {
+		google.maps.event.trigger(this.map, 'resize');
+	},
+	init: function(opts) { // required: node
 		this.opts = opts = CT.merge(opts, {
 			zoom: 12,
 			disableDefaultUI: true,
