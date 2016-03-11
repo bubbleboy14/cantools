@@ -28,6 +28,7 @@ class Geo(object):
 					"lat": loc["lat"],
 					"lng": loc["lng"]
 				}
+			self.savecache()
 		return [self.cache[address]['lat'], self.cache[address]['lng']]
 
 	def latlng2zip(self, lat, lng):
@@ -47,6 +48,7 @@ class Geo(object):
 		if "zip" not in d:
 			d["count"] = 1
 			d["zip"] = d["lat"] and self.latlng2zip(d["lat"], d["lng"])
+			self.savecache()
 		else:
 			d["count"] += 1
 			log("address referenced %s times"%(d["count"],), 4)
