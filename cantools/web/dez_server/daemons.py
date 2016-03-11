@@ -11,7 +11,7 @@ from ...util import log as syslog
 sys.path.insert(0, ".") # for dynamically loading modules
 
 logger_getter = get_logger_getter("dez", syslog, config.log.allow)
-A_STATIC = { "/": "_", "/js/CT/": "js/CT" }
+A_STATIC = { "/": "_", "/js/CT/": "js/CT", "/logs/": "logs", "/logs": "logs" }
 A_CB = { "/admin": "admin" }
 
 class Response(object):
