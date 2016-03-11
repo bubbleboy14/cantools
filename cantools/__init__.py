@@ -1,6 +1,7 @@
 import util
 import config as cfgmod
 config = cfgmod.config
+import geo
 from scripts import builder, deploy, init, pubsub, start
 
 ctstart = start.go
