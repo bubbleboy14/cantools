@@ -43,8 +43,11 @@ class Builder(object):
 				mkdir("js")
 			if not os.path.isdir("css"):
 				mkdir("css")
-			if not os.path.isdir("log"):
-				mkdir("log")
+			if not os.path.isdir("logs"):
+				mkdir("logs")
+			lj = os.path.join("logs", "json")
+			if not os.path.isdir(lj):
+				mkdir(lj)
 		ctroot = os.path.join(self.cantools_path, "cantools", "cantools")
 		if self.web_backend == "gae":
 			sym(ctroot, "cantools")
