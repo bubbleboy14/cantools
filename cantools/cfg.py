@@ -80,6 +80,9 @@ handlers:
 - url: /css
   static_dir: css
 
+- url: /img
+  static_dir: img
+
 ## MODE SWITCHING -- DON'T MESS WITH (unless you know what you're doing)!
 # START mode: dynamic
 - url: /js

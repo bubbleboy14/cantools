@@ -26,7 +26,9 @@ class Builder(object):
 		os.chdir(self.pname)
 		mkdir("js")
 		mkdir("css")
+		mkdir("img")
 		mkdir("html")
+		mkdir("logs")
 
 	def make_files(self):
 		log("generating configuration", 1)
@@ -43,6 +45,8 @@ class Builder(object):
 				mkdir("js")
 			if not os.path.isdir("css"):
 				mkdir("css")
+			if not os.path.isdir("img"):
+				mkdir("img")
 			if not os.path.isdir("logs"):
 				mkdir("logs")
 			lj = os.path.join("logs", "json")
