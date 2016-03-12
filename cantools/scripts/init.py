@@ -13,11 +13,12 @@ class Builder(object):
 		self.pname = pname
 		self.cantools_path = cantools_path
 		self.web_backend = web_backend
+		self.refresh_symlinks = refresh_symlinks
 		if not refresh_symlinks:
 			self.build_dirs()
 			self.make_files()
-		self.generate_symlinks(refresh_symlinks)
 		self.vcignore()
+		self.generate_symlinks()
 		log("done! goodbye.", 1)
 
 	def build_dirs(self):
@@ -38,9 +39,9 @@ class Builder(object):
 		log("demo index page", 1)
 		cp(config.init.html%(self.pname,), os.path.join("html", "index.html"))
 
-	def generate_symlinks(self, refresh=False):
+	def generate_symlinks(self):
 		log("creating symlinks", 1)
-		if refresh:
+		if self.refresh_symlinks:
 			if not os.path.isdir("js"):
 				mkdir("js")
 			if not os.path.isdir("css"):
@@ -62,7 +63,7 @@ class Builder(object):
 
 	def vcignore(self):
 		log("configuring version control path exclusion", 1)
-		itype = raw_input("would you like to exclude symlinks and dot files from your repository? [NO/git/svn] ")
+		itype = raw_input("would you like to generate exclusion rules for symlinks and dot files (if you select svn, we will add the project to your repository first)? [NO/git/svn] ")
 		if itype == "git":
 			log("configuring git", 2)
 			cfg = config.init.vcignore["."]
@@ -72,6 +73,7 @@ class Builder(object):
 			cp("\n".join(cfg), ".gitignore")
 		elif itype == "svn":
 			log("configuring svn", 2)
+			cmd("svn add %s"%(self.pname,))
 			for root, files in config.init.vcignore.items():
 				cp("\n".join(files), "_tmp")
 				cmd("svn propset svn:ignore -F _tmp %s"%(root,))
