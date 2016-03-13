@@ -17,12 +17,21 @@ CT.modal.Modal = CT.Class({
 				n.style.opacity = 0;
 				(parent || document.body).appendChild(n);
 				setTimeout(function() {
-					CT.dom.trans(n, "opacity", "1");
+					CT.trans.trans({
+						node: n,
+						property: "opacity",
+						value: 1
+					});
 				}, 100);
 			};
 			n.hide = function() {
-				CT.dom.trans(n, "opacity", "0", function() {
-					CT.dom.remove(n);
+				CT.trans.trans({
+					node: n,
+					property: "opacity",
+					value: 0,
+					cb: function() {
+						CT.dom.remove(n);
+					}
 				});
 			};
 		},
@@ -56,16 +65,16 @@ CT.modal.Modal = CT.Class({
 			n.show = function(parent) {
 				(parent || document.body).appendChild(n);
 				setTimeout(function() {
-					ver && CT.dom.trans(n, "top", n.top_in);
-					hor && CT.dom.trans(n, "left", n.left_in);
+					ver && CT.trans.trans({ node: n, property: "top", value: n.top_in });
+					hor && CT.trans.trans({ node: n, property: "left", value: n.left_in });
 				}, 100);
 			};
 			n.hide = function() {
-				ver && CT.dom.trans(n, "top", n.top_out);
-				hor && CT.dom.trans(n, "left", n.left_out);
-				CT.dom.trans(null, null, null, function() {
+				ver && CT.trans.trans({ node: n, property: "top", value: n.top_out });
+				hor && CT.trans.trans({ node: n, property: "left", value: n.left_out });
+				CT.trans.trans({ cb: function() {
 					CT.dom.remove(n);
-				});
+				}});
 			};
 		}
 	},

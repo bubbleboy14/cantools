@@ -664,52 +664,5 @@ CT.dom = {
 	"each": function(p, f) {
 		for (var i = 0; i < p.childNodes.length; i++)
 			f(p.childNodes[i]);
-	},
-
-	// transitions
-	"_vender_prefixes": [
-	    "-webkit-",
-	    "-moz-",
-	    "-ms-",
-	    "-o-",
-	    ""
-	],
-	"setVenderPrefixed": function(node, property, value) {
-	    for (var i = 0; i < CT.dom._vender_prefixes.length; i++)
-	        node.style[CT.dom._vender_prefixes[i] + property] = value;
-	},
-	"_tswap": { "transform": "-webkit-transform" }, // mobile safari transitions
-	"trans": function(node, property, value, cb, duration, ease, prefix) {
-	    duration = duration || 500;
-	    property && CT.dom.setVenderPrefixed(node, "transition",
-	        (CT.dom._tswap[property] || property)
-	        + " " + duration + "ms " + (ease || "ease-in-out"));
-	    if (cb) {
-	        var transTimeout, wrapper = function () {
-	            property && CT.dom.setVenderPrefixed(node, "transition", "");
-	            clearTimeout(transTimeout);
-	            transTimeout = null;
-	            if (node) { // node is optional for use as a timer
-		            node.removeEventListener("webkitTransitionEnd", wrapper, false);
-		            node.removeEventListener("mozTransitionEnd", wrapper, false);
-		            node.removeEventListener("oTransitionEnd", wrapper, false);
-		            node.removeEventListener("transitionend", wrapper, false);
-		        }
-	            cb();
-	        }
-	        if (node) {
-		        node.addEventListener("webkitTransitionEnd", wrapper, false);
-		        node.addEventListener("mozTransitionEnd", wrapper, false);
-		        node.addEventListener("oTransitionEnd", wrapper, false);
-		        node.addEventListener("transitionend", wrapper, false);
-		    }
-	        transTimeout = setTimeout(wrapper, duration);
-	    }
-	    if (value && property) {
-	        if (prefix)
-	            CT.dom.setVenderPrefixed(node, property, value);
-	        else
-	            node.style[property] = value;
-	    }
 	}
 };

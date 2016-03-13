@@ -14,10 +14,17 @@ CT.mobile = {
             tline = "scale(" + (w / CT.dom.ALLNODE.clientWidth) + ")";
         CT.dom.setVenderPrefixed(CT.dom.ALLNODE, "transform-origin",
             o ? o : (w < CT.dom.ALLNODE.clientWidth ? "0% 0%" : "50% 0%"));
-        CT.dom.trans(CT.dom.ALLNODE, "transform", t ? t : tline, function() {
-            n && n.scrollIntoView(true, { "behavior": "smooth" }); // for initial load
-            cb && cb();
-        }, 1000, null, true);
+        CT.trans.trans({
+            node: CT.dom.ALLNODE,
+            property: "transform",
+            value: t && t || tline,
+            duration: 1000,
+            prefix: true,
+            cb: function() {
+                n && n.scrollIntoView(true, { "behavior": "smooth" }); // for initial load
+                cb && cb();
+            }
+        });
     },
     "fitAndSnap": function(n, cb) {
         if (CT.dom.ALLNODE.mobileNode) // smoothest way once we're loaded

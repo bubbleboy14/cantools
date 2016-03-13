@@ -13,6 +13,7 @@ CT.require("CT.parse");
 CT.require("CT.pubsub");
 CT.require("CT.recaptcha");
 CT.require("CT.storage");
+CT.require("CT.trans");
 CT.require("CT.upload");
 CT.require("CT.video");
 
