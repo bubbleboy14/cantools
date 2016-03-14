@@ -2,6 +2,9 @@ cfg = {
 	"log": {
 		"allow": ["info", "log", "error"]
 	},
+	"geo": {
+		"test": False
+	},
 	"admin": {
 		"host": "localhost",
 		"port": 8002

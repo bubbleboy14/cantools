@@ -1,6 +1,7 @@
 import os, urllib, json
 from cantools.web import fetch
 from cantools.util import log, read, writejson
+from cantools import config
 
 zcpath = os.path.join("logs", "json", "geo")
 
@@ -42,6 +43,9 @@ class Geo(object):
 
 	def addr2zip(self, addr):
 		log("finding zip for '%s'"%(addr,), 3)
+		if config.geo.test:
+			log("test mode! returning nonsense :)")
+			return '12345'
 		if addr not in self.cache:
 			self.address2latlng(addr)
 		d = self.cache[addr]
