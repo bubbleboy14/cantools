@@ -12,7 +12,7 @@ CT.mobile = {
                 + toff.left + "px,-" + toff.top + "px)";
         else // stretched
             tline = "scale(" + (w / CT.dom.ALLNODE.clientWidth) + ")";
-        CT.dom.setVenderPrefixed(CT.dom.ALLNODE, "transform-origin",
+        CT.trans.setVenderPrefixed(CT.dom.ALLNODE, "transform-origin",
             o ? o : (w < CT.dom.ALLNODE.clientWidth ? "0% 0%" : "50% 0%"));
         CT.trans.trans({
             node: CT.dom.ALLNODE,
