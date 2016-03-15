@@ -16,7 +16,10 @@ CT.map.Map = CT.Class({
 	},
 	addMarker: function(data) {
 		var m = this.markers[data.key] = new CT.map.Marker(data);
-		m.add(this.map);
+		if (this.map)
+			m.add(this.map);
+		else
+			this.opts.markers[d.key] = d;
 		return m;
 	},
 	geoJson: function(gj) { // path or json obj (right?)
@@ -39,10 +42,6 @@ CT.map.Map = CT.Class({
 		this.map = new google.maps.Map(this.opts.node, this.opts);
 		for (k in this.opts.markers)
 			this.addMarker(this.opts.markers[k]);
-		for (k in this.opts.lines)
-			this.addLine(this.opts.lines[k]);
-		for (k in this.opts.shapes)
-			this.addShape(this.opts.shapes[k]);
 		if (this.opts.geojson)
 			this.geoJson(this.opts.geojson);
 	},
@@ -54,9 +53,7 @@ CT.map.Map = CT.Class({
 			zoom: 12,
 			disableDefaultUI: true,
 			zoomControl: true,
-			markers: {},
-			lines: {},
-			shapes: {}
+			markers: {}
 		});
 		if (opts.center)
 			this._build();
