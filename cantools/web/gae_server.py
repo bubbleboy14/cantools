@@ -1,3 +1,14 @@
+try:
+    import google
+except:
+    import sys
+    from util import config
+    sys.path.append(config.cache("\n".join([
+        "can't find google - please enter the path to google_appengine",
+        " - if you DON'T have a copy, get one here:",
+        "   https://cloud.google.com/appengine/downloads#Google_App_Engine_SDK_for_Python",
+        " - if you DO have a copy, enter the path to it below",
+        "so what's the path? "]), password=False))
 from google.appengine.runtime.apiproxy_errors import RequestTooLargeError
 from google.appengine.api import mail
 from util import *
