@@ -72,9 +72,9 @@ class KeyWrapper(object):
 	def __nonzero__(self):
 		return bool(self.value)
 
-	def get(self):
+	def get(self, session=None):
 		from cantools.db import get
-		return get(self.value)
+		return get(self.value, session)
 
 	def delete(self):
 		self.get().rm() # should be more efficient way...
