@@ -19,7 +19,8 @@ cfg = {
 		"gae": "data.db",
 		"dez": "sqlite:///data.db",
 		"test": "sqlite:///data_test.db",
-		"echo": False
+		"echo": False,
+		"public": True # read from db without credentials via _db.py web handler
 	},
 	"encode": False,
 	"mailer": None, # (override w/ MAILER)
@@ -64,7 +65,7 @@ cfg = {
 	""",
 	"init": {
 		"vcignore": {
-			".": ["*pyc", "*~", ".ctp", "_", "admin.py"],
+			".": ["*pyc", "*~", ".ctp", "_", "admin.py", "_db.py"],
 			"css": ["ct.css"],
 			"js": ["CT"]
 		},
@@ -85,6 +86,9 @@ handlers:
 
 - url: /img
   static_dir: img
+
+- url: /_db
+  script: _db.py
 
 ## MODE SWITCHING -- DON'T MESS WITH (unless you know what you're doing)!
 # START mode: dynamic

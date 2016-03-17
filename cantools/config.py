@@ -58,7 +58,7 @@ def _getpass(val, ptype):
 
 config = Config(cfg)
 for key, val in [[term.strip() for term in line.split(" = ")] for line in read("ct.cfg", True)]:
-	if key in ["ENCODE", "DB_ECHO", "GEO_TEST"]:
+	if key in ["ENCODE", "DB_ECHO", "DB_PUBLIC", "GEO_TEST"]:
 		val = val == "True"
 	if key == "DB":
 		config.db.update(config.web.server, _getpass(val, "db"))
@@ -74,6 +74,7 @@ for key, val in [[term.strip() for term in line.split(" = ")] for line in read("
 			for part in path.split("_"):
 				c = getattr(c, part)
 		c.update(target, val)
+config.update("db_public", config.db.public)
 config.update("db_echo", config.db.echo)
 config.update("db_test", config.db.test)
 config.update("db", config.db[config.web.server])
