@@ -23,7 +23,7 @@ CT.db = {
 		CT.net.post("/_db", qdata, null, cb);
 	},
 	init: function(opts) {
-		this.opts = opts = CT.merge(opts, {
+		CT.db._opts = opts = CT.merge(opts, {
 			panel_key: "db", // required: builder(). also why not: post_pager
 		});
 		CT.net.post("/_db", { "action": "schema" }, null, function(schema) {
@@ -42,7 +42,7 @@ CT.db = {
 		};
 	},
 	pager: function(modelName, order, filters, k, pnode, cnode) {
-		var o = this.opts, key = k || modelName,
+		var o = CT.db._opts, key = k || modelName,
 			cnode = cnode || CT.dom.id(o.panel_key + "content" + key);
 		cnode.appendChild(CT.panel.pager(o.builder(modelName),
 			CT.db._refill(modelName, order, filters), 10, "rcol", "data", key));
