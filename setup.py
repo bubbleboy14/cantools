@@ -15,6 +15,7 @@ setup(
         'cantools.db.gae',
         'cantools.db.sql',
         'cantools.scripts',
+        'cantools.scripts.pubsub',
         'cantools.util',
         'cantools.web',
         'cantools.web.dez_server'
