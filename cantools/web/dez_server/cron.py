@@ -27,6 +27,7 @@ class Rule(object):
 
     def register_handler(self, args, kwargs):
         self.logger.info("register handler: %s"%(self.url,))
+        kwargs["threaded"] = True
         self.cb = lambda : do_respond(*args, **kwargs)
 
     def trigger(self):
