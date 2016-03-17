@@ -78,13 +78,19 @@ CT.modal.Modal = CT.Class({
 			};
 		}
 	},
+	"on": {
+		"show": function() {},
+		"hide": function() {}
+	},
 	"hide": function() {
 		this.node.hide();
 		this.visible = false;
+		this.on.hide();
 	},
 	"show": function(n) {
 		this.node.show(n);
 		this.visible = true;
+		this.on.show();
 	},
 	"addClose": function() {
 		this.add(CT.dom.node(CT.dom.link("X", this.hide), "div", "right pointer"));
@@ -136,6 +142,11 @@ CT.modal.Prompt = CT.Class({
 		},
 		"multiple-choice": function(data) {
 			return CT.dom.choices(data, true);
+		}
+	},
+	"on": {
+		"show": function() {
+			this.input.focus();
 		}
 	},
 	"submit": function() {
