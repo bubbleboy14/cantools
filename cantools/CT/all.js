@@ -2,6 +2,7 @@ CT.require("CT.Pager");
 CT.require("CT.align");
 CT.require("CT.canvas.all");
 CT.require("CT.data");
+CT.require("CT.db");
 CT.require("CT.drag");
 CT.require("CT.dom");
 CT.require("CT.gesture");
