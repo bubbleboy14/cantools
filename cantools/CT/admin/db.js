@@ -1,17 +1,19 @@
 CT.admin.db = {
 	"init": function() {
 		CT.admin.db.starred = CT.dom.id("dbstarred");
-		CT.db.init({
-			cb: function(schema) {
-				var skeys = Object.keys(schema);
-				CT.panel.simple(skeys, "db");
-				skeys.forEach(function(modelName) {
-					CT.db.pager(modelName);
-				});
-			},
-			builder: CT.admin.db._build,
-			post_pager: CT.admin.db._post_pager
-		});
+		CT.admin.core.init("db", function() {
+			CT.db.init({
+				cb: function(schema) {
+					var skeys = Object.keys(schema);
+					CT.panel.simple(skeys, "db");
+					skeys.forEach(function(modelName) {
+						CT.db.pager(modelName);
+					});
+				},
+				builder: CT.admin.db._build,
+				post_pager: CT.admin.db._post_pager
+			});
+		}, true);
 	},
 	"_post_pager": function(key, modelName) {
 		var pnode = CT.dom.id("dbpanel" + key);
