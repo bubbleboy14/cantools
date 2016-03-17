@@ -10,19 +10,20 @@ CT.admin.db = {
 				});
 			},
 			builder: CT.admin.db._build,
-			post_pager: function(key, modelName) {
-				var pnode = CT.dom.id("dbpanel" + key);
-				pnode.insertBefore(CT.dom.node([
-					CT.dom.button("new query", function() {
-						CT.db.query(modelName);
-					}),
-					CT.dom.button("new " + modelName, function() {
-						CT.admin.db.starLink(CT.db.getDefaults(modelName,
-							{ "label": "new " + modelName }), modelName).onclick();
-					})
-				], "div", "right"), pnode.firstChild);
-			}
+			post_pager: CT.admin.db._post_pager
 		});
+	},
+	"_post_pager": function(key, modelName) {
+		var pnode = CT.dom.id("dbpanel" + key);
+		pnode.insertBefore(CT.dom.node([
+			CT.dom.button("new query", function() {
+				CT.db.query(modelName);
+			}),
+			CT.dom.button("new " + modelName, function() {
+				CT.admin.db.starLink(CT.db.getDefaults(modelName,
+					{ "label": "new " + modelName }), modelName).onclick();
+			})
+		], "div", "right"), pnode.firstChild);
 	},
 	"_build": function(modelName) {
 		return function(obj) {
