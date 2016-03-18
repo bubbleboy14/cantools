@@ -7,7 +7,11 @@ modelsubs = {}
 def get_model(modelName):
     return modelsubs.get(modelName, None)
 
-def get_schema():
+def get_schema(modname=None):
+    if modname:
+        if not isinstance(modname, basestring):
+            modname = modname.__name__
+        return modelsubs[modname.lower()]._schema
     s = {}
     for key, val in modelsubs.items():
         if key != "modelbase":
