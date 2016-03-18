@@ -29,6 +29,8 @@ def _col(colClass, *args, **kwargs):
 	if colClass is DateTimeAutoStamper:
 		col.is_dt_autostamper = True
 		col.should_stamp = typeInstance.should_stamp
+	if colClass is Key:
+		col._kinds = typeInstance.kinds
 	col._ct_type = colClass.__name__.lower()
 	return col
 
@@ -83,6 +85,10 @@ class KeyWrapper(object):
 		return self.value
 
 class Key(BasicString):
+	def __init__(self, *args, **kwargs):
+		self.kinds = kwargs.pop("kinds", [kwargs.pop("kind", "*")])
+		BasicString.__init__(self, *args, **kwargs)
+
 	def process_bind_param(self, value, dialect):
 		return value and value.urlsafe()
 
