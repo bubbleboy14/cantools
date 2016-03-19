@@ -18,13 +18,17 @@ def get_schema(modname=None):
             s[key] = val._schema
     return s
 
-def get_page(modelName, limit, offset, order='index', filters=[], session=session):
+def get_page(modelName, limit, offset, order='index', filters={}, session=session):
     #SAWarning: Can't resolve label reference '-draw_num'; converting to text()
     #'-column_name' or 'column_name desc' work but give this warning
     mod = get_model(modelName)
     query = mod.query(session=session)
-    for filt in filters:
-        query.filter(getattr(mod, filt[0]) == filt[1])
+    for key, val in filters.items():
+        prop = getattr(mod, key)
+        if "%" in val:
+            query.filter(prop.like(val))
+        else:
+            query.filter(prop == val)
     return [d.data() for d in query.order(order).fetch(limit, offset)]
 
 def getall(entity=None, query=None, keys_only=False, session=session):

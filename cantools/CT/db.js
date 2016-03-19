@@ -130,13 +130,13 @@ CT.db.Query = CT.Class({
 		return CT.dom.node([selectcell, dircell]);
 	},
 	_submit: function() {
-		var order = null, filters = [], osel = this.order.firstChild;
+		var order = null, filters = {}, osel = this.order.firstChild;
 		if (osel.value != "None")
 			order = osel.nextSibling.value == "descending"
 				? "-" + osel.value : osel.value;
 		CT.dom.each(this.filters, function(fnode) {
 			var fc = fnode.firstChild;
-			filters.push([fc.value, fc.nextSibling.firstChild.getValue()]);
+			filters[fc.value] = fc.nextSibling.firstChild.getValue();
 		});
 		var key = this.modelName + "query" + this.id;
 		CT.panel.add(this.modelName + " (" + this.id + ")",

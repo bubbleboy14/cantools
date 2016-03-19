@@ -17,7 +17,7 @@ def response():
 		mname = cgi_get("modelName", required=False)
 		if mname:
 			succeed(get_page(mname, cgi_get("limit"), cgi_get("offset"),
-				cgi_get("order", default="index"), cgi_get("filters", default=[])))
+				cgi_get("order", default="index"), cgi_get("filters", default={})))
 		else:
 			succeed(get(cgi_get("key")).data())
 	elif action == "edit":
