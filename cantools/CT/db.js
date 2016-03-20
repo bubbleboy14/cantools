@@ -1,6 +1,6 @@
 CT.db = {
 	_schema: {},
-	"key2model": function(key) {
+	key2model: function(key) {
 		return JSON.parse(atob(key)).model;
 	},
 	getSchema: function(modelName) {
