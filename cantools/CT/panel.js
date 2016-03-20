@@ -1,7 +1,7 @@
 CT.panel = {
 	"lastClicked": {},
 	"trigger": function(data, cb) {
-		var n = CT.dom.node(CT.dom.link(data.title, function() {
+		var n = CT.dom.node(CT.dom.link(data.label ||  data.title ||  data.name, function() {
 			CT.dom.each(n.parentNode, function(c) {
 				c.className = (c == n) ? "activetab" : "";
 			});
