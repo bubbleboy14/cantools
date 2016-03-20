@@ -28,7 +28,7 @@ CT.db = {
 		});
 		CT.net.post("/_db", { "action": "schema" }, null, function(schema) {
 			CT.db.setSchema(schema);
-			opts.cb(schema);
+			opts.cb && opts.cb(schema);
 		});
 	},
 	query: function(modelName) {
