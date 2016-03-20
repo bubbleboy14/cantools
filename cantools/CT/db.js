@@ -31,9 +31,10 @@ CT.db = {
 			opts.cb && opts.cb(schema);
 		});
 	},
-	query: function(modelName) {
+	query: function(modelName, transition) {
 		(new CT.modal.Modal({
-			"node": (new CT.db.Query(modelName)).node
+			"node": (new CT.db.Query(modelName)).node,
+			"transition": transition || "none"
 		})).show();
 	},
 	_refill: function(modelName, order, filters) {
