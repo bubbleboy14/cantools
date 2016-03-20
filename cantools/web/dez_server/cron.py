@@ -2,10 +2,7 @@ from rel import timeout
 from dez.logging import get_logger_getter
 from cantools import config
 from cantools.util import read
-from cantools.util import log as syslog
 from ..util import do_respond
-
-logger_getter = get_logger_getter("cron", syslog, config.log.allow)
 
 secsPerUnit = {
     "hours": 60 * 60,
@@ -17,7 +14,6 @@ secsPerUnit = {
 class Rule(object):
     def __init__(self, controller, url, rule):
         self.logger = logger_getter("Rule(%s -> %s)"%(rule, url))
-        self.cb = None
         self.controller = controller
         self.url = url
         self.rule = rule
@@ -25,18 +21,9 @@ class Rule(object):
         self.timer = timeout(None, self.trigger)
         self.parse()
 
-    def register_handler(self, args, kwargs):
-        self.logger.info("register handler: %s"%(self.url,))
-        kwargs["threaded"] = True
-        self.cb = lambda : do_respond(*args, **kwargs)
-
     def trigger(self):
-        self.logger.info("trigger")
-        if not self.cb:
-            self.logger.info("importing module: %s"%(self.url,))
-            self.controller.current = self
-            __import__(self.url[1:])
-        self.cb()
+        self.logger.info("trigger: %s %s"%(self.url, self.seconds))
+        self.controller.trigger_handler(self.url, self.url[1:])
         return True
 
     def start(self):
@@ -53,7 +40,7 @@ class Rule(object):
             self.logger.error("can't parse: %s"%(self.line,))
 
 class Cron(object):
-    def __init__(self, controller):
+    def __init__(self, controller, logger_getter):
         self.logger = logger_getter("Cron")
         self.controller = controller
         self.timers = {}

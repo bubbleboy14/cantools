@@ -18,7 +18,7 @@ def dweb():
 	return getController().web
 
 def respond(*args, **kwargs):
-	getController().current.register_handler(args, kwargs)
+	getController().register_handler(args, kwargs)
 
 def fetch(host, path="/", port=80, asjson=False, cb=None, timeout=1, async=False):
 	if async:
