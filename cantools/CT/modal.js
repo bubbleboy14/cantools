@@ -92,6 +92,9 @@ CT.modal.Modal = CT.Class({
 		this.visible = true;
 		this.on.show();
 	},
+	"showHide": function() {
+		this.visible ? this.hide() : this.show();
+	},
 	"addClose": function() {
 		this.add(CT.dom.node(CT.dom.link("X", this.hide), "div", "right pointer"));
 	},
@@ -147,7 +150,8 @@ CT.modal.Prompt = CT.Class({
 	"on": {
 		"show": function() {
 			this.input.focus();
-		}
+		},
+		"hide": function() {}
 	},
 	"submit": function() {
 		this.opts.cb(this.input.value);

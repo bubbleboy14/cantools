@@ -1,5 +1,16 @@
 CT.map.util = {
+	_try_limit: 20,
 	_llcache: CT.storage.get("addr2latlng") || {},
+	_try_a2ll: function(addr) {
+		var tries = 0, res;
+		while( tries < CT.map.util._try_limit && !res ) {
+			res = CT.net.get("http://maps.googleapis.com/maps/api/geocode/json",
+				{ address: addr }, true).results[0];
+			if (res) return res
+			tries += 1;
+			CT.log("CT.map.util.addr2latlng: can't find " + addr + " - trying again! tries: " + tries);
+		}
+	},
 	latlng: function(position) { // {lat,lng}
 		return position instanceof google.maps.LatLng
 			? position : new google.maps.LatLng(position);
@@ -7,8 +18,7 @@ CT.map.util = {
 	addr2latlng: function(addr) {
 		var c = CT.map.util._llcache;
 		if (! (addr in c)) {
-			c[addr] = CT.net.get("http://maps.googleapis.com/maps/api/geocode/json",
-				{ address: addr }, true).results[0].geometry.location;
+			c[addr] = CT.map.util._try_a2ll(addr).geometry.location;
 			CT.storage.set("addr2latlng", c);
 		}
 		return c[addr];

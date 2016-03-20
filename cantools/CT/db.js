@@ -1,6 +1,6 @@
 CT.db = {
 	_schema: {},
-	"key2model": function(key) {
+	key2model: function(key) {
 		return JSON.parse(atob(key)).model;
 	},
 	getSchema: function(modelName) {
@@ -28,12 +28,13 @@ CT.db = {
 		});
 		CT.net.post("/_db", { "action": "schema" }, null, function(schema) {
 			CT.db.setSchema(schema);
-			opts.cb(schema);
+			opts.cb && opts.cb(schema);
 		});
 	},
-	query: function(modelName) {
+	query: function(modelName, transition, showHelp) {
 		(new CT.modal.Modal({
-			"node": (new CT.db.Query(modelName)).node
+			"node": (new CT.db.Query(modelName, showHelp)).node,
+			"transition": transition || "none"
 		})).show();
 	},
 	_refill: function(modelName, order, filters) {
@@ -106,6 +107,7 @@ CT.db.Query = CT.Class({
 	CLASSNAME: "CT.db.Query",
 	_filter: function() {
 		var valcell = CT.dom.node(null, "span"), schema = this.schema,
+			compcell = CT.dom.select(["==", ">", "<", ">=", "<=", "!=", "like"]),
 			selectcell = CT.dom.select(this.filterables),
 			rmcell = CT.dom.button("remove", function() {
 				CT.dom.remove(selectcell.parentNode);
@@ -115,7 +117,7 @@ CT.db.Query = CT.Class({
 				CT.db.edit.input(selectcell.value, schema[selectcell.value]));
 		};
 		selectcell.onchange();
-		this.filters.appendChild(CT.dom.node([selectcell, valcell, rmcell]));
+		this.filters.appendChild(CT.dom.node([selectcell, compcell, valcell, rmcell]));
 	},
 	_order: function() {
 		var selectcell = CT.dom.select(["None"].concat(this.filterables)),
@@ -130,13 +132,18 @@ CT.db.Query = CT.Class({
 		return CT.dom.node([selectcell, dircell]);
 	},
 	_submit: function() {
-		var order = null, filters = [], osel = this.order.firstChild;
+		var order = null, filters = {}, osel = this.order.firstChild;
 		if (osel.value != "None")
 			order = osel.nextSibling.value == "descending"
 				? "-" + osel.value : osel.value;
 		CT.dom.each(this.filters, function(fnode) {
-			var fc = fnode.firstChild;
-			filters.push([fc.value, fc.nextSibling.firstChild.getValue()]);
+			var propcell = fnode.firstChild,
+				compcell = propcell.nextSibling,
+				valcell = compcell.nextSibling;
+			filters[propcell.value] = {
+				comparator: compcell.value,
+				value: valcell.firstChild.getValue()
+			};
 		});
 		var key = this.modelName + "query" + this.id;
 		CT.panel.add(this.modelName + " (" + this.id + ")",
@@ -156,6 +163,8 @@ CT.db.Query = CT.Class({
 				CT.dom.node("Filters", "span", "big bold"),
 				CT.dom.button("add", this._filter)
 			]),
+			CT.dom.node("Select 'like' comparator for values such as 'MO%' (meaning 'starts with MO')",
+				"div", this.showHelp && "italic" || "hidden"),
 			this.filters,
 			CT.dom.button("submit", this._submit)
 		]);
@@ -166,10 +175,11 @@ CT.db.Query = CT.Class({
 			if (CT.db.edit.isSupported(this.schema[k]))
 				this.filterables.push(k);
 	},
-	init: function(modelName) {
+	init: function(modelName, showHelp) {
 		this.id = CT.db.Query._id;
 		CT.db.Query._id += 1;
 		this.modelName = modelName;
+		this.showHelp = showHelp;
 		this.schema = CT.db.getSchema(modelName);
 		this._filterables();
 		this._build();

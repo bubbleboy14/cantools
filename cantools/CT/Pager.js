@@ -43,8 +43,7 @@ CT.Pager = CT.Class({
 			CT.dom[((this.offset + this.limit) >= this.max) ? "hide" : "show"](this.next, "inline");
 	},
 	"_render": function() {
-		this.content.innerHTML = "";
-		this.content.appendChild(this._renderCb(this.data.slice(this.offset,
+		CT.dom.setContent(this.content, this._renderCb(this.data.slice(this.offset,
 			this.offset + this.limit)));
 	},
 	"_refill": function(data) {

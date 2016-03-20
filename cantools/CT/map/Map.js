@@ -22,6 +22,11 @@ CT.map.Map = CT.Class({
 			this.opts.markers[d.key] = d;
 		return m;
 	},
+	clearMarkers: function() {
+		for (var k in this.markers)
+			this.markers[k].remove();
+		this.markers = {};
+	},
 	geoJson: function(gj) { // path or json obj (right?)
 		this.map.data.loadGeoJSON(gj);
 	},

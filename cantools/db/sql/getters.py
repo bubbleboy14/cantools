@@ -1,26 +1,48 @@
-import json
+import json, operator
 from base64 import b64decode
 from session import session
 
 modelsubs = {}
+operators = {
+    "==": operator.__eq__,
+    ">=": operator.__ge__,
+    "<=": operator.__le__,
+    "!=": operator.__ne__,
+    ">": operator.__gt__,
+    "<": operator.__lt__
+}
 
 def get_model(modelName):
     return modelsubs.get(modelName, None)
 
-def get_schema():
+def get_schema(modname=None):
+    if modname:
+        if not isinstance(modname, basestring):
+            modname = modname.__name__
+        return modelsubs[modname.lower()]._schema
     s = {}
     for key, val in modelsubs.items():
         if key != "modelbase":
             s[key] = val._schema
     return s
 
-def get_page(modelName, limit, offset, order='index', filters=[], session=session):
+def get_page(modelName, limit, offset, order='index', filters={}, session=session):
+    from properties import KeyWrapper
     #SAWarning: Can't resolve label reference '-draw_num'; converting to text()
     #'-column_name' or 'column_name desc' work but give this warning
+    schema = get_schema(modelName)
     mod = get_model(modelName)
     query = mod.query(session=session)
-    for filt in filters:
-        query.filter(getattr(mod, filt[0]) == filt[1])
+    for key, obj in filters.items():
+        val = obj["value"]
+        comp = obj["comparator"]
+        prop = getattr(mod, key)
+        if schema[key] == "key":
+            val = KeyWrapper(val)
+        if comp == "like":
+            query.filter(prop.like(val))
+        else:
+            query.filter(operators[comp](prop, val))
     return [d.data() for d in query.order(order).fetch(limit, offset)]
 
 def getall(entity=None, query=None, keys_only=False, session=session):
