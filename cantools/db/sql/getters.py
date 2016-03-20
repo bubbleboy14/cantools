@@ -19,13 +19,17 @@ def get_schema(modname=None):
     return s
 
 def get_page(modelName, limit, offset, order='index', filters={}, session=session):
+    from properties import KeyWrapper
     #SAWarning: Can't resolve label reference '-draw_num'; converting to text()
     #'-column_name' or 'column_name desc' work but give this warning
+    schema = get_schema(modelName)
     mod = get_model(modelName)
     query = mod.query(session=session)
     for key, val in filters.items():
         prop = getattr(mod, key)
-        if "%" in val:
+        if schema[key] == "key":
+            query.filter(prop == KeyWrapper(val))
+        elif "%" in val:
             query.filter(prop.like(val))
         else:
             query.filter(prop == val)
