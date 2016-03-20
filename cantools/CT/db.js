@@ -31,9 +31,9 @@ CT.db = {
 			opts.cb && opts.cb(schema);
 		});
 	},
-	query: function(modelName, transition) {
+	query: function(modelName, transition, showHelp) {
 		(new CT.modal.Modal({
-			"node": (new CT.db.Query(modelName)).node,
+			"node": (new CT.db.Query(modelName, showHelp)).node,
 			"transition": transition || "none"
 		})).show();
 	},
@@ -163,6 +163,8 @@ CT.db.Query = CT.Class({
 				CT.dom.node("Filters", "span", "big bold"),
 				CT.dom.button("add", this._filter)
 			]),
+			CT.dom.node("Select 'like' comparator for values such as 'MO%' (meaning 'starts with MO')",
+				"div", this.showHelp && "italic" || "hidden"),
 			this.filters,
 			CT.dom.button("submit", this._submit)
 		]);
@@ -173,10 +175,11 @@ CT.db.Query = CT.Class({
 			if (CT.db.edit.isSupported(this.schema[k]))
 				this.filterables.push(k);
 	},
-	init: function(modelName) {
+	init: function(modelName, showHelp) {
 		this.id = CT.db.Query._id;
 		CT.db.Query._id += 1;
 		this.modelName = modelName;
+		this.showHelp = showHelp;
 		this.schema = CT.db.getSchema(modelName);
 		this._filterables();
 		this._build();

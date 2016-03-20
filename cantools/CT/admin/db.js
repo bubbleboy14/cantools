@@ -19,7 +19,7 @@ CT.admin.db = {
 		var pnode = CT.dom.id("dbpanel" + key);
 		pnode.insertBefore(CT.dom.node([
 			CT.dom.button("new query", function() {
-				CT.db.query(modelName);
+				CT.db.query(modelName, "fade", true);
 			}),
 			CT.dom.button("new " + modelName, function() {
 				CT.admin.db.starLink(CT.db.getDefaults(modelName,
