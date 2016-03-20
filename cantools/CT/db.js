@@ -107,6 +107,7 @@ CT.db.Query = CT.Class({
 	CLASSNAME: "CT.db.Query",
 	_filter: function() {
 		var valcell = CT.dom.node(null, "span"), schema = this.schema,
+			compcell = CT.dom.select(["==", ">", "<", ">=", "<=", "!=", "like"]),
 			selectcell = CT.dom.select(this.filterables),
 			rmcell = CT.dom.button("remove", function() {
 				CT.dom.remove(selectcell.parentNode);
@@ -116,7 +117,7 @@ CT.db.Query = CT.Class({
 				CT.db.edit.input(selectcell.value, schema[selectcell.value]));
 		};
 		selectcell.onchange();
-		this.filters.appendChild(CT.dom.node([selectcell, valcell, rmcell]));
+		this.filters.appendChild(CT.dom.node([selectcell, compcell, valcell, rmcell]));
 	},
 	_order: function() {
 		var selectcell = CT.dom.select(["None"].concat(this.filterables)),
@@ -136,8 +137,13 @@ CT.db.Query = CT.Class({
 			order = osel.nextSibling.value == "descending"
 				? "-" + osel.value : osel.value;
 		CT.dom.each(this.filters, function(fnode) {
-			var fc = fnode.firstChild;
-			filters[fc.value] = fc.nextSibling.firstChild.getValue();
+			var propcell = fnode.firstChild,
+				compcell = propcell.nextSibling,
+				valcell = compcell.nextSibling;
+			filters[propcell.value] = {
+				comparator: compcell.value,
+				value: valcell.firstChild.getValue()
+			};
 		});
 		var key = this.modelName + "query" + this.id;
 		CT.panel.add(this.modelName + " (" + this.id + ")",

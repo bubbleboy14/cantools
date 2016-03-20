@@ -1,8 +1,16 @@
-import json
+import json, operator
 from base64 import b64decode
 from session import session
 
 modelsubs = {}
+operators = {
+    "==": operator.__eq__,
+    ">=": operator.__ge__,
+    "<=": operator.__le__,
+    "!=": operator.__ne__,
+    ">": operator.__gt__,
+    "<": operator.__lt__
+}
 
 def get_model(modelName):
     return modelsubs.get(modelName, None)
@@ -25,14 +33,16 @@ def get_page(modelName, limit, offset, order='index', filters={}, session=sessio
     schema = get_schema(modelName)
     mod = get_model(modelName)
     query = mod.query(session=session)
-    for key, val in filters.items():
+    for key, obj in filters.items():
+        val = obj["value"]
+        comp = obj["comparator"]
         prop = getattr(mod, key)
         if schema[key] == "key":
-            query.filter(prop == KeyWrapper(val))
-        elif "%" in val:
+            val = KeyWrapper(val)
+        if comp == "like":
             query.filter(prop.like(val))
         else:
-            query.filter(prop == val)
+            query.filter(operators[comp](prop, val))
     return [d.data() for d in query.order(order).fetch(limit, offset)]
 
 def getall(entity=None, query=None, keys_only=False, session=session):
