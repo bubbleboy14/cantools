@@ -26,7 +26,7 @@ class Query(object):
 			fmod = get_model(fname)
 			fprop = getattr(fmod, fkey)
 			sub = self.session.query(fprop, func.count("*").label("sub_count")).group_by(fprop).subquery()
-			self.query = self.query.outerjoin(sub, self.mod.key==getattr(sub.c, fkey)).filter(sub.c.sub_count != None)
+			self.query = self.query.join(sub, self.mod.key==getattr(sub.c, fkey))
 			prop = -sub.c.sub_count
 		return self._order(prop)
 
