@@ -5,6 +5,7 @@ if config.web.server == "gae":
 	from gae.model import *
 elif config.web.server == "dez":
 	from sql.model import *
+	from sql.lookup import inc_counter, dec_counter, refresh_counter
 else:
 	from cantools import util
 	util.error("no data backend specified")
