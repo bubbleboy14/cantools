@@ -24,7 +24,7 @@ def init_multi(instances, session=session):
 		})))
 
 def put_multi(instances, session=session):
-	batch(instance, init_multi, session)
+	batch(instances, init_multi, session)
 	session.commit()
 
 def delete_multi(instances, session=session):

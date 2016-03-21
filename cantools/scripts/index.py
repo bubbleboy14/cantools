@@ -32,8 +32,8 @@ def do_batch(chunk, reference):
 	counts[reference] += len(chunk)
 	counts["_counters"] += len(rc)
 	log("refreshed %s total"%(counts[reference],), 2)
-	log("updated %s counters"%(len(counts["_counters"]),), 2)
-	put_multi(chunk + rc)
+	log("updated %s counters"%(counts["_counters"],), 2)
+	put_multi(rc)
 	log("saved", 2)
 
 def go():
