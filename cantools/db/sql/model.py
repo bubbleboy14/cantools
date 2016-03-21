@@ -33,7 +33,9 @@ class CTMeta(DeclarativeMeta):
         modelsubs[lname] = super(CTMeta, cls).__new__(cls, name, bases, attrs)
         return modelsubs[lname]
 
-class ModelBase(declarative_base()):
+sa_dbase = declarative_base()
+
+class ModelBase(sa_dbase):
     index = Integer(primary_key=True)
     polytype = String()
     key = CompositeKey()
@@ -44,6 +46,12 @@ class ModelBase(declarative_base()):
         "with_polymorphic": "*"
     }
 
+    def __init__(self, *args, **kwargs):
+        sa_dbase.__init__(self, *args, **kwargs)
+        self._orig_fkeys = {}
+        for prop in self._schema["_kinds"]:
+            self._orig_fkeys[prop] = getattr(self, prop)
+
     def __eq__(self, other):
         return self.id() == (other and hasattr(other, "id") and other.id())
 
@@ -51,7 +59,17 @@ class ModelBase(declarative_base()):
         return not self.__eq__(other)
 
     def put(self, session=session):
-        put_multi([self], session)
+        from lookup import inc_counter, dec_counter
+        plist = [self]
+        for key, val in self._orig_fkeys.items():
+            oval = getattr(self, key)
+            if oval != val:
+                reference = "%s.%s"%(self.__tablename__, key)
+                if oval:
+                    plist.append(dec_counter(oval, reference, session=session))
+                if val:
+                    plist.append(inc_counter(val, reference, session=session))
+        put_multi(plist, session)
 
     def rm(self, commit=True, session=session):
         session.delete(self)
@@ -59,7 +77,7 @@ class ModelBase(declarative_base()):
             session.commit()
 
     def collection(self, entity_model, property_name, fetch=True, keys_only=False, data=False):
-        q = entity_model.query(getattr(entity_model, property_name) == self.index)
+        q = entity_model.query(getattr(entity_model, property_name) == self.key)
         if not fetch:
             return q
         if not data:
