@@ -17,7 +17,7 @@ class CTRefCount(ModelBase):
     def refresh(self):
         fname, fkey = self.reference.split(".")
         fmod = get_model(fname)
-        self.count = fmod.query(getattr(fmod, fkey) == self.target.key).count()
+        self.count = fmod.query(getattr(fmod, fkey) == self.target).count()
 
 def ref_counter(target, reference, session=session):
     return CTRefCount.query(CTRefCount.target == target,

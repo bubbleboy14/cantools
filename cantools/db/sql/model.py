@@ -48,6 +48,7 @@ class ModelBase(sa_dbase):
 
     def __init__(self, *args, **kwargs):
         sa_dbase.__init__(self, *args, **kwargs)
+        self._name = "%s(%s)"%(self.polytype, self.label())
         self._orig_fkeys = {}
         for prop in self._schema["_kinds"]:
             self._orig_fkeys[prop] = getattr(self, prop)

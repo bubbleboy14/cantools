@@ -2,6 +2,7 @@ import base64, json
 from datetime import datetime
 from properties import KeyWrapper
 from session import session, loadTables
+from cantools.util import batch
 
 def init_multi(instances, session=session):
 	now = datetime.now()
@@ -23,10 +24,7 @@ def init_multi(instances, session=session):
 		})))
 
 def put_multi(instances, session=session):
-	i = 0
-	while i < len(instances):
-		init_multi(instances[i:i+1000], session)
-		i += 1000
+	batch(instance, init_multi, session)
 	session.commit()
 
 def delete_multi(instances, session=session):
