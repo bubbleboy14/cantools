@@ -4,39 +4,56 @@ from properties import KeyWrapper
 from session import session, loadTables
 from cantools.util import batch
 
+def _init_entity(instance, session=session):
+    from lookup import inc_counter, dec_counter
+    puts = []
+    now = datetime.now()
+    classes = set()
+    cls = instance.__class__
+    tname = instance.__tablename__
+    if cls not in classes:
+        classes.add(cls)
+        loadTables(cls)
+    if tname != "ctrefcount":
+        for key, val in cls.__dict__.items():
+            if getattr(val, "is_dt_autostamper", False) and val.should_stamp(not instance.index):
+                setattr(instance, key, now)
+            if key in instance._orig_fkeys:
+                oval = getattr(instance, key)
+                if oval != val:
+                    reference = "%s.%s"%(tname, key)
+                    if oval:
+                        puts.append(dec_counter(oval, reference, session=session))
+                    if val:
+                        puts.append(inc_counter(val, reference, session=session))
+    return puts
+
 def init_multi(instances, session=session):
-	now = datetime.now()
-	classes = set()
-	for instance in instances:
-		cls = instance.__class__
-		if cls not in classes:
-			classes.add(cls)
-			loadTables(cls)
-		for key, val in cls.__dict__.items():
-			if getattr(val, "is_dt_autostamper", False) and val.should_stamp(not instance.index):
-				setattr(instance, key, now)
-	session.add_all(instances)
-	session.flush()
-	for instance in instances:
-		instance.key = instance.key or KeyWrapper(base64.b64encode(json.dumps({
-			"index": instance.index,
-			"model": instance.polytype
-		})))
+    lookups = []
+    for instance in instances:
+        lookups += _init_entity(instance, session)
+    session.add_all(instances + lookups)
+    session.flush()
+    for instance in instances:
+        instance.key = instance.key or KeyWrapper(base64.b64encode(json.dumps({
+            "index": instance.index,
+            "model": instance.polytype
+        })))
 
 def put_multi(instances, session=session):
-	batch(instances, init_multi, session)
-	session.commit()
+    batch(instances, init_multi, session)
+    session.commit()
 
 def delete_multi(instances, session=session):
-	for instance in instances:
-		instance.rm(False)
-	session.commit()
+    for instance in instances:
+        instance.rm(False)
+    session.commit()
 
 def edit(data, session=session):
-	from cantools.db import get, get_model
-	ent = "key" in data and get(data["key"], session) or get_model(data["modelName"])()
-	for propname, proptype in ent._schema.items():
-		if propname in data: # check proptype....
-			setattr(ent, propname, data[propname])
-	ent.put()
-	return ent
+    from cantools.db import get, get_model
+    ent = "key" in data and get(data["key"], session) or get_model(data["modelName"])()
+    for propname, proptype in ent._schema.items():
+        if propname in data: # check proptype....
+            setattr(ent, propname, data[propname])
+    ent.put()
+    return ent

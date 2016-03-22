@@ -5,9 +5,6 @@ class CTRefCount(ModelBase):
     reference = String()       # table.property (such as 'building.owner')
     count = Integer(default=0) # number of pointers
 
-    def put(self, session=session): # overrides
-        put_multi([self], session)
-
     def inc(self, amount=1):
         self.count += amount
 

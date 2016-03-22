@@ -61,17 +61,7 @@ class ModelBase(sa_dbase):
         return not self.__eq__(other)
 
     def put(self, session=session):
-        from lookup import inc_counter, dec_counter
-        plist = [self]
-        for key, val in self._orig_fkeys.items():
-            oval = getattr(self, key)
-            if oval != val:
-                reference = "%s.%s"%(self.__tablename__, key)
-                if oval:
-                    plist.append(dec_counter(oval, reference, session=session))
-                if val:
-                    plist.append(inc_counter(val, reference, session=session))
-        put_multi(plist, session)
+        put_multi([self], session)
 
     def rm(self, commit=True, session=session):
         session.delete(self)
