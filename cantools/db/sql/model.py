@@ -1,4 +1,5 @@
 from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
+from sqlalchemy import func # for module
 from query import *
 from cantools import util
 
