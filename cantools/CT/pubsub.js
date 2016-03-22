@@ -81,7 +81,6 @@ CT.pubsub = {
 				var dstring = JSON.stringify(data),
 					b64str = btoa(dstring);
 				CT.pubsub._.ws.send(b64str);
-				CT.pubsub._.log("WRITE", dstring, b64str);
 			} else
 				CT.pubsub._.queue.push(data);
 		},
