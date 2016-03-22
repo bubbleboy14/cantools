@@ -1,8 +1,24 @@
-from optparse import OptionParser
-from cantools.db import session, get_schema, get_model, put_multi, refresh_counter
+from cantools.db import session, func, get_schema, get_model, put_multi, refresh_counter
 from cantools.util import error, log, batch
 
 counts = { "_counters": 0 }
+
+def get_keys(kind, reference):
+	log("acquiring %s (%s) keys"%(kind, reference), 1)
+	mod = get_model(kind)
+	q = session.query(getattr(mod, "key"))
+	qcount = q.count()
+	log("found %s"%(qcount,), 2)
+	fname, fkey = reference.split(".")
+	fmod = get_model(fname)
+	fprop = getattr(fmod, fkey)
+	sub = session.query(fprop, func.count("*").label("sub_count")).group_by(fprop).subquery()
+	q = q.join(sub, mod.key==getattr(sub.c, fkey))
+	newcount = q.count()
+	log("filtering out %s untargetted entities"%(qcount - newcount), 2)
+	qcount = newcount
+	log("returning %s keys"%(qcount,), 2)
+	return q.all()
 
 def refmap():
 	log("compiling back reference map")
@@ -13,25 +29,19 @@ def refmap():
 			counts[reference] = 0
 			for kind in [k for k in kinds if k != "*"]: # skip wildcard for now
 				if kind not in rmap:
-					log("acquiring %s keys"%(kind,), 1)
-					rmap[kind] = {
-						"keys": session.query(getattr(get_model(kind), "key")).all(),
-						"references": []
-					}
-				rmap[kind]["references"].append(reference)
+					rmap[kind] = {}
+				rmap[kind][reference] = get_keys(kind, reference)
 	return rmap
 
-def do_batch(chunk, reference, skip_existing):
+def do_batch(chunk, reference):
 	log("refreshing %s %s keys"%(len(chunk), reference), 1)
 	i = 0
 	rc = []
 	for item in chunk: # item is single-member tuple
-		c = refresh_counter(item[0], reference, skip_existing)
-		if c:
-			rc.append(c)
-			i += 1
-			if not i % 100:
-				log("processed %s"%(i,), 3)
+		rc.append(refresh_counter(item[0], reference))
+		i += 1
+		if not i % 100:
+			log("processed %s"%(i,), 3)
 	counts[reference] += len(chunk)
 	counts["_counters"] += len(rc)
 	log("refreshed %s total"%(counts[reference],), 2)
@@ -39,22 +49,16 @@ def do_batch(chunk, reference, skip_existing):
 	put_multi(rc)
 	log("saved", 2)
 
-def go(skip_existing=False):
+def go():
 	log("indexing foreignkey references throughout database")
 	import model # load schema
-	for kind, data in refmap().items():
+	for kind, references in refmap().items():
 		log("processing table: %s"%(kind,), important=True)
-		keys = data["keys"]
-		for reference in data["references"]:
-			batch(keys, do_batch, reference, skip_existing)
+		for reference, keys in references.items():
+			batch(keys, do_batch, reference)
 	tcount = sum(counts.values()) - counts["_counters"]
 	log("refreshed %s rows and updated %s counters"%(tcount, counts["_counters"]), important=True)
 	log("goodbye")
 
 if __name__ == "__main__":
-	parser = OptionParser("ctindex [-s]")
-	parser.add_option("-s", "--skip_existing", action="store_true",
-		dest="skip_existing", default=False,
-		help="skip existing indices (good for resuming an interrupted job)")
-	options, args = parser.parse_args()
-	go(options.skip_existing)
+	go()
