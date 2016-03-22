@@ -34,8 +34,7 @@ def dec_counter(target, reference, amount=1, session=session):
     rc.dec(amount)
     return rc
 
-def refresh_counter(target, reference, skip_existing=False, session=session):
+def refresh_counter(target, reference, session=session):
     rc = ref_counter(target, reference, session)
-    if not (skip_existing and rc.key):
-        rc.refresh()
-        return rc
+    rc.refresh()
+    return rc
