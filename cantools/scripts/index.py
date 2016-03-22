@@ -1,5 +1,7 @@
-from cantools.db import session, func, get_schema, get_model, put_multi, refresh_counter
 from cantools.util import error, log, batch
+from cantools import config
+if config.web.server == "dez":
+	from cantools.db import session, func, get_schema, get_model, put_multi, refresh_counter
 
 counts = { "_counters": 0 }
 
@@ -50,6 +52,8 @@ def do_batch(chunk, reference):
 	log("saved", 2)
 
 def go():
+	if config.web.server != "dez":
+		error("ctindex only available for dez projects")
 	log("indexing foreignkey references throughout database")
 	import model # load schema
 	for kind, references in refmap().items():
