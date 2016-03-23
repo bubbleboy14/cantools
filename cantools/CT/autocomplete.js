@@ -1,11 +1,7 @@
 CT.autocomplete.Guesser = CT.Class({
-	data: [],
+	CLASSNAME: "CT.autocomplete.Guesser",
 	_doNothing: function() {},
 	_returnTrue: function() { return true; },
-	_handleGuess: function(response_data) {
-		this.data = CT.data.uniquify(this.data.concat(response_data));
-		this._update();
-	},
 	expand: function(cb) {
 		this.viewing = true;
 		this.node.className = "autocomplete autocomplete-open";
@@ -39,11 +35,12 @@ CT.autocomplete.Guesser = CT.Class({
 			this.tapTag(tagName);
 		}.bind(this);
 	},
-	_update: function() {
-		this.data.forEach(function(d) {
-			if (!CT.dom.id("ac" + d))
-				this.addTag(d);
-		});
+	_upOne: function(d) {
+		if (!CT.dom.id("ac" + d.label))
+			this.addTag(d.label);
+	},
+	_update: function(data) {
+		data.forEach(this._upOne);
 	},
 	_onUp: function(e) {
 		if (!this.viewing) {
@@ -67,7 +64,7 @@ CT.autocomplete.Guesser = CT.Class({
 			this.opts.enterCb();
 		} else if (this.input.value) {
 			var tagfrag = this.input.value.toLowerCase(),
-				targets = CT.dom.className(tagfrag);
+				targets = CT.dom.className(tagfrag, this.node);
 			CT.dom.mod({
 				className: "tagline",
 				hide: true
@@ -78,10 +75,10 @@ CT.autocomplete.Guesser = CT.Class({
 					show: true
 				});
 			else
-				this.guesser(tagfrag, this._handleGuess);
+				this.guesser(tagfrag, this._update);
 		} else CT.dom.mod({
 			className: "tagline",
-			show: true
+			hide: true
 		});
 		this.opts.keyUpCb();
 	},
@@ -93,9 +90,11 @@ CT.autocomplete.Guesser = CT.Class({
 			tabCb: this._doNothing,
 			guessCb: this._doNothing
 		});
+		CT.autocomplete.Guesser.id += 1;
+		this.id = CT.autocomplete.Guesser.id;
 		this.input = opts.input;
 		this.tapper = opts.tapCb;
-		this.guesser = opts.guessCb;
+		this.guesser = this.guesser || opts.guessCb;
 		var ipos = CT.align.offset(this.input);
 		this.node = CT.dom.node(CT.dom.node(), null, "autocomplete hider", null, null, {
 			position: "absolute",
@@ -104,10 +103,23 @@ CT.autocomplete.Guesser = CT.Class({
 			left: (ipos.left + 2) + "px"
 		});
 		document.body.appendChild(this.node);
-		this._update();
 		CT.drag.makeDraggable(this.node, { constraint: "horizontal" });
 		CT.gesture.listen("down", this.input, this._returnTrue);
 		CT.gesture.listen("up", this.input, this._onUp);
 		this.input.onkeyup = this._onKeyUp;
 	}
 });
+CT.autocomplete.Guesser.id = 0;
+
+CT.autocomplete.DBGuesser = CT.Class({
+	CLASSNAME: "CT.autocomplete.DBGuesser",
+	guesser: function(frag) {
+		CT.log("guessing: " + frag);
+		var filters = {};
+		filters[this.opts.property] = {
+			comparator: "like",
+			value: frag + "%"
+		};
+		CT.db.get(this.opts.modelName, this._update, null, null, null, filters);
+	}
+}, CT.autocomplete.Guesser);
