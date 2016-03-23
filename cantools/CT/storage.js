@@ -11,12 +11,20 @@ CT.storage = {
 		}
 		return CT.storage.opts;
 	},
+	"_jsp": function(s) {
+		try {
+			return JSON.parse(s);
+		} catch(err) {
+			CT.log("CT.storage: JSON.parse failure -- returning null");
+			return null;
+		}
+	},
 	"get": function(key) {
 		var opts = CT.storage.init(),
 			val = opts.backend.getItem(key);
 		if (opts.compress)
 			val = LZString.decompress(val);
-		return opts.json ? (val ? JSON.parse(val) : null) : val;
+		return opts.json ? CT.storage._jsp(val) : val;
 	},
 	"set": function(key, val) {
 		var opts = CT.storage.init();
