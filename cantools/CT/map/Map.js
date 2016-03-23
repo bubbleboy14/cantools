@@ -51,7 +51,7 @@ CT.map.Map = CT.Class({
 			this.geoJson(this.opts.geojson);
 		// following two lines for firefox, basically
 		this.refresh();
-		this.maps.setCenter(this.opts.center);
+		this.map.setCenter(this.opts.center);
 	},
 	refresh: function() {
 		google.maps.event.trigger(this.map, 'resize');
