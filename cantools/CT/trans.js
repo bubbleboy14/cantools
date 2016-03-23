@@ -6,6 +6,7 @@ CT.trans = {
 		defaults: {
 			trans: {
 				duration: 500,
+				property: "*",
 				ease: "ease-in-out"
 			},
 			rotate: {
@@ -33,9 +34,9 @@ CT.trans = {
 	trans: function(opts) {
 		// opts: node, property, value, cb, duration, ease prefix
 		opts = CT.merge(opts, CT.trans._.defaults.trans);
-	    opts.property && opts.node && CT.trans.setVenderPrefixed(opts.node,
+	    opts.node && CT.trans.setVenderPrefixed(opts.node,
 	    	"transition", (CT.trans._.tswap[opts.property] || opts.property)
-	        + " " + opts.duration + "ms " + (opts.ease || "ease-in-out"));
+	        + " " + opts.duration + "ms " + opts.ease);
 	    if (opts.cb) {
 	        var transTimeout, wrapper = function () {
 	            opts.property && CT.trans.setVenderPrefixed(opts.node, "transition", "");
@@ -51,7 +52,7 @@ CT.trans = {
         	});
 	        transTimeout = setTimeout(wrapper, opts.duration);
 	    }
-	    if (opts.property) {
+	    if (opts.property && opts.property != "*") {
 	        if (opts.prefix)
 	            CT.trans.setVenderPrefixed(opts.node, opts.property, opts.value);
 	        else
