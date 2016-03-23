@@ -8,6 +8,17 @@ CT.db = {
 	},
 	setSchema: function(schema) {
 		CT.db._schema = schema;
+		var s, p, ref, rmap = CT.db._rmap = {};
+		for (s in schema) {
+			for (p in schema[s]._kinds) {
+				ref = s + "." + p;
+				schema[s]._kinds[p].forEach(function(k) {
+					if (! (k in rmap) )
+						rmap[k] = [];
+					rmap[k].push(ref);
+				});
+			}
+		}
 	},
 	get: function(modelName, cb, limit, offset, order, filters) {
 		var qdata = {
@@ -120,7 +131,7 @@ CT.db.Query = CT.Class({
 		this.filters.appendChild(CT.dom.node([selectcell, compcell, valcell, rmcell]));
 	},
 	_order: function() {
-		var selectcell = CT.dom.select(["None"].concat(this.filterables)),
+		var selectcell = CT.dom.select(["None"].concat(this.filterables).concat(CT.db._rmap[this.modelName])),
 			dircell = CT.dom.select(["ascending", "descending"]);
 		dircell.className = "hidden";
 		selectcell.onchange = function() {
