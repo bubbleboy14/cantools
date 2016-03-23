@@ -145,6 +145,29 @@
 .w280 {
     width: 280px;
 }
+/* autocomplete classes */
+.autocomplete {
+  z-index: 4;
+  position: absolute;
+  height: 0px;
+  background: white;
+  text-align: left;
+  overflow-y: scroll;
+  -webkit-transition: height 300ms ease-out;
+}
+.autocomplete div div {
+  padding: 5px 15px;
+}
+.autocomplete div div:active {
+  color: white;
+  background-color: #00aeef;
+}
+.autocomplete-open {
+  overflow-x: hidden;
+}
+.hider {
+    visibility: hidden;
+}
 
 /* required CT ids */
 #top_buttons {
