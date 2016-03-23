@@ -35,3 +35,6 @@ def refresh_counter(target, reference, session=session):
     rc = ref_counter(target, reference, session)
     rc.refresh()
     return rc
+
+def refcount_subq(reference, session=session):
+    return session.query(CTRefCount.target, CTRefCount.count).filter(CTRefCount.reference == reference).subquery()
