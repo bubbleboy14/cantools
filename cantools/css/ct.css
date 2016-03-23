@@ -149,9 +149,10 @@
 .autocomplete {
   z-index: 4;
   position: absolute;
-  height: 0px;
+  max-height: 0px;
   background: white;
   text-align: left;
+  overflow-x: hidden;
   overflow-y: scroll;
   -webkit-transition: height 300ms ease-out;
 }
@@ -163,7 +164,7 @@
   background-color: #00aeef;
 }
 .autocomplete-open {
-  overflow-x: hidden;
+    max-height: 200px;
 }
 .hider {
     visibility: hidden;

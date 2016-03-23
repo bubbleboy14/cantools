@@ -96,16 +96,18 @@ CT.autocomplete.Guesser = CT.Class({
 		this.input = opts.input;
 		this.tapper = opts.tapCb;
 		this.guesser = opts.guessCb;
-		var nstyle = CT.align.offset(this.input);
-		nstyle.top += 20;
-		nstyle.width = this.input.clientWidth;
-		nstyle.position = "absolute";
-		this.node = CT.dom.node(null, null, "autocomplete hider", null, null, nstyle);
-		this.node.appendChild(CT.dom.node());
+		var ipos = CT.align.offset(this.input);
+		this.node = CT.dom.node(CT.dom.node(), null, "autocomplete hider", null, null, {
+			position: "absolute",
+			width: (this.input.clientWidth + 2) + "px",
+			top: (ipos.top + 22) + "px",
+			left: (ipos.left + 2) + "px"
+		});
+		document.body.appendChild(this.node);
 		this._update();
 		CT.drag.makeDraggable(this.node, { constraint: "horizontal" });
-		CT.gesture.listen("down", tinput, this._returnTrue);
-		CT.gesture.listen("up", tinput, this._onUp);
+		CT.gesture.listen("down", this.input, this._returnTrue);
+		CT.gesture.listen("up", this.input, this._onUp);
 		this.input.onkeyup = this._onKeyUp;
 	}
 });
