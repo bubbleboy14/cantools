@@ -1,15 +1,13 @@
-CT.autocomplete = {};
-
 CT.autocomplete.Guesser = CT.Class({
-	data: {},
+	data: [],
 	_doNothing: function() {},
 	_returnTrue: function() { return true; },
 	_handleGuess: function(response_data) {
-		this.data = CT.merge(response_data, this.data);
+		this.data = CT.data.uniquify(this.data.concat(response_data));
 		this._update();
 	},
-	guess: function() {
-		this.guesser(this._handleGuess);
+	guess: function(tagfrag) {
+		this.guesser(tagfrag, this._handleGuess);
 	},
 	expand: function(cb) {
 		this.viewing = true;
@@ -30,12 +28,12 @@ CT.autocomplete.Guesser = CT.Class({
 			}
 		});
 	},
-	tapTag: function(tagName, insertCurrent) {
-		this.tapper(tagName, insertCurrent);
+	tapTag: function(tagName) {
+		this.tapper(tagName);
 	    this.retract();
 	},
 	addTag: function(tagName) {
-		var n = CT.dom.node(tagName, "div", "tagline");
+		var n = CT.dom.node(tagName, "div", "tagline", "ac" + tagName);
 		var tlower = tagName.toLowerCase();
 		for (var i = 1; i <= tlower.length; i++)
 			n.className += " " + tlower.slice(0, i);
@@ -45,8 +43,10 @@ CT.autocomplete.Guesser = CT.Class({
 		}.bind(this);
 	},
 	_update: function() {
-		for (var k in this.data)
-			this.addTag(this.data[k]);
+		this.data.forEach(function(d) {
+			if (!CT.dom.id("ac" + d))
+				this.addTag(d);
+		});
 	},
 	_onUp: function(e) {
 		if (!this.viewing) {
@@ -69,17 +69,19 @@ CT.autocomplete.Guesser = CT.Class({
 			this.input.blur();
 			this.opts.enterCb();
 		} else if (this.input.value) {
+			var tagfrag = tinput.value.toLowerCase(),
+				targets = CT.dom.className(tagfrag);
 			CT.dom.mod({
 				className: "tagline",
 				hide: true
 			});
-			var tagfrag = tinput.value.toLowerCase();
-			if (tagfrag.charAt(0) == "#")
-				tagfrag = tagfrag.slice(1);
-			CT.dom.mod({
-				className: tagfrag,
-				show: true
-			});
+			if (targets.length)
+				CT.dom.mod({
+					className: tagfrag,
+					show: true
+				});
+			else
+				this.guess(tagfrag);
 		} else CT.dom.mod({
 			className: "tagline",
 			show: true
