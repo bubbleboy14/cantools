@@ -6,9 +6,6 @@ CT.autocomplete.Guesser = CT.Class({
 		this.data = CT.data.uniquify(this.data.concat(response_data));
 		this._update();
 	},
-	guess: function(tagfrag) {
-		this.guesser(tagfrag, this._handleGuess);
-	},
 	expand: function(cb) {
 		this.viewing = true;
 		this.node.className = "autocomplete autocomplete-open";
@@ -69,7 +66,7 @@ CT.autocomplete.Guesser = CT.Class({
 			this.input.blur();
 			this.opts.enterCb();
 		} else if (this.input.value) {
-			var tagfrag = tinput.value.toLowerCase(),
+			var tagfrag = this.input.value.toLowerCase(),
 				targets = CT.dom.className(tagfrag);
 			CT.dom.mod({
 				className: "tagline",
@@ -81,35 +78,34 @@ CT.autocomplete.Guesser = CT.Class({
 					show: true
 				});
 			else
-				this.guess(tagfrag);
+				this.guesser(tagfrag, this._handleGuess);
 		} else CT.dom.mod({
 			className: "tagline",
 			show: true
 		});
 		this.opts.keyUpCb();
 	},
-	register: function(nodeId, tinput, opts) {
-		opts = CT.merge(opts, {
-			tabCb: function () {}
-		});
-		opts = opts || {};
-		this.input = tinput;
-		this.tapper = opts.tapCb;
-
-		var n = this.node = opts.node || CT.dom.id(nodeId);
-		n.appendChild(CT.dom.node());
-		CT.drag.makeDraggable(n, { constraint: "horizontal" });
-
-		this._update();
-		CT.gesture.listen("down", tinput, this._returnTrue);
-		CT.gesture.listen("up", tinput, this._onUp);
-		tinput.onkeyup = this._onKeyUp;
-	},
 	init: function(opts) {
-		this.opts = CT.merge(opts, {
+		opts = this.opts = CT.merge(opts, {
 			enterCb: this._doNothing,
 			keyUpCb: this._doNothing,
-			expandCb: this._doNothing
+			expandCb: this._doNothing,
+			tabCb: this._doNothing,
+			guessCb: this._doNothing
 		});
+		this.input = opts.input;
+		this.tapper = opts.tapCb;
+		this.guesser = opts.guessCb;
+		var nstyle = CT.align.offset(this.input);
+		nstyle.top += 20;
+		nstyle.width = this.input.clientWidth;
+		nstyle.position = "absolute";
+		this.node = CT.dom.node(null, null, "autocomplete hider", null, null, nstyle);
+		this.node.appendChild(CT.dom.node());
+		this._update();
+		CT.drag.makeDraggable(this.node, { constraint: "horizontal" });
+		CT.gesture.listen("down", tinput, this._returnTrue);
+		CT.gesture.listen("up", tinput, this._onUp);
+		this.input.onkeyup = this._onKeyUp;
 	}
 });
