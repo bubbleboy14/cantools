@@ -49,9 +49,20 @@ CT.map.Map = CT.Class({
 			this.addMarker(this.opts.markers[k]);
 		if (this.opts.geojson)
 			this.geoJson(this.opts.geojson);
+		// following two lines for firefox, basically
+		this.refresh();
+		this.maps.setCenter(this.opts.center);
 	},
 	refresh: function() {
 		google.maps.event.trigger(this.map, 'resize');
+	},
+	_geoSucceed: function(pos) {
+		this.opts.center = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+		this._build();
+	},
+	_geoFail: function() {
+		this.opts.center = CT.map.util.getGeoFallback();
+		this._build();
 	},
 	init: function(opts) { // required: node
 		this.opts = opts = CT.merge(opts, {
@@ -63,9 +74,6 @@ CT.map.Map = CT.Class({
 		if (opts.center)
 			this._build();
 		else
-			navigator.geolocation.getCurrentPosition(function(pos) {
-				opts.center = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-				this._build();
-			}.bind(this));
+			navigator.geolocation.getCurrentPosition(this._geoSucceed, this._geoFail);
 	}
 });

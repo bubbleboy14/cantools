@@ -20,10 +20,10 @@ CT.log.grep = function(ins, outs) {
 };
 CT.log.grep._ins = [];
 CT.log.grep._outs = [];
-
 CT.log._fix = function(a) {
 	return (typeof(a) == "object") ? JSON.stringify(a) : a;
 }
+CT.log._silent = false;
 CT.log.set = function(bool) {
 	CT.log._silent = bool;
 };

@@ -50,7 +50,7 @@ def getall(entity=None, query=None, keys_only=False, session=session):
         res = query.all()
     elif entity:
         res = entity.query(session=session).all()
-    if keys_only:
+    if keys_only: # TODO: query for keys. for now, do with query.
         return [r.key for r in res]
     return res
 

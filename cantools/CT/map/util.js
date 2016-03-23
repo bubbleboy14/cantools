@@ -11,6 +11,13 @@ CT.map.util = {
 			CT.log("CT.map.util.addr2latlng: can't find " + addr + " - trying again! tries: " + tries);
 		}
 	},
+	_geo_fallback: { lat: 37.75, lng: -122.45 },
+	setGeoFallback: function(pos) {
+		CT.map.util._geo_fallback = pos;
+	},
+	getGeoFallback: function() {
+		return CT.map.util._geo_fallback;
+	},
 	latlng: function(position) { // {lat,lng}
 		return position instanceof google.maps.LatLng
 			? position : new google.maps.LatLng(position);

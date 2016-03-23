@@ -1,4 +1,5 @@
 from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
+from sqlalchemy import func # for module
 from query import *
 from cantools import util
 
@@ -33,7 +34,9 @@ class CTMeta(DeclarativeMeta):
         modelsubs[lname] = super(CTMeta, cls).__new__(cls, name, bases, attrs)
         return modelsubs[lname]
 
-class ModelBase(declarative_base()):
+sa_dbase = declarative_base()
+
+class ModelBase(sa_dbase):
     index = Integer(primary_key=True)
     polytype = String()
     key = CompositeKey()
@@ -43,6 +46,13 @@ class ModelBase(declarative_base()):
         "polymorphic_identity": "modelbase",
         "with_polymorphic": "*"
     }
+
+    def __init__(self, *args, **kwargs):
+        sa_dbase.__init__(self, *args, **kwargs)
+        self._name = "%s(%s)"%(self.polytype, self.label())
+        self._orig_fkeys = {}
+        for prop in self._schema["_kinds"]:
+            self._orig_fkeys[prop] = getattr(self, prop)
 
     def __eq__(self, other):
         return self.id() == (other and hasattr(other, "id") and other.id())
@@ -59,7 +69,7 @@ class ModelBase(declarative_base()):
             session.commit()
 
     def collection(self, entity_model, property_name, fetch=True, keys_only=False, data=False):
-        q = entity_model.query(getattr(entity_model, property_name) == self.index)
+        q = entity_model.query(getattr(entity_model, property_name) == self.key)
         if not fetch:
             return q
         if not data:
