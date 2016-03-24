@@ -3,7 +3,8 @@ cfg = {
 		"allow": ["info", "log", "error"]
 	},
 	"geo": {
-		"test": False
+		"test": False,
+		"username": "demo" # should override in ct.cfg
 	},
 	"admin": {
 		"host": "localhost",

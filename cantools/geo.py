@@ -34,7 +34,7 @@ class Geo(object):
 
 	def latlng2zip(self, lat, lng):
 		result = fetch("ws.geonames.org",
-			"/findNearbyPostalCodesJSON?radius=1&username=marbar&lat=%s&lng=%s"%(lat, lng), asjson=True)
+			"/findNearbyPostalCodesJSON?radius=1&username=%s&lat=%s&lng=%s"%(config.geo.username, lat, lng), asjson=True)
 		log("finding zip for lat %s and lng %s. result: %s"%(lat, lng, json.dumps(result)), 3)
 		if not len(result["postalCodes"]):
 			log("can't find zipcode!!!", important=True)
