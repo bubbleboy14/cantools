@@ -22,12 +22,14 @@ class CTMeta(DeclarativeMeta):
                 "polymorphic_identity": lname
             }
             attrs["index"] = sqlForeignKey(bases[0], primary_key=True)
-            schema = attrs["_schema"] = { "_kinds": {} }
             if "label" not in attrs:
-                for label in ["name", "title", "key"]:
+                for label in ["name", "title"]:
                     if label in attrs:
                         attrs["label"] = label
                         break
+                if "label" not in attrs:
+                    attrs["label"] = "key"
+            schema = attrs["_schema"] = { "_kinds": {}, "_label": attrs["label"] }
             for key, val in attrs.items():
                 if getattr(val, "_ct_type", None):
                     schema[key] = val._ct_type
