@@ -104,7 +104,7 @@ CT.admin.db.Editor = CT.Class({
 		rownode.appendChild(CT.dom.node(k + ":", "div", "keycell"));
 		ptype = rownode.ptype = this.schema[k];
 		if (CT.db.edit.isSupported(ptype)) {
-			valcell = CT.db.edit.input(k, ptype, val);
+			valcell = CT.db.edit.input(k, ptype, val, this.modelName);
 			this.inputs.push(valcell);
 		} else
 			valcell = CT.dom.node(val || "null", "span");

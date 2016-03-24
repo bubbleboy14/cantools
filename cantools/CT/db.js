@@ -20,6 +20,13 @@ CT.db = {
 			}
 		}
 	},
+	reference2label: function(modelName, property) {
+		var t = CT.db._schema[modelName]._kinds[property][0];
+		return {
+			modelName: t,
+			property: CT.db._schema[t].label
+		};
+	},
 	get: function(modelName, cb, limit, offset, order, filters) {
 		var qdata = {
 			"action": "get",
@@ -100,7 +107,7 @@ CT.db.edit = {
 			return f.value; // string
 		};
 	},
-	input: function(k, ptype, val) {
+	input: function(k, ptype, val, modelName) {
 		var valcell;
 		if (ptype == "string")
 			valcell = CT.dom.field(null, val);
@@ -116,7 +123,8 @@ CT.db.edit = {
 		else if (ptype == "key")
 			valcell = (new CT.db.edit.EntityRow({
 				property: k,
-				key: val
+				key: val,
+				modelName: modelName
 			})).node;
 		valcell.getValue = CT.db.edit._val(valcell, ptype);
 		valcell.rowKey = k;
@@ -154,7 +162,8 @@ CT.db.edit.EntityRow = CT.Class({
 		this._change = this._change || new CT.modal.Prompt({
 			transition: "slide",
 			prompt: "enter name of new " + this.opts.property,
-			cb: this.node.fill
+			cb: this.node.fill,
+			autocomplete: CT.db.reference2label(this.opts.modelName, this.opts.property)
 		});
 		this._change.show();
 	},
@@ -188,7 +197,7 @@ CT.db.edit.EntityRow = CT.Class({
 CT.db.Query = CT.Class({
 	CLASSNAME: "CT.db.Query",
 	_filter: function() {
-		var valcell = CT.dom.node(null, "span"), schema = this.schema,
+		var valcell = CT.dom.node(null, "span"), schema = this.schema, mname = this.modelName,
 			compcell = CT.dom.select(["==", ">", "<", ">=", "<=", "!=", "like"]),
 			selectcell = CT.dom.select(this.filterables),
 			rmcell = CT.dom.button("remove", function() {
@@ -196,7 +205,7 @@ CT.db.Query = CT.Class({
 			});
 		selectcell.onchange = function() {
 			CT.dom.setContent(valcell,
-				CT.db.edit.input(selectcell.value, schema[selectcell.value]));
+				CT.db.edit.input(selectcell.value, schema[selectcell.value], mname));
 		};
 		selectcell.onchange();
 		this.filters.appendChild(CT.dom.node([selectcell, compcell, valcell, rmcell]));
