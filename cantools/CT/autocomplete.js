@@ -22,7 +22,7 @@ CT.autocomplete.Guesser = CT.Class({
 		});
 	},
 	tapTag: function(data) {
-		this.tapper(data);
+		this.opts.tapCb(data);
 	    this.retract();
 	},
 	addTag: function(data) {
@@ -62,7 +62,7 @@ CT.autocomplete.Guesser = CT.Class({
 		var code = e.keyCode || e.which;
 		if (code == 13 || code == 3) {
 			this.input.blur();
-			this.opts.enterCb();
+			this.opts.enterCb(this.input.value);
 		} else if (this.input.value) {
 			var tagfrag = this.input.value.toLowerCase(),
 				targets = CT.dom.className(tagfrag, this.node);
@@ -76,26 +76,27 @@ CT.autocomplete.Guesser = CT.Class({
 					show: true
 				});
 			else
-				this.guesser(tagfrag, this._update);
+				this.opts.guessCb(tagfrag, this._update);
 		} else CT.dom.mod({
 			className: "tagline",
 			hide: true
 		});
 		this.opts.keyUpCb();
 	},
+	_onTap: function(data) {
+		this.input.value = data.label;
+	},
 	init: function(opts) {
 		opts = this.opts = CT.merge(opts, {
 			enterCb: this._doNothing,
 			keyUpCb: this._doNothing,
 			expandCb: this._doNothing,
-			tabCb: this._doNothing,
-			guessCb: this._doNothing
+			tapCb: this._onTap,
+			guessCb: this.guesser
 		});
 		CT.autocomplete.Guesser.id += 1;
 		this.id = CT.autocomplete.Guesser.id;
 		this.input = opts.input;
-		this.tapper = opts.tapCb;
-		this.guesser = this.guesser || opts.guessCb;
 		var ipos = CT.align.offset(this.input);
 		this.node = CT.dom.node(CT.dom.node(), null, "autocomplete hider", null, null, {
 			position: "absolute",

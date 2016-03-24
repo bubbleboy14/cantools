@@ -147,7 +147,7 @@
 }
 /* autocomplete classes */
 .autocomplete {
-  z-index: 4;
+  z-index: 5;
   position: absolute;
   max-height: 0px;
   background: white;
@@ -158,10 +158,14 @@
 }
 .autocomplete div div {
   padding: 5px 15px;
+  border-bottom: 1px solid gray;
+  background: lightgray;
+  cursor: pointer;
 }
-.autocomplete div div:active {
+.autocomplete div div:hover {
   color: white;
-  background-color: #00aeef;
+  font-weight: bold;
+  background-color: darkgray;
 }
 .autocomplete-open {
     max-height: 200px;
