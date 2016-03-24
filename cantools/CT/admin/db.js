@@ -33,12 +33,12 @@ CT.admin.db = {
 		};
 	},
 	"_add": function(modelName, d) {
-		CT.panel.add(d.label, false, modelName);
-		CT.dom.id(modelName + "content" + d.label.replace(/ /g,
+		CT.panel.add(d[d.label], false, modelName);
+		CT.dom.id(modelName + "content" + d[d.label].replace(/ /g,
 			"")).appendChild(CT.admin.db._build(modelName)(d));
 	},
 	"star": function(k) {
-		var d = CT.data.get(k), key = "starreditem" + (d.label || d.key).replace(/ /g, ""),
+		var d = CT.data.get(k), key = "starreditem" + d[d.label].replace(/ /g, ""),
 			b = CT.dom.button(CT.dom.id(key) ? "Unstar" : "Star", function() {
 				if (b.innerHTML == "Star") {
 					b.innerHTML = "Unstar";
@@ -51,14 +51,14 @@ CT.admin.db = {
 		return b;
 	},
 	"starLink": function(d, modelName) {
-		var label = d.label || d.key,
+		var label = d[d.label],
 			k = "starreditem" + label.replace(/ /g, ""),
 			slink = CT.dom.id(k);
 		if (!slink) {
 			slink = CT.dom.node(CT.dom.link(label, function() {
-				var dobj = {}, nslabel = (d.label || d.key).replace(/ /g, "");
+				var dobj = {}, nslabel = label.replace(/ /g, "");
 				dobj.db = modelName || CT.db.key2model(d.key);
-				dobj[dobj.db] = d.label;
+				dobj[dobj.db] = d[d.label];
 				if (!CT.dom.id(dobj.db + "panel" + nslabel))
 					CT.admin.db._add(dobj.db, d);
 				CT.panel.drill(dobj);
@@ -90,62 +90,21 @@ CT.admin.db.Editor = CT.Class({
 				data.key = resp.key;
 				CT.data.add(data);
 			}
-			if (data.label != resp.label) {
-				CT.panel.rename(data.label, resp.label, changes.modelName, "starred");
+			if (data[data.label] != resp[resp.label]) {
+				CT.panel.rename(data[data.label], resp[resp.label], changes.modelName, "starred");
 				CT.dom.id()
-				data.label = resp.label;
+				data[data.label] = resp[resp.label];
 			}
 			alert("you did it");
 		}, "edit failed", { data: changes }, "/_db");
-	},
-	"_modal": function(key) {
-		this.log("_modal", key);
-		(new CT.modal.Modal({
-			"node": this._mtable(key)
-		})).show();
-	},
-	"_mtable": function(key) {
-		var k, d = CT.data.get(key), my_d = this.data, n = CT.dom.node();
-		for (k in d)
-			n.appendChild(CT.dom.node([
-				CT.dom.node(k + ":", "div", "keycell"),
-				CT.dom.node(d[k] || "(none)", "span")
-			], "div", "lister"));
-		n.appendChild(CT.dom.button("change"));
-		n.appendChild(CT.dom.button("edit", function() {
-			CT.admin.db.starLink(my_d);
-			CT.admin.db.starLink(d).onclick();
-			n.parentNode.modal.hide();
-		}));
-		return n;
-	},
-	"_entity": function(key) {
-		if (!key) return CT.dom.node("null");
-		var that = this, n = CT.dom.node(),
-			vdata = CT.data.get(key);
-		this.log("_entity", key, vdata);
-		var fill = function(d) {
-			n.appendChild(CT.dom.link((d.label || d.key),
-				function() { that._modal(key); }));
-		};
-		if (vdata)
-			fill(vdata);
-		else
-			CT.admin.core.q("get", function(d) {
-				CT.data.add(d);
-				fill(d);
-			}, "failed to get " + key, { "key": key }, "/_db");
-		return n;
 	},
 	"_row": function(k) {
 		var val = this.data[k], valcell, ptype,
 			rownode = CT.dom.node("", "div", "lister");
 		rownode.appendChild(CT.dom.node(k + ":", "div", "keycell"));
 		ptype = rownode.ptype = this.schema[k];
-		if (ptype == "key")
-			valcell = this._entity(val);
-		else if (CT.db.edit.isSupported(ptype)) {
-			valcell = CT.db.edit.input(k, ptype, val);
+		if (CT.db.edit.isSupported(ptype)) {
+			valcell = CT.db.edit.input(k, ptype, val, this.modelName);
 			this.inputs.push(valcell);
 		} else
 			valcell = CT.dom.node(val || "null", "span");
@@ -164,7 +123,7 @@ CT.admin.db.Editor = CT.Class({
 			(n[r.ptype] || n).appendChild(r);
 		}
 		d.key && n.appendChild(CT.dom.node(CT.dom.button("Delete", function() {
-			var label = d.label || d.key;
+			var label = d[d.label];
 			if (!confirm("really delete " + label + "?"))
 				return;
 			CT.dom.remove(CT.dom.id("starreditem" + label.replace(/ /g, "")));

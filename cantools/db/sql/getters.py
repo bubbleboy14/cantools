@@ -1,5 +1,6 @@
 import json, operator
 from base64 import b64decode
+from sqlalchemy import func
 from session import session
 
 modelsubs = {}
@@ -22,7 +23,7 @@ def get_schema(modname=None):
         return modelsubs[modname.lower()]._schema
     s = {}
     for key, val in modelsubs.items():
-        if key != "modelbase":
+        if key not in ["modelbase", "ctrefcount"]:
             s[key] = val._schema
     return s
 
@@ -40,7 +41,7 @@ def get_page(modelName, limit, offset, order='index', filters={}, session=sessio
         if schema[key] == "key":
             val = KeyWrapper(val)
         if comp == "like":
-            query.filter(prop.like(val))
+            query.filter(func.lower(prop).like(val.lower()))
         else:
             query.filter(operators[comp](prop, val))
     return [d.data() for d in query.order(order).fetch(limit, offset)]

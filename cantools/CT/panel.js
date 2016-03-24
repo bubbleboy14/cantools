@@ -1,7 +1,7 @@
 CT.panel = {
 	"lastClicked": {},
 	"trigger": function(data, cb) {
-		var n = CT.dom.node(CT.dom.link(data.label ||  data.title ||  data.name, function() {
+		var n = CT.dom.node(CT.dom.link(data[data.label], function() {
 			CT.dom.each(n.parentNode, function(c) {
 				c.className = (c == n) ? "activetab" : "";
 			});
@@ -121,12 +121,12 @@ CT.panel = {
 		var content = CT.dom.node(null, null, dataClass, ks + "panels"),
 			sideBar = CT.dom.node(),
 			pager = new CT.Pager(function(data) {
-				var dnames = data.map(function(d) { return (d.label || d.key); }),
+				var dnames = data.map(function(d) { return d[d.label]; }),
 					keystring = ks || ("p" + pager.id);
 				CT.panel.simple(dnames, keystring, sideBar, content);
 				data.forEach(function(d) {
 					CT.dom.setContent(CT.dom.id(keystring + "content"
-						+ (d.label || d.key).replace(/ /g, ""),
+						+ d[d.label].replace(/ /g, ""),
 						true), getContent(d));
 				});
 				return sideBar;

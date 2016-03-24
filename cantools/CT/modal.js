@@ -134,7 +134,15 @@ CT.modal.Prompt = CT.Class({
 	"CLASSNAME": "CT.modal.Prompt",
 	"_input": {
 		"string": function() {
-			return CT.dom.smartField(this.submit);
+			if (this.opts.autocomplete)
+				return CT.autocomplete.DBGuesser({
+					input: CT.dom.field(),
+					tapCb: this.submitAC,
+					property: this.opts.autocomplete.property,
+					modelName: this.opts.autocomplete.modelName
+				}).input;
+			else
+				return CT.dom.smartField(this.submit);
 		},
 		"password": function() {
 			return CT.dom.smartField(this.submit,
@@ -152,6 +160,10 @@ CT.modal.Prompt = CT.Class({
 			this.input.focus();
 		},
 		"hide": function() {}
+	},
+	"submitAC": function(d) {
+		this.opts.cb(d);
+		this.hide();
 	},
 	"submit": function() {
 		this.opts.cb(this.input.value);

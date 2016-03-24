@@ -587,9 +587,14 @@ CT.dom = {
 		n && n.parentNode && n.parentNode.removeChild(n);
 	},
 	"setContent": function(targetNode, content) {
-		targetNode.innerHTML = "";
-		targetNode.appendChild(typeof content == "function"
-			? content() : content);
+		if (typeof content == "function")
+			content = content();
+		if (typeof content == "string")
+			targetNode.innerHTML = content;
+		else {
+			targetNode.innerHTML = "";
+			targetNode.appendChild(content);
+		}
 	},
 
 	// ALLNODE stuff
@@ -664,5 +669,16 @@ CT.dom = {
 	"each": function(p, f) {
 		for (var i = 0; i < p.childNodes.length; i++)
 			f(p.childNodes[i]);
+	},
+	"mod": function(opts) {
+		var targets = opts.targets ? opts.targets
+			: (opts.target ? [opts.target]
+			: (opts.className ? CT.dom.className(opts.className)
+			: (opts.id ? [CT.dom.id(opts.id)] : []))),
+			property = opts.property || "display",
+			value = opts.value ||
+				(opts.show ? "block" : opts.hide ? "none" : "");
+		for (var i = 0; i < targets.length; i++)
+			targets[i].style[property] = value;
 	}
 };
