@@ -21,23 +21,24 @@ CT.autocomplete.Guesser = CT.Class({
 			}
 		});
 	},
-	tapTag: function(tagName) {
-		this.tapper(tagName);
+	tapTag: function(data) {
+		this.tapper(data);
 	    this.retract();
 	},
-	addTag: function(tagName) {
+	addTag: function(data) {
+		var tagName = data.label;
 		var n = CT.dom.node(tagName, "div", "tagline", "ac" + tagName);
 		var tlower = tagName.toLowerCase();
 		for (var i = 1; i <= tlower.length; i++)
 			n.className += " " + tlower.slice(0, i);
 		this.node.firstChild.appendChild(n);
 		n.onclick = function() {
-			this.tapTag(tagName);
+			this.tapTag(data);
 		}.bind(this);
 	},
 	_upOne: function(d) {
 		if (!CT.dom.id("ac" + d.label))
-			this.addTag(d.label);
+			this.addTag(d);
 	},
 	_update: function(data) {
 		data.forEach(this._upOne);
