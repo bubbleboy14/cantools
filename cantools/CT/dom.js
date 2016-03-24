@@ -587,9 +587,14 @@ CT.dom = {
 		n && n.parentNode && n.parentNode.removeChild(n);
 	},
 	"setContent": function(targetNode, content) {
-		targetNode.innerHTML = "";
-		targetNode.appendChild(typeof content == "function"
-			? content() : content);
+		if (typeof content == "function")
+			content = content();
+		if (typeof content == "string")
+			targetNode.innerHTML = content;
+		else {
+			targetNode.innerHTML = "";
+			targetNode.appendChild(content);
+		}
 	},
 
 	// ALLNODE stuff
