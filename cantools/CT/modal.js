@@ -137,7 +137,7 @@ CT.modal.Prompt = CT.Class({
 			if (this.opts.autocomplete)
 				return CT.autocomplete.DBGuesser({
 					input: CT.dom.field(),
-					enterCb: this.submit,
+					tapCb: this.submitAC,
 					property: this.opts.autocomplete.property,
 					modelName: this.opts.autocomplete.modelName
 				}).input;
@@ -160,6 +160,10 @@ CT.modal.Prompt = CT.Class({
 			this.input.focus();
 		},
 		"hide": function() {}
+	},
+	"submitAC": function(d) {
+		this.opts.cb(d);
+		this.hide();
 	},
 	"submit": function() {
 		this.opts.cb(this.input.value);
