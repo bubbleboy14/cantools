@@ -10,4 +10,4 @@ ctpubsub = pubsub.get_addr_and_start
 ctinit = init.parse_and_make
 ctindex = index.go
 
-__version__ = "0.6.1"
+__version__ = "0.6.2"
