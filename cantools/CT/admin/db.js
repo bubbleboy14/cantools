@@ -98,53 +98,12 @@ CT.admin.db.Editor = CT.Class({
 			alert("you did it");
 		}, "edit failed", { data: changes }, "/_db");
 	},
-	"_modal": function(key) {
-		this.log("_modal", key);
-		(new CT.modal.Modal({
-			"node": this._mtable(key)
-		})).show();
-	},
-	"_mtable": function(key) {
-		var k, d = CT.data.get(key), my_d = this.data, n = CT.dom.node();
-		for (k in d)
-			n.appendChild(CT.dom.node([
-				CT.dom.node(k + ":", "div", "keycell"),
-				CT.dom.node(d[k] || "(none)", "span")
-			], "div", "lister"));
-		n.appendChild(CT.dom.button("change"));
-		n.appendChild(CT.dom.button("edit", function() {
-			CT.admin.db.starLink(my_d);
-			CT.admin.db.starLink(d).onclick();
-			n.parentNode.modal.hide();
-		}));
-		return n;
-	},
-	"_entity": function(key) {
-		if (!key) return CT.dom.node("null");
-		var that = this, n = CT.dom.node(),
-			vdata = CT.data.get(key);
-		this.log("_entity", key, vdata);
-		var fill = function(d) {
-			n.appendChild(CT.dom.link((d.label || d.key),
-				function() { that._modal(key); }));
-		};
-		if (vdata)
-			fill(vdata);
-		else
-			CT.admin.core.q("get", function(d) {
-				CT.data.add(d);
-				fill(d);
-			}, "failed to get " + key, { "key": key }, "/_db");
-		return n;
-	},
 	"_row": function(k) {
 		var val = this.data[k], valcell, ptype,
 			rownode = CT.dom.node("", "div", "lister");
 		rownode.appendChild(CT.dom.node(k + ":", "div", "keycell"));
 		ptype = rownode.ptype = this.schema[k];
-		if (ptype == "key")
-			valcell = this._entity(val);
-		else if (CT.db.edit.isSupported(ptype)) {
+		if (CT.db.edit.isSupported(ptype)) {
 			valcell = CT.db.edit.input(k, ptype, val);
 			this.inputs.push(valcell);
 		} else

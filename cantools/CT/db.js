@@ -31,7 +31,10 @@ CT.db = {
 			qdata.order = order;
 		if (filters)
 			qdata.filters = filters;
-		CT.net.post("/_db", qdata, null, cb);
+		CT.net.post("/_db", qdata, null, function(d) {
+			CT.data.addSet(d);
+			cb(d);
+		});
 	},
 	init: function(opts) {
 		CT.db._opts = opts = CT.merge(opts, {
@@ -75,7 +78,7 @@ CT.db.edit = {
 	},
 	isSupported: function(ptype) {
 		// implement key/datetimeautostamper/list editing soon!!
-		return ptype != "key" && ptype in CT.db.edit._d;
+		return ptype in CT.db.edit._d;
 	},
 	getDefaults: function(modelName, extras) {
 		var k, d = extras || {},
@@ -92,6 +95,8 @@ CT.db.edit = {
 				return parseInt(f.value);
 			if (ptype == "float")
 				return parseFloat(f.value);
+			if (ptype == "key")
+				return f.data.key;
 			return f.value; // string
 		};
 	},
@@ -108,11 +113,73 @@ CT.db.edit = {
 			valcell = CT.parse.numOnly(CT.dom.field(null, val), true);
 		else if (ptype == "integer")
 			valcell = CT.parse.numOnly(CT.dom.field(null, val));
+		else if (ptype == "key")
+			valcell = (new CT.db.edit.EntityRow({
+				property: k,
+				key: val
+			})).node;
 		valcell.getValue = CT.db.edit._val(valcell, ptype);
 		valcell.rowKey = k;
 		return valcell;
 	},
 };
+
+CT.db.edit.EntityRow = CT.Class({
+	CLASSNAME: "CT.db.edit.EntityRow",
+	mtable: function() {
+		var k, n = CT.dom.node();
+		for (k in this.node.data)
+			n.appendChild(CT.dom.node([
+				CT.dom.node(k + ":", "div", "keycell"),
+				CT.dom.node(this.node.data[k] || "(none)", "span")
+			], "div", "lister"));
+		n.appendChild(CT.dom.button("change", this.change));
+		n.appendChild(CT.dom.button("edit", this.edit));
+		return n;
+	},
+	edit: function() {
+		CT.admin.db.starLink(this.node.data).onclick();
+		this._modal.hide();
+	},
+	modal: function() {
+		this._modal = this._modal || new CT.modal.Modal({
+			"node": this.mtable()
+		})
+		this._modal.show();
+	},
+	change: function() {
+		(new CT.modal.Prompt({
+			transition: "slide",
+			prompt: "enter name of new " + this.opts.property,
+			cb: this.node.fill
+		})).show();
+	},
+	_change_or_modal: function() {
+		if (this.opts.key)
+			this.modal();
+		else
+			this.change();
+	},
+	init: function(opts) {
+		this.opts = opts;
+		var vdata = CT.data.get(opts.key),
+			n = this.node = CT.dom.node(CT.dom.link(null, this._change_or_modal));
+		n.fill = function(d) {
+			n.data = d;
+			opts.key = d.key;
+			CT.dom.setContent(n.firstChild, d.label || d.key);
+		};
+		if (vdata)
+			n.fill(vdata);
+		else if (!opts.key)
+			CT.dom.setContent(n.firstChild, "null (tap to select)");
+		else
+			CT.admin.core.q("get", function(d) {
+				CT.data.add(d);
+				n.fill(d);
+			}, "failed to get " + opts.key, { "key": opts.key }, "/_db");
+	}
+});
 
 CT.db.Query = CT.Class({
 	CLASSNAME: "CT.db.Query",
