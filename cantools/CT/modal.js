@@ -134,7 +134,15 @@ CT.modal.Prompt = CT.Class({
 	"CLASSNAME": "CT.modal.Prompt",
 	"_input": {
 		"string": function() {
-			return CT.dom.smartField(this.submit);
+			if (this.opts.autocomplete)
+				return CT.autocomplete.DBGuesser({
+					input: CT.dom.field(),
+					enterCb: this.submit,
+					property: this.opts.autocomplete.property,
+					modelName: this.opts.autocomplete.modelName
+				}).input;
+			else
+				return CT.dom.smartField(this.submit);
 		},
 		"password": function() {
 			return CT.dom.smartField(this.submit,
