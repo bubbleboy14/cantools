@@ -4,7 +4,10 @@ cfg = {
 	},
 	"geo": {
 		"test": False,
-		"username": "demo" # should override in ct.cfg
+		"user": {
+			"geonames": "demo",
+			"google": ""
+		}
 	},
 	"admin": {
 		"host": "localhost",

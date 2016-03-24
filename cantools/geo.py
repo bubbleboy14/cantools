@@ -11,12 +11,18 @@ class Geo(object):
 		for addr in self.cache:
 			self.cache[addr]["count"] = 0
 
+	def _no_cache(self, addr):
+		return not (addr in self.cache and self.cache[addr]["lat"] and self.cache[addr]["lng"])
+
 	def address2latlng(self, address):
-		if address not in self.cache:
+		if self._no_cache(address):
 			log("finding lat/lng for %s"%(address,), 3)
-			results = fetch("maps.googleapis.com",
-		        "/maps/api/geocode/json?sensor=false&address=%s"%(urllib.quote(address.replace(" ", "+")),),
-		        asjson=True)['results']
+			kwargs = { "asjson": True }
+			path = "/maps/api/geocode/json?sensor=false&address=%s"%(urllib.quote(address.replace(" ", "+")),)
+			if config.geo.user.google:
+				path += "&key=%s"%(config.geo.user.google,)
+				kwargs["protocol"] = "https"
+			results = fetch("maps.googleapis.com", path, **kwargs)['results']
 			if not len(results):
 				log("no results!!!", 4)
 				self.cache[address] = {
@@ -34,22 +40,22 @@ class Geo(object):
 
 	def latlng2zip(self, lat, lng):
 		result = fetch("ws.geonames.org",
-			"/findNearbyPostalCodesJSON?radius=1&username=%s&lat=%s&lng=%s"%(config.geo.username, lat, lng), asjson=True)
+			"/findNearbyPostalCodesJSON?radius=1&username=%s&lat=%s&lng=%s"%(config.geo.user.geonames, lat, lng), asjson=True)
 		log("finding zip for lat %s and lng %s. result: %s"%(lat, lng, json.dumps(result)), 3)
 		if not len(result["postalCodes"]):
 			log("can't find zipcode!!!", important=True)
 			return None
 		return result["postalCodes"][0]["postalCode"]
 
-	def addr2zip(self, addr):
+	def addr2zip(self, addr, allowNone=False):
 		log("finding zip for '%s'"%(addr,), 3)
 		if config.geo.test:
 			log("test mode! returning nonsense :)")
 			return '12345'
-		if addr not in self.cache:
+		if self._no_cache(addr):
 			self.address2latlng(addr)
 		d = self.cache[addr]
-		if "zip" not in d:
+		if not d.get("zip", allowNone):
 			d["count"] = 1
 			d["zip"] = d["lat"] and self.latlng2zip(d["lat"], d["lng"])
 			self.savecache()
