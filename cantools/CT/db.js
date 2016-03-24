@@ -24,7 +24,7 @@ CT.db = {
 		var t = CT.db._schema[modelName]._kinds[property][0];
 		return {
 			modelName: t,
-			property: CT.db._schema[t].label
+			property: CT.db._schema[t]._label
 		};
 	},
 	get: function(modelName, cb, limit, offset, order, filters) {
