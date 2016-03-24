@@ -23,6 +23,11 @@ class CTMeta(DeclarativeMeta):
             }
             attrs["index"] = sqlForeignKey(bases[0], primary_key=True)
             schema = attrs["_schema"] = { "_kinds": {} }
+            if "label" not in attrs:
+                for label in ["name", "title", "key"]:
+                    if label in attrs:
+                        attrs["label"] = label
+                        break
             for key, val in attrs.items():
                 if getattr(val, "_ct_type", None):
                     schema[key] = val._ct_type
@@ -83,5 +88,12 @@ class ModelBase(sa_dbase):
             util.error("can't get id -- not saved!")
         return self.key.urlsafe()
 
-    def label(self):
-        return getattr(self, "name", self.key)
+    def mydata(self):
+        return {}
+
+    def data(self):
+        d = self.mydata()
+        d["label"] = self.label
+        d["key"] = self.id()
+        d["modeltype"] = self.modeltype()
+        return d

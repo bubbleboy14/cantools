@@ -23,7 +23,7 @@ def get_schema(modname=None):
         return modelsubs[modname.lower()]._schema
     s = {}
     for key, val in modelsubs.items():
-        if key != "modelbase":
+        if key not in ["modelbase", "ctrefcount"]:
             s[key] = val._schema
     return s
 

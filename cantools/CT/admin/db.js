@@ -33,12 +33,12 @@ CT.admin.db = {
 		};
 	},
 	"_add": function(modelName, d) {
-		CT.panel.add(d.label, false, modelName);
-		CT.dom.id(modelName + "content" + d.label.replace(/ /g,
+		CT.panel.add(d[d.label], false, modelName);
+		CT.dom.id(modelName + "content" + d[d.label].replace(/ /g,
 			"")).appendChild(CT.admin.db._build(modelName)(d));
 	},
 	"star": function(k) {
-		var d = CT.data.get(k), key = "starreditem" + (d.label || d.key).replace(/ /g, ""),
+		var d = CT.data.get(k), key = "starreditem" + d[d.label].replace(/ /g, ""),
 			b = CT.dom.button(CT.dom.id(key) ? "Unstar" : "Star", function() {
 				if (b.innerHTML == "Star") {
 					b.innerHTML = "Unstar";
@@ -51,14 +51,14 @@ CT.admin.db = {
 		return b;
 	},
 	"starLink": function(d, modelName) {
-		var label = d.label || d.key,
+		var label = d[d.label],
 			k = "starreditem" + label.replace(/ /g, ""),
 			slink = CT.dom.id(k);
 		if (!slink) {
 			slink = CT.dom.node(CT.dom.link(label, function() {
-				var dobj = {}, nslabel = (d.label || d.key).replace(/ /g, "");
+				var dobj = {}, nslabel = label.replace(/ /g, "");
 				dobj.db = modelName || CT.db.key2model(d.key);
-				dobj[dobj.db] = d.label;
+				dobj[dobj.db] = d[d.label];
 				if (!CT.dom.id(dobj.db + "panel" + nslabel))
 					CT.admin.db._add(dobj.db, d);
 				CT.panel.drill(dobj);
@@ -90,10 +90,10 @@ CT.admin.db.Editor = CT.Class({
 				data.key = resp.key;
 				CT.data.add(data);
 			}
-			if (data.label != resp.label) {
-				CT.panel.rename(data.label, resp.label, changes.modelName, "starred");
+			if (data[data.label] != resp[resp.label]) {
+				CT.panel.rename(data[data.label], resp[resp.label], changes.modelName, "starred");
 				CT.dom.id()
-				data.label = resp.label;
+				data[data.label] = resp[resp.label];
 			}
 			alert("you did it");
 		}, "edit failed", { data: changes }, "/_db");
@@ -123,7 +123,7 @@ CT.admin.db.Editor = CT.Class({
 			(n[r.ptype] || n).appendChild(r);
 		}
 		d.key && n.appendChild(CT.dom.node(CT.dom.button("Delete", function() {
-			var label = d.label || d.key;
+			var label = d[d.label];
 			if (!confirm("really delete " + label + "?"))
 				return;
 			CT.dom.remove(CT.dom.id("starreditem" + label.replace(/ /g, "")));

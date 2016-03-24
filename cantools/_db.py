@@ -21,8 +21,7 @@ def response():
 		else:
 			succeed(get(cgi_get("key")).data())
 	elif action == "edit":
-		ent = edit(cgi_get("data"))
-		succeed({ "key": ent.id(), "label": ent.label() })
+		succeed(edit(cgi_get("data")).data())
 	elif action == "delete":
 		get(cgi_get("key")).rm()
 		succeed()

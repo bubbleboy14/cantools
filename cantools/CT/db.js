@@ -142,17 +142,21 @@ CT.db.edit.EntityRow = CT.Class({
 		this._modal.hide();
 	},
 	modal: function() {
+		this._change && this._change.hide();
 		this._modal = this._modal || new CT.modal.Modal({
-			"node": this.mtable()
-		})
+			transition: "fade",
+			node: this.mtable()
+		});
 		this._modal.show();
 	},
 	change: function() {
-		(new CT.modal.Prompt({
+		this._modal && this._modal.hide();
+		this._change = this._change || new CT.modal.Prompt({
 			transition: "slide",
 			prompt: "enter name of new " + this.opts.property,
 			cb: this.node.fill
-		})).show();
+		});
+		this._change.show();
 	},
 	_change_or_modal: function() {
 		if (this.opts.key)
@@ -167,7 +171,7 @@ CT.db.edit.EntityRow = CT.Class({
 		n.fill = function(d) {
 			n.data = d;
 			opts.key = d.key;
-			CT.dom.setContent(n.firstChild, d.label || d.key);
+			CT.dom.setContent(n.firstChild, d[d.label]);
 		};
 		if (vdata)
 			n.fill(vdata);

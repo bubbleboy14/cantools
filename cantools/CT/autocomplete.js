@@ -26,7 +26,7 @@ CT.autocomplete.Guesser = CT.Class({
 	    this.retract();
 	},
 	addTag: function(data) {
-		var tagName = data.label;
+		var tagName = data[data.label];
 		var n = CT.dom.node(tagName, "div", "tagline", "ac" + tagName);
 		var tlower = tagName.toLowerCase();
 		for (var i = 1; i <= tlower.length; i++)
@@ -37,7 +37,7 @@ CT.autocomplete.Guesser = CT.Class({
 		}.bind(this);
 	},
 	_upOne: function(d) {
-		if (!CT.dom.id("ac" + d.label))
+		if (!CT.dom.id("ac" + d[d.label]))
 			this.addTag(d);
 	},
 	_update: function(data) {
@@ -84,7 +84,7 @@ CT.autocomplete.Guesser = CT.Class({
 		this.opts.keyUpCb();
 	},
 	_onTap: function(data) {
-		this.input.value = data.label;
+		this.input.value = data[data.label];
 	},
 	init: function(opts) {
 		opts = this.opts = CT.merge(opts, {

@@ -39,7 +39,7 @@ CT.trans = {
 	        + " " + opts.duration + "ms " + opts.ease);
 	    if (opts.cb) {
 	        var transTimeout, wrapper = function () {
-	            opts.property && CT.trans.setVenderPrefixed(opts.node, "transition", "");
+	            opts.node && CT.trans.setVenderPrefixed(opts.node, "transition", "");
 	            clearTimeout(transTimeout);
 	            transTimeout = null;
 	            if (opts.node) CT.trans._.enames.forEach(function(ename) {
