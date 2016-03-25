@@ -19,9 +19,11 @@ def _init_entity(instance, session=session):
             if getattr(val, "is_dt_autostamper", False) and val.should_stamp(not instance.index):
                 setattr(instance, key, now)
             if key in instance._orig_fkeys:
-                oval = getattr(instance, key)
+                oval = instance._orig_fkeys[key]
+                val = KeyWrapper(getattr(instance, key)) # not a key yet...
                 if oval != val:
                     reference = "%s.%s"%(tname, key)
+                    print oval, val, reference
                     if oval:
                         puts.append(dec_counter(oval, reference, session=session))
                     if val:
@@ -30,8 +32,9 @@ def _init_entity(instance, session=session):
 
 def init_multi(instances, session=session):
     lookups = []
-    for instance in instances:
-        lookups += _init_entity(instance, session)
+    with session.no_autoflush:
+        for instance in instances:
+            lookups += _init_entity(instance, session)
     session.add_all(instances + lookups)
     session.flush()
     for instance in instances:
@@ -52,8 +55,8 @@ def delete_multi(instances, session=session):
 def edit(data, session=session):
     from cantools.db import get, get_model
     ent = "key" in data and get(data["key"], session) or get_model(data["modelName"])()
-    for propname, proptype in ent._schema.items():
-        if propname in data: # check proptype....
-            setattr(ent, propname, data[propname])
+    for propname, val in data.items():
+        if propname in ent._schema:
+            setattr(ent, propname, val)
     ent.put()
     return ent
