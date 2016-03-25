@@ -49,7 +49,7 @@ class Geo(object):
 				fullpath += "&%s=%s"%(sig, keys[num])
 				if user == "google":
 					kwargs["protocol"] = "https"
-			result = fetch(host, fullpath, **kwargs)[prop]
+			result = fetch(host, fullpath, **kwargs).get(prop, [])
 			if len(result):
 				break
 			log("0-length %s result - changing user"%(api,), important=True)
