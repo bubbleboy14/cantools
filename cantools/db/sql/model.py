@@ -1,3 +1,4 @@
+from sqlalchemy import orm
 from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
 from query import *
 from cantools import util
@@ -40,9 +41,7 @@ class CTMeta(DeclarativeMeta):
         modelsubs[lname] = super(CTMeta, cls).__new__(cls, name, bases, attrs)
         return modelsubs[lname]
 
-sa_dbase = declarative_base()
-
-class ModelBase(sa_dbase):
+class ModelBase(declarative_base()):
     index = Integer(primary_key=True)
     polytype = String()
     key = CompositeKey()
@@ -53,10 +52,14 @@ class ModelBase(sa_dbase):
         "with_polymorphic": "*"
     }
 
-    def __init__(self, *args, **kwargs):
-        sa_dbase.__init__(self, *args, **kwargs)
-        self._name = "%s(%s)"%(self.polytype, self.label())
+    def __init__(self):
+        self.init()
+
+    @orm.reconstructor
+    def init(self):
+        self._name = "%s(%s)"%(self.polytype, getattr(self, self.label))
         self._orig_fkeys = {}
+        print "INITIALIZING"
         for prop in self._schema["_kinds"]:
             self._orig_fkeys[prop] = getattr(self, prop)
 
@@ -95,7 +98,7 @@ class ModelBase(sa_dbase):
 
     def data(self):
         d = self.mydata()
-        d["label"] = self.label
         d["key"] = self.id()
-        d["modeltype"] = self.modeltype()
+        d["label"] = self.label
+        d["modeltype"] = self.polytype
         return d
