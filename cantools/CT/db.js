@@ -214,7 +214,7 @@ CT.db.Query = CT.Class({
 		this.filters.appendChild(CT.dom.node([selectcell, compcell, valcell, rmcell]));
 	},
 	_order: function() {
-		var selectcell = CT.dom.select(["None"].concat(this.filterables).concat(CT.db._rmap[this.modelName])),
+		var selectcell = CT.dom.select(["None"].concat(this.filterables).concat(CT.db._rmap[this.modelName] || [])),
 			dircell = CT.dom.select(["ascending", "descending"]);
 		dircell.className = "hidden";
 		selectcell.onchange = function() {
