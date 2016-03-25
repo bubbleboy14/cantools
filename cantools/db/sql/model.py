@@ -41,7 +41,9 @@ class CTMeta(DeclarativeMeta):
         modelsubs[lname] = super(CTMeta, cls).__new__(cls, name, bases, attrs)
         return modelsubs[lname]
 
-class ModelBase(declarative_base()):
+sa_dbase = declarative_base()
+
+class ModelBase(sa_dbase):
     index = Integer(primary_key=True)
     polytype = String()
     key = CompositeKey()
@@ -52,16 +54,22 @@ class ModelBase(declarative_base()):
         "with_polymorphic": "*"
     }
 
-    def __init__(self):
-        self.init()
+    def __init__(self, *args, **kwargs):
+        sa_dbase.__init__(self, *args, **kwargs)
+        self._defaults()
+        self._init()
 
     @orm.reconstructor
-    def init(self):
+    def _init(self):
         self._name = "%s(%s)"%(self.polytype, getattr(self, self.label))
         self._orig_fkeys = {}
-        print "INITIALIZING"
         for prop in self._schema["_kinds"]:
             self._orig_fkeys[prop] = getattr(self, prop)
+
+    def _defaults(self):
+        for key, val in self.__class__.__dict__.items():
+            if hasattr(val, "_default"):
+                setattr(self, key, val._default)
 
     def __eq__(self, other):
         return self.id() == (other and hasattr(other, "id") and other.id())
