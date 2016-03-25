@@ -68,7 +68,7 @@ class ModelBase(sa_dbase):
 
     def _defaults(self):
         for key, val in self.__class__.__dict__.items():
-            if hasattr(val, "_default"):
+            if getattr(self, key, None) is None and getattr(val, "_default", None) is not None:
                 setattr(self, key, val._default)
 
     def __eq__(self, other):
