@@ -72,7 +72,6 @@ CT.admin.db = {
 CT.admin.db.Editor = CT.Class({
 	"CLASSNAME": "CT.admin.db.Editor",
 	"_submit": function() {
-		this.log("_submit");
 		var data = this.data, changes = {};
 		if (data.key)
 			changes.key = data.key;
