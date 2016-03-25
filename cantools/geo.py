@@ -6,6 +6,25 @@ from cantools import config
 zcpath = os.path.join("logs", "json", "geo")
 
 class Geo(object):
+	apis = {
+		"latlng": {
+			"user": "google",
+			"host": "maps.googleapis.com",
+			"path": "/maps/api/geocode/json?sensor=false&address={0}",
+			"sig": "key",
+			"property": "results",
+			"index": 0
+		},
+		"zip": {
+			"user": "geonames",
+			"host": "ws.geonames.org",
+			"path": "/findNearbyPostalCodesJSON?radius=1&lat={0}&lng={1}",
+			"sig": "username",
+			"property": "postalCodes",
+			"index": 0
+		}
+	}
+
 	def __init__(self):
 		self.cache = read("%s.json"%(zcpath,), isjson=True, default={})
 		for addr in self.cache:
@@ -14,15 +33,37 @@ class Geo(object):
 	def _no_cache(self, addr):
 		return not (addr in self.cache and self.cache[addr]["lat"] and self.cache[addr]["lng"])
 
+	def _fetch(self, api, *args): # api is latlng/zip
+		path = self.apis[api]["path"].format(*[urllib.quote(str(a).replace(" ", "+")) for a in args])
+		host = self.apis[api]["host"]
+		user = self.apis[api]["user"]
+		prop = self.apis[api]["property"]
+		keys = config.geo.user[user]
+		onum = num = self.apis[api]["index"]
+		sig = self.apis[api]["sig"]
+		kwargs = { "asjson": True }
+		result = []
+		while True:
+			fullpath = path
+			if keys[num]:
+				fullpath += "&%s=%s"%(sig, keys[num])
+				if user == "google":
+					kwargs["protocol"] = "https"
+			result = fetch(host, fullpath, **kwargs)[prop]
+			if len(result):
+				break
+			log("0-length %s result - changing user"%(api,), important=True)
+			num = (num + 1) % len(keys)
+			if num == onum:
+				log("exhausted key list -- returning [] :'(")
+				break
+		self.apis[api]["index"] = num
+		return result
+
 	def address2latlng(self, address):
 		if self._no_cache(address):
 			log("finding lat/lng for %s"%(address,), 3)
-			kwargs = { "asjson": True }
-			path = "/maps/api/geocode/json?sensor=false&address=%s"%(urllib.quote(address.replace(" ", "+")),)
-			if config.geo.user.google:
-				path += "&key=%s"%(config.geo.user.google,)
-				kwargs["protocol"] = "https"
-			results = fetch("maps.googleapis.com", path, **kwargs)['results']
+			results = self._fetch("latlng", address)
 			if not len(results):
 				log("no results!!!", 4)
 				self.cache[address] = {
@@ -39,13 +80,12 @@ class Geo(object):
 		return [self.cache[address]['lat'], self.cache[address]['lng']]
 
 	def latlng2zip(self, lat, lng):
-		result = fetch("ws.geonames.org",
-			"/findNearbyPostalCodesJSON?radius=1&username=%s&lat=%s&lng=%s"%(config.geo.user.geonames, lat, lng), asjson=True)
+		result = self._fetch("zip", lat, lng)
 		log("finding zip for lat %s and lng %s. result: %s"%(lat, lng, json.dumps(result)), 3)
-		if not len(result["postalCodes"]):
+		if not len(result):
 			log("can't find zipcode!!!", important=True)
 			return None
-		return result["postalCodes"][0]["postalCode"]
+		return result[0]["postalCode"]
 
 	def addr2zip(self, addr, allowNone=False):
 		log("finding zip for '%s'"%(addr,), 3)

@@ -5,8 +5,8 @@ cfg = {
 	"geo": {
 		"test": False,
 		"user": {
-			"geonames": "demo",
-			"google": ""
+			"geonames": ["demo"],
+			"google": [""]
 		}
 	},
 	"admin": {

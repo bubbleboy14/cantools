@@ -24,7 +24,7 @@ CT.map.util = {
 	},
 	addr2latlng: function(addr) {
 		var c = CT.map.util._llcache;
-		if (! (addr in c)) {
+		if (!c[addr]) {
 			c[addr] = CT.map.util._try_a2ll(addr).geometry.location;
 			CT.storage.set("addr2latlng", c);
 		}
