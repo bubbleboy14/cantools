@@ -13,13 +13,12 @@ class StringType(DynamicType):
 def basicType(colClass, baseType=DynamicType):
 	return type("%s"%(colClass.__name__,), (baseType,), { "impl": colClass })
 
-_cparams = ["primary_key", "default"]
-
 def _col(colClass, *args, **kwargs):
 	cargs = {}
-	for p in _cparams:
-		if p in kwargs:
-			cargs[p] = kwargs.pop(p)
+	if "primary_key" in kwargs:
+		cargs["primary_key"] = kwargs.pop("primary_key")
+	default = kwargs.pop("default", None)
+
 	if kwargs.pop("repeated", None):
 		return sqlalchemy.Column(ArrayType(**kwargs), *args, **cargs)
 	typeInstance = colClass(**kwargs)
@@ -32,6 +31,7 @@ def _col(colClass, *args, **kwargs):
 	if colClass is Key:
 		col._kinds = typeInstance.kinds
 	col._ct_type = colClass.__name__.lower()
+	col._default = default
 	return col
 
 def sqlColumn(colClass):
