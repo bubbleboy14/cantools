@@ -80,6 +80,11 @@ CT.db.edit = {
 		"boolean": false,
 		"key": null
 	},
+	_no_ent: {
+		"key": null,
+		"label": "name",
+		"name": "null (tap to select)"
+	},
 	propertyDefault: function(ptype) {
 		return CT.db.edit._d[ptype];
 	},
@@ -178,14 +183,12 @@ CT.db.edit.EntityRow = CT.Class({
 		var vdata = CT.data.get(opts.key),
 			n = this.node = CT.dom.node(CT.dom.link(null, this._change_or_modal));
 		n.fill = function(d) {
-			n.data = d;
+			d = n.data = d || CT.db.edit._no_ent;
 			opts.key = d.key;
 			CT.dom.setContent(n.firstChild, d[d.label]);
 		};
-		if (vdata)
+		if (vdata || !opts.key)
 			n.fill(vdata);
-		else if (!opts.key)
-			CT.dom.setContent(n.firstChild, "null (tap to select)");
 		else
 			CT.admin.core.q("get", function(d) {
 				CT.data.add(d);
