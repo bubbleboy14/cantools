@@ -75,13 +75,15 @@ var CT = {
 				alert(msg);
 		},
 		"_b64rd": function(d, enc) {
-			if (typeof d == "string")
-				return (enc ? btoa : atob)(d);
-			if (typeof d == "object") {
-				var k, o = Array.isArray(d) ? [] : {};
-				for (k in d)
-					o[k] = CT.net._b64rd(d[k], enc);
-				return o;
+			if (d) {
+				if (typeof d == "string")
+					return (enc ? btoa : atob)(d);
+				if (typeof d == "object") {
+					var k, o = Array.isArray(d) ? [] : {};
+					for (k in d)
+						o[k] = CT.net._b64rd(d[k], enc);
+					return o;
+				}
 			}
 			return d;
 		},
