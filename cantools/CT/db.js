@@ -104,9 +104,9 @@ CT.db.edit = {
 			if (ptype == "boolean")
 				return f.checked;
 			if (ptype == "integer")
-				return parseInt(f.value);
+				return parseInt(f.value) || null;
 			if (ptype == "float")
-				return parseFloat(f.value);
+				return parseFloat(f.value) || null;
 			if (ptype == "key")
 				return f.data.key;
 			return f.value; // string
