@@ -36,6 +36,7 @@ class Session(object):
 		global lastSession
 		lastSession = self
 		self.session = self.generator()
+		self.no_autoflush = self.session.no_autoflush
 
 def loadTables(cls):
 	cls.metadata.create_all(lastSession.engine)
