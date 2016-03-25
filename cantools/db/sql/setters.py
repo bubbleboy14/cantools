@@ -20,10 +20,9 @@ def _init_entity(instance, session=session):
                 setattr(instance, key, now)
             if key in instance._orig_fkeys:
                 oval = instance._orig_fkeys[key]
-                val = KeyWrapper(getattr(instance, key)) # not a key yet...
+                val = getattr(instance, key)
                 if oval != val:
                     reference = "%s.%s"%(tname, key)
-                    print oval, val, reference
                     if oval:
                         puts.append(dec_counter(oval, reference, session=session))
                     if val:
@@ -57,6 +56,8 @@ def edit(data, session=session):
     ent = "key" in data and get(data["key"], session) or get_model(data["modelName"])()
     for propname, val in data.items():
         if propname in ent._schema:
+            if val and propname in ent._schema["_kinds"]:
+                val = KeyWrapper(val)
             setattr(ent, propname, val)
     ent.put()
     return ent
