@@ -23,10 +23,9 @@ def respond(*args, **kwargs):
 def fetch(host, path="/", port=80, asjson=False, cb=None, timeout=1, async=False, protocol="http"):
 	if async:
 		return dfetch(host, port, cb, timeout, asjson)
-	kwargs = {}
 	if protocol == "https":
-		kwargs["verify"] = False
-	result = requests.get("%s://%s:%s%s"%(protocol, host, port, path), **kwargs).content
+		port = 443
+	result = requests.get("%s://%s:%s%s"%(protocol, host, port, path)).content
 	return asjson and json.loads(result) or result
 
 # file uploads
