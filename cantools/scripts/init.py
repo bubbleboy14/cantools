@@ -74,7 +74,7 @@ class Builder(object):
 			cp("\n".join(cfg), ".gitignore")
 		elif itype == "svn":
 			log("configuring svn", 2)
-			cmd("svn add %s"%(self.pname,))
+			cmd("svn add .")
 			for root, files in config.init.vcignore.items():
 				cp("\n".join(files), "_tmp")
 				cmd("svn propset svn:ignore -F _tmp %s"%(root,))
