@@ -245,3 +245,82 @@ button, .pointer {
     width: 180px;
     font-weight: bold;
 }
+
+/* loading spinner */
+/* source: https://css-tricks.com/examples/Loading/ */
+.ctswrap {
+    z-index: 100;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -50px;
+    margin-left: -50px;
+}
+.ctspinner {
+    width: 100px;
+    height: 100px;
+    -webkit-border-radius: 50px;
+       -moz-border-radius: 50px;
+            border-radius: 50px;
+    background: #ccc;
+    font: 12px "Lucida Grande", Sans-Serif;
+    text-align: center;
+    line-height: 100px;
+    color: white;
+    -webkit-box-shadow: 0 0 5px rgba(0,0,0,0.5);
+    -moz-box-shadow: 0 0 5px rgba(0,0,0,0.5);
+    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+}
+.ctspinner:before {
+    z-index: -2;
+    content: "";
+    position: absolute;
+      left: -20px;
+       top: -20px;
+    bottom: -20px;
+     right: -20px;
+    -webkit-border-radius: 70px;
+       -moz-border-radius: 70px;
+            border-radius: 70px;
+    background: #eee;
+    -webkit-box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+    -moz-box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+}
+.ctspinner span {
+    z-index: -1;
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-left: 50px solid transparent;
+    border-right: 50px solid transparent;
+    border-top: 80px solid rgba(255,255,255,0.7);
+    top: -28px;
+    left: 0px;
+    -webkit-animation: ticktock 5s linear infinite;
+    -webkit-transform-origin: 50px 80px;
+}
+.ctspinner strong {
+    overflow: hidden;
+    display: block;
+    margin: 0 auto;
+    -webkit-animation: expand 2.5s linear infinite;
+}
+
+@-webkit-keyframes expand {
+    0% {
+            width: 0;
+    }
+    100% {
+            width: 60px;
+    }
+}
+
+@-webkit-keyframes ticktock {
+    0% {
+            -webkit-transform: rotate(0);
+    }
+    100% {
+            -webkit-transform: rotate(360deg);
+    }
+}

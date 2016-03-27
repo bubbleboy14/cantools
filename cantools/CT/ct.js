@@ -24,10 +24,14 @@ var CT = {
 		"_path": "",
 		"_cache": false,
 		"_encode": false,
+		"_spinner": false,
 		"_encoder": function (d) { return d; },
 		"_decoder": function (d) { return d; },
 		"_silentFail": true,
 		// functions
+		"setSpinner": function(bool) {
+			CT.net._spinner = bool;
+		},
 		"setCache": function(bool) {
 			CT.net._cache = bool;
 		},
@@ -98,9 +102,15 @@ var CT = {
 			eb = eb || function(payload) {
 				CT.net._fallback_error(errMsg + ": " + payload);
 			};
+			if (CT.net._spinner) {
+				CT.net._spinner_node = CT.net._spinner_node || CT.dom.spinner();
+				document.body.appendChild(CT.net._spinner_node);
+			}
 			CT.net.xhr(path, "POST", params, true, function(xhr) {
 		        if (xhr.readyState == 4) {
 		            if (xhr.status == 200) {
+		            	if (CT.net._spinner)
+		            		CT.dom.remove(CT.net._spinner_node);
 		                var data = xhr.responseText.trim();
 		                if (CT.net._encode)
 		                    data = CT.net._decoder(data);

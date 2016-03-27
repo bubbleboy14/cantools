@@ -355,6 +355,12 @@ CT.dom = {
 		});
 		return n;
 	},
+	"spinner": function() {
+		return CT.dom.node(CT.dom.node([
+			CT.dom.node("loading...", "strong"),
+			CT.dom.node("", "span")
+		], "div", "ctspinner"), "div", "ctswrap");
+	},
 
 	// date selector
 	"_monthnames": ["January", "February",
