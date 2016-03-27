@@ -15,7 +15,6 @@ CT.storage = {
 		try {
 			return JSON.parse(s);
 		} catch(err) {
-			CT.log("CT.storage: JSON.parse failure -- returning null");
 			return null;
 		}
 	},

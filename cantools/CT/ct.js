@@ -29,7 +29,7 @@ var CT = {
 		"_silentFail": true,
 		// functions
 		"setCache": function(bool) {
-			CT.net._cache = bool; // works for json gets
+			CT.net._cache = bool;
 		},
 		"setEncoder": function(func) {
 			CT.net._encoder = func;
@@ -88,6 +88,12 @@ var CT = {
 			return d;
 		},
 		"post": function(path, params, errMsg, cb, eb, headers, cbarg, ebarg) {
+			var signature = path + JSON.stringify(params);
+			if (CT.net._cache) {
+				var cachedVersion = CT.storage.get(signature);
+				if (cachedVersion)
+					return cb(cachedVersion, cbarg);
+			}
 			cb = cb || function() {};
 			eb = eb || function(payload) {
 				CT.net._fallback_error(errMsg + ": " + payload);
@@ -100,14 +106,21 @@ var CT = {
 		                    data = CT.net._decoder(data);
 		                var payload = data.slice(1);
 		                var code = data.charAt(0);
+		                var success = function(b64) {
+		                	var pl = JSON.parse(payload);
+		                	if (b64) pl = CT.net._b64rd(pl);
+		                	if (CT.net._cache)
+			                	CT.storage.set(signature, pl);
+		                	cb(pl, cbarg);
+		                };
 		                if (code == '0')
 		                	eb(payload, ebarg);
 		                else if (code == "1")
-		                    cb(JSON.parse(payload), cbarg);
+		                	success();
 		                else if (code == "2")
 		                	eb(atob(payload), ebarg);
 		                else if (code == "3")
-		                	cb(CT.net._b64rd(JSON.parse(payload)), cbarg);
+		                	success(true);
 		                else
 		                	CT.log("what? bad response code: " + code);
 		            }
