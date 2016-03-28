@@ -51,12 +51,14 @@ CT.db = {
 		});
 	},
 	one: function(key, cb) {
+		if (CT.data.has(key))
+			return cb && cb(CT.data.get(key));
 		CT.net.post("/_db", {
 			action: "get",
 			key: key
 		}, "failed to get " + key, function(d) {
 			CT.data.add(d);
-			cb(d);
+			cb && cb(d);
 		});
 	},
 	init: function(opts) {

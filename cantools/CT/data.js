@@ -57,6 +57,9 @@ CT.data = {
 	},
 
 	// cache
+	"has": function(key) {
+		return !!CT.data.map[key];
+	},
 	"get": function(key) {
 		return CT.data.map[key];
 	},
