@@ -61,7 +61,7 @@ CT.parse = {
 	},
 
 	// input filter
-	"_nchars": "0123456789",
+	"_nchars": "0123456789-",
 	"numOnly": function(n, allowDot) {
 	    n.onkeyup = function() {
 	        var i, c, v = "", hasdot = false;
