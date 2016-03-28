@@ -3,6 +3,13 @@ CT.db = {
 	key2model: function(key) {
 		return JSON.parse(atob(key)).model;
 	},
+	key2label: function(key) {
+		var d = CT.data.get(key);
+		return d[d.label];
+	},
+	isKey: function(modelName, property) {
+		return !!CT.db._schema[modelName]._kinds[property];
+	},
 	getSchema: function(modelName) {
 		return modelName ? CT.db._schema[modelName] : CT.db._schema;
 	},
