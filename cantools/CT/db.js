@@ -43,6 +43,15 @@ CT.db = {
 			cb(d);
 		});
 	},
+	one: function(key, cb) {
+		CT.net.post("/_db", {
+			action: "get",
+			key: key
+		}, "failed to get " + key, function(d) {
+			CT.data.add(d);
+			cb(d);
+		});
+	},
 	init: function(opts) {
 		CT.db._opts = opts = CT.merge(opts, {
 			panel_key: "db", // required: builder(). also why not: post_pager
@@ -83,7 +92,7 @@ CT.db.edit = {
 	_no_ent: {
 		"key": null,
 		"label": "name",
-		"name": "null (tap to select)"
+		"name": "(tap to select)"
 	},
 	propertyDefault: function(ptype) {
 		return CT.db.edit._d[ptype];
@@ -134,7 +143,7 @@ CT.db.edit = {
 		valcell.getValue = CT.db.edit._val(valcell, ptype);
 		valcell.rowKey = k;
 		return valcell;
-	},
+	}
 };
 
 CT.db.edit.EntityRow = CT.Class({
@@ -147,7 +156,7 @@ CT.db.edit.EntityRow = CT.Class({
 				CT.dom.node(this.node.data[k] || "(none)", "span")
 			], "div", "lister"));
 		n.appendChild(CT.dom.button("change", this.change));
-		n.appendChild(CT.dom.button("edit", this.edit));
+		CT.admin && n.appendChild(CT.dom.button("edit", this.edit));
 		return n;
 	},
 	edit: function() {
@@ -181,7 +190,7 @@ CT.db.edit.EntityRow = CT.Class({
 	init: function(opts) {
 		this.opts = opts;
 		var vdata = CT.data.get(opts.key),
-			n = this.node = CT.dom.node(CT.dom.link(null, this._change_or_modal));
+			n = this.node = CT.dom.node(CT.dom.link(null, this._change_or_modal), "span");
 		n.fill = function(d) {
 			d = n.data = d || CT.db.edit._no_ent;
 			opts.key = d.key;
@@ -190,10 +199,10 @@ CT.db.edit.EntityRow = CT.Class({
 		if (vdata || !opts.key)
 			n.fill(vdata);
 		else
-			CT.admin.core.q("get", function(d) {
+			CT.db.one(opts.key, function(d) {
 				CT.data.add(d);
 				n.fill(d);
-			}, "failed to get " + opts.key, { "key": opts.key }, "/_db");
+			});
 	}
 });
 
@@ -208,7 +217,7 @@ CT.db.Query = CT.Class({
 			});
 		selectcell.onchange = function() {
 			CT.dom.setContent(valcell,
-				CT.db.edit.input(selectcell.value, schema[selectcell.value], mname));
+				CT.db.edit.input(selectcell.value, schema[selectcell.value], null, mname));
 		};
 		selectcell.onchange();
 		this.filters.appendChild(CT.dom.node([selectcell, compcell, valcell, rmcell]));
