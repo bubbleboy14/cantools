@@ -1,17 +1,31 @@
 CT.map.util = {
 	_try_limit: 20,
 	_llcache: CT.storage.get("addr2latlng") || {},
+	_keys: [],
+	_kindex: 0,
+	_get_res: function(addr) {
+		var params = { address: addr },
+			k = CT.map.util._keys[CT.map.util._kindex];
+		if (k) {
+			params.key = k;
+			CT.map.util._kindex += 1;
+		} else
+			CT.map.util._kindex = 0;
+		return CT.net.get("https://maps.googleapis.com/maps/api/geocode/json", params, true).results[0];
+	},
 	_try_a2ll: function(addr) {
-		var tries = 0, res;
+		var tries = 0, res, key;
 		while( tries < CT.map.util._try_limit && !res ) {
-			res = CT.net.get("http://maps.googleapis.com/maps/api/geocode/json",
-				{ address: addr }, true).results[0];
+			res = CT.map.util._get_res(addr);
 			if (res) return res
 			tries += 1;
 			CT.log("CT.map.util.addr2latlng: can't find " + addr + " - trying again! tries: " + tries);
 		}
 	},
 	_geo_fallback: { lat: 37.75, lng: -122.45 },
+	setGeoKeys: function(keys) {
+		CT.map.util._keys = keys;
+	},
 	setGeoFallback: function(pos) {
 		CT.map.util._geo_fallback = pos;
 	},

@@ -108,5 +108,5 @@ class ModelBase(sa_dbase):
         d = self.mydata()
         d["key"] = self.id()
         d["label"] = self.label
-        d["modeltype"] = self.polytype
+        d["modelName"] = self.polytype
         return d
