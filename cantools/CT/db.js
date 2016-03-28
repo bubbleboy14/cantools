@@ -52,9 +52,9 @@ CT.db = {
 			opts.cb && opts.cb(schema);
 		});
 	},
-	query: function(modelName, transition, showHelp) {
+	query: function(opts, transition) {
 		(new CT.modal.Modal({
-			"node": (new CT.db.Query(modelName, showHelp)).node,
+			"node": (new CT.db.Query(opts)).node,
 			"transition": transition || "none"
 		})).show();
 	},
@@ -239,12 +239,19 @@ CT.db.Query = CT.Class({
 				value: valcell.firstChild.getValue()
 			};
 		});
+		this.opts.submit({
+			modelName: this.modelName,
+			order: order,
+			filters: filters
+		});
+		this.node.parentNode.modal.hide();
+	},
+	_submitCb: function(opts) {
 		var key = this.modelName + "query" + this.id;
 		CT.panel.add(this.modelName + " (" + this.id + ")",
 			false, "db", CT.dom.id("dbqueries"), null, key);
-		CT.db.pager(this.modelName, order, filters, key);
+		CT.db.pager(this.modelName, opts.order, opts.filters, key);
 		CT.panel.swap(key, false, "db");
-		this.node.parentNode.modal.hide();
 	},
 	_build: function() {
 		this.filters = CT.dom.node();
@@ -258,7 +265,7 @@ CT.db.Query = CT.Class({
 				CT.dom.button("add", this._filter)
 			]),
 			CT.dom.node("Select 'like' comparator for values such as 'MO%' (meaning 'starts with MO')",
-				"div", this.showHelp && "italic" || "hidden"),
+				"div", this.opts.showHelp && "italic" || "hidden"),
 			this.filters,
 			CT.dom.button("submit", this._submit)
 		]);
@@ -269,12 +276,14 @@ CT.db.Query = CT.Class({
 			if (CT.db.edit.isSupported(this.schema[k]))
 				this.filterables.push(k);
 	},
-	init: function(modelName, showHelp) {
+	init: function(opts) {
+		this.opts = opts = CT.merge(opts, {
+			submit: this._submitCb
+		});
 		this.id = CT.db.Query._id;
 		CT.db.Query._id += 1;
-		this.modelName = modelName;
-		this.showHelp = showHelp;
-		this.schema = CT.db.getSchema(modelName);
+		this.modelName = opts.modelName;
+		this.schema = CT.db.getSchema(opts.modelName);
 		this._filterables();
 		this._build();
 	}
