@@ -119,7 +119,6 @@ CT.autocomplete.Guesser.id = 0;
 CT.autocomplete.DBGuesser = CT.Class({
 	CLASSNAME: "CT.autocomplete.DBGuesser",
 	guesser: function(frag) {
-		CT.log("guessing: " + frag);
 		var filters = {};
 		filters[this.opts.property] = {
 			comparator: "like",
