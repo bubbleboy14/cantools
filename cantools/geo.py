@@ -1,4 +1,4 @@
-import os, urllib, json
+import os, urllib
 from cantools.web import fetch
 from cantools.util import log, read, writejson
 from cantools import config
@@ -16,13 +16,23 @@ class Geo(object):
 			"index": 0
 		},
 		"zip": {
-			"user": "geonames",
-			"host": "ws.geonames.org",
-			"path": "/findNearbyPostalCodesJSON?radius=1&lat={0}&lng={1}",
-			"sig": "username",
-			"property": "postalCodes",
-			"index": 0
-		}
+			"geonames": {
+				"user": "geonames",
+				"host": "ws.geonames.org",
+				"path": "/findNearbyPostalCodesJSON?radius=1&lat={0}&lng={1}",
+				"sig": "username",
+				"property": "postalCodes",
+				"index": 0
+			},
+			"google": {
+				"user": "google",
+				"host": "maps.googleapis.com",
+				"path": "/maps/api/geocode/json?sensor=false&latlng={0},{1}",
+				"sig": "key",
+				"property": "results",
+				"index": 0
+			}
+		}[config.geo.zip]
 	}
 
 	def __init__(self):
@@ -49,10 +59,11 @@ class Geo(object):
 				fullpath += "&%s=%s"%(sig, keys[num])
 				if user == "google":
 					kwargs["protocol"] = "https"
-			result = fetch(host, fullpath, **kwargs).get(prop, [])
+			raw = fetch(host, fullpath, **kwargs)
+			result = raw.get(prop, [])
 			if len(result):
 				break
-			log("0-length %s result - changing user"%(api,), important=True)
+			log("0-length %s result (got: '%s') - changing user"%(api, raw), important=True)
 			num = (num + 1) % len(keys)
 			if num == onum:
 				log("exhausted key list -- returning [] :'(")
@@ -81,10 +92,12 @@ class Geo(object):
 
 	def latlng2zip(self, lat, lng):
 		result = self._fetch("zip", lat, lng)
-		log("finding zip for lat %s and lng %s. result: %s"%(lat, lng, json.dumps(result)), 3)
+		log("finding zip for lat %s and lng %s"%(lat, lng), 3)
 		if not len(result):
 			log("can't find zipcode!!!", important=True)
 			return None
+		if config.geo.zip == "google":
+			return [c["short_name"] for c in result[0]["address_components"] if c["types"][0] == "postal_code"][0]
 		return result[0]["postalCode"]
 
 	def addr2zip(self, addr, allowNone=False):

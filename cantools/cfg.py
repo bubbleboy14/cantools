@@ -4,6 +4,7 @@ cfg = {
 	},
 	"geo": {
 		"test": False,
+		"zip": "google", # google|geonames
 		"user": {
 			"geonames": ["demo"],
 			"google": [""]
