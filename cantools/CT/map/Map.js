@@ -19,7 +19,7 @@ CT.map.Map = CT.Class({
 		if (this.map)
 			m.add(this.map);
 		else
-			this.opts.markers[d.key] = d;
+			this.opts.markers[data.key] = data;
 		return m;
 	},
 	clearMarkers: function() {
