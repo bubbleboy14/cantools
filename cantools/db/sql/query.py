@@ -28,7 +28,10 @@ class Query(object):
                 asc = False
                 prop = prop[1:]
             sub = refcount_subq(prop, self.session)
-            return self.join(sub, self.mod.key == sub.c.target).order(asc and sub.c.count or -sub.c.count)
+            order = sub.c.count
+            if not asc:
+                order = -sub.c.count
+            return self.join(sub, self.mod.key == sub.c.target).order(order)
         return self._order(prop)
 
     def _qplam(self, fname):
