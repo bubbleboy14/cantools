@@ -23,8 +23,12 @@ class Query(object):
     def order(self, prop):
         if isinstance(prop, basestring) and "." in prop: # it's a foreignkey reference from another table
             from lookup import refcount_subq
+            asc = True
+            if prop.startswith("-"):
+                asc = False
+                prop = prop[1:]
             sub = refcount_subq(prop, self.session)
-            return self.join(sub, self.mod.key == sub.c.target).order(-sub.c.count)
+            return self.join(sub, self.mod.key == sub.c.target).order(asc and sub.c.count or -sub.c.count)
         return self._order(prop)
 
     def _qplam(self, fname):
