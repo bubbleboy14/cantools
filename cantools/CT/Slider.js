@@ -3,6 +3,7 @@ CT.Slider = CT.Class({
 	init: function (opts) {
 		this.opts = CT.merge(opts, {
 			node: document.body,
+			autoSlideInterval: 5000,
 			cards: []
 		});
 		this.circlesContainer = CT.dom.node("", "div", "carousel-order-indicator");
@@ -31,6 +32,14 @@ CT.Slider = CT.Class({
 			interval: this.width, 
 			up: this.updatePosition
 		});
+		this._autoSlide = setInterval(this._autoSlideCallback, this.opts.autoSlideInterval);
+		CT.gesture.listen("down", this.container, this._clearAutoSlide);
+	},
+	_clearAutoSlide: function() {
+		if (this._autoSlide) {
+			clearInterval(this._autoSlide);
+			this._autoSlide = null;
+		}
 	},
 	addFrame: function(imgsrc, index) {
 		var circle = CT.dom.node("", "div", "indicator-circle");
@@ -73,10 +82,15 @@ CT.Slider = CT.Class({
 			x: this.pos
 		});
 	},
+	_autoSlideCallback: function() {
+		this.shift("left");
+	},
 	prevButtonCallback: function () {
+		this._clearAutoSlide();
 		this.shift("right");
 	},
 	nextButtonCallback: function () {
+		this._clearAutoSlide();
 		this.shift("left");
 	}
 });
