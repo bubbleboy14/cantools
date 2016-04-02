@@ -1,4 +1,5 @@
 CT.require("CT.Pager");
+CT.require("CT.Slider");
 CT.require("CT.align");
 CT.require("CT.autocomplete");
 CT.require("CT.canvas.all");
