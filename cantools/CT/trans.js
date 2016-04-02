@@ -21,9 +21,9 @@ CT.trans = {
 				property: "transform",
 				ease: "ease-out",
 				prefix: true,
-				dx: 0,
-				dy: 0,
-				dz: 0
+				x: 0,
+				y: 0,
+				z: 0
 			}
 		}
 	},
@@ -73,7 +73,7 @@ CT.trans = {
 	translate: function(node, opts) {
 		opts = CT.merge(opts, CT.trans._.defaults.translate);
 		opts.node = node;
-		opts.value = "translate3d(" + opts.dx + "px," + opts.dy + "px," + opts.dz + "px)",
+		opts.value = "translate3d(" + opts.x + "px," + opts.y + "px," + opts.z + "px)",
 		CT.trans.trans(opts);
 	}
 };

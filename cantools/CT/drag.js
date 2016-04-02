@@ -154,8 +154,8 @@ CT.drag = {
 					{
 						node.animating = true;
 						CT.trans.translate(node, {
-							dx: node.xDrag,
-							dy: node.yDrag,
+							x: node.xDrag,
+							y: node.yDrag,
 							cb: function () {
 								node.animating = false;
 							}
@@ -200,8 +200,8 @@ CT.drag = {
 					{
 						node.animating = true;
 						CT.trans.translate(node, {
-							dx: node.xDrag,
-							dy: node.yDrag,
+							x: node.xDrag,
+							y: node.yDrag,
 							cb: function () {
 								node.animating = false;
 								if (opts.drag)
@@ -290,8 +290,8 @@ CT.drag = {
 				}
 				node.animating = true;
 				CT.trans.translate(node, {
-					dx: node.xDrag,
-					dy: node.yDrag,
+					x: node.xDrag,
+					y: node.yDrag,
 					cb: function() {
 						node.animating = false;
 						upCallback(direction);//legit?
