@@ -24,8 +24,9 @@ setup(
         "rel >= 0.3.4",
         "dez >= 0.5.12",
         "yagmail >= 0.4.116",
-        "requests >= 2.3.0"
-        "slimit"
+        "requests >= 2.3.0",
+        "slimit",
+        "sqlalchemy >= 1.0.12"
     ],
     entry_points = '''
         [console_scripts]
