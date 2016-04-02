@@ -627,23 +627,24 @@ CT.dom = {
 	},
 
 	// dynamically add style rules
-	"addStyle": function(text, href, objarr) { // choose one!
-		if (objarr) {
+	"addStyle": function(text, href, obj) { // choose one!
+		if (obj) {
+			// obj is unordered. if ordered definitions are desired,
+			// use repeated calls to addStyle, eg:
+			//  - defchunks.forEach(function(c) { CT.dom.addStyle(null, null, c); });
 			text = [];
-			objarr.forEach(function(objwrapper) {
-				for (var key in objwrapper) { // there's only one ;)
-					text.push(key + " {");
-					var pobj = objwrapper[key];
-					for (var prop in pobj)
-						text.push(prop + ": " + pobj[prop] + ";");
-					text.push("}");
-				}
-			});
+			for (var key in obj) {
+				text.push(key + " {");
+				var pobj = obj[key];
+				for (var prop in pobj)
+					text.push(prop + ": " + pobj[prop] + ";");
+				text.push("}");
+			}
 			text = text.join("\n");
 		}
 		var node = href ? CT.dom.node(null, "link", null, null,
 			{ "href": href }) : CT.dom.node(text, "style");
-	    document.getElementsByTagName("head")[0].appendChild(node);
+	    CT.dom.tag("head")[0].appendChild(node);
 	},
 
 	// defer function until node exists in dom
