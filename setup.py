@@ -1,9 +1,8 @@
-from cantools import __version__
 from setuptools import setup
 
 setup(
     name='ct',
-    version=__version__,
+    version="0.6.5",
     author='Mario Balibrera',
     author_email='mario.balibrera@gmail.com',
     license='MIT License',

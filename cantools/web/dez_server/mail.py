@@ -1,9 +1,6 @@
-from ..util import config, fail, log
-try:
-	import yagmail
-	yag = config.mailer and yagmail.SMTP(config.mailer) # will ask for password
-except ImportError, e:
-	log("failed to import yagmail -- letting it slide so setup script can run")
+from ..util import config, fail
+import yagmail
+yag = config.mailer and yagmail.SMTP(config.mailer) # will ask for password
 
 def send_mail(to=None, sender=None, subject=None, body=None, html=None):
 	if not yag:
