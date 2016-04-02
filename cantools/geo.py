@@ -1,6 +1,6 @@
 import os, urllib
 from cantools.web import fetch
-from cantools.util import log, read, writejson
+from cantools.util import log, read, write, writejson
 from cantools import config
 
 zcpath = os.path.join("logs", "json", "geo")
@@ -118,9 +118,12 @@ class Geo(object):
 		log("found zip: %s"%(d["zip"],), 4)
 		return d["zip"]
 
-	def savecache(self):
-		log("saving zipcode / latlng (geo) cache", important=True)
-		writejson(self.cache, zcpath)
+	def savecache(self, pretty=False):
+		log("saving zipcode / latlng (geo) cache (pretty: %s)"%(pretty,), important=True)
+		if pretty:
+			writejson(self.cache, zcpath)
+		else:
+			write(self.cache, "%s.json"%(zcpath,), True)
 
 geo = Geo()
 address2latlng = geo.address2latlng
