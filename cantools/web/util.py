@@ -1,4 +1,5 @@
 import sys, json, threading
+from urllib import quote, unquote
 from base64 import b64encode, b64decode
 from cantools import config
 
@@ -79,9 +80,15 @@ def cgi_read():
 def set_read(f):
     localvars.read = f
 
+def rdec(data):
+    return unquote(b64decode(data)).decode("utf_8")
+
+def renc(data):
+    return b64encode(quote(data.encode("utf_8")))
+
 def rb64(data, de=False):
     if isinstance(data, basestring):
-        return (de and b64decode or b64encode)(data)
+        return (de and rdec or renc)(data)
     elif isinstance(data, dict):
         for k, v in data.items():
             data[str(k)] = rb64(v, de)

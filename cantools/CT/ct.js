@@ -64,7 +64,7 @@ var CT = {
 		    	xhr.setRequestHeader(header, headers[header]);
 		    xhr.onreadystatechange = cb && function() { cb(xhr); };
 		    if (params) {
-		    	params = JSON.stringify(CT.net._b64rd(params, true));
+		    	params = JSON.stringify(CT.net._rd(params, true));
 		    	if (CT.net._encode)
 		    		params = CT.net._encoder(params);
 		    }
@@ -78,14 +78,20 @@ var CT = {
 			else
 				alert(msg);
 		},
-		"_b64rd": function(d, enc) {
+		"_u2l": function (s) {
+		    return btoa(unescape(encodeURIComponent(s)));
+		},
+		"_l2u": function (s) {
+		    return decodeURIComponent(escape(atob(s)));
+		},
+		"_rd": function(d, enc) {
 			if (d) {
 				if (typeof d == "string")
-					return (enc ? btoa : atob)(d);
+					return CT.net[(enc ? "_u2l" : "_l2u")](d);
 				if (typeof d == "object") {
 					var k, o = Array.isArray(d) ? [] : {};
 					for (k in d)
-						o[k] = CT.net._b64rd(d[k], enc);
+						o[k] = CT.net._rd(d[k], enc);
 					return o;
 				}
 			}
@@ -118,7 +124,7 @@ var CT = {
 		                var code = data.charAt(0);
 		                var success = function(b64) {
 		                	var pl = JSON.parse(payload);
-		                	if (b64) pl = CT.net._b64rd(pl);
+		                	if (b64) pl = CT.net._rd(pl);
 		                	if (CT.net._cache)
 			                	CT.storage.set(signature, pl);
 		                	cb(pl, cbarg);
