@@ -22,10 +22,17 @@ CT.map.Map = CT.Class({
 			this.opts.markers[data.key] = data;
 		return m;
 	},
-	clearMarkers: function() {
-		for (var k in this.markers)
-			this.markers[k].remove();
-		this.markers = {};
+	addMarkers: function(dlist) {
+		var that = this, ms = [];
+		dlist.forEach(function(d) {
+			ms.push(that.addMarker(d));
+		});
+		return ms;
+	},
+	clearMarkers: function(markers) { // markers is LIST
+		(markers || Object.values(this.markers)).forEach(function(m) {
+			m.remove();
+		});
 	},
 	geoJson: function(gj) { // path or json obj (right?)
 		this.map.data.loadGeoJSON(gj);
