@@ -50,13 +50,27 @@ CT.db = {
 			cb(d);
 		});
 	},
+	multi: function(keys, cb) {
+		var needed = keys.filter(function(k) {
+			return !CT.data.get(k);
+		});
+		CT.net.post("/_db", {
+			action: "get",
+			keys: needed
+		}, null, function(dlist) {
+			CT.data.addSet(dlist);
+			cb && cb(keys.map(function(k) {
+				return CT.data.get(k);
+			}));
+		});
+	},
 	one: function(key, cb) {
 		if (CT.data.has(key))
 			return cb && cb(CT.data.get(key));
 		CT.net.post("/_db", {
 			action: "get",
 			key: key
-		}, "failed to get " + key, function(d) {
+		}, null, function(d) {
 			CT.data.add(d);
 			cb && cb(d);
 		});
