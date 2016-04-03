@@ -59,8 +59,10 @@ def get(b64compkey, session=session):
     compkey = json.loads(b64decode(b64compkey))
     return modelsubs[compkey["model"]].query(session=session).query.get(compkey["index"])
 
-def get_multi(keyobjs, session=session):
-    b64keys = [k.urlsafe() for k in keyobjs]
+def get_multi(b64keys, session=session):
+    # b64keys can be Key instances or b64 key strings
+    if b64keys and not isinstance(b64keys[0], basestring):
+        b64keys = [k.urlsafe() for k in b64keys]
     keys = [json.loads(b64decode(k)) for k in b64keys]
     ents = {}
     res = {}
