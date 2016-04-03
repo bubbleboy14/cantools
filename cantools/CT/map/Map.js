@@ -29,8 +29,8 @@ CT.map.Map = CT.Class({
 		});
 		return ms;
 	},
-	clearMarkers: function(markers) { // markers is LIST
-		(markers || Object.values(this.markers)).forEach(function(m) {
+	clearMarkers: function(markers) {
+		(Array.isArray(markers) ? markers : Object.values(this.markers)).forEach(function(m) {
 			m.remove();
 		});
 	},
