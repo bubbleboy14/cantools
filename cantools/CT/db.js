@@ -54,6 +54,11 @@ CT.db = {
 		var needed = keys.filter(function(k) {
 			return !CT.data.get(k);
 		});
+		if (!needed.length) {
+			return cb(keys.map(function(k) {
+				return CT.data.get(k);
+			}));
+		}
 		CT.net.post("/_db", {
 			action: "get",
 			keys: needed
