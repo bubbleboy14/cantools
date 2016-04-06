@@ -3,6 +3,14 @@ from datetime import datetime
 
 LOG_FILE = None
 ERROR_CB = None
+TIME_CBS = {}
+
+def start_timer(tname):
+    TIME_CBS[tname] = datetime.now()
+
+def end_timer(tname, msg=""):
+    diff = datetime.now() - TIME_CBS[tname]
+    log("[timer] Completed in %s |%s| %s"%(diff, msg, tname), important=True)
 
 def set_log(fname):
 	global LOG_FILE
