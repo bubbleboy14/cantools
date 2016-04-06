@@ -10,8 +10,8 @@ def go():
 		help="select your port (default=%s)"%(config.web.port,))
 	parser.add_option("-a", "--admin_port", dest="admin_port", default=config.admin.port,
 		help="select your port (default=%s)"%(config.admin.port,))
-	parser.add_option("-d", "--datastore", dest="datastore", default=config.db,
-		help="select your datastore file (default=%s)"%(config.db,))
+	parser.add_option("-d", "--datastore", dest="datastore", default=config.db.main,
+		help="select your datastore file (default=%s)"%(config.db.main,))
 	options, args = parser.parse_args()
 
 	config.web.update("port", int(options.port))

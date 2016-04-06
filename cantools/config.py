@@ -74,8 +74,6 @@ for key, val in [[term.strip() for term in line.split(" = ")] for line in read("
 			for part in path.split("_"):
 				c = getattr(c, part)
 		c.update(target, val)
-config.update("db_public", config.db.public)
-config.update("db_echo", config.db.echo)
-config.update("db_test", config.db.test)
-config.update("db", config.db[config.web.server])
+
+config.db.update("main", config.db[config.web.server])
 config.update("cache", pc)

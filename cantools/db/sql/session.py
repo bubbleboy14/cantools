@@ -8,8 +8,8 @@ from cantools.web import cgi_dump, set_pre_close
 lastSession = None
 
 class Session(object):
-	def __init__(self, dbstring=config.db):
-		self.engine = create_engine(dbstring, pool_recycle=7200, echo=config.db_echo)
+	def __init__(self, dbstring=config.db.main):
+		self.engine = create_engine(dbstring, pool_recycle=7200, echo=config.db.echo)
 		self.generator = scoped_session(sessionmaker(bind=self.engine), scopefunc=self._scope)
 		for fname in ["add", "add_all", "delete", "flush", "commit", "query"]:
 			setattr(self, fname, self._func(fname))
@@ -42,7 +42,7 @@ def loadTables(cls):
 	cls.metadata.create_all(lastSession.engine)
 
 def testSession():
-	return Session(config.db_test)
+	return Session(config.db.test)
 
 def closeSession():
 	lastSession.generator.remove()

@@ -7,7 +7,7 @@ def response():
 	action = cgi_get("action", choices=["schema", "get", "edit", "delete"])
 
 	# edit/delete always require credentials; getters do configurably
-	if not config.db_public or action in ["edit", "delete"]:
+	if not config.db.public or action in ["edit", "delete"]:
 		if cgi_get("pw") != config.admin.pw:
 			fail("wrong")
 
