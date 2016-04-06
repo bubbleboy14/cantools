@@ -56,6 +56,8 @@ def getall(entity=None, query=None, keys_only=False, session=session):
     return res
 
 def get(b64compkey, session=session):
+    if not isinstance(b64compkey, basestring):
+        b64compkey = b64compkey.urlsafe()
     compkey = json.loads(b64decode(b64compkey))
     return modelsubs[compkey["model"]].query(session=session).query.get(compkey["index"])
 
