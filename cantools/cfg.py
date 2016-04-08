@@ -10,6 +10,10 @@ cfg = {
 			"google": [""]
 		}
 	},
+	"cache": {
+		"request": False,
+		"db": True
+	},
 	"admin": {
 		"host": "localhost",
 		"port": 8002

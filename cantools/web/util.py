@@ -4,7 +4,6 @@ from base64 import b64encode, b64decode
 from cantools import config
 
 DEBUG = True
-cache_default = False
 
 # memcache stuff -- overwrite with setters
 def getmem(key, tojson=True):
@@ -220,8 +219,8 @@ def redirect(addr, msg="", noscript=False, exit=True):
     _write(_env(True)%(a,), exit)
 
 def setcachedefault(shouldCache=True):
-    global cache_default
-    cache_default = shouldCache
+    # deprecated -- should set via config.cache.update("requst", [bool])
+    config.cache.update("request", shouldCache)
 
 def _env(html):
     return "%s"
@@ -246,7 +245,7 @@ def processResponse(data, code):
     return "%s%s"%(code, data)
 
 def succeed(data="", html=False, noenc=False, savename=None, cache=False):
-    if cache or cache_default:
+    if cache or config.cache.request:
         savename = local("request_string")
     _header("Content-Type", "text/%s"%(html and "html" or "plain"))
     draw = processResponse(data, "1")
