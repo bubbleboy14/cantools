@@ -219,8 +219,8 @@ def redirect(addr, msg="", noscript=False, exit=True):
     _write(_env(True)%(a,), exit)
 
 def setcachedefault(shouldCache=True):
-    # deprecated -- should set via config.cache.update("requst", [bool])
-    config.cache.update("request", shouldCache)
+    # deprecated -- should set via config.memcache.update("requst", [bool])
+    config.memcache.update("request", shouldCache)
 
 def _env(html):
     return "%s"
@@ -245,7 +245,7 @@ def processResponse(data, code):
     return "%s%s"%(code, data)
 
 def succeed(data="", html=False, noenc=False, savename=None, cache=False):
-    if cache or config.cache.request:
+    if cache or config.memcache.request:
         savename = local("request_string")
     _header("Content-Type", "text/%s"%(html and "html" or "plain"))
     draw = processResponse(data, "1")

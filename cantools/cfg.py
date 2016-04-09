@@ -10,7 +10,7 @@ cfg = {
 			"google": [""]
 		}
 	},
-	"cache": {
+	"memcache": {
 		"request": False,
 		"db": True
 	},
