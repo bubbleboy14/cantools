@@ -95,7 +95,7 @@ CT.map.Marker = CT.Class({
 			icon: "http://maps.google.com/mapfiles/ms/icons/purple-dot.png",
 			listeners: opts.info && { click: this.showInfo } || {}
 		});
-		opts.position = CT.map.util.latlng((opts.position && opts.lat && opts.lng)
+		opts.position = CT.map.util.latlng((opts.position && opts.position.lat && opts.position.lng)
 			? opts.position : CT.map.util.addr2latlng(opts.address));
 		opts.content ? this._buildCustomMarker() : this._buildMarker();
 		this._buildWrappers();
