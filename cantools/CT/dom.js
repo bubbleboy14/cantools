@@ -367,12 +367,14 @@ CT.dom = {
 	    "March", "April", "May", "June", "July", "August",
 	    "September", "October", "November", "December"],
 	"currentyear": Math.max((new Date()).getFullYear(), 2014),
-	"dateSelectors": function(node, d, startdate, enddate, withtime, noday) {
+	"dateSelectors": function(node, d, startdate, enddate, withtime, noday, val) {
 	    var eyears = ["Year"];
 	    startdate = startdate || CT.dom.currentyear;
 	    enddate = enddate || CT.dom.currentyear;
 	    for (var i = startdate; i <= enddate; i++)
 	        eyears.push(i);
+	    node = node || CT.dom.node(null, "span");
+	    d = d || node;
 	    d.year = CT.dom.select(eyears);
 	    d.month = CT.dom.select(["Month"].concat(CT.dom._monthnames),
 	        ["Month", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
@@ -388,12 +390,31 @@ CT.dom = {
 	        // hour, minute = etime.split(":") server-side
 	        var etimes = ["Time"];
 	        for (var i = 0; i < 24; i++) {
-	            etimes.push(i+":"+"00");
-	            etimes.push(i+":"+"30");
+	        	var istr = i < 10 ? "0" + i : i;
+	            etimes.push(istr + ":" + "00");
+	            etimes.push(istr + ":" + "30");
 	        }
 	        d.time = CT.dom.select(etimes);
 	        node.appendChild(d.time);
 	    }
+	    if (val) {
+	    	var vsplit = val.split(" "),
+	    		dsplit = vsplit[0].split("-");
+	    	d.year.value = dsplit[0];
+	    	d.month.value = parseInt(dsplit[1]);
+	    	d.day.value = parseInt(dsplit[2]);
+	    	if (withtime)
+	    		d.time.value = vsplit[1].slice(0, -3);
+	    }
+		d.value = function() {
+			var val = d.year.value + "-" + d.month.value;
+			if (!noday)
+				val += "-" + d.day.value;
+			if (withtime)
+				val += " " + d.time.value + ":00";
+			return val;
+		};
+	    return node;
 	},
 
 	// password prompt
