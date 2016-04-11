@@ -5,8 +5,7 @@ CT.drag = {
 		left: "vertical",
 		right: "vertical"
 	},
-	nativeScroll: function (n, opts)
-	{
+	nativeScroll: function (n, opts) {
 		CT.gesture.listen("up", n, function () {
 			if (opts.up)
 				opts.up();
@@ -62,8 +61,7 @@ CT.drag = {
 			return true;
 		}, false);
 	},
-	makeDraggable: function (node, opts)
-	{
+	makeDraggable: function (node, opts) {
 		opts = opts || {};
 		if (!opts.interval && !opts.force && !CT.info.isStockAndroid)
 			return CT.drag.nativeScroll(node.firstChild, opts);
@@ -78,8 +76,7 @@ CT.drag = {
 			node.parentNode.style.overflow = "visible";
 		};
 		node.parentNode.addEventListener('scroll', function (event) {return false;}, false);
-		downCallback = function () 
-		{
+		downCallback = function () {
 			if (node.animating) return;
 			node.dragging = false;
 			node.touchedDown = true;
@@ -248,8 +245,7 @@ CT.drag = {
 					opts.scroll();
 			}
 		};
-		swipeCallback =  function (direction, distance, dx, dy, pixelsPerSecond)
-		{
+		swipeCallback =  function (direction, distance, dx, dy, pixelsPerSecond) {
 			var xMod = opts.interval ? node.xDrag % opts.interval : -dx;
 			var yMod = opts.interval ? node.yDrag % opts.interval : pixelsPerSecond * .3;
 			if (node.animating == false)
