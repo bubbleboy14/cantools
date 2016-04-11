@@ -106,7 +106,9 @@ CT.admin.db.Editor = CT.Class({
 		rownode.appendChild(CT.dom.node(k + ":", "div", "keycell"));
 		ptype = rownode.ptype = this.schema[k];
 		if (CT.db.edit.isSupported(ptype)) {
-			valcell = CT.db.edit.input(k, ptype, val, this.modelName);
+			valcell = CT.db.edit.input(k, ptype, val, this.modelName, {
+				startYear: 1970 // gotta start somewhere, might as well be epoch...
+			});
 			this.inputs.push(valcell);
 		} else
 			valcell = CT.dom.node(val || "null", "span");
@@ -115,8 +117,8 @@ CT.admin.db.Editor = CT.Class({
 	},
 	"_table": function() {
 		var k, r, d = this.data, n = this.node = CT.dom.node();
-		["string", "integer", "float", "bool", "key"].forEach(function(t) {
-			// TODO: list, datetimeautostamper (when they work)
+		["string", "integer", "float", "bool", "datetimeautostamper", "key"].forEach(function(t) {
+			// TODO: list (when it's ready)
 			n[t] = CT.dom.node();
 			n.appendChild(n[t]);
 		});

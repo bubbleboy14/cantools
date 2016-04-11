@@ -110,11 +110,12 @@ CT.db = {
 };
 
 CT.db.edit = {
-	_d: { // unimplemented: datetimeautostamper, list -- no editing (yet) :)
+	_d: { // unimplemented: list -- no editing (yet) :)
 		"string": "",
 		"integer": 0,
 		"float": 0.0,
 		"boolean": false,
+		"datetimeautostamper": null,
 		"key": null
 	},
 	_no_ent: {
@@ -126,7 +127,7 @@ CT.db.edit = {
 		return CT.db.edit._d[ptype];
 	},
 	isSupported: function(ptype) {
-		// implement key/datetimeautostamper/list editing soon!!
+		// implement list editing soon!!
 		return ptype in CT.db.edit._d;
 	},
 	getDefaults: function(modelName, extras) {
@@ -146,11 +147,14 @@ CT.db.edit = {
 				return parseFloat(f.value) || null;
 			if (ptype == "key")
 				return f.data.key;
+			if (ptype == "datetimeautostamper")
+				return f.value();
 			return f.value; // string
 		};
 	},
-	input: function(k, ptype, val, modelName) {
+	input: function(k, ptype, val, modelName, opts) {
 		var valcell;
+		opts = opts || {};
 		if (ptype == "string")
 			valcell = CT.dom.field(null, val);
 		else if (ptype == "boolean")
@@ -168,6 +172,8 @@ CT.db.edit = {
 				key: val,
 				modelName: modelName
 			})).node;
+		else if (ptype == "datetimeautostamper")
+			valcell = CT.dom.dateSelectors(null, null, opts.startYear, null, null, null, val);
 		valcell.getValue = CT.db.edit._val(valcell, ptype);
 		valcell.rowKey = k;
 		return valcell;
@@ -237,7 +243,7 @@ CT.db.edit.EntityRow = CT.Class({
 CT.db.Query = CT.Class({
 	CLASSNAME: "CT.db.Query",
 	_filter: function() {
-		var valcell = CT.dom.node(null, "span"), schema = this.schema, mname = this.modelName,
+		var valcell = CT.dom.node(null, "span"), that = this,
 			compcell = CT.dom.select(["==", ">", "<", ">=", "<=", "!=", "like"]),
 			selectcell = CT.dom.select(this.filterables),
 			rmcell = CT.dom.button("remove", function() {
@@ -245,7 +251,8 @@ CT.db.Query = CT.Class({
 			});
 		selectcell.onchange = function() {
 			CT.dom.setContent(valcell,
-				CT.db.edit.input(selectcell.value, schema[selectcell.value], null, mname));
+				CT.db.edit.input(selectcell.value, that.schema[selectcell.value],
+					null, that.modelName, that.opts));
 		};
 		selectcell.onchange();
 		this.filters.appendChild(CT.dom.node([selectcell, compcell, valcell, rmcell]));
