@@ -412,6 +412,8 @@ CT.dom = {
 				val += "-" + d.day.value;
 			if (withtime)
 				val += " " + d.time.value + ":00";
+			else
+				val += " 00:00:00";
 			return val;
 		};
 	    return node;

@@ -15,12 +15,13 @@ CT.admin.db = {
 			});
 		}, true);
 	},
-	"_post_pager": function(key, modelName) {
+	"_post_pager": function(key, modelName, startYear) {
 		var pnode = CT.dom.id("dbpanel" + key);
 		pnode.insertBefore(CT.dom.node([
 			CT.dom.button("new query", function() {
 				CT.db.query({
 					modelName: modelName,
+					startYear: startYear || 1970, // gotta start somewhere...
 					showHelp: true
 				}, "fade");
 			}),

@@ -1,5 +1,6 @@
 import json, operator
 from base64 import b64decode
+from datetime import datetime
 from sqlalchemy import func
 from session import session
 
@@ -38,8 +39,10 @@ def get_page(modelName, limit, offset, order='index', filters={}, session=sessio
         val = obj["value"]
         comp = obj["comparator"]
         prop = getattr(mod, key)
-        if schema[key] == "key":
+        if schema[key] == "key" and not isinstance(val, KeyWrapper):
             val = KeyWrapper(val)
+        elif schema[key] == "datetimeautostamper" and not isinstance(val, datetime):
+            val = datetime.strptime(val, "%Y-%m-%d %H:%M:%S")
         if comp == "like":
             query.filter(func.lower(prop).like(val.lower()))
         else:
