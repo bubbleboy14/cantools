@@ -377,13 +377,14 @@ CT.dom = {
 	    d = d || node;
 	    d.year = CT.dom.select(eyears);
 	    d.month = CT.dom.select(["Month"].concat(CT.dom._monthnames),
-	        ["Month", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+	        ["Month", "01", "02", "03", "04", "05",
+	        "06", "07", "08", "09", "10", "11", "12"]);
 	    node.appendChild(d.year);
 	    node.appendChild(d.month);
 	    if (!noday) {
-	        d.day = CT.dom.select(["Day", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
-	            11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
-	            25, 26, 27, 28, 29, 30, 31]);
+	        d.day = CT.dom.select(["Day", "01", "02", "03", "04", "05", "06", "07", "08",
+	        	"09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20",
+	        	"21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"]);
 	        node.appendChild(d.day);
 	    }
 	    if (withtime) {
@@ -401,12 +402,15 @@ CT.dom = {
 	    	var vsplit = val.split(" "),
 	    		dsplit = vsplit[0].split("-");
 	    	d.year.value = dsplit[0];
-	    	d.month.value = parseInt(dsplit[1]);
-	    	d.day.value = parseInt(dsplit[2]);
+	    	d.month.value = dsplit[1];
+	    	if (!noday)
+		    	d.day.value = dsplit[2];
 	    	if (withtime)
 	    		d.time.value = vsplit[1].slice(0, -3);
 	    }
 		d.value = function() {
+			if (d.year.value == "Year" || d.month.value == "Month" || (!noday && d.day.value == "Day"))
+				return null;
 			var val = d.year.value + "-" + d.month.value;
 			if (!noday)
 				val += "-" + d.day.value;
