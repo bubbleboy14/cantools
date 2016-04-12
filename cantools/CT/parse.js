@@ -1,16 +1,3 @@
-// time stuff
-// Date prototype stuff from:
-// http://stackoverflow.com/questions/11887934/check-if-daylight-saving-time-is-in-effect-and-if-it-is-for-how-many-hours
-Date.prototype.stdTimezoneOffset = function() {
-    var jan = new Date(this.getFullYear(), 0, 1);
-    var jul = new Date(this.getFullYear(), 6, 1);
-    return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
-};
-Date.prototype.dst = function() {
-    return this.getTimezoneOffset() < this.stdTimezoneOffset();
-};
-var SERVER_OFFSET = (new Date()).dst() ? 7 : 8; // i think ;)
-
 CT.parse = {
 	"_linkProcessor": null,
 	"_NUMS": '0123456789',
@@ -171,9 +158,13 @@ CT.parse = {
 	    if (!diff) return false;
 	    return diff + " " + name + (diff == 1 ? "" : "s");
 	},
+	"_ts_server_offset": 0,
+	"set_ts_server_offset": function(offset) {
+		CT.parse._ts_server_offset = offset;
+	},
 	"timeStamp": function(datetime) {
 	    var now = new Date();
-	    now.setHours(now.getHours() + (now.getTimezoneOffset() / 60) - SERVER_OFFSET);
+	    now.setHours(now.getHours() + (now.getTimezoneOffset() / 60) - CT.parse._ts_server_offset);
 	    var then = new Date(datetime.replace('T', ' ').replace(/-/g, '/')),
 	        secs = (now - then) / 1000,
 	        mins = ~~(secs / 60),
