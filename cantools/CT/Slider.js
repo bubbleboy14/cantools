@@ -1,12 +1,14 @@
 CT.Slider = CT.Class({
 	CLASSNAME: "CT.Slider",
 	init: function (opts) {
-		this.opts = CT.merge(opts, {
+		this.opts = opts = CT.merge(opts, {
 			node: document.body,
 			autoSlideInterval: 5000,
-			cards: []
+			cards: [],
+			bubblePosition: "bottom" // or "top"
 		});
-		this.circlesContainer = CT.dom.node("", "div", "carousel-order-indicator");
+		this.circlesContainer = CT.dom.node("", "div",
+			"carousel-order-indicator " + opts.bubblePosition);
 		this.prevButton = CT.dom.node("<", "div", "slider-btn prv hidden");
 		this.nextButton = CT.dom.node(">", "div", "slider-btn nxt");
 		this.index = this.pos = 0;

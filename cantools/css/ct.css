@@ -190,6 +190,7 @@
     background-color: #6a6a6a;
     width: 15px;
     height: 15px;
+    cursor: pointer;
 }
 .active-circle {
     background-color: white;
@@ -207,15 +208,13 @@
 }
 .carousel-image-container img {
     position: relative;
-    top: 5px;
-    height: 85%;
+    height: 100%;
     display: inline-block;
     clear:both;
 }
 .carousel-order-indicator {
     text-align: center;
     position: absolute;
-    bottom: 5px;
     width: 100%;
 }
 .slider-btn {
@@ -231,6 +230,12 @@
 }
 .slider-btn:hover {
     color: yellow;
+}
+.top {
+    top: 10px;
+}
+.bottom {
+    bottom: 10px;
 }
 .nxt {
     right: 10px;
