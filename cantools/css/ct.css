@@ -202,13 +202,48 @@
 }
 .carousel-content-container {
     height: 100%;
+    position: relative;
     display: inline-block;
+    font-weight: bold;
+    color: white;
 }
-.carousel-content-front {
+.carousel-content-image {
     background-position: center;
     background-size: cover;
+    position: absolute;
+    top: 0px;
+    right: 0px;
     height: 100%;
     width: 100%;
+    transition: width 1s, height 1s;
+    -moz-transition: width 1s, height 1s;
+    -webkit-transition: width 1s, height 1s;
+}
+.carousel-content-teaser {
+    padding: 10px;
+    margin: 10px;
+    width: 55%;
+    white-space: normal;
+    position: absolute;
+    top: 30px;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.25);
+}
+.carousel-content-full {
+    z-index: -1;
+    padding: 10px;
+    position: absolute;
+    top: 30%;
+    right: 100px;
+    left: 100px;
+    bottom: 10px;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.25);
+    white-space: normal;
+}
+.carousel-retracted {
+    width: 40%;
+    height: 30%;
 }
 .carousel-order-indicator {
     text-align: center;
