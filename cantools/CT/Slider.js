@@ -9,7 +9,7 @@ CT.Slider = CT.Class({
 		this.circlesContainer = CT.dom.node("", "div", "carousel-order-indicator");
 		this.prevButton = CT.dom.node("<", "div", "slider-btn prv hidden");
 		this.nextButton = CT.dom.node(">", "div", "slider-btn nxt");
-		this.pos = 0;
+		this.index = this.pos = 0;
 		this.width = CT.align.width(this.opts.node);
 		this.height = CT.align.height(this.opts.node);
 		this.fullWidth = this.opts.cards.length * this.width;
@@ -35,55 +35,59 @@ CT.Slider = CT.Class({
 		this._autoSlide = setInterval(this._autoSlideCallback, this.opts.autoSlideInterval);
 		CT.gesture.listen("down", this.container, this._clearAutoSlide);
 	},
-	_clearAutoSlide: function() {
+	_clearAutoSlide: function () {
 		if (this._autoSlide) {
 			clearInterval(this._autoSlide);
 			this._autoSlide = null;
 		}
 	},
-	addFrame: function(imgsrc, index) {
+	addFrame: function (card, index) {
+		if (typeof card == "string")
+			card = { img: card }
 		var circle = CT.dom.node("", "div", "indicator-circle");
+		CT.gesture.listen("tap", circle, this.circleJump(index));
 		if (index == 0) {
 			circle.className += " active-circle";
 			this.activeCircle = circle;
 		}
 		this.circlesContainer.appendChild(circle);
-		this.container.appendChild(CT.dom.node(CT.dom.img(imgsrc), "div",
+		this.container.appendChild(CT.dom.node(CT.dom.img(card.img), "div",
 			"carousel-image-container", null, null, { width: this.width + "px" }));
 	},
-	updatePosition: function (direction) {
+	circleJump: function (index) {
+		var f = function() {
+			this.slide(index);
+			this.trans();
+		}.bind(this);
+		return f;
+	},
+	slide: function (index) {
+		this.index = index;
 		this.activeCircle.classList.remove('active-circle');
-		if (direction == "first")
-			this.activeCircle = this.circlesContainer.firstChild;
-		else if (direction == "last")
-			this.activeCircle = this.circlesContainer.lastChild;
-		else if (direction == "left" && this.activeCircle.nextSibling)
-			this.activeCircle = this.activeCircle.nextSibling;
-		else if (direction == "right" && this.activeCircle.previousSibling)
-			this.activeCircle = this.activeCircle.previousSibling;
+		this.activeCircle = this.circlesContainer.childNodes[index];
 		this.activeCircle.classList.add('active-circle');
 		CT.dom[this.activeCircle.nextSibling ? "show" : "hide"](this.nextButton);
 		CT.dom[this.activeCircle.previousSibling ? "show" : "hide"](this.prevButton);
 	},
-	shift: function (direction) {
-		if (direction == "right")
-			this.pos += this.width;
-		else if (direction == "left")
-			this.pos -= this.width;
-		if (this.pos == -this.fullWidth) {
-			this.pos = 0;
-			direction = "first";
-		} else if (this.pos == this.width) {
-			this.pos = this.width - this.fullWidth;
-			direction = "last";
-		}
-		this.updatePosition(direction);
+	updatePosition: function (direction, force) {
+		var index = this.index;
+		if (direction == "left" && (force || this.activeCircle.nextSibling))
+			index += 1;
+		else if (direction == "right" && (force || this.activeCircle.previousSibling))
+			index -= 1;
+		this.slide(index % this.circlesContainer.childNodes.length);
+	},
+	trans: function() {
 		CT.trans.translate(this.container, {
-			x: this.pos
+			x: -this.index * this.width
 		});
 	},
-	_autoSlideCallback: function() {
-		this.shift("left");
+	shift: function (direction, force) {
+		this.updatePosition(direction, force);
+		this.trans();
+	},
+	_autoSlideCallback: function () {
+		this.shift("left", true);
 	},
 	prevButtonCallback: function () {
 		this._clearAutoSlide();
