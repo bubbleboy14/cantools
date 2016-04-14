@@ -200,17 +200,15 @@
     height: 100%;
     white-space: nowrap;
 }
-.carousel-image-container {
+.carousel-content-container {
     height: 100%;
-    text-align: center;
-    clear: both;
     display: inline-block;
 }
-.carousel-image-container img {
-    position: relative;
+.carousel-content-front {
+    background-position: center;
+    background-size: cover;
     height: 100%;
-    display: inline-block;
-    clear:both;
+    width: 100%;
 }
 .carousel-order-indicator {
     text-align: center;

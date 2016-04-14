@@ -53,8 +53,9 @@ CT.Slider = CT.Class({
 			this.activeCircle = circle;
 		}
 		this.circlesContainer.appendChild(circle);
-		this.container.appendChild(CT.dom.node(CT.dom.img(card.img), "div",
-			"carousel-image-container", null, null, { width: this.width + "px" }));
+		this.container.appendChild(CT.dom.node(CT.dom.node(null, "div", "carousel-content-front",
+			null, null, { backgroundImage: "url(" + card.img + ")" }), "div",
+			"carousel-content-container", null, null, { width: this.width + "px" }));
 	},
 	circleJump: function (index) {
 		var f = function() {
