@@ -1,8 +1,20 @@
-def getxls(data, name=None):
-	import xlrd
+def getxls(data, name=None, parse=True):
+	import xlrd, datetime
 	wb = xlrd.open_workbook(file_contents=data)
 	s = wb.sheet_by_name(name or wb.sheet_names()[0])
-	return s
+	if not parse:
+		return s
+	d = [[c.value for c in s.row(0)]]
+	for r in range(1, s.nrows):
+		row = s.row(r)
+		rl = []
+		for c in row:
+			if c.ctype == 3: # date
+				rl.append(datetime.datetime(*xlrd.xldate_as_tuple(c.value, wb.datemode)))
+			else:
+				rl.append(c.value)
+		d.append(rl)
+	return d
 
 def _svlines(data):
 	return data.replace("\r\n", "\n").replace("\r", "\n").split("\n")
