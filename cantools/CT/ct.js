@@ -106,7 +106,7 @@ var CT = {
 			}
 			cb = cb || function() {};
 			eb = eb || function(payload) {
-				CT.net._fallback_error(errMsg + ": " + payload);
+				CT.net._fallback_error((errMsg || "error") + ": " + payload);
 			};
 			if (CT.net._spinner) {
 				CT.net._spinner_node = CT.net._spinner_node || CT.dom.spinner();
