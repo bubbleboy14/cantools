@@ -53,15 +53,19 @@ CT.Slider = CT.Class({
 			this.activeCircle = circle;
 		}
 		this.circlesContainer.appendChild(circle);
-		var node = CT.dom.node([
+		var nodes = [
 			CT.dom.node(null, "div", "carousel-content-image", null,
 				null, { backgroundImage: "url(" + card.img + ")" }),
-			CT.dom.node(card.content, "div", "big carousel-content-full"),
-			CT.dom.node([
+			CT.dom.node(card.content, "div", "big carousel-content-full")
+		];
+		if (card.title || card.blurb) {
+			nodes.push(CT.dom.node([
 				CT.dom.node(card.title, "div", "biggest"),
 				CT.dom.node(card.blurb, "div", "bigger")
-			], "div", "carousel-content-teaser")
-			], "div", "carousel-content-container", null, null, { width: this.width + "px" });
+			], "div", "carousel-content-teaser"));
+		}
+		var node = CT.dom.node(nodes, "div", "carousel-content-container",
+			null, null, { width: this.width + "px" });
 		if (card.content) {
 			var clearAS = this._clearAutoSlide;
 			CT.gesture.listen("tap", node, function() {
