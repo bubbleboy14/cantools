@@ -10,11 +10,11 @@ def _svlines(data):
 def gettsv(data):
 	return [l.split("\t") for l in _svlines(data) if l]
 
-def getcsv(data, mod=False):
+def getcsv_from_data(data): # deprecated! doesn't work _that_ well.
 	return [l.split(",") for l in _svlines(data) if l]
 
 # eh, module reads it better sometimes (especially if we write(_svlines(read())) first)
-def getcsvmod(fname):
+def getcsv(fname):
 	import csv
 	d = []
 	f = open(fname, "rU")
