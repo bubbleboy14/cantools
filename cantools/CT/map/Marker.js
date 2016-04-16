@@ -61,6 +61,7 @@ CT.map.Marker = CT.Class({
 	remove: function() {
 		this.opts.map = null;
 		this.marker.setMap(null);
+		this.hideInfo();
 	},
 	update: function(opts) {
 		this.opts = CT.merge(opts, this.opts);
@@ -72,7 +73,7 @@ CT.map.Marker = CT.Class({
 		iw.open(this.opts.map);
 	},
 	hideInfo: function() {
-		this._infoWindow.close();
+		this._infoWindow && this._infoWindow.close();
 	},
 	_wrap: function(k) {
 		var m = this, kup = CT.parse.capitalize(k);
