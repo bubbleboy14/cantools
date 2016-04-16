@@ -37,6 +37,18 @@ CT.map.DOMMarker = CT.Class({
 	}
 }, CT.map.Node);
 
+CT.map.infoWindow = function() {
+	return new google.maps.InfoWindow();
+};
+CT.map.infoWindowSingleton = function() {
+	if (!CT.map._iw)
+		CT.map._iw = CT.map.infoWindow();
+	return CT.map._iw;
+};
+CT.map.useSingleInfoWindow = function() {
+	CT.map._iwSingleton = true;
+};
+
 CT.map.Marker = CT.Class({
 	CLASSNAME: "CT.map.Marker",
 	_converters: {
@@ -54,8 +66,7 @@ CT.map.Marker = CT.Class({
 		this.opts = CT.merge(opts, this.opts);
 	},
 	showInfo: function() {
-		var iw = this._infoWindow = this._infoWindow
-			|| new google.maps.InfoWindow();
+		var iw = this._infoWindow = this._infoWindow || CT.map.infoWindow();
 		iw.setContent(this.opts.info);
 		iw.setPosition(this.getPosition());
 		iw.open(this.opts.map);
@@ -98,6 +109,8 @@ CT.map.Marker = CT.Class({
 		opts.position = CT.map.util.latlng((opts.position && opts.position.lat && opts.position.lng)
 			? opts.position : CT.map.util.addr2latlng(opts.address));
 		opts.content ? this._buildCustomMarker() : this._buildMarker();
+		if (CT.map._iwSingleton)
+			this._infoWindow = CT.map.infoWindowSingleton();
 		this._buildWrappers();
 		if (this.opts.map)
 			this.add(this.opts.map);
