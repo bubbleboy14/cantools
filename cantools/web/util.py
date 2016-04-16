@@ -156,7 +156,11 @@ def set_header(f):
 def _write(data, exit=True, savename=None):
     if savename:
         setmem(savename, data, False)
-    _send(data.decode('ascii', 'replace').encode('utf-8'))
+    try:
+        data = data.decode('ascii', 'replace').encode('utf-8')
+    except Exception, e:
+        data = data.encode('utf-8')
+    _send(data)
     if exit:
         _pre_close()
         _close()
