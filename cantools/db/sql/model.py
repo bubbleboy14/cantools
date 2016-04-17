@@ -12,7 +12,6 @@ def choice_validator(choices):
 
 class CTMeta(DeclarativeMeta):
     def query(cls, *args, **kwargs):
-        loadTables(cls)
         return Query(cls, *args, **kwargs)
 
     def __new__(cls, name, bases, attrs):
@@ -41,7 +40,7 @@ class CTMeta(DeclarativeMeta):
         modelsubs[lname] = super(CTMeta, cls).__new__(cls, name, bases, attrs)
         return modelsubs[lname]
 
-sa_dbase = declarative_base()
+sa_dbase = declarative_base(metadata=metadata)
 
 class ModelBase(sa_dbase):
     index = Integer(primary_key=True)

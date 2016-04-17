@@ -3,7 +3,7 @@ from cantools.util import start_timer, end_timer
 from properties import *
 from getters import *
 from setters import *
-from session import session, testSession, loadTables, Session
+from session import session, testSession, metadata, Session
 
 _passthru = ["count", "all"]
 _qmod = ["filter", "limit", "offset", "join"]

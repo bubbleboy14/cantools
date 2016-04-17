@@ -1,19 +1,15 @@
 import base64, json
 from datetime import datetime
 from properties import KeyWrapper
-from session import session, loadTables
+from session import session
 from cantools.util import batch
 
 def _init_entity(instance, session=session):
     from lookup import inc_counter, dec_counter
     puts = []
     now = datetime.now()
-    classes = set()
     cls = instance.__class__
     tname = instance.__tablename__
-    if cls not in classes:
-        classes.add(cls)
-        loadTables(cls)
     if tname != "ctrefcount":
         for key, val in cls.__dict__.items():
             if getattr(val, "is_dt_autostamper", False) and val.should_stamp(not instance.index):
@@ -43,6 +39,7 @@ def init_multi(instances, session=session):
         })))
 
 def put_multi(instances, session=session):
+    session.init()
     batch(instances, init_multi, session)
     session.commit()
 
