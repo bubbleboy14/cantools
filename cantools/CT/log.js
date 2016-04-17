@@ -20,13 +20,16 @@ CT.log.grep = function(ins, outs) {
 };
 CT.log.grep._ins = [];
 CT.log.grep._outs = [];
+
 CT.log._fix = function(a) {
 	return (typeof(a) == "object") ? JSON.stringify(a) : a;
 }
+
 CT.log._silent = false;
 CT.log.set = function(bool) {
 	CT.log._silent = bool;
 };
+
 CT.log.getLogger = function(component) {
 	var logger = function() {
 		var str_arr = [];
@@ -35,4 +38,14 @@ CT.log.getLogger = function(component) {
 		CT.log("[" + component + "] " + str_arr.join(" "));
 	};
 	return logger;
+};
+
+CT.log._tcbs = {};
+CT.log._timer = CT.log.getLogger("timer");
+CT.log.startTimer = function(tname) {
+	CT.log._tcbs[tname] = Date.now();
+};
+CT.log.endTimer = function(tname, msg) {
+	var duration = (Date.now() - CT.log._tcbs[tname]) / 1000;
+	CT.log._timer("Completed in", duration, "seconds:", tname, msg);
 };
