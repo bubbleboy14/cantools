@@ -10,11 +10,6 @@ var CT = {
 			CT._.onload.forEach(function(cb) { cb(); });
 		}
 	},
-	"style": {
-		"panel": {
-			"title": "bigger blue bold bottompadded"
-		}
-	},
 	"info": {
 		"page": location.pathname.slice(1,-5),
 		"userAgent": navigator.userAgent || navigator.vendor || window.opera
