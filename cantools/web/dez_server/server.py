@@ -37,7 +37,7 @@ def getmem(key, tojson=True):
 	return dweb().memcache.get(key, tojson)
 
 def setmem(key, val, fromjson=True):
-	dweb().memcache.set(key, val, tojson)
+	dweb().memcache.set(key, val, fromjson)
 
 def delmem(key):
 	dweb().memcache.rm(key)
