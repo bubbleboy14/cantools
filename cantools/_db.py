@@ -1,4 +1,4 @@
-from cantools.web import respond, succeed, fail, cgi_get
+from cantools.web import respond, succeed, fail, cgi_get, cgi_dump, getmem, setmem, clearmem
 from cantools.db import get, get_multi, get_schema, get_page, edit
 from cantools import config
 import model # load up all models (for schema)
@@ -14,16 +14,24 @@ def response():
 	if action == "schema":
 		succeed(get_schema())
 	elif action == "get":
-		mname = cgi_get("modelName", required=False)
-		keys = cgi_get("keys", required=False)
-		if mname:
-			succeed(get_page(mname, cgi_get("limit"), cgi_get("offset"),
-				cgi_get("order", default="index"), cgi_get("filters", default={})))
-		elif keys:
-			succeed([d.data() for d in get_multi(keys)])
-		else:
-			succeed(get(cgi_get("key")).data())
+		sig = cgi_dump()
+		res = getmem(sig, False)
+		if not res:
+			mname = cgi_get("modelName", required=False)
+			keys = cgi_get("keys", required=False)
+			if mname:
+				res = get_page(mname, cgi_get("limit"), cgi_get("offset"),
+					cgi_get("order", default="index"), cgi_get("filters", default={}))
+			elif keys:
+				res = [d.data() for d in get_multi(keys)]
+			else:
+				res = get(cgi_get("key")).data()
+			if config.memcache.db:
+				setmem(sig, res, False)
+		succeed(res)
 	elif action == "edit":
+		if config.memcache.db:
+			clearmem()
 		succeed(edit(cgi_get("data")).data())
 	elif action == "delete":
 		get(cgi_get("key")).rm()
