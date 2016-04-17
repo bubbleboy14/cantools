@@ -19,16 +19,6 @@
 	color: darkgreen;
 }
 
-#dbqueries {
-	border: 1px solid black;
-	position: absolute;
-	bottom: 10px;
-	left: 10px;
-	width: 90px;
-	background: black;
-	color: green;
-}
-
 #dbstarred {
 	border: 1px solid black;
 	position: absolute;
@@ -53,4 +43,21 @@
 	width: 80%;
 	height: 100%;
 	background: gray;
+}
+
+.blbox {
+	border: 1px solid black;
+	position: absolute;
+	bottom: 10px;
+	left: 10px;
+	width: 90px;
+	background: black;
+	color: green;
+}
+
+.gbp {
+	border: 1px solid green;
+	padding: 5px;
+	margin: 5px;
+	text-align: center;
 }
