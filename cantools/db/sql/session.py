@@ -1,6 +1,7 @@
 import threading
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
+from rel import tick
 from cantools import config
 from cantools.util import log
 from cantools.web import cgi_dump, set_pre_close
@@ -16,7 +17,7 @@ class Session(object):
 		self._refresh()
 
 	def _scope(self):
-		return "%s%s"%(threading.currentThread().getName(), cgi_dump())
+		return "%s%s%s"%(threading.currentThread().getName(), tick(), cgi_dump())
 
 	def _func(self, fname):
 		def f(*args):
