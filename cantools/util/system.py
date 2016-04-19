@@ -35,4 +35,4 @@ def rm(pname):
 
 def cmd(cline):
 	log('issuing command: "%s"'%(cline,), 2)
-	subprocess.call(cline, shell=True)				
+	subprocess.call(cline, shell=True)

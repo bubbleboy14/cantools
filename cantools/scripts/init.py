@@ -1,7 +1,7 @@
 import os
 from optparse import OptionParser
 from cantools import config
-from cantools.util import log, cp, sym, mkdir, rm, cmd
+from cantools.util import log, error, cp, sym, mkdir, rm, cmd
 
 HOME = os.environ.get("HOME", ".")
 
@@ -9,9 +9,16 @@ class Builder(object):
 	def __init__(self, pname=None, cantools_path=HOME, web_backend="dez", refresh_symlinks=False):
 		if not pname and not refresh_symlinks:
 			pname = raw_input("project name? ")
-		log("Initializing %s Project: %s"%(web_backend, pname or "(whatever)"))
+		log("Initializing %s Project: %s"%(web_backend, pname or "(refresh)"))
 		self.pname = pname
-		self.cantools_path = cantools_path
+		self.ctroot = os.path.join(cantools_path, "cantools", "cantools")
+		if not os.path.exists(self.ctroot):
+			error("failed to establish cantools root",
+				"We tried: %s"%(self.ctroot,),
+				"This directory does not contain cantools.",
+				"You can download cantools at https://github.com/bubbleboy14/cantools",
+				"Please pass the path to your local copy of cantools via the -c flag."
+			)
 		self.web_backend = web_backend
 		self.refresh_symlinks = refresh_symlinks
 		if not refresh_symlinks:
@@ -53,14 +60,13 @@ class Builder(object):
 			lj = os.path.join("logs", "json")
 			if not os.path.isdir(lj):
 				mkdir(lj)
-		ctroot = os.path.join(self.cantools_path, "cantools", "cantools")
 		if self.web_backend == "gae":
-			sym(ctroot, "cantools")
-		sym(os.path.join(ctroot, "CT"), os.path.join("js", "CT"))
-		sym(os.path.join(ctroot, "css", "ct.css"), os.path.join("css", "ct.css"))
-		sym(os.path.join(ctroot, "admin"), "_")
-		sym(os.path.join(ctroot, "admin.py"), "admin.py")
-		sym(os.path.join(ctroot, "_db.py"), "_db.py")
+			sym(self.ctroot, "cantools")
+		sym(os.path.join(self.ctroot, "CT"), os.path.join("js", "CT"))
+		sym(os.path.join(self.ctroot, "css", "ct.css"), os.path.join("css", "ct.css"))
+		sym(os.path.join(self.ctroot, "admin"), "_")
+		sym(os.path.join(self.ctroot, "admin.py"), "admin.py")
+		sym(os.path.join(self.ctroot, "_db.py"), "_db.py")
 
 	def vcignore(self):
 		log("configuring version control path exclusion", 1)
