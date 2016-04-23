@@ -30,21 +30,16 @@ class Session(object):
 		def f(*args):
 			self._refresh()
 			self.init()
-			func = getattr(self.session, fname)
-			try:
-				res = func(*args)
-			except Exception, e:
-				log("session.%s failed -- rebuilding session: %s"%(fname, e), important=True)
-				self.generator.remove()
-				self._refresh()
-				res = func(*args)
-			return res
+			return getattr(self.session, fname)(*args)
 		return f
 
 	def _refresh(self):
 		global lastSession
 		lastSession = self
-		self.session = self.generator()
+		session = self.generator()
+		if hasattr(self, "session") and self.session != session:
+			self.session.close()
+		self.session = session
 		self.no_autoflush = self.session.no_autoflush
 
 def testSession():
