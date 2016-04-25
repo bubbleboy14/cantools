@@ -5,6 +5,13 @@ class CTRefCount(ModelBase):
     reference = String()       # table.property (such as 'building.owner')
     count = Integer(default=0) # number of pointers
 
+    def mydata(self):
+        return {
+            "target": self.target.urlsafe(),
+            "reference": self.reference,
+            "count": self.count
+        }
+
     def inc(self, amount=1):
         self.count += amount
 
