@@ -38,7 +38,7 @@ class Query(object):
 
     def _qpass(self, fname):
         def qp(*args, **kwargs):
-            qkey = "%s: %s %s (%s)"%(fname, args, kwargs, self.query)
+            qkey = "Query.%s: %s %s (%s)"%(fname, args, kwargs, self.query)
             start_timer(qkey)
             res = getattr(self.query, fname)(*args, **kwargs)
             end_timer(qkey)
