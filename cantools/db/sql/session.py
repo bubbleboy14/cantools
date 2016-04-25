@@ -24,7 +24,10 @@ class Session(object):
 			self._initialized_tables = True
 
 	def _scope(self):
-		return "%s%s%s"%(threading.currentThread().getName(), tick(), cgi_dump())
+		threadId = threading.currentThread().getName()
+		if threadId == "MainThread":
+			threadId = tick()
+		return "%s%s"%(threadId, cgi_dump())
 
 	def _func(self, fname):
 		def f(*args):
@@ -36,10 +39,7 @@ class Session(object):
 	def _refresh(self):
 		global lastSession
 		lastSession = self
-		session = self.generator()
-		if hasattr(self, "session") and self.session != session:
-			self.session.close()
-		self.session = session
+		self.session = self.generator()
 		self.no_autoflush = self.session.no_autoflush
 
 def testSession():
