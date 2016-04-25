@@ -66,6 +66,10 @@ class ModelBase(sa_dbase):
             self._orig_fkeys[prop] = getattr(self, prop)
 
     def _defaults(self):
+        for prop in self._schema["_kinds"]:
+            if getattr(self, prop, None) is None:
+                setattr(self, prop, KeyWrapper())
+        self.key = KeyWrapper()
         for key, val in self.__class__.__dict__.items():
             if getattr(self, key, None) is None and getattr(val, "_default", None) is not None:
                 setattr(self, key, val._default)
@@ -96,8 +100,6 @@ class ModelBase(sa_dbase):
         return self.__tablename__
 
     def id(self):
-        if not self.key:
-            util.error("can't get id -- not saved!")
         return self.key.urlsafe()
 
     def mydata(self):
