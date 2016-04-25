@@ -191,9 +191,14 @@
     display: inline-block;
     border-radius: 50%;
     background-color: #6a6a6a;
-    width: 15px;
     height: 15px;
     cursor: pointer;
+}
+.labeled-circle {
+    padding: 5px;
+}
+.unlabeled-circle {
+    width: 15px;
 }
 .active-circle {
     background-color: white;
