@@ -1,5 +1,9 @@
 CT.dom = {
 	// basic nodes
+	"_autoparse": false,
+	"setAutoparse": function(bool) {
+		CT.dom._autoparse = bool;
+	},
 	"_nodes": {}, // node()-generated nodes with ids
 	"_obj2node": function(attrs) {
 		var args = [];
@@ -45,8 +49,11 @@ CT.dom = {
 		                d.appendChild(document.createTextNode(content));
 		            }
 		        }
-		        else
+		        else {
+		        	if (CT.dom._autoparse)
+		        		content = CT.parse.process(content.toString());
 		            d.innerHTML = content;
+		        }
 		    }
 		}
 	    if (classname)
