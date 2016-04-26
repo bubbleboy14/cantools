@@ -234,20 +234,23 @@
     white-space: normal;
     position: absolute;
     top: 30px;
-    border-radius: 5px;
+    border-radius: 15px;
     background-color: rgba(255, 255, 255, 0.25);
 }
 .carousel-content-full {
     z-index: -1;
     padding: 10px;
+    margin-top: 10px;
     position: absolute;
     top: 30%;
     right: 100px;
     left: 100px;
     bottom: 10px;
-    border-radius: 5px;
+    border-radius: 15px;
     background-color: rgba(255, 255, 255, 0.25);
     white-space: normal;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 .carousel-retracted {
     width: 40%;
