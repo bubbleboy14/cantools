@@ -54,10 +54,12 @@ CT.Slider = CT.Class({
 			this.activeCircle = circle;
 		}
 		this.circlesContainer.appendChild(circle);
+		var full = CT.dom.node(card.content, "div", "big carousel-content-full");
+		CT.drag.makeDraggable(full, { constraint: "horizontal" });
 		var nodes = [
 			CT.dom.node(null, "div", "carousel-content-image", null,
 				null, { backgroundImage: "url(" + card.img + ")" }),
-			CT.dom.node(card.content, "div", "big carousel-content-full")
+			full
 		];
 		if (card.title || card.blurb) {
 			nodes.push(CT.dom.node([
@@ -72,10 +74,17 @@ CT.Slider = CT.Class({
 			CT.gesture.listen("tap", node, function() {
 				clearAS();
 				node._retracted = !node._retracted;
-				if (node._retracted)
+				if (node._retracted) {
 					node.firstChild.classList.add("carousel-retracted");
-				else
+					CT.trans.trans({
+						cb: function() {
+							full.style.zIndex = 100;
+						}
+					});
+				} else {
+					full.style.zIndex = -1;
 					node.firstChild.classList.remove("carousel-retracted");
+				}
 			});
 		}
 		this.container.appendChild(node);
