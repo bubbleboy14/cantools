@@ -26,7 +26,7 @@ CT.dom = {
 	    if (content) {
 		    if (Array.isArray(content)) // array of nodes or objects
 		    	content.forEach(function(item) {
-		    		d.appendChild(item instanceof Node ? item : CT.dom._obj2node(item));
+		    		d.appendChild(item instanceof Node ? item : CT.dom.node(item));
 		    	});
 		    else if (content instanceof Node) // single node
 		    	d.appendChild(content);
