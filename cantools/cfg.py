@@ -74,7 +74,7 @@ cfg = {
 	""",
 	"init": {
 		"vcignore": {
-			".": ["*pyc", "*~", ".ctp", "_", "admin.py", "_db.py"],
+			".": ["*pyc", "*~", ".ctp", "_", "admin.py", "_db.py", "logs"],
 			"css": ["ct.css"],
 			"js": ["CT"],
 			"html-static": ["CT"],
