@@ -76,7 +76,9 @@ cfg = {
 		"vcignore": {
 			".": ["*pyc", "*~", ".ctp", "_", "admin.py", "_db.py"],
 			"css": ["ct.css"],
-			"js": ["CT"]
+			"js": ["CT"],
+			"html-static": ["CT"],
+			"html-production": ["CT"]
 		},
 		"yaml": {
 			"gae": """application: %s
