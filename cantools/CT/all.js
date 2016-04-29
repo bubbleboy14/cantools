@@ -8,7 +8,6 @@ CT.require("CT.db");
 CT.require("CT.drag");
 CT.require("CT.dom");
 CT.require("CT.gesture");
-CT.require("CT.log");
 CT.require("CT.mobile");
 CT.require("CT.modal");
 CT.require("CT.panel");
