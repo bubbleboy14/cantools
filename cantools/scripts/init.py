@@ -36,6 +36,8 @@ class Builder(object):
 		mkdir("css")
 		mkdir("img")
 		mkdir("html")
+		mkdir("html-static")
+		mkdir("html-production")
 		mkdir("logs")
 
 	def make_files(self):
@@ -62,7 +64,10 @@ class Builder(object):
 				mkdir(lj)
 		if self.web_backend == "gae":
 			sym(self.ctroot, "cantools")
-		sym(os.path.join(self.ctroot, "CT"), os.path.join("js", "CT"))
+		ctp = os.path.join(self.ctroot, "CT")
+		sym(ctp, os.path.join("js", "CT"))
+		sym(ctp, os.path.join("html-static", "CT"))
+		sym(ctp, os.path.join("html-production", "CT"))
 		sym(os.path.join(self.ctroot, "css", "ct.css"), os.path.join("css", "ct.css"))
 		sym(os.path.join(self.ctroot, "admin"), "_")
 		sym(os.path.join(self.ctroot, "admin.py"), "admin.py")
