@@ -235,7 +235,7 @@
     position: absolute;
     top: 30px;
     border-radius: 15px;
-    background-color: rgba(255, 255, 255, 0.25);
+    background-color: rgba(100, 100, 100, 0.7);
 }
 .carousel-content-full {
     z-index: -1;
