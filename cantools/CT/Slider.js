@@ -45,7 +45,7 @@ CT.Slider = CT.Class({
 	},
 	addFrame: function (card, index) {
 		if (typeof card == "string")
-			card = { img: card }
+			card = { img: card };
 		var circle = CT.dom.node(card.label, "div",
 			"indicator-circle " + (card.label ? "labeled" : "unlabeled") + "-circle");
 		CT.gesture.listen("tap", circle, this.circleJump(index));
