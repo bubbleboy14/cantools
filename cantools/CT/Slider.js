@@ -47,7 +47,7 @@ CT.Slider = CT.Class({
 		this.container.style.width = this.fullWidth + "px";
 		this.container.parentNode.style.width = this.width + "px";
 		this.container.parentNode.style.height = this.height + "px";
-		CT.dom.forEach(this.container, function(n) {
+		CT.dom.each(this.container, function(n) {
 			n.style.width = w + "px";
 		});
 	},
