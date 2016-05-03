@@ -65,13 +65,13 @@ CT.Slider = CT.Class({
 			nodes.push(CT.dom.node([
 				CT.dom.node(card.title, "div", "biggest"),
 				CT.dom.node(card.blurb, "div", "bigger")
-			], "div", "carousel-content-teaser"));
+			], "div", "carousel-content-teaser pointer"));
 		}
 		var node = CT.dom.node(nodes, "div", "carousel-content-container",
 			null, null, { width: this.width + "px" });
-		if (card.content) {
+		if (card.content) { // assume title/blurb exists
 			var clearAS = this._clearAutoSlide;
-			CT.gesture.listen("tap", node, function() {
+			CT.gesture.listen("tap", node.firstChild.nextSibling.nextSibling, function() {
 				clearAS();
 				node._retracted = !node._retracted;
 				if (node._retracted) {
