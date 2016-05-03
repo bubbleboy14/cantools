@@ -29,13 +29,27 @@ CT.Slider = CT.Class({
 		this.opts.cards.forEach(this.addFrame);
 		CT.gesture.listen("tap", this.prevButton, this.prevButtonCallback);
 		CT.gesture.listen("tap", this.nextButton, this.nextButtonCallback);
-		CT.drag.makeDraggable(this.container, {
+		this.dragOpts = {
 			constraint: "vertical",
 			interval: this.width, 
 			up: this.updatePosition
-		});
+		};
+		CT.drag.makeDraggable(this.container, this.dragOpts);
 		this._autoSlide = setInterval(this._autoSlideCallback, this.opts.autoSlideInterval);
 		CT.gesture.listen("down", this.container, this._clearAutoSlide);
+		this.opts.node.onresize = this._resize;
+	},
+	_resize: function() {
+		var w = this.width = CT.align.width(this.opts.node);
+		this.height = CT.align.height(this.opts.node);
+		this.fullWidth = this.opts.cards.length * this.width;
+		this.dragOpts.interval = this.width;
+		this.container.style.width = this.fullWidth + "px";
+		this.container.parentNode.style.width = this.width + "px";
+		this.container.parentNode.style.height = this.height + "px";
+		CT.dom.forEach(this.container, function(n) {
+			n.style.width = w + "px";
+		});
 	},
 	_clearAutoSlide: function () {
 		if (this._autoSlide) {
