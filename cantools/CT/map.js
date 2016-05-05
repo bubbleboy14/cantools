@@ -1,6 +1,7 @@
 /*
 This module loads the Google Maps API via CT.scriptImport(),
 as well as a utility submodule (CT.map.util) and four classes:
+
     - CT.map.Map
     - CT.map.Node
     - CT.map.Marker

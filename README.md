@@ -4,18 +4,18 @@ This portable modern web framework is the application-neutral backbone of Civil 
 ### License: MIT (see LICENSE)
 
 ## Package Installation (limited)
- - package: https://pypi.python.org/pypi/ct
- - command: easy_install ct
- - downside: you have to figure out the path to cantools
+  - package: https://pypi.python.org/pypi/ct
+  - command: easy_install ct
+  - downside: you have to figure out the path to cantools
 
 ## Repository Installation (full)
   - upside: easiest way to know the path to cantools
     - for the time being, you need to know this to run ctinit
- - site: https://github.com/bubbleboy14/cantools
- - steps
-   - git clone https://github.com/bubbleboy14/cantools.git
-   - cd cantools
-   - python setup.py install
+  - site: https://github.com/bubbleboy14/cantools
+  - steps
+    - git clone https://github.com/bubbleboy14/cantools.git
+    - cd cantools
+    - python setup.py install
 
 # Back (CLI)
 
@@ -455,6 +455,7 @@ The main one to look out for is listen, defined below.
 ### Import line: 'CT.require("CT.map");'
 This module loads the Google Maps API via CT.scriptImport(),
 as well as a utility submodule (CT.map.util) and four classes:
+
     - CT.map.Map
     - CT.map.Node
     - CT.map.Marker
@@ -631,6 +632,7 @@ needs to lazily import CT.lib.lz-string. Could be different, but there it is.
 This module provides convenience functions for messing
 around with DOM elements via CSS transitions. Have at it.
 
+### Try out these functions:
 	CT.trans.rotate(node, opts)
 	CT.trans.translate(node, opts)
 	CT.trans.trans(opts)
@@ -638,7 +640,7 @@ around with DOM elements via CSS transitions. Have at it.
 	 - sets CSS properties for all vendor prefixes
 	   - [ "-webkit-", "-moz-", "-ms-", "-o-", "" ]
 
-And here are the default options:
+### And here are the default options:
 	trans: {
 		duration: 500,
 		property: "*",

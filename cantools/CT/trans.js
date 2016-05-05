@@ -2,6 +2,7 @@
 This module provides convenience functions for messing
 around with DOM elements via CSS transitions. Have at it.
 
+### Try out these functions:
 	CT.trans.rotate(node, opts)
 	CT.trans.translate(node, opts)
 	CT.trans.trans(opts)
@@ -9,7 +10,7 @@ around with DOM elements via CSS transitions. Have at it.
 	 - sets CSS properties for all vendor prefixes
 	   - [ "-webkit-", "-moz-", "-ms-", "-o-", "" ]
 
-And here are the default options:
+### And here are the default options:
 	trans: {
 		duration: 500,
 		property: "*",
