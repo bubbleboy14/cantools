@@ -1,3 +1,14 @@
+"""
+This class is used to generate a pager, which is a self-refilling DOM element.
+
+The constructor takes four positional arguments:
+ - renderCb: function that returns formatted content given an array of data objects
+ - requestCb: function that acquires new raw data
+ - limit (default: 20): number of items to request/display at a time
+ - nodeClass (optional): CSS class of pager DOM node
+ - nodeId (optional): CSS id of pager DOM node
+"""
+
 CT.Pager = CT.Class({
 	"CLASSNAME": "CT.Pager",
 	"offset": 0,

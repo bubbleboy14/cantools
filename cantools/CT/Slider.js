@@ -1,3 +1,21 @@
+"""
+This class is used to generate a slider, which is a segmented,
+directionally-constrained draggable DOM element.
+
+The constructor takes an options object, 'opts', which may define
+up to four properties. These individual properties, as well as the
+'opts' object itself, are all optional.
+
+Definable properties are as follows:
+ - node (default: document.body): DOM element in which to build the slider
+ - autoSlideInterval (default: 5000): how many milliseconds to wait before auto-sliding cards
+ - bubblePosition (default: 'bottom'): where to position card indicator bubbles ('top' or 'bottom')
+ - cards (default: []): an array of items corresponding to the cards in the slider
+
+The last one, 'cards', must be an array either of strings (interpreted
+as image urls) or of data objects (processed in the addFrame function).
+"""
+
 CT.Slider = CT.Class({
 	CLASSNAME: "CT.Slider",
 	init: function (opts) {
