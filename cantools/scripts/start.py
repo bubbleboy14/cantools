@@ -1,15 +1,15 @@
 """
-Usage: ctstart [--web_backend=BACKEND] [--port=PORT] [--datastore=DS_PATH]
+### Usage: ctstart [--web_backend=BACKEND] [--port=PORT] [--datastore=DS_PATH]
 
-Options:
-  -h, --help            show this help message and exit
-  -w WEB_BACKEND, --web_backend=WEB_BACKEND
-                        web backend. options: dez, gae. (default: dez)
-  -p PORT, --port=PORT  select your port (default=8080)
-  -a ADMIN_PORT, --admin_port=ADMIN_PORT
-                        select your port (default=8002)
-  -d DATASTORE, --datastore=DATASTORE
-                        select your datastore file (default=sqlite:///data.db)
+### Options:
+    -h, --help            show this help message and exit
+    -w WEB_BACKEND, --web_backend=WEB_BACKEND
+                          web backend. options: dez, gae. (default: dez)
+    -p PORT, --port=PORT  select your port (default=8080)
+    -a ADMIN_PORT, --admin_port=ADMIN_PORT
+                          select your port (default=8002)
+    -d DATASTORE, --datastore=DATASTORE
+                          select your datastore file (default=sqlite:///data.db)
 """
 
 from optparse import OptionParser
