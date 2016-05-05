@@ -15,10 +15,11 @@ def dsBack(cmd):
 
 def dsFront(mod):
 	modname = "CT.%s"%(mod[:-3],)
+	iline = mod == "ct.js" and '&lt;script src="/js/CT/ct.js"&gt;&lt;/script&gt;' or 'CT.require("%s");'%(modname,)
 	log(modname, 2)
 	return "\n".join([
 		"## %s"%(modname,),
-		"### Import line: 'CT.require(\"%s\");'"%(modname,),
+		"### Import line: '%s'"%(iline,),
 		read(os.path.join(CTPATH, mod))[3:].split("\n*/")[0]
 	])
 
