@@ -133,7 +133,7 @@ handlers:
 	"about": """# cantools %s
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM; a built in administrative interface; and a rich modular JavaScript library.
 
-### License: MIT (see LICENSE)
+License: MIT (see LICENSE)
 
 ## Package Installation (limited)
   - package: https://pypi.python.org/pypi/ct
