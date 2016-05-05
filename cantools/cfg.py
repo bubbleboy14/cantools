@@ -129,5 +129,10 @@ handlers:
   </body>
 </html>""",
 		"ctcfg": 'ENCODE = False\nMODE = dynamic\nWEB_SERVER = %s'
-	}
+	},
+	"about": """This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM; a built in administrative interface; and a rich modular JavaScript library.
+
+Latest version: %s
+ - link: https://pypi.python.org/pypi/ct
+ - command: easy_install ct"""
 }
