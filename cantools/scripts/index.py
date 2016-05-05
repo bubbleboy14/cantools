@@ -1,3 +1,8 @@
+"""
+Run this if your CTRefCount records get messed up for
+some reason. It will go through and recount everything.
+"""
+
 from cantools.util import error, log, batch
 from cantools import config
 if config.web.server == "dez":
