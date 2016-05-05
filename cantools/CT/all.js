@@ -1,5 +1,5 @@
 """
-This loader imports every CT module that doesn't require large script imports.
+This loader imports almost every CT module.
 
 This includes:
  - CT.Pager
@@ -23,9 +23,8 @@ This includes:
  - CT.upload
  - CT.video
 
-This excludes:
- - CT.map
- - CT.rte
+This excludes CT.map and CT.rte, which require large script
+imports, as well as CT.admin, which is not for typical use.
 """
 
 CT.require("CT.Pager");
@@ -48,5 +47,3 @@ CT.require("CT.storage");
 CT.require("CT.trans");
 CT.require("CT.upload");
 CT.require("CT.video");
-
-// import CT.map and CT.rte as needed (large script imports)
