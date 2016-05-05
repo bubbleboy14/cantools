@@ -1,4 +1,4 @@
-"""
+/*
 This loader imports almost every CT module.
 
 This includes:
@@ -25,7 +25,7 @@ This includes:
 
 This excludes CT.map and CT.rte, which require large script
 imports, as well as CT.admin, which is not for typical use.
-"""
+*/
 
 CT.require("CT.Pager");
 CT.require("CT.Slider");

@@ -1,4 +1,4 @@
-"""
+/*
 This class is used to generate a pager, which is a self-refilling DOM element.
 
 The constructor takes four positional arguments:
@@ -7,7 +7,7 @@ The constructor takes four positional arguments:
  - limit (default: 20): number of items to request/display at a time
  - nodeClass (optional): CSS class of pager DOM node
  - nodeId (optional): CSS id of pager DOM node
-"""
+*/
 
 CT.Pager = CT.Class({
 	"CLASSNAME": "CT.Pager",

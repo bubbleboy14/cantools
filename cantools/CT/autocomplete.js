@@ -1,4 +1,4 @@
-"""
+/*
 The purpose of this module is to simplify the creation of DOM
 text fields that autocomplete user input based on some data set.
 
@@ -26,7 +26,7 @@ DBGuesser's constructor supports a few more properties:
  - modelName: the name of the backend database model to query from
  - property: the property (on specified model) to compare to text input
  - filters (default: {}): filters to apply to database query
-"""
+*/
 
 CT.autocomplete.Guesser = CT.Class({
 	CLASSNAME: "CT.autocomplete.Guesser",

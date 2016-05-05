@@ -1,4 +1,4 @@
-"""
+/*
 This class is used to generate a slider, which is a segmented,
 directionally-constrained draggable DOM element.
 
@@ -14,7 +14,7 @@ Definable properties are as follows:
 
 The last one, 'cards', must be an array either of strings (interpreted
 as image urls) or of data objects (processed in the addFrame function).
-"""
+*/
 
 CT.Slider = CT.Class({
 	CLASSNAME: "CT.Slider",

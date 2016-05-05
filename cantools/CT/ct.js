@@ -1,4 +1,4 @@
-"""
+/*
 This is the cantools bootstrapper. This means that it must be included in
 a regular script tag in the head of your html file. It contains the core
 functionality of the framework, as follows.
@@ -79,7 +79,7 @@ code, and they're only imported as needed (when missing from browser). These inc
  - requestAnimationFrame
  - Object.values
  - addEventListener
-"""
+*/
 
 var CT = {
 	"_": {
