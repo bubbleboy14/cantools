@@ -6,7 +6,7 @@ This includes:
  - CT.Slider
  - CT.align
  - CT.autocomplete
- - CT.canvas;
+ - CT.canvas
  - CT.data
  - CT.db
  - CT.drag
@@ -32,7 +32,7 @@ CT.require("CT.Pager");
 CT.require("CT.Slider");
 CT.require("CT.align");
 CT.require("CT.autocomplete");
-CT.require("CT.canvas.all");
+CT.require("CT.canvas");
 CT.require("CT.data");
 CT.require("CT.db");
 CT.require("CT.drag");
