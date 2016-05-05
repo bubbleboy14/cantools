@@ -1,3 +1,23 @@
+/*
+This module provides two functions, wysiwygize() and qwiz(), which
+both convert textareas (identified by id) into rich text editors.
+
+CT.rte.wysiwygize(nodeid, isrestricted, val, cb, mismatchcb)
+ - nodeid: id of target textarea (must exist in DOM)
+ - isrestricted: if true, disables tables and images
+ - val: string value with which to initialize target text area
+ - cb: callback to invoke once textarea is initialized
+ - mismatchcb: callback to invoke if the reformatted text doesn't match val
+CT.rte.qwiz(nodeid, val)
+ - nodeid: id of target textarea (must exist in DOM)
+ - val: string value with which to initialize target text area
+
+CT.rte.qwiz() just builds a simplified (isrestricted=true) rich text area
+after first waiting for the nodeid-indicated node to appear in the DOM.
+
+CT.rte requires the open-source TinyMCE library, pulled in via CT.scriptImport().
+*/
+
 CT.scriptImport("CT.lib.tiny_mce.tiny_mce");
 CT.rte = {
 	// wysiwyg editor widget
@@ -32,7 +52,7 @@ CT.rte = {
 	        d.theme_advanced_buttons3 = "";
 	    }
 	    tinyMCE.init(d);
-	    var n = document.getElementById(nodeid);
+	    var n = CT.dom.id(nodeid);
 	    var dothiscbs = [];
 	    var doset = function(s, followup) {
 	        n.node.setContent(s);
@@ -63,8 +83,8 @@ CT.rte = {
 	    });
 	},
 	"qwiz": function(nodeid, val) {
-	    var n = document.getElementById(nodeid);
-	    if (!n || n.get)
+	    var n = CT.dom.id(nodeid);
+	    if (!n) // wait for node to appear in DOM
 	        return setTimeout(CT.rte.qwiz, 500, nodeid, val);
 	    !n.get && CT.rte.wysiwygize(nodeid, true, val);
 	}

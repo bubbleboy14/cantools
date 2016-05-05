@@ -1,6 +1,10 @@
-// TODO: this functionality requires backend integration
-// include complementary python module!
+/*
+This module provides functions, build() and submit(),
+for messing around with recaptcha botwalls.
 
+TODO: this functionality requires backend
+integration - include complementary python module!
+*/
 CT.recaptcha = {
 	"build": function(key, rnode, eb, iecb, response_field_id) {
 		CT.require("CT.lib.recaptcha_ajax", true);
