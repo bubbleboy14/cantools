@@ -1,3 +1,32 @@
+/*
+The purpose of this module is to simplify the creation of DOM
+text fields that autocomplete user input based on some data set.
+
+This module contains two classes, Guesser and DBGuesser.
+
+### CT.autocomplete.Guesser
+
+#### The constructor takes an options object with any or all of the following properties:
+    - enterCb (default: doNothing): trigger when user hits enter
+    - keyUpCb (default: doNothing): trigger on key up
+    - expandCB (default: doNothing): trigger when autocomplete node expands
+    - tapCb (default: set input to data[data.label]): trigger on option tap
+    - guessCb (default: this.guesser): trigger when it's time to guess
+
+You might notice that no 'guesser' function is defined on this class.
+This means that you must either pass in a 'guessCb' function to the constructor
+or subclass Guesser, adding this function to the class (as 'guesser').
+
+### CT.autocomplete.DBGuesser
+DBGuesser subclasses Guesser, and defines a 'guesser'
+function, which uses the CT.db module to acquire data.
+
+#### DBGuesser's constructor supports a few more properties:
+    - modelName: the name of the backend database model to query from
+    - property: the property (on specified model) to compare to text input
+    - filters (default: {}): filters to apply to database query
+*/
+
 CT.autocomplete.Guesser = CT.Class({
 	CLASSNAME: "CT.autocomplete.Guesser",
 	_doNothing: function() {},
@@ -119,7 +148,7 @@ CT.autocomplete.Guesser.id = 0;
 CT.autocomplete.DBGuesser = CT.Class({
 	CLASSNAME: "CT.autocomplete.DBGuesser",
 	guesser: function(frag) {
-		var filters = {};
+		var filters = CT.merge(this.opts.filters);
 		filters[this.opts.property] = {
 			comparator: "like",
 			value: frag + "%"

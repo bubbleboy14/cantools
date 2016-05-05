@@ -1,6 +1,44 @@
+/*
+This module provides convenience functions for messing
+around with DOM elements via CSS transitions. Have at it.
+
+### Try out these functions:
+	CT.trans.rotate(node, opts)
+	CT.trans.translate(node, opts)
+	CT.trans.trans(opts)
+	CT.trans.setVendorPrefixed(node, property, value)
+	 - sets CSS properties for all vendor prefixes
+	   - [ "-webkit-", "-moz-", "-ms-", "-o-", "" ]
+
+### And here are the default options:
+	trans: {
+		duration: 500,
+		property: "*",
+		ease: "ease-in-out"
+	},
+	rotate: {
+		degrees: 180,
+		duration: 1000,
+		property: "transform",
+		ease: "linear",
+		prefix: true
+	},
+	translate: {
+		duration: 300,
+		property: "transform",
+		ease: "ease-out",
+		prefix: true,
+		x: 0,
+		y: 0,
+		z: 0
+	}
+
+TODO: let's add some more, like scale and fade.
+*/
+
 CT.trans = {
 	_: {
-		vender_prefixes: [ "-webkit-", "-moz-", "-ms-", "-o-", ""],
+		vender_prefixes: [ "-webkit-", "-moz-", "-ms-", "-o-", "" ],
 		tswap: { transform: "-webkit-transform" }, // mobile safari transitions
 		enames: [ "webkitTransitionEnd", "mozTransitionEnd", "oTransitionEnd", "transitionend"],
 		defaults: {

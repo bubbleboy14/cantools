@@ -1,3 +1,8 @@
+/*
+This module contains functions for determining
+dimensions of and positioning DOM elements.
+*/
+
 CT.align = {
 	"absers": [],
 	"fullscreeners": [],

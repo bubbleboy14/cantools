@@ -1,3 +1,55 @@
+/*
+This module contains functions for manipulating and processing text. This includes:
+
+### parsing
+Mainly, you'll just want to call CT.parse.process(c, simple, customArg).
+
+#### It returns the processed string and supports 3 positional arguments:
+    - c (string)
+      - the text to process
+    - simple (bool)
+      - if true, uses simple link wrapping
+      - else (default), embeds images and invokes custom processor (if any)
+    - customArg (anything)
+      - passed to custom link processor, if any (for indicating some mode, for instance)
+
+#### Furthermore:
+    - normalizes whitespace
+    - formats and embeds links for phone numbers
+    - generates mailto links as necessary
+    - processes remaining links via url2link() or processLink() (switching on simple)
+
+### link processing
+This is done through CT.parse.processLink(url, customArg).
+
+#### It supports two arguments:
+    - url: url to parse
+    - customArg: passed to custom processor, for instance, for disabling embedded video
+
+#### Furthermore:
+    - embeds images
+    - linkifies other links
+    - adds 0-width whitespace characters to line-break url strings as necessary
+      - via CT.parse.breakurl(url)
+    - supports custom link processing callbacks
+      - via CT.parse.setLinkProcessor(cb)
+
+### input constraints/validation
+	CT.parse.validEmail(s): returns bool
+	CT.parse.validPassword(s): returns bool
+	CT.parse.numOnly(n, allowDot, noNeg): returns n
+	 - turn 'n' input into a field that only allows numbers
+	 - allowDot and noNeg toggle decimals and negative #s
+
+### strippers, formatters, converters, sanitization
+Various functions for deriving different types of information, such as
+phone numbers and zip codes, from text; reformatting recognizable strings
+and generating links (as in the case of phone numbers); case-modding,
+soft-truncating, and removing script blocks from text; and otherwise messing
+with strings. Also, CT.parse.timeStamp(datetime) goes a long way toward
+making timestamps meaningful to humans.
+*/
+
 CT.parse = {
 	"_linkProcessor": null,
 	"_NUMS": '0123456789',
@@ -25,12 +77,12 @@ CT.parse = {
 	        furl = "http://" + furl;
 	    return '<a target="_blank" href=' + furl + '>' + (rname || CT.parse.breakurl(rurl)) + "</a>";
 	},
-	"processLink": function(url, novid) {
+	"processLink": function(url, customArg) {
 	    var ext = url.slice(-4);
 	    if (CT.parse.imgTypes.indexOf(ext) != -1)
 	        return '<img src=' + url + '>';
 	    return CT.parse._linkProcessor
-	    	&& CT.parse._linkProcessor(url, novid)
+	    	&& CT.parse._linkProcessor(url, customArg)
 	    	|| CT.parse.url2link(url);
 	},
 
@@ -48,15 +100,14 @@ CT.parse = {
 	},
 
 	// input filter
-	"_nchars": "0123456789-",
-	"numOnly": function(n, allowDot) {
+	"numOnly": function(n, allowDot, noNeg) {
 	    n.onkeyup = function() {
 	        var i, c, v = "", hasdot = false;
 	        for (i = 0; i < n.value.length; i++) {
 	            c = n.value.charAt(i);
 	            if (allowDot && !hasdot && c == ".")
 	                hasdot = true;
-	            else if (CT.parse._nchars.indexOf(c) == -1)
+	            else if (!(!noNeg && !i && c == "-") && (CT.parse._NUMS.indexOf(c) == -1))
 	                continue;
 	            v += c;
 	        }
@@ -175,7 +226,7 @@ CT.parse = {
 	},
 
 	// parser
-	"process": function(c, simple, novid) {
+	"process": function(c, simple, customArg) {
 	    if (!c) return "";
 
 	    // whitespace and tags
@@ -220,7 +271,7 @@ CT.parse = {
 	                lc = sl[0],
 	                w = sl[1];
 	            clist[i] = frontCap + (simple ? CT.parse.url2link
-	            	: CT.parse.processLink)(w, novid) + lc + endCap;
+	            	: CT.parse.processLink)(w, customArg) + lc + endCap;
 	        }
 	    }
 	    return clist.join(" ");

@@ -1,3 +1,15 @@
+/*
+This module contains functions for registering cross-platform gesture callbacks.
+The main one to look out for is listen, defined below.
+
+### CT.gesture.listen(eventName, node, cb, stopPropagation, preventDefault)
+    - eventName - one of: drag, swipe, tap, up, down, hold, pinch, hover, wheel
+    - node - the node to listen to
+    - cb - the function to call when something happens
+    - stopPropagation - whether to propagate this event beyond node
+    - preventDefault - whether to prevent default behavior
+*/
+
 CT.gesture = {
 	gid: 0,
 	preventDefault: true,

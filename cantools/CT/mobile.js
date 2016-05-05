@@ -1,3 +1,10 @@
+/*
+This module takes a website formatted for a regular computer screen
+and, via configuration, mobilizes it by zooming in on specific sections
+of the page and providing user interface elements for scaling/translating
+between components.
+*/
+
 CT.mobile = {
     "options": { // true/false for ALLNODE._mobile
         "true": ["mobile", "stretched"],
