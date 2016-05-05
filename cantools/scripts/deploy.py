@@ -1,4 +1,17 @@
 """
+Usage: ctdeploy [-d|s|p] [-un] [--js_path=PATH]
+
+Options:
+  -h, --help            show this help message and exit
+  -d, --dynamic         switch to dynamic (development) mode
+  -s, --static          switch to static (debug) mode
+  -p, --production      switch to production (garbled) mode
+  -u, --upload          uploads project in specified mode and then switches
+                        back to dynamic (development) mode
+  -n, --no_build        skip compilation step
+  -j JS_PATH, --js_path=JS_PATH
+                        set javascript path (default=js)
+
 Supports 3 modes:
  - dynamic (files live in html)
    - normal development files
@@ -25,7 +38,7 @@ Supports 3 modes:
    - wire encryption
    - designated lazy imports (indicated by second bool arg to CT.require)
 
-Generates fresh 'static' and 'production' files (from 'development' source files in 'html' on every run, regardless of flags). Mode is established in the yaml file, which routes requests to the appropriate directory. Will have modular platform backends -- currently supports app engine.
+Generates fresh 'static' and 'production' files (from 'development' source files in 'html' on every run, unless -n [or --no_build] flag is used). Mode is established in the app.yaml file, which routes requests to the appropriate directory, and the ct.cfg file, which determines backend behavior, especially regarding encryption.
 """
 
 import subprocess, commands, os

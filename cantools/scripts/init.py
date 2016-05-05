@@ -1,3 +1,17 @@
+"""
+Usage: ctinit [projname] [--cantools_path=PATH] [--web_backend=BACKEND]
+
+Options:
+  -h, --help            show this help message and exit
+  -c CANTOOLS_PATH, --cantools_path=CANTOOLS_PATH
+                        where is cantools? (default: /your/home/directory)
+  -w WEB_BACKEND, --web_backend=WEB_BACKEND
+                        web backend. options: dez, gae. (default: dez)
+  -r, --refresh_symlinks
+                        add symlinks to project and configure version control
+                        path exclusion (if desired)
+"""
+
 import os
 from optparse import OptionParser
 from cantools import config

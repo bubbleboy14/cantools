@@ -1,3 +1,13 @@
+"""
+Usage: ctpubsub [-d domain] [-p port]
+
+Options:
+  -h, --help            show this help message and exit
+  -d DOMAIN, --domain=DOMAIN
+                        use a specific domain (default: localhost)
+  -p PORT, --port=PORT  use a specific port (default: 8888)
+"""
+
 from cantools import config
 from bots import Bot
 
