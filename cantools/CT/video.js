@@ -1,19 +1,17 @@
 /*
 This module supports video playback.
 
-video players
--------------
+### video players
 We support Google Video, YouTube, Vimeo, and uStream.
 
-raw formats
------------
+### raw formats
 We support mp4, ogg, and webm.
 
 Typically, you'll want to use the embed() function.
 
-CT.video.embed(video, small) - returns stringified html
- - video (string): link to video content
- - small (bool): if true, make it smaller
+### CT.video.embed(video, small) - returns stringified html
+	- video (string): link to video content
+	- small (bool): if true, make it smaller
 
 TODO: replace 'small' bool with flexible styling.
 */

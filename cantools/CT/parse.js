@@ -1,51 +1,47 @@
 /*
 This module contains functions for manipulating and processing text. This includes:
 
-parsing
--------
+### parsing
 Mainly, you'll just want to call CT.parse.process(c, simple, customArg).
 
-It returns the processed string and supports 3 positional arguments:
- - c (string)
-   - the text to process
- - simple (bool)
-   - if true, uses simple link wrapping
-   - else (default), embeds images and invokes custom processor (if any)
- - customArg (anything)
-   - passed to custom link processor, if any (for indicating some mode, for instance)
+#### It returns the processed string and supports 3 positional arguments:
+    - c (string)
+      - the text to process
+    - simple (bool)
+      - if true, uses simple link wrapping
+      - else (default), embeds images and invokes custom processor (if any)
+    - customArg (anything)
+      - passed to custom link processor, if any (for indicating some mode, for instance)
 
-Furthermore:
- - normalizes whitespace
- - formats and embeds links for phone numbers
- - generates mailto links as necessary
- - processes remaining links via url2link() or processLink() (switching on simple)
+#### Furthermore:
+    - normalizes whitespace
+    - formats and embeds links for phone numbers
+    - generates mailto links as necessary
+    - processes remaining links via url2link() or processLink() (switching on simple)
 
-link processing
----------------
+### link processing
 This is done through CT.parse.processLink(url, customArg).
 
-It supports two arguments:
- - url: url to parse
- - customArg: passed to custom processor, for instance, for disabling embedded video
+#### It supports two arguments:
+    - url: url to parse
+    - customArg: passed to custom processor, for instance, for disabling embedded video
 
-Furthermore:
- - embeds images
- - linkifies other links
- - adds 0-width whitespace characters to line-break url strings as necessary
-   - via CT.parse.breakurl(url)
- - supports custom link processing callbacks
-   - via CT.parse.setLinkProcessor(cb)
+#### Furthermore:
+    - embeds images
+    - linkifies other links
+    - adds 0-width whitespace characters to line-break url strings as necessary
+      - via CT.parse.breakurl(url)
+    - supports custom link processing callbacks
+      - via CT.parse.setLinkProcessor(cb)
 
-input constraints/validation
-----------------------------
-CT.parse.validEmail(s): returns bool
-CT.parse.validPassword(s): returns bool
-CT.parse.numOnly(n, allowDot, noNeg): returns n
- - turn 'n' input into a field that only allows numbers
- - allowDot and noNeg toggle decimals and negative #s
+### input constraints/validation
+	CT.parse.validEmail(s): returns bool
+	CT.parse.validPassword(s): returns bool
+	CT.parse.numOnly(n, allowDot, noNeg): returns n
+	 - turn 'n' input into a field that only allows numbers
+	 - allowDot and noNeg toggle decimals and negative #s
 
-strippers, formatters, converters, sanitization
------------------------------------------------
+### strippers, formatters, converters, sanitization
 Various functions for deriving different types of information, such as
 phone numbers and zip codes, from text; reformatting recognizable strings
 and generating links (as in the case of phone numbers); case-modding,

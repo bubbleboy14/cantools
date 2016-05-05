@@ -2,15 +2,15 @@
 This module provides two functions, wysiwygize() and qwiz(), which
 both convert textareas (identified by id) into rich text editors.
 
-CT.rte.wysiwygize(nodeid, isrestricted, val, cb, mismatchcb)
- - nodeid: id of target textarea (must exist in DOM)
- - isrestricted: if true, disables tables and images
- - val: string value with which to initialize target text area
- - cb: callback to invoke once textarea is initialized
- - mismatchcb: callback to invoke if the reformatted text doesn't match val
-CT.rte.qwiz(nodeid, val)
- - nodeid: id of target textarea (must exist in DOM)
- - val: string value with which to initialize target text area
+### CT.rte.wysiwygize(nodeid, isrestricted, val, cb, mismatchcb)
+	- nodeid: id of target textarea (must exist in DOM)
+	- isrestricted: if true, disables tables and images
+	- val: string value with which to initialize target text area
+	- cb: callback to invoke once textarea is initialized
+	- mismatchcb: callback to invoke if the reformatted text doesn't match val
+### CT.rte.qwiz(nodeid, val)
+	- nodeid: id of target textarea (must exist in DOM)
+	- val: string value with which to initialize target text area
 
 CT.rte.qwiz() just builds a simplified (isrestricted=true) rich text area
 after first waiting for the nodeid-indicated node to appear in the DOM.

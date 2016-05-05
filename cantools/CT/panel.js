@@ -3,36 +3,36 @@ This module contains functions for generating lists of items that,
 when clicked, show corresponding content or trigger corresponding
 logic. Here are three examples.
 
-CT.panel.simple(pnames, keystring, itemnode, panelnode, cbs)
-------------------------------------------------------------
+### CT.panel.simple(pnames, keystring, itemnode, panelnode, cbs)
 This function wraps CT.panel.load(), supporting a subset of load()'s
 options (the simple ones). It supports the following args, of which
 only the first is required:
- - pnames (string array): short for 'panel names'
- - keystring (string, default: 'sb'): identifier for collections of content/lister nodes
- - itemnode (node, default: CT.dom.id(keystring + "items")): parent node for lister items
- - panelnode (node, default: CT.dom.id(keystring + "panels")): parent node for content panels
- - cbs (function array, optional): callbacks to invoke on lister item click post- panel swap
 
-CT.panel.pager(getContent, request, limit, colClass, dataClass, ks)
--------------------------------------------------------------------
+    - pnames (string array): short for 'panel names'
+    - keystring (string, default: 'sb'): identifier for collections of content/lister nodes
+    - itemnode (node, default: CT.dom.id(keystring + "items")): parent node for lister items
+    - panelnode (node, default: CT.dom.id(keystring + "panels")): parent node for content panels
+    - cbs (function array, optional): callbacks to invoke on lister item click post- panel swap
+
+### CT.panel.pager(getContent, request, limit, colClass, dataClass, ks)
 This function generates and returns a node containing a
 (CT.Pager-backed) paging lister node and a corresponding content panel.
- - getContent (function): combined with CT.panel.simple() in pager's renderCb
- - request (function): pager's requestCb
- - limit (number, default: 20): pager's limit (chunk size)
- - colClass (string, optional): class of generated pager (list selector) node
- - dataClass (string, optional): class of generated data (content panel) node
- - ks (string, default: "p" + CT.Pager._id): keystring of data and list nodes
 
-CT.panel.triggerList(data, cb, node)
-------------------------------------
+    - getContent (function): combined with CT.panel.simple() in pager's renderCb
+    - request (function): pager's requestCb
+    - limit (number, default: 20): pager's limit (chunk size)
+    - colClass (string, optional): class of generated pager (list selector) node
+    - dataClass (string, optional): class of generated data (content panel) node
+    - ks (string, default: "p" + CT.Pager._id): keystring of data and list nodes
+
+### CT.panel.triggerList(data, cb, node)
 This function fills the 'node' node with a list of clickable items, each of
 which triggers cb(d), where d is the corresponding object in the 'data' array.
- - data (object array): data set used to generate list
-   - for d in data: link content equals d.title || d[d.label]
- - cb (function): the callback to invoke when an item is clicked
- - node (node): the list parent node
+
+    - data (object array): data set used to generate list
+      - for d in data: link content equals d.title || d[d.label]
+    - cb (function): the callback to invoke when an item is clicked
+    - node (node): the list parent node
 */
 
 CT.panel = {

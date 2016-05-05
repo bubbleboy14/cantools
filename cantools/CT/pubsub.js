@@ -1,14 +1,14 @@
 /*
 This module provides a direct interface with the ctpubsub backend. Here's how to use it.
 
-CT.pubsub.connect(host, port, uname)
-CT.pubsub.publish(channel, message)
-CT.pubsub.subscribe(channel)
-CT.pubsub.unsubscribe(channel)
-CT.pubsub.pm(user, message)
-CT.pubsub.set_cb(action, cb)
-CT.pubsub.set_reconnect(bool)
-CT.pubsub.isInitialized() (returns bool)
+	CT.pubsub.connect(host, port, uname)
+	CT.pubsub.publish(channel, message)
+	CT.pubsub.subscribe(channel)
+	CT.pubsub.unsubscribe(channel)
+	CT.pubsub.pm(user, message)
+	CT.pubsub.set_cb(action, cb)
+	CT.pubsub.set_reconnect(bool)
+	CT.pubsub.isInitialized() (returns bool)
 */
 
 CT.pubsub = {

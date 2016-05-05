@@ -1,17 +1,17 @@
 /*
 This module supports file uploads.
 
-CT.upload.form(uid, kval, sbutton, isize)
- - uid: user id (if any)
- - kval: upload key (if any)
- - sbutton: submit button (if any)
- - isize: input size (in characters)
+### CT.upload.form(uid, kval, sbutton, isize)
+	- uid: user id (if any)
+	- kval: upload key (if any)
+	- sbutton: submit button (if any)
+	- isize: input size (in characters)
 
-CT.upload.submit(f, success, failure, iskey)
- - f: input field
- - success: upload success callback
- - failure: upload failure callback
- - iskey: whether a key is expected as the return value
+### CT.upload.submit(f, success, failure, iskey)
+	- f: input field
+	- success: upload success callback
+	- failure: upload failure callback
+	- iskey: whether a key is expected as the return value
 
 This module lazily imports CT.lib.aim (in submit()).
 

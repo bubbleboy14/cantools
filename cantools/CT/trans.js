@@ -2,12 +2,12 @@
 This module provides convenience functions for messing
 around with DOM elements via CSS transitions. Have at it.
 
-CT.trans.rotate(node, opts)
-CT.trans.translate(node, opts)
-CT.trans.trans(opts)
-CT.trans.setVendorPrefixed(node, property, value)
- - sets CSS properties for all vendor prefixes
-   - [ "-webkit-", "-moz-", "-ms-", "-o-", "" ]
+	CT.trans.rotate(node, opts)
+	CT.trans.translate(node, opts)
+	CT.trans.trans(opts)
+	CT.trans.setVendorPrefixed(node, property, value)
+	 - sets CSS properties for all vendor prefixes
+	   - [ "-webkit-", "-moz-", "-ms-", "-o-", "" ]
 
 And here are the default options:
 	trans: {
