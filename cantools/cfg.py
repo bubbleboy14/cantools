@@ -77,7 +77,6 @@ cfg = {
 			".": ["*pyc", "*~", ".ctp", "_", "admin.py", "_db.py", "logs"],
 			"css": ["ct.css"],
 			"js": ["CT"],
-			"html-static": ["CT"],
 			"html-production": ["CT"]
 		},
 		"yaml": {
