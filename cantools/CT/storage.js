@@ -1,3 +1,20 @@
+/*
+This module provides an abstraction layer over a storage backend.
+
+Here are the obvious functions:
+CT.storage.get(key)
+CT.storage.set(key, val)
+CT.storage.clear()
+
+You also have to call CT.storage.init(opts). The 'opts' object may contain:
+ - backend (one of: localStorage, sessionStorage) - default: localStorage
+ - json (bool) - default: true
+ - compress (bool) - default: true
+
+Why call init(), you ask? Well, if 'compress' is true, the storage module
+needs to lazily import CT.lib.lz-string. Could be different, but there it is.
+*/
+
 CT.storage = {
 	"init": function(opts) {
 		if (!CT.storage.opts) {
