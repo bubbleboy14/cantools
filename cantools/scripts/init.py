@@ -10,6 +10,10 @@ Options:
   -r, --refresh_symlinks
                         add symlinks to project and configure version control
                         path exclusion (if desired)
+
+TODO :: We shouldn't have to ask for --cantools_path. Instead, this
+        path should be saved in an environment variable on install.
+        Right? Could get complicated.
 """
 
 import os

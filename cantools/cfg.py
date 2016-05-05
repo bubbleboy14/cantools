@@ -134,10 +134,17 @@ handlers:
 
 Latest version: %s
 License: MIT (see LICENSE)
-Installation
+
+Package Installation (limited)
  - package: https://pypi.python.org/pypi/ct
  - command: easy_install ct
- - repository: https://github.com/bubbleboy14/cantools
+ - downside: you have to figure out the path to cantools
+
+Repository Installation (full)
+  - upside: easiest way to know the path to cantools
+    - for the time being, you need to know this to run ctinit
+ - site: https://github.com/bubbleboy14/cantools
+ - steps
    - git clone https://github.com/bubbleboy14/cantools.git
    - cd cantools
    - python setup.py install"""
