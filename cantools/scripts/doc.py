@@ -14,9 +14,13 @@ def dsBack(cmd):
 	return "## ct%s\n%s"%(cmd, ds)
 
 def dsFront(mod):
-	log(mod, 2)
-	ds = read(os.path.join(CTPATH, mod))[3:].split("\n*/")[0]
-	return "## CT.%s\n%s"%(mod, ds)
+	modname = "CT.%s"%(mod[:-3],)
+	log(modname, 2)
+	return "\n".join([
+		"## %s"%(modname,),
+		"### Import line: 'CT.require(\"%s\");'"%(modname,),
+		read(os.path.join(CTPATH, mod))[3:].split("\n*/")[0]
+	])
 
 def back():
 	log("back", 1)
@@ -25,8 +29,10 @@ def back():
 
 def front():
 	log("front", 1)
+	plist = os.listdir(CTPATH)
+	plist.sort()
 	return ["# Front (JS Library)"] + map(lambda mod : dsFront(mod),
-		filter(lambda i : i.endswith("js"), os.listdir(CTPATH)))
+		filter(lambda i : i.endswith("js"), plist))
 
 def build():
 	log("building docs")

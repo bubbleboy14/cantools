@@ -1,9 +1,10 @@
 /*
 This module includes submodules for interacting with the admin backend:
- - CT.admin.core
- - CT.admin.db
- - CT.admin.memcache
- - CT.admin.pubsub
+
+    - CT.admin.core
+    - CT.admin.db
+    - CT.admin.memcache
+    - CT.admin.pubsub
 */
 
 CT.require("CT.admin.core");

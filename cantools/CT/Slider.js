@@ -6,11 +6,11 @@ The constructor takes an options object, 'opts', which may define
 up to four properties. These individual properties, as well as the
 'opts' object itself, are all optional.
 
-Definable properties are as follows:
- - node (default: document.body): DOM element in which to build the slider
- - autoSlideInterval (default: 5000): how many milliseconds to wait before auto-sliding cards
- - bubblePosition (default: 'bottom'): where to position card indicator bubbles ('top' or 'bottom')
- - cards (default: []): an array of items corresponding to the cards in the slider
+### Definable properties are as follows:
+    - node (default: document.body): DOM element in which to build the slider
+    - autoSlideInterval (default: 5000): how many milliseconds to wait before auto-sliding cards
+    - bubblePosition (default: 'bottom'): where to position card indicator bubbles ('top' or 'bottom')
+    - cards (default: []): an array of items corresponding to the cards in the slider
 
 The last one, 'cards', must be an array either of strings (interpreted
 as image urls) or of data objects (processed in the addFrame function).

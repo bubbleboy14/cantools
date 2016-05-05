@@ -108,23 +108,19 @@ some reason. It will go through and recount everything.
 
 # Front (JS Library)
 
-## CT.storage.js
-This module provides an abstraction layer over a storage backend.
+## CT.Pager
+### Import line: 'CT.require("CT.Pager");'
+This class is used to generate a pager, which is a self-refilling DOM element.
 
-Here are the obvious functions:
-CT.storage.get(key)
-CT.storage.set(key, val)
-CT.storage.clear()
+### The constructor takes four positional arguments:
+    - renderCb: function that returns formatted content given an array of data objects
+    - requestCb: function that acquires new raw data
+    - limit (default: 20): number of items to request/display at a time
+    - nodeClass (optional): CSS class of pager DOM node
+    - nodeId (optional): CSS id of pager DOM node
 
-You also have to call CT.storage.init(opts). The 'opts' object may contain:
- - backend (one of: localStorage, sessionStorage) - default: localStorage
- - json (bool) - default: true
- - compress (bool) - default: true
-
-Why call init(), you ask? Well, if 'compress' is true, the storage module
-needs to lazily import CT.lib.lz-string. Could be different, but there it is.
-
-## CT.Slider.js
+## CT.Slider
+### Import line: 'CT.require("CT.Slider");'
 This class is used to generate a slider, which is a segmented,
 directionally-constrained draggable DOM element.
 
@@ -132,28 +128,188 @@ The constructor takes an options object, 'opts', which may define
 up to four properties. These individual properties, as well as the
 'opts' object itself, are all optional.
 
-Definable properties are as follows:
- - node (default: document.body): DOM element in which to build the slider
- - autoSlideInterval (default: 5000): how many milliseconds to wait before auto-sliding cards
- - bubblePosition (default: 'bottom'): where to position card indicator bubbles ('top' or 'bottom')
- - cards (default: []): an array of items corresponding to the cards in the slider
+### Definable properties are as follows:
+    - node (default: document.body): DOM element in which to build the slider
+    - autoSlideInterval (default: 5000): how many milliseconds to wait before auto-sliding cards
+    - bubblePosition (default: 'bottom'): where to position card indicator bubbles ('top' or 'bottom')
+    - cards (default: []): an array of items corresponding to the cards in the slider
 
 The last one, 'cards', must be an array either of strings (interpreted
 as image urls) or of data objects (processed in the addFrame function).
 
-## CT.pubsub.js
-This module provides a direct interface with the ctpubsub backend. Here's how to use it.
+## CT.admin
+### Import line: 'CT.require("CT.admin");'
+This module includes submodules for interacting with the admin backend:
 
-CT.pubsub.connect(host, port, uname)
-CT.pubsub.publish(channel, message)
-CT.pubsub.subscribe(channel)
-CT.pubsub.unsubscribe(channel)
-CT.pubsub.pm(user, message)
-CT.pubsub.set_cb(action, cb)
-CT.pubsub.set_reconnect(bool)
-CT.pubsub.isInitialized() (returns bool)
+    - CT.admin.core
+    - CT.admin.db
+    - CT.admin.memcache
+    - CT.admin.pubsub
 
-## CT.db.js
+## CT.align
+### Import line: 'CT.require("CT.align");'
+This module contains functions for determining
+dimensions of and positioning DOM elements.
+
+## CT.all
+### Import line: 'CT.require("CT.all");'
+This loader imports almost every CT module.
+
+### This includes:
+    - CT.Pager
+    - CT.Slider
+    - CT.align
+    - CT.autocomplete
+    - CT.canvas
+    - CT.data
+    - CT.db
+    - CT.drag
+    - CT.dom
+    - CT.gesture
+    - CT.mobile
+    - CT.modal
+    - CT.panel
+    - CT.parse
+    - CT.pubsub
+    - CT.recaptcha
+    - CT.storage
+    - CT.trans
+    - CT.upload
+    - CT.video
+
+### This excludes:
+    - CT.map and CT.rte, which require large script imports
+    - CT.admin, which is not for typical use.
+
+## CT.autocomplete
+### Import line: 'CT.require("CT.autocomplete");'
+The purpose of this module is to simplify the creation of DOM
+text fields that autocomplete user input based on some data set.
+
+This module contains two classes, Guesser and DBGuesser.
+
+### CT.autocomplete.Guesser
+
+#### The constructor takes an options object with any or all of the following properties:
+    - enterCb (default: doNothing): trigger when user hits enter
+    - keyUpCb (default: doNothing): trigger on key up
+    - expandCB (default: doNothing): trigger when autocomplete node expands
+    - tapCb (default: set input to data[data.label]): trigger on option tap
+    - guessCb (default: this.guesser): trigger when it's time to guess
+
+You might notice that no 'guesser' function is defined on this class.
+This means that you must either pass in a 'guessCb' function to the constructor
+or subclass Guesser, adding this function to the class (as 'guesser').
+
+### CT.autocomplete.DBGuesser
+DBGuesser subclasses Guesser, and defines a 'guesser'
+function, which uses the CT.db module to acquire data.
+
+#### DBGuesser's constructor supports a few more properties:
+    - modelName: the name of the backend database model to query from
+    - property: the property (on specified model) to compare to text input
+    - filters (default: {}): filters to apply to database query
+
+## CT.canvas
+### Import line: 'CT.require("CT.canvas");'
+This module contains classes that simplify use of the HTML5 canvas element:
+
+    - CT.canvas.Canvas
+    - CT.canvas.Controller
+    - CT.canvas.Node
+    - CT.canvas.Text
+
+## CT.ct
+### Import line: 'CT.require("CT.ct");'
+This is the cantools bootstrapper. This means that it must be included in
+a regular script tag in the head of your html file. It contains the core
+functionality of the framework, as follows.
+
+### CT.net
+#### This is where the network stuff lives. Highlights:
+    - CT.net.post(path, params, errMsg, cb, eb, headers, cbarg, ebarg)
+      - issues a POST request via asynchronous XHR
+    - CT.net.get(path, qsp, isjson)
+      - issues a GET request via synchronous XHR
+      - optionally parses query string object and unpacks response as JSON
+
+#### Also includes:
+ - CT.net.setSpinner(bool) (default: false)
+   - enables/disables spinner (indicating outstanding request)
+ - CT.net.setCache(bool) (default: false)
+   - enables/disables client-side request caching
+ - CT.net.setEncoder(func)
+   - sets encoder (upstream data processing function)
+   - must be used in conjunction with cantools.web.setenc()
+ - CT.net.setDecoder(func)
+   - sets decoder (downstream data processing function)
+   - must be used in conjunction with cantools.web.setdec()
+ - CT.net.xhr(path, method, params, async, cb, headers)
+   - thin wrapper around browser-level XHR abstraction
+
+### CT.require(modname, lazy)
+This is the basis of the cantools module system. Any time your code requires
+a module (CT or otherwise), simply call CT.require('MyProject.submodule.whatever')
+to dynamically pull in the necessary code. When your project is compiled in
+production mode, these imports are baked into the host HTML file, _except_
+those flagged 'lazy' (second argument is 'true').
+
+### CT.scriptImport(modpath, cb, delay)
+This function supports the importation of libraries that only work if they
+know their path (which they ascertain by checking their own script tag).
+This includes many popular libraries, such as TinyMCE and Google Maps.
+
+### CT.onload(cb)
+Registers a callback to be fired when the window loads.
+
+### CT.merge()
+Merges arbitrary number of objects into new object and returns result.
+
+### CT.Class(obj, parent)
+This function creates a cantools class. The first argument is a class
+definition, an object containing all the functions and properties
+belonging to the class. The second (optional) argument is the base
+class from which to inherit.
+
+If the class definition includes a 'CLASSNAME' property, this is used
+for logging (each class instance has its own 'log' function). Otherwise,
+a warning is generated.
+
+If the class definition includes an 'init' function, this function
+becomes the class constructor, which is called when an instance is
+created (var instance_of_ClassA = new ClassA([args])).
+
+All class functions are bound to the instance, including those
+embedded in data structures.
+
+### CT.log
+This module contains functions for logging, acquiring specific loggers,
+and filtering log output, as well as timing functions for profiling code.
+
+### shims
+In addition to the above functions and modules, the cantools bootstrapper provides a
+number of shims - fallback implementations of key functionality - for old browsers.
+These are required lazily, meaning that they are _not_ included in production-compiled
+code, and they're only imported as needed (when missing from browser).
+
+#### These include:
+    - JSON
+    - sessionStorage
+    - classList
+    - requestAnimationFrame
+    - Object.values
+    - addEventListener
+
+## CT.data
+### Import line: 'CT.require("CT.data");'
+This module contains functions for:
+ - structure comparison
+ - array manipulation
+ - object caching
+ - data acquisition
+
+## CT.db
+### Import line: 'CT.require("CT.db");'
 This module provides direct integration with the cantools.db backend
 via the _db.py request handler. Some key functions are defined below.
 
@@ -227,7 +383,8 @@ table. The constructor takes an options object ('opts') with three possible entr
  - submit: the function to call when the 'submit' button is clicked
    - default: pager node is created and added to parent indicated by pagerPanelId
 
-## CT.dom.js
+## CT.dom
+### Import line: 'CT.require("CT.dom");'
 This module contains functions for interacting with the DOM. This includes:
 
 simple and compound node creation
@@ -276,64 +433,64 @@ CT.dom.addStyle(text, href, obj)
    - obj: object mapping selector strings to style definitions (specified
           via embedded objects mapping CSS properties to values)
 
-## CT.autocomplete.js
-The purpose of this module is to simplify the creation of DOM
-text fields that autocomplete user input based on some data set.
+## CT.drag
+### Import line: 'CT.require("CT.drag");'
+This module enables cross-platform, sometimes-native dragging, mostly via
+CT.gesture module. The principle function is makeDraggable(), used as follows:
 
-This module contains two classes, Guesser and DBGuesser.
+CT.drag.makeDraggable(node, opts)
+---------------------------------
+This function makes the 'node' node draggable. The 'opts' object may contain
+any or all of the following options:
+ - constraint ('horizontal' or 'vertical'): prevents drags in indicated direction
+ - interval (number): 'chunks' total drag area into sections, causing drags to
+                      always settle on areas corresponding to multiples of 'interval',
+                      and swipes to slide between such areas
+ - force (bool, default false): forces non-native scrolling
+ - up, down, drag, scroll, swipe (functions): optional gesture callbacks
 
-CT.autocomplete.Guesser
------------------------
-The constructor takes an options object with any or all of the following properties:
- - enterCb (default: doNothing): trigger when user hits enter
- - keyUpCb (default: doNothing): trigger on key up
- - expandCB (default: doNothing): trigger when autocomplete node expands
- - tapCb (default: set input to data[data.label]): trigger on option tap
- - guessCb (default: this.guesser): trigger when it's time to guess
+## CT.gesture
+### Import line: 'CT.require("CT.gesture");'
+This module contains functions for registering cross-platform gesture callbacks.
+The main one to look out for is listen, defined below.
 
-You might notice that no 'guesser' function is defined on this class.
-This means that you must either pass in a 'guessCb' function to the constructor
-or subclass Guesser, adding this function to the class (as 'guesser').
+CT.gesture.listen(eventName, node, cb, stopPropagation, preventDefault)
+-----------------------------------------------------------------------
+ - eventName - one of: drag, swipe, tap, up, down, hold, pinch, hover, wheel
+ - node - the node to listen to
+ - cb - the function to call when something happens
+ - stopPropagation - whether to propagate this event beyond node
+ - preventDefault - whether to prevent default behavior
 
-CT.autocomplete.DBGuesser
--------------------------
-DBGuesser subclasses Guesser, and defines a 'guesser'
-function, which uses the CT.db module to acquire data.
+## CT.map
+### Import line: 'CT.require("CT.map");'
+This module loads the Google Maps API via CT.scriptImport(),
+as well as a utility submodule (CT.map.util) and four classes:
+ - CT.map.Map
+ - CT.map.Node
+ - CT.map.Marker
+ - CT.map.Shape
 
-DBGuesser's constructor supports a few more properties:
- - modelName: the name of the backend database model to query from
- - property: the property (on specified model) to compare to text input
- - filters (default: {}): filters to apply to database query
+## CT.mobile
+### Import line: 'CT.require("CT.mobile");'
+This module takes a website formatted for a regular computer screen
+and, via configuration, mobilizes it by zooming in on specific sections
+of the page and providing user interface elements for scaling/translating
+between components.
 
-## CT.all.js
-This loader imports almost every CT module.
+## CT.modal
+### Import line: 'CT.require("CT.modal");'
+This module contains two classes, Modal and Prompt.
 
-This includes:
- - CT.Pager
- - CT.Slider
- - CT.align
- - CT.autocomplete
- - CT.canvas
- - CT.data
- - CT.db
- - CT.drag
- - CT.dom
- - CT.gesture
- - CT.mobile
- - CT.modal
- - CT.panel
- - CT.parse
- - CT.pubsub
- - CT.recaptcha
- - CT.storage
- - CT.trans
- - CT.upload
- - CT.video
+CT.modal.Modal creates a DOM node that can be transitioned
+on- and off- screen to/from a configurable position.
 
-This excludes CT.map and CT.rte, which require large script
-imports, as well as CT.admin, which is not for typical use.
+CT.modal.Prompt (a subclass of Modal) includes interface
+elements for obtaining user input, such as a string, a
+password, or one or more selections from a list.
 
-## CT.panel.js
+## CT.panel
+### Import line: 'CT.require("CT.panel");'
 This module contains functions for generating lists of items that,
 when clicked, show corresponding content or trigger corresponding
 logic. Here are three examples.
@@ -369,26 +526,8 @@ which triggers cb(d), where d is the corresponding object in the 'data' array.
  - cb (function): the callback to invoke when an item is clicked
  - node (node): the list parent node
 
-## CT.video.js
-This module supports video playback.
-
-video players
--------------
-We support Google Video, YouTube, Vimeo, and uStream.
-
-raw formats
------------
-We support mp4, ogg, and webm.
-
-Typically, you'll want to use the embed() function.
-
-CT.video.embed(video, small) - returns stringified html
- - video (string): link to video content
- - small (bool): if true, make it smaller
-
-TODO: replace 'small' bool with flexible styling.
-
-## CT.parse.js
+## CT.parse
+### Import line: 'CT.require("CT.parse");'
 This module contains functions for manipulating and processing text. This includes:
 
 parsing
@@ -443,7 +582,29 @@ soft-truncating, and removing script blocks from text; and otherwise messing
 with strings. Also, CT.parse.timeStamp(datetime) goes a long way toward
 making timestamps meaningful to humans.
 
-## CT.rte.js
+## CT.pubsub
+### Import line: 'CT.require("CT.pubsub");'
+This module provides a direct interface with the ctpubsub backend. Here's how to use it.
+
+CT.pubsub.connect(host, port, uname)
+CT.pubsub.publish(channel, message)
+CT.pubsub.subscribe(channel)
+CT.pubsub.unsubscribe(channel)
+CT.pubsub.pm(user, message)
+CT.pubsub.set_cb(action, cb)
+CT.pubsub.set_reconnect(bool)
+CT.pubsub.isInitialized() (returns bool)
+
+## CT.recaptcha
+### Import line: 'CT.require("CT.recaptcha");'
+This module provides functions, build() and submit(),
+for messing around with recaptcha botwalls.
+
+TODO: this functionality requires backend
+integration - include complementary python module!
+
+## CT.rte
+### Import line: 'CT.require("CT.rte");'
 This module provides two functions, wysiwygize() and qwiz(), which
 both convert textareas (identified by id) into rich text editors.
 
@@ -462,118 +623,25 @@ after first waiting for the nodeid-indicated node to appear in the DOM.
 
 CT.rte requires the open-source TinyMCE library, pulled in via CT.scriptImport().
 
-## CT.data.js
-This module contains functions for:
- - structure comparison
- - array manipulation
- - object caching
- - data acquisition
+## CT.storage
+### Import line: 'CT.require("CT.storage");'
+This module provides an abstraction layer over a storage backend.
 
-## CT.ct.js
-This is the cantools bootstrapper. This means that it must be included in
-a regular script tag in the head of your html file. It contains the core
-functionality of the framework, as follows.
+### Here are the obvious functions:
+    - CT.storage.get(key)
+    - CT.storage.set(key, val)
+    - CT.storage.clear()
 
-CT.net
-------
-This is where the network stuff lives. Highlights:
- - CT.net.post(path, params, errMsg, cb, eb, headers, cbarg, ebarg)
-   - issues a POST request via asynchronous XHR
- - CT.net.get(path, qsp, isjson)
-   - issues a GET request via synchronous XHR
-   - optionally parses query string object and unpacks response as JSON
+### You also have to call CT.storage.init(opts). The 'opts' object may contain:
+    - backend (one of: localStorage, sessionStorage) - default: localStorage
+    - json (bool) - default: true
+    - compress (bool) - default: true
 
-Also includes:
- - CT.net.setSpinner(bool) (default: false)
-   - enables/disables spinner (indicating outstanding request)
- - CT.net.setCache(bool) (default: false)
-   - enables/disables client-side request caching
- - CT.net.setEncoder(func)
-   - sets encoder (upstream data processing function)
-   - must be used in conjunction with cantools.web.setenc()
- - CT.net.setDecoder(func)
-   - sets decoder (downstream data processing function)
-   - must be used in conjunction with cantools.web.setdec()
- - CT.net.xhr(path, method, params, async, cb, headers)
-   - thin wrapper around browser-level XHR abstraction
+Why call init(), you ask? Well, if 'compress' is true, the storage module
+needs to lazily import CT.lib.lz-string. Could be different, but there it is.
 
-CT.require(modname, lazy)
--------------------------
-This is the basis of the cantools module system. Any time your code requires
-a module (CT or otherwise), simply call CT.require('MyProject.submodule.whatever')
-to dynamically pull in the necessary code. When your project is compiled in
-production mode, these imports are baked into the host HTML file, _except_
-those flagged 'lazy' (second argument is 'true').
-
-CT.scriptImport(modpath, cb, delay)
------------------------------------
-This function supports the importation of libraries that only work if they
-know their path (which they ascertain by checking their own script tag).
-This includes many popular libraries, such as TinyMCE and Google Maps.
-
-CT.onload(cb)
--------------
-Registers a callback to be fired when the window loads.
-
-CT.merge()
-----------
-Merges arbitrary number of objects into new object and returns result.
-
-CT.Class(obj, parent)
----------------------
-This function creates a cantools class. The first argument is a class
-definition, an object containing all the functions and properties
-belonging to the class. The second (optional) argument is the base
-class from which to inherit.
-
-If the class definition includes a 'CLASSNAME' property, this is used
-for logging (each class instance has its own 'log' function). Otherwise,
-a warning is generated.
-
-If the class definition includes an 'init' function, this function
-becomes the class constructor, which is called when an instance is
-created (var instance_of_ClassA = new ClassA([args])).
-
-All class functions are bound to the instance, including those
-embedded in data structures.
-
-CT.log
-------
-This module contains functions for logging, acquiring specific loggers,
-and filtering log output, as well as timing functions for profiling code.
-
-shims
------
-In addition to the above functions and modules, the cantools bootstrapper provides a
-number of shims - fallback implementations of key functionality - for old browsers.
-These are required lazily, meaning that they are _not_ included in production-compiled
-code, and they're only imported as needed (when missing from browser). These include:
- - JSON
- - sessionStorage
- - classList
- - requestAnimationFrame
- - Object.values
- - addEventListener
-
-## CT.mobile.js
-This module takes a website formatted for a regular computer screen
-and, via configuration, mobilizes it by zooming in on specific sections
-of the page and providing user interface elements for scaling/translating
-between components.
-
-## CT.gesture.js
-This module contains functions for registering cross-platform gesture callbacks.
-The main one to look out for is listen, defined below.
-
-CT.gesture.listen(eventName, node, cb, stopPropagation, preventDefault)
------------------------------------------------------------------------
- - eventName - one of: drag, swipe, tap, up, down, hold, pinch, hover, wheel
- - node - the node to listen to
- - cb - the function to call when something happens
- - stopPropagation - whether to propagate this event beyond node
- - preventDefault - whether to prevent default behavior
-
-## CT.trans.js
+## CT.trans
+### Import line: 'CT.require("CT.trans");'
 This module provides convenience functions for messing
 around with DOM elements via CSS transitions. Have at it.
 
@@ -609,25 +677,8 @@ And here are the default options:
 
 TODO: let's add some more, like scale and fade.
 
-## CT.canvas.js
-This module contains classes that simplify use of the HTML5 canvas element:
- - CT.canvas.Canvas
- - CT.canvas.Controller
- - CT.canvas.Node
- - CT.canvas.Text
-
-## CT.align.js
-This module contains functions for determining
-dimensions of and positioning DOM elements.
-
-## CT.admin.js
-This module includes submodules for interacting with the admin backend:
- - CT.admin.core
- - CT.admin.db
- - CT.admin.memcache
- - CT.admin.pubsub
-
-## CT.upload.js
+## CT.upload
+### Import line: 'CT.require("CT.upload");'
 This module supports file uploads.
 
 CT.upload.form(uid, kval, sbutton, isize)
@@ -646,52 +697,22 @@ This module lazily imports CT.lib.aim (in submit()).
 
 TODO: remove/replace uid/kval/iskey -- too application-specific
 
-## CT.drag.js
-This module enables cross-platform, sometimes-native dragging, mostly via
-CT.gesture module. The principle function is makeDraggable(), used as follows:
+## CT.video
+### Import line: 'CT.require("CT.video");'
+This module supports video playback.
 
-CT.drag.makeDraggable(node, opts)
----------------------------------
-This function makes the 'node' node draggable. The 'opts' object may contain
-any or all of the following options:
- - constraint ('horizontal' or 'vertical'): prevents drags in indicated direction
- - interval (number): 'chunks' total drag area into sections, causing drags to
-                      always settle on areas corresponding to multiples of 'interval',
-                      and swipes to slide between such areas
- - force (bool, default false): forces non-native scrolling
- - up, down, drag, scroll, swipe (functions): optional gesture callbacks
+video players
+-------------
+We support Google Video, YouTube, Vimeo, and uStream.
 
-## CT.Pager.js
-This class is used to generate a pager, which is a self-refilling DOM element.
+raw formats
+-----------
+We support mp4, ogg, and webm.
 
-The constructor takes four positional arguments:
- - renderCb: function that returns formatted content given an array of data objects
- - requestCb: function that acquires new raw data
- - limit (default: 20): number of items to request/display at a time
- - nodeClass (optional): CSS class of pager DOM node
- - nodeId (optional): CSS id of pager DOM node
+Typically, you'll want to use the embed() function.
 
-## CT.recaptcha.js
-This module provides functions, build() and submit(),
-for messing around with recaptcha botwalls.
+CT.video.embed(video, small) - returns stringified html
+ - video (string): link to video content
+ - small (bool): if true, make it smaller
 
-TODO: this functionality requires backend
-integration - include complementary python module!
-
-## CT.modal.js
-This module contains two classes, Modal and Prompt.
-
-CT.modal.Modal creates a DOM node that can be transitioned
-on- and off- screen to/from a configurable position.
-
-CT.modal.Prompt (a subclass of Modal) includes interface
-elements for obtaining user input, such as a string, a
-password, or one or more selections from a list.
-
-## CT.map.js
-This module loads the Google Maps API via CT.scriptImport(),
-as well as a utility submodule (CT.map.util) and four classes:
- - CT.map.Map
- - CT.map.Node
- - CT.map.Marker
- - CT.map.Shape
+TODO: replace 'small' bool with flexible styling.

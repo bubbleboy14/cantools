@@ -1,30 +1,31 @@
 /*
 This loader imports almost every CT module.
 
-This includes:
- - CT.Pager
- - CT.Slider
- - CT.align
- - CT.autocomplete
- - CT.canvas
- - CT.data
- - CT.db
- - CT.drag
- - CT.dom
- - CT.gesture
- - CT.mobile
- - CT.modal
- - CT.panel
- - CT.parse
- - CT.pubsub
- - CT.recaptcha
- - CT.storage
- - CT.trans
- - CT.upload
- - CT.video
+### This includes:
+    - CT.Pager
+    - CT.Slider
+    - CT.align
+    - CT.autocomplete
+    - CT.canvas
+    - CT.data
+    - CT.db
+    - CT.drag
+    - CT.dom
+    - CT.gesture
+    - CT.mobile
+    - CT.modal
+    - CT.panel
+    - CT.parse
+    - CT.pubsub
+    - CT.recaptcha
+    - CT.storage
+    - CT.trans
+    - CT.upload
+    - CT.video
 
-This excludes CT.map and CT.rte, which require large script
-imports, as well as CT.admin, which is not for typical use.
+### This excludes:
+    - CT.map and CT.rte, which require large script imports
+    - CT.admin, which is not for typical use.
 */
 
 CT.require("CT.Pager");

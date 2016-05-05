@@ -3,16 +3,15 @@ This is the cantools bootstrapper. This means that it must be included in
 a regular script tag in the head of your html file. It contains the core
 functionality of the framework, as follows.
 
-CT.net
-------
-This is where the network stuff lives. Highlights:
- - CT.net.post(path, params, errMsg, cb, eb, headers, cbarg, ebarg)
-   - issues a POST request via asynchronous XHR
- - CT.net.get(path, qsp, isjson)
-   - issues a GET request via synchronous XHR
-   - optionally parses query string object and unpacks response as JSON
+### CT.net
+#### This is where the network stuff lives. Highlights:
+    - CT.net.post(path, params, errMsg, cb, eb, headers, cbarg, ebarg)
+      - issues a POST request via asynchronous XHR
+    - CT.net.get(path, qsp, isjson)
+      - issues a GET request via synchronous XHR
+      - optionally parses query string object and unpacks response as JSON
 
-Also includes:
+#### Also includes:
  - CT.net.setSpinner(bool) (default: false)
    - enables/disables spinner (indicating outstanding request)
  - CT.net.setCache(bool) (default: false)
@@ -26,30 +25,25 @@ Also includes:
  - CT.net.xhr(path, method, params, async, cb, headers)
    - thin wrapper around browser-level XHR abstraction
 
-CT.require(modname, lazy)
--------------------------
+### CT.require(modname, lazy)
 This is the basis of the cantools module system. Any time your code requires
 a module (CT or otherwise), simply call CT.require('MyProject.submodule.whatever')
 to dynamically pull in the necessary code. When your project is compiled in
 production mode, these imports are baked into the host HTML file, _except_
 those flagged 'lazy' (second argument is 'true').
 
-CT.scriptImport(modpath, cb, delay)
------------------------------------
+### CT.scriptImport(modpath, cb, delay)
 This function supports the importation of libraries that only work if they
 know their path (which they ascertain by checking their own script tag).
 This includes many popular libraries, such as TinyMCE and Google Maps.
 
-CT.onload(cb)
--------------
+### CT.onload(cb)
 Registers a callback to be fired when the window loads.
 
-CT.merge()
-----------
+### CT.merge()
 Merges arbitrary number of objects into new object and returns result.
 
-CT.Class(obj, parent)
----------------------
+### CT.Class(obj, parent)
 This function creates a cantools class. The first argument is a class
 definition, an object containing all the functions and properties
 belonging to the class. The second (optional) argument is the base
@@ -66,23 +60,23 @@ created (var instance_of_ClassA = new ClassA([args])).
 All class functions are bound to the instance, including those
 embedded in data structures.
 
-CT.log
-------
+### CT.log
 This module contains functions for logging, acquiring specific loggers,
 and filtering log output, as well as timing functions for profiling code.
 
-shims
------
+### shims
 In addition to the above functions and modules, the cantools bootstrapper provides a
 number of shims - fallback implementations of key functionality - for old browsers.
 These are required lazily, meaning that they are _not_ included in production-compiled
-code, and they're only imported as needed (when missing from browser). These include:
- - JSON
- - sessionStorage
- - classList
- - requestAnimationFrame
- - Object.values
- - addEventListener
+code, and they're only imported as needed (when missing from browser).
+
+#### These include:
+    - JSON
+    - sessionStorage
+    - classList
+    - requestAnimationFrame
+    - Object.values
+    - addEventListener
 */
 
 var CT = {
