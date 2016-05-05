@@ -1,3 +1,53 @@
+/*
+This module contains functions for interacting with the DOM. This includes:
+
+simple and compound node creation
+---------------------------------
+CT.dom.node(content, type, classname, id, attrs, style)
+ - content - what goes in the resulting DOM node. may be:
+   - a node
+   - a function
+   - an object
+   - a string or number
+   - an array containing any of the above
+ - type - tag name of resulting DOM node
+ - classname - class of resulting DOM node
+ - id - id of resulting DOM node
+ - attrs - object defining miscellaneous properties of resulting DOM node
+ - style - object mapping CSS properties to values
+
+All other node generators use CT.dom.node() under the hood. There are many. See code.
+
+selectors
+---------
+CT.dom.id(id, all)
+ - 'all' is a bool indicating whether to also search free-floating nodes.
+CT.dom.className(cname, n)
+ - 'n' is the node to search. defaults to document.
+CT.dom.tag(tag, n)
+ - 'n' is the node to search. defaults to document.
+CT.dom.Q(q, n)
+ - executes querySelectorAll(q) on n (defaults to document)
+
+style modding
+-------------
+CT.dom.mod(opts)
+ - 'opts' object must include:
+   - property: CSS property to modify
+   - value: new value
+ - 'opts' object must include one of:
+   - target (node)
+   - targets (node array)
+   - className (string)
+   - id (string)
+CT.dom.addStyle(text, href, obj)
+ - use EITHER text, href, or obj
+   - text: raw CSS text
+   - href: url of stylesheet
+   - obj: object mapping selector strings to style definitions (specified
+          via embedded objects mapping CSS properties to values)
+*/
+
 CT.dom = {
 	// basic nodes
 	"_autoparse": false,
