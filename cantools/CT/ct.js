@@ -55,6 +55,10 @@ definition, an object containing all the functions and properties
 belonging to the class. The second (optional) argument is the base
 class from which to inherit.
 
+If the class definition includes a 'CLASSNAME' property, this is used
+for logging (each class instance has its own 'log' function). Otherwise,
+a warning is generated.
+
 If the class definition includes an 'init' function, this function
 becomes the class constructor, which is called when an instance is
 created (var instance_of_ClassA = new ClassA([args])).

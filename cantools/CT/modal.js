@@ -1,3 +1,14 @@
+/*
+This module contains two classes, Modal and Prompt.
+
+CT.modal.Modal creates a DOM node that can be transitioned
+on- and off- screen to/from a configurable position.
+
+CT.modal.Prompt (a subclass of Modal) includes interface
+elements for obtaining user input, such as a string, a
+password, or one or more selections from a list.
+*/
+
 CT.modal.Modal = CT.Class({
 	"CLASSNAME": "CT.modal.Modal",
 	"visible": false,
