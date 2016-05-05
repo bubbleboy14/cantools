@@ -1,3 +1,11 @@
+/*
+This module contains functions for:
+ - structure comparison
+ - array manipulation
+ - object caching
+ - data acquisition
+*/
+
 CT.data = {
 	map: {},
 
