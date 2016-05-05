@@ -1,3 +1,19 @@
+/*
+This module enables cross-platform, sometimes-native dragging, mostly via
+CT.gesture module. The principle function is makeDraggable(), used as follows:
+
+CT.drag.makeDraggable(node, opts)
+---------------------------------
+This function makes the 'node' node draggable. The 'opts' object may contain
+any or all of the following options:
+ - constraint ('horizontal' or 'vertical'): prevents drags in indicated direction
+ - interval (number): 'chunks' total drag area into sections, causing drags to
+                      always settle on areas corresponding to multiples of 'interval',
+                      and swipes to slide between such areas
+ - force (bool, default false): forces non-native scrolling
+ - up, down, drag, scroll, swipe (functions): optional gesture callbacks
+*/
+
 CT.drag = {
 	_direction2constraint: {
 		up: "horizontal",
