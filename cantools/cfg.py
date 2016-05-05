@@ -126,6 +126,7 @@ handlers:
     <script src="/js/CT/ct.js"></script>
   </head>
   <body>
+   Hello World
   </body>
 </html>""",
 		"ctcfg": 'ENCODE = False\nMODE = dynamic\nWEB_SERVER = %s'
@@ -147,5 +148,18 @@ License: MIT (see LICENSE)
   - steps
     - git clone https://github.com/bubbleboy14/cantools.git
     - cd cantools
-    - python setup.py install"""
+    - python setup.py install
+
+## Hello World
+This takes less than a moment. Pop open a terminal in your home directory:
+
+	~$ git clone https://github.com/bubbleboy14/cantools.git
+	~$ cd cantools/
+	~/cantools$ python setup.py install
+	~/cantools$ cd ..
+	~$ ctinit hello_world
+	~$ cd hello_world/
+	~/hello_world$ ctstart
+
+And that's it. Open http://localhost:8080/ in your browser and call it a day."""
 }
