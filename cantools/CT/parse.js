@@ -274,6 +274,6 @@ CT.parse = {
 	            	: CT.parse.processLink)(w, customArg) + lc + endCap;
 	        }
 	    }
-	    return clist.join(" ");
+	    return clist.join(" ").replace(/ <\//g, "</");
 	}
 };
