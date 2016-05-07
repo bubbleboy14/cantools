@@ -3,7 +3,6 @@ This loader imports almost every CT module.
 
 ### This includes:
     - CT.Pager
-    - CT.Slider
     - CT.align
     - CT.autocomplete
     - CT.canvas
@@ -18,6 +17,7 @@ This loader imports almost every CT module.
     - CT.parse
     - CT.pubsub
     - CT.recaptcha
+    - CT.slider
     - CT.storage
     - CT.trans
     - CT.upload
@@ -29,7 +29,6 @@ This loader imports almost every CT module.
 */
 
 CT.require("CT.Pager");
-CT.require("CT.Slider");
 CT.require("CT.align");
 CT.require("CT.autocomplete");
 CT.require("CT.canvas");
@@ -44,6 +43,7 @@ CT.require("CT.panel");
 CT.require("CT.parse");
 CT.require("CT.pubsub");
 CT.require("CT.recaptcha");
+CT.require("CT.slider");
 CT.require("CT.storage");
 CT.require("CT.trans");
 CT.require("CT.upload");
