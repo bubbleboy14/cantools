@@ -263,9 +263,6 @@
 }
 .slider-btn {
     position: absolute;
-    top: 50%;
-    height: 100px;
-    margin-top: -150px;
     cursor: pointer;
     color: white;
     font-size: 1000%;
@@ -275,10 +272,17 @@
 .slider-btn:hover {
     color: yellow;
 }
-.top {
+.slider-btn span {
+    line-height: 1;
+}
+.sb-middle {
+    top: 50%;
+    margin-top: -100px;
+}
+.top, .sb-top {
     top: 10px;
 }
-.bottom {
+.bottom, .sb-bottom {
     bottom: 10px;
 }
 .nxt {

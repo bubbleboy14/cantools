@@ -3,13 +3,14 @@ This class is used to generate a slider, which is a segmented,
 directionally-constrained draggable DOM element.
 
 The constructor takes an options object, 'opts', which may define
-up to five properties. These individual properties, as well as the
-'opts' object itself, are all optional.
+any of several properties. These individual properties, as well as
+the 'opts' object itself, are all optional.
 
 ### Definable properties are as follows:
     - node (default: document.body): DOM element in which to build the slider
     - autoSlideInterval (default: 5000): how many milliseconds to wait before auto-sliding cards
     - bubblePosition (default: 'bottom'): where to position card indicator bubbles ('top' or 'bottom')
+    - arrowPosition (default: 'middle'): where to position navigator arrows
     - orientation (default: "horizontal"): orientation for slider cards to arrange themselves
     - cards (default: []): an array of items corresponding to the cards in the slider
 
@@ -30,13 +31,16 @@ CT.Slider = CT.Class({
 			autoSlideInterval: 5000,
 			cards: [],
 			orientation: "horizontal",
+			arrowPosition: "middle", // or "top" or "middle"
 			bubblePosition: "bottom" // or "top"
 		});
 		this.dimension = this._orientation2dim[opts.orientation];
 		this.circlesContainer = CT.dom.node("", "div",
 			"carousel-order-indicator " + opts.bubblePosition);
-		this.prevButton = CT.dom.node("<", "div", "slider-btn prv hidden");
-		this.nextButton = CT.dom.node(">", "div", "slider-btn nxt");
+		this.prevButton = CT.dom.node(CT.dom.node("<", "span"), "div",
+			"slider-btn prv hidden sb-" + this.opts.arrowPosition);
+		this.nextButton = CT.dom.node(CT.dom.node(">", "span"), "div",
+			"slider-btn nxt sb-" + this.opts.arrowPosition);
 		this.index = this.pos = 0;
 		this.width = CT.align.width(this.opts.node);
 		this.height = CT.align.height(this.opts.node);
