@@ -85,6 +85,9 @@
 .clearnode {
     clear: both;
 }
+.fullheight {
+    height: 100%;
+}
 .fullwidth {
     width: 100%;
 }
@@ -205,13 +208,10 @@
 }
 .carousel-container {
     background-color: #404041;
-    height: 100%;
     white-space: nowrap;
 }
 .carousel-content-container {
-    height: 100%;
     position: relative;
-    display: inline-block;
     font-weight: bold;
     color: white;
 }

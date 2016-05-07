@@ -3,13 +3,14 @@ This class is used to generate a slider, which is a segmented,
 directionally-constrained draggable DOM element.
 
 The constructor takes an options object, 'opts', which may define
-up to four properties. These individual properties, as well as the
+up to five properties. These individual properties, as well as the
 'opts' object itself, are all optional.
 
 ### Definable properties are as follows:
     - node (default: document.body): DOM element in which to build the slider
     - autoSlideInterval (default: 5000): how many milliseconds to wait before auto-sliding cards
     - bubblePosition (default: 'bottom'): where to position card indicator bubbles ('top' or 'bottom')
+    - orientation (default: "horizontal"): orientation for slider cards to arrange themselves
     - cards (default: []): an array of items corresponding to the cards in the slider
 
 The last one, 'cards', must be an array either of strings (interpreted
@@ -18,13 +19,20 @@ as image urls) or of data objects (processed in the addFrame function).
 
 CT.Slider = CT.Class({
 	CLASSNAME: "CT.Slider",
+	_dir2abs: { right: "forward", left: "backward", down: "forward", up: "backward" },
+	_other_dim: { height: "width", width: "height" },
+	_other_orientation: { vertical: "horizontal", horizontal: "vertical" },
+	_orientation2dim: { vertical: "height", horizontal: "width" },
+	_orientation2axis: { vertical: "y", horizontal: "x" },
 	init: function (opts) {
 		this.opts = opts = CT.merge(opts, {
 			node: document.body,
 			autoSlideInterval: 5000,
 			cards: [],
+			orientation: "horizontal",
 			bubblePosition: "bottom" // or "top"
 		});
+		this.dimension = this._orientation2dim[opts.orientation];
 		this.circlesContainer = CT.dom.node("", "div",
 			"carousel-order-indicator " + opts.bubblePosition);
 		this.prevButton = CT.dom.node("<", "div", "slider-btn prv hidden");
@@ -32,9 +40,12 @@ CT.Slider = CT.Class({
 		this.index = this.pos = 0;
 		this.width = CT.align.width(this.opts.node);
 		this.height = CT.align.height(this.opts.node);
-		this.fullWidth = this.opts.cards.length * this.width;
-		this.container = CT.dom.node("", "div", "carousel-container", null,
-			null, { width: this.fullWidth + "px" });
+		this.full = this.opts.cards.length * this[this.dimension];
+		var cstyle = {};
+		cstyle[this._orientation2dim[opts.orientation]] = this.full + "px";
+		this.container = CT.dom.node("", "div",
+			"carousel-container full" + this._other_dim[this.dimension],
+			null, null, cstyle);
 		this.opts.node.appendChild(CT.dom.node([
 			this.container,
 			this.circlesContainer,
@@ -48,8 +59,8 @@ CT.Slider = CT.Class({
 		CT.gesture.listen("tap", this.prevButton, this.prevButtonCallback);
 		CT.gesture.listen("tap", this.nextButton, this.nextButtonCallback);
 		this.dragOpts = {
-			constraint: "vertical",
-			interval: this.width, 
+			constraint: this._other_orientation[opts.orientation],
+			interval: this[this.dimension],
 			up: this.updatePosition
 		};
 		CT.drag.makeDraggable(this.container, this.dragOpts);
@@ -57,17 +68,19 @@ CT.Slider = CT.Class({
 		CT.gesture.listen("down", this.container, this._clearAutoSlide);
 		this.opts.node.onresize = this._resize;
 	},
+	_resize_frame: function(n) {
+		n.style[this.dimension] = this[this.dimension] + "px";
+	},
 	_resize: function() {
-		var w = this.width = CT.align.width(this.opts.node);
+		var dim = this.dimension,
+			v = this[dim] = CT.align[dim](this.opts.node);
 		this.height = CT.align.height(this.opts.node);
-		this.fullWidth = this.opts.cards.length * this.width;
-		this.dragOpts.interval = this.width;
-		this.container.style.width = this.fullWidth + "px";
+		this.full = this.opts.cards.length * v;
+		this.dragOpts.interval = v;
+		this.container.style[dim] = this.full + "px";
 		this.container.parentNode.style.width = this.width + "px";
 		this.container.parentNode.style.height = this.height + "px";
-		CT.dom.each(this.container, function(n) {
-			n.style.width = w + "px";
-		});
+		CT.dom.each(this.container, this._resize_frame);
 	},
 	_clearAutoSlide: function () {
 		if (this._autoSlide) {
@@ -99,8 +112,11 @@ CT.Slider = CT.Class({
 				CT.dom.node(card.blurb, "div", "bigger")
 			], "div", "carousel-content-teaser pointer"));
 		}
-		var node = CT.dom.node(nodes, "div", "carousel-content-container",
-			null, null, { width: this.width + "px" });
+		var node = CT.dom.node(nodes, "div",
+			"carousel-content-container full" + this._other_dim[this.dimension]);
+		if (this.dimension == "width")
+			node.style.display = "inline-block";
+		this._resize_frame(node);
 		if (card.content) { // assume title/blurb exists
 			var clearAS = this._clearAutoSlide;
 			CT.gesture.listen("tap", node.firstChild.nextSibling.nextSibling, function() {
@@ -138,17 +154,17 @@ CT.Slider = CT.Class({
 		CT.dom[this.activeCircle.previousSibling ? "show" : "hide"](this.prevButton);
 	},
 	updatePosition: function (direction, force) {
-		var index = this.index;
-		if (direction == "left" && (force || this.activeCircle.nextSibling))
+		var index = this.index, absdir = this._dir2abs[direction];
+		if (absdir == "backward" && (force || this.activeCircle.nextSibling))
 			index += 1;
-		else if (direction == "right" && (force || this.activeCircle.previousSibling))
+		else if (absdir == "forward" && (force || this.activeCircle.previousSibling))
 			index -= 1;
 		this.slide(index % this.circlesContainer.childNodes.length);
 	},
 	trans: function() {
-		CT.trans.translate(this.container, {
-			x: -this.index * this.width
-		});
+		var opts = {};
+		opts[this._orientation2axis[this.opts.orientation]] = -this.index * this[this.dimension];
+		CT.trans.translate(this.container, opts);
 	},
 	shift: function (direction, force) {
 		this.updatePosition(direction, force);
