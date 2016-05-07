@@ -683,6 +683,11 @@ CT.dom = {
 			targetNode.appendChild(content);
 		}
 	},
+	"addEach": function(parent, subs) {
+		subs.forEach(function(node) { // must wrap
+			parent.appendChild(node);
+		});
+	},
 
 	// ALLNODE stuff
 	"ALLNODE": null,

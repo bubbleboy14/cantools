@@ -158,26 +158,23 @@ CT.slider.Slider = CT.Class({
 CT.slider.Frame = CT.Class({
 	CLASSNAME: "CT.slider.Frame",
 	peekaboo: function() {
-		var opts = this.opts, slider = this.slider,
-			full = CT.dom.node(opts.content, "div", "big carousel-content-full");
+		var opts = this.opts, node = this.node,
+			full = CT.dom.node(opts.content, "div", "big carousel-content-full"),
+			nodes = [
+				CT.dom.node(null, "div", "carousel-content-image", null,
+					null, { backgroundImage: "url(" + opts.img + ")" }),
+				full
+			];
 		CT.drag.makeDraggable(full, { constraint: "horizontal" });
-		var nodes = [
-			CT.dom.node(null, "div", "carousel-content-image", null,
-				null, { backgroundImage: "url(" + opts.img + ")" }),
-			full
-		];
 		if (opts.title || opts.blurb) {
 			nodes.push(CT.dom.node([
 				CT.dom.node(opts.title, "div", "biggest"),
 				CT.dom.node(opts.blurb, "div", "bigger")
 			], "div", "carousel-content-teaser pointer"));
 		}
-		var node = this.node = CT.dom.node(nodes, "div",
-			"carousel-content-container full" + CT.slider.other_dim[slider.dimension]);
-		if (slider.dimension == "width")
-			node.style.display = "inline-block";
+		CT.dom.addEach(node, nodes);
 		if (opts.content) { // assume title/blurb exists
-			var clearAS = slider._clearAutoSlide;
+			var clearAS = this.slider._clearAutoSlide;
 			CT.gesture.listen("tap", node.firstChild.nextSibling.nextSibling, function() {
 				clearAS();
 				node._retracted = !node._retracted;
@@ -197,9 +194,13 @@ CT.slider.Frame = CT.Class({
 	},
 	init: function(opts, slider) {
 		this.opts = opts = CT.merge(opts, {
-			mode: "peekaboo" // or 'slider'
+			mode: "peekaboo" // or 'chunks'
 		});
 		this.slider = slider;
+		this.node = CT.dom.node("", "div",
+			"carousel-content-container full" + CT.slider.other_dim[slider.dimension]);
+		if (slider.dimension == "width")
+			this.node.style.display = "inline-block";
 		this[opts.mode]();
 	}
 });
