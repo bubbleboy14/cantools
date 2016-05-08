@@ -193,7 +193,7 @@
     margin: 0 5px;
     display: inline-block;
     border-radius: 50%;
-    background-color: #6a6a6a;
+    background-color: rgba(100, 100, 100, 0.8);
     height: 15px;
     cursor: pointer;
 }
@@ -204,7 +204,7 @@
     width: 15px;
 }
 .active-circle {
-    background-color: white;
+    background-color: rgba(200, 200, 200, 0.8);
 }
 .carousel-container {
     background-color: #404041;
