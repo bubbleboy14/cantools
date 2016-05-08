@@ -8,10 +8,11 @@ the 'opts' object itself, are all optional.
 
 ### Definable properties are as follows:
     - node (default: document.body): DOM element in which to build the slider
+    - mode (dfault: 'peekaboo'): how to display each frame - 'peekaboo' or 'chunk'
     - autoSlideInterval (default: 5000): how many milliseconds to wait before auto-sliding frames
     - bubblePosition (default: 'bottom'): where to position frame indicator bubbles ('top' or 'bottom')
     - arrowPosition (default: 'middle'): where to position navigator arrows
-    - orientation (default: "horizontal"): orientation for slider frames to arrange themselves
+    - orientation (default: 'horizontal'): orientation for slider frames to arrange themselves
     - frames (default: []): an array of items corresponding to the frames in the slider
 
 The last one, 'frames', must be an array either of strings (interpreted
@@ -30,9 +31,10 @@ CT.slider.Slider = CT.Class({
 	CLASSNAME: "CT.slider.Slider",
 	init: function (opts) {
 		this.opts = opts = CT.merge(opts, {
-			node: document.body,
-			autoSlideInterval: 5000,
 			frames: [],
+			autoSlideInterval: 5000,
+			node: document.body,
+			mode: "peekaboo", // or 'chunk'
 			orientation: "horizontal",
 			arrowPosition: "middle", // or "top" or "middle"
 			bubblePosition: "bottom" // or "top"
@@ -71,18 +73,23 @@ CT.slider.Slider = CT.Class({
 			up: this.updatePosition
 		};
 		CT.drag.makeDraggable(this.container, this.dragOpts);
-		this._autoSlide = setInterval(this._autoSlideCallback, this.opts.autoSlideInterval);
+		if (this.opts.autoSlideInterval)
+			this._autoSlide = setInterval(this._autoSlideCallback, this.opts.autoSlideInterval);
 		CT.gesture.listen("down", this.container, this._clearAutoSlide);
 		this.opts.node.onresize = this._resize;
+		setTimeout(this._resize, 1000);
 	},
 	_resize_frame: function(n) {
 		n.style[this.dimension] = this[this.dimension] + "px";
 		return n;
 	},
 	_resize: function() {
-		var dim = this.dimension,
-			v = this[dim] = CT.align[dim](this.opts.node);
+		this.width = CT.align.width(this.opts.node);
 		this.height = CT.align.height(this.opts.node);
+		this.log("resizing", "width:", this.width, "height:", this.height);
+		if (!this.width || !this.height)
+			return setTimeout(this._resize, 1000);
+		var dim = this.dimension, v = this[dim];
 		this.full = this.opts.frames.length * v;
 		this.dragOpts.interval = v;
 		this.container.style[dim] = this.full + "px";
@@ -192,15 +199,22 @@ CT.slider.Frame = CT.Class({
 			});
 		}
 	},
-	init: function(opts, slider) {
-		this.opts = opts = CT.merge(opts, {
-			mode: "peekaboo" // or 'chunks'
+	chunk: function() {
+		new CT.slider.Slider({
+			node: this.node,
+			frames: this.opts.frames,
+			autoSlideInterval: null,
+			orientation: CT.slider.other_orientation[this.slider.opts.orientation],
+			arrowPosition: "bottom"
 		});
+	},
+	init: function(opts, slider) {
+		this.opts = opts;
 		this.slider = slider;
 		this.node = CT.dom.node("", "div",
 			"carousel-content-container full" + CT.slider.other_dim[slider.dimension]);
 		if (slider.dimension == "width")
 			this.node.style.display = "inline-block";
-		this[opts.mode]();
+		this[slider.opts.mode]();
 	}
 });
