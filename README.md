@@ -1,4 +1,4 @@
-# cantools 0.6.7.1
+# cantools 0.6.7.2
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM; a built in administrative interface; and a rich modular JavaScript library.
 
 License: MIT (see LICENSE)
@@ -132,24 +132,6 @@ This class is used to generate a pager, which is a self-refilling DOM element.
     - nodeClass (optional): CSS class of pager DOM node
     - nodeId (optional): CSS id of pager DOM node
 
-## CT.Slider
-### Import line: 'CT.require("CT.Slider");'
-This class is used to generate a slider, which is a segmented,
-directionally-constrained draggable DOM element.
-
-The constructor takes an options object, 'opts', which may define
-up to four properties. These individual properties, as well as the
-'opts' object itself, are all optional.
-
-### Definable properties are as follows:
-    - node (default: document.body): DOM element in which to build the slider
-    - autoSlideInterval (default: 5000): how many milliseconds to wait before auto-sliding cards
-    - bubblePosition (default: 'bottom'): where to position card indicator bubbles ('top' or 'bottom')
-    - cards (default: []): an array of items corresponding to the cards in the slider
-
-The last one, 'cards', must be an array either of strings (interpreted
-as image urls) or of data objects (processed in the addFrame function).
-
 ## CT.admin
 ### Import line: 'CT.require("CT.admin");'
 This module includes submodules for interacting with the admin backend:
@@ -170,7 +152,6 @@ This loader imports almost every CT module.
 
 ### This includes:
     - CT.Pager
-    - CT.Slider
     - CT.align
     - CT.autocomplete
     - CT.canvas
@@ -185,6 +166,7 @@ This loader imports almost every CT module.
     - CT.parse
     - CT.pubsub
     - CT.recaptcha
+    - CT.slider
     - CT.storage
     - CT.trans
     - CT.upload
@@ -622,6 +604,28 @@ CT.rte.qwiz() just builds a simplified (isrestricted=true) rich text area
 after first waiting for the nodeid-indicated node to appear in the DOM.
 
 CT.rte requires the open-source TinyMCE library, pulled in via CT.scriptImport().
+
+## CT.slider
+### Import line: 'CT.require("CT.slider");'
+This class is used to generate a slider, which is a segmented,
+directionally-constrained draggable DOM element.
+
+The CT.slider.Slider constructor takes an options object, 'opts', which may
+define any of several properties. These individual properties, as well as
+the 'opts' object itself, are all optional.
+
+### Definable properties are as follows:
+    - node (default: document.body): DOM element in which to build the slider
+    - mode (dfault: 'peekaboo'): how to display each frame - 'peekaboo' or 'chunk'
+    - autoSlideInterval (default: 5000): how many milliseconds to wait before auto-sliding frames
+    - clearParentAutoSlide (default: null): used by chunked (or custom) Frame to cancel parent autoslide
+    - bubblePosition (default: 'bottom'): where to position frame indicator bubbles ('top' or 'bottom')
+    - arrowPosition (default: 'middle'): where to position navigator arrows
+    - orientation (default: 'horizontal'): orientation for slider frames to arrange themselves
+    - frames (default: []): an array of items corresponding to the frames in the slider
+
+The last one, 'frames', must be an array either of strings (interpreted
+as image urls) or of data objects (processed in the addFrame function).
 
 ## CT.storage
 ### Import line: 'CT.require("CT.storage");'
