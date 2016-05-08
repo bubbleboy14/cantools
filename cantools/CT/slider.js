@@ -88,7 +88,6 @@ CT.slider.Slider = CT.Class({
 	_resize: function() {
 		this.width = CT.align.width(this.opts.node);
 		this.height = CT.align.height(this.opts.node);
-		this.log("resizing", "width:", this.width, "height:", this.height);
 		if (!this.width || !this.height)
 			return setTimeout(this._resize, 1000);
 		var dim = this.dimension, v = this[dim];
