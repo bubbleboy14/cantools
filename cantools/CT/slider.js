@@ -10,6 +10,7 @@ the 'opts' object itself, are all optional.
     - node (default: document.body): DOM element in which to build the slider
     - mode (dfault: 'peekaboo'): how to display each frame - 'peekaboo' or 'chunk'
     - autoSlideInterval (default: 5000): how many milliseconds to wait before auto-sliding frames
+    - clearParentAutoSlide (default: null): used by chunked (or custom) Frame to cancel parent autoslide
     - bubblePosition (default: 'bottom'): where to position frame indicator bubbles ('top' or 'bottom')
     - arrowPosition (default: 'middle'): where to position navigator arrows
     - orientation (default: 'horizontal'): orientation for slider frames to arrange themselves
@@ -33,6 +34,7 @@ CT.slider.Slider = CT.Class({
 		this.opts = opts = CT.merge(opts, {
 			frames: [],
 			autoSlideInterval: 5000,
+			clearParentAutoSlide: null,
 			node: document.body,
 			mode: "peekaboo", // or 'chunk'
 			orientation: "horizontal",
@@ -75,7 +77,7 @@ CT.slider.Slider = CT.Class({
 		CT.drag.makeDraggable(this.container, this.dragOpts);
 		if (this.opts.autoSlideInterval)
 			this._autoSlide = setInterval(this._autoSlideCallback, this.opts.autoSlideInterval);
-		CT.gesture.listen("down", this.container, this._clearAutoSlide);
+		CT.gesture.listen("down", this.container, this.clearAutoSlide);
 		this.opts.node.onresize = this._resize;
 		setTimeout(this._resize, 1000);
 	},
@@ -97,11 +99,12 @@ CT.slider.Slider = CT.Class({
 		this.container.parentNode.style.height = this.height + "px";
 		CT.dom.each(this.container, this._resize_frame);
 	},
-	_clearAutoSlide: function () {
+	clearAutoSlide: function () {
 		if (this._autoSlide) {
 			clearInterval(this._autoSlide);
 			this._autoSlide = null;
 		}
+		this.opts.clearParentAutoSlide && this.opts.clearParentAutoSlide();
 	},
 	addFrame: function (frame, index) {
 		if (typeof frame == "string")
@@ -118,7 +121,7 @@ CT.slider.Slider = CT.Class({
 	},
 	circleJump: function (index) {
 		var f = function() {
-			this._clearAutoSlide();
+			this.clearAutoSlide();
 			this.slide(index);
 			this.trans();
 		}.bind(this);
@@ -153,11 +156,11 @@ CT.slider.Slider = CT.Class({
 		this.shift("left", true);
 	},
 	prevButtonCallback: function () {
-		this._clearAutoSlide();
+		this.clearAutoSlide();
 		this.shift("right");
 	},
 	nextButtonCallback: function () {
-		this._clearAutoSlide();
+		this.clearAutoSlide();
 		this.shift("left");
 	}
 });
@@ -181,7 +184,7 @@ CT.slider.Frame = CT.Class({
 		}
 		CT.dom.addEach(node, nodes);
 		if (opts.content) { // assume title/blurb exists
-			var clearAS = this.slider._clearAutoSlide;
+			var clearAS = this.slider.clearAutoSlide;
 			CT.gesture.listen("tap", node.firstChild.nextSibling.nextSibling, function() {
 				clearAS();
 				node._retracted = !node._retracted;
@@ -205,6 +208,7 @@ CT.slider.Frame = CT.Class({
 			frames: this.opts.frames,
 			autoSlideInterval: null,
 			orientation: CT.slider.other_orientation[this.slider.opts.orientation],
+			clearParentAutoSlide: this.slider.clearAutoSlide,
 			arrowPosition: "bottom"
 		});
 	},
