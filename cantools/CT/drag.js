@@ -6,12 +6,13 @@ CT.gesture module. The principle function is makeDraggable(), used as follows:
 This function makes the 'node' node draggable. The 'opts' object may contain
 any or all of the following options:
 
-    - constraint ('horizontal' or 'vertical'): prevents drags in indicated direction
+    - constraint ('horizontal' or 'vertical'): prevents drags in indicated direction.
     - interval (number): 'chunks' total drag area into sections, causing drags to
                          always settle on areas corresponding to multiples of 'interval',
-                         and swipes to slide between such areas
-    - force (bool, default false): forces non-native scrolling
-    - up, down, drag, scroll, swipe (functions): optional gesture callbacks
+                         and swipes to slide between such areas. if value is 'auto',
+                         we use width / number_of_child_nodes.
+    - force (bool, default false): forces non-native scrolling.
+    - up, down, drag, scroll, swipe (functions): optional gesture callbacks.
 */
 
 CT.drag = {
@@ -87,12 +88,17 @@ CT.drag = {
 		node.classList.add('hardware-acceleration');
 		node.style['-webkit-transform'] = "translate3d(0,0,0)";
 		// Don't apply overflow=visible to welcome tutorial carousel container
+		// - this is questionable
 		if (node.className.indexOf("carousel") == -1) {
 			node.style.overflow = "visible";
 			node.parentNode.style.overflow = "visible";
 		};
-		node.parentNode.addEventListener('scroll', function (event) {return false;}, false);
-		downCallback = function () {
+		node.parentNode.addEventListener('scroll', function (event) { return false; }, false);
+		var getInterval = function() {
+			return opts.interval == "auto" ?
+				(CT.align.width(node) / node.childNodes.length) : opts.interval;
+		};
+		var downCallback = function () {
 			if (node.animating) return;
 			node.dragging = false;
 			node.touchedDown = true;
@@ -102,69 +108,42 @@ CT.drag = {
 			if (opts.down)
 				opts.down();
 		};
-		upCallback = function (direction) {
-			var xMod = 0, yMod = 0, boundaryReached = false;
+		var upCallback = function (direction) {
+			var xMod = 0, yMod = 0, boundaryReached = false, interval = getInterval();
 			node.touchedDown = node.dragging = false;
-			if (node.animating == false)
-			{
-				if (opts.interval)
-				{
-					if (opts.constraint != "vertical")
-					{
-						yMod = node.yDrag % opts.interval;
-						if (yMod != 0)
-						{
-							if (Math.abs(yMod) <= (opts.interval / 2))
-							{
+			if (node.animating == false) {
+				if (interval) {
+					if (opts.constraint != "vertical") {
+						yMod = node.yDrag % interval;
+						if (yMod != 0) {
+							if (Math.abs(yMod) <= (interval / 2))
 								node.yDrag -= yMod;
-							}
 							else
-							{
-								node.yDrag -= (opts.interval + yMod);
-							}
+								node.yDrag -= (interval + yMod);
 							if (node.yDrag < node.yDragStart)
-							{
 								direction = "up";
-							}
 							else if (node.yDrag > node.yDragStart)
-							{
 								direction = "down";
-							}
 							else
-							{
 								direction = "hold";
-							}
 						}
 					}
-					if (opts.constraint != "horizontal")
-					{
-						xMod = node.xDrag % opts.interval;
-						if (xMod != 0)
-						{
-							if (Math.abs(xMod) <= (opts.interval / 2))
-							{
+					if (opts.constraint != "horizontal") {
+						xMod = node.xDrag % interval;
+						if (xMod != 0) {
+							if (Math.abs(xMod) <= (interval / 2))
 								node.xDrag -= xMod;
-							}
 							else
-							{
-								node.xDrag -= (opts.interval + xMod);
-							}
+								node.xDrag -= (interval + xMod);
 							if (node.xDrag < node.xDragStart)
-							{
 								direction = "left";
-							}
 							else if (node.xDrag > node.xDragStart)
-							{
 								direction = "right";
-							}
 							else
-							{
 								direction = "hold";
-							}
 						}
 					}
-					if (direction)
-					{
+					if (direction) {
 						node.animating = true;
 						CT.trans.translate(node, {
 							x: node.xDrag,
@@ -175,42 +154,34 @@ CT.drag = {
 						});
 					}
 				}
-				else	//boundary checking
-				{
-					if (opts.constraint != "horizontal")
-					{
-						if (node.xDrag > 0)
-						{
+				else {	//boundary checking
+					if (opts.constraint != "horizontal") {
+						if (node.xDrag > 0) {
 							node.xDrag = 0;
 							boundaryReached = true;
 							direction = "right";
 						}
 						else if (Math.abs(node.xDrag) > 
-							(node.scrollWidth - node.parentNode.clientWidth))
-						{
+							(node.scrollWidth - node.parentNode.clientWidth)) {
 							node.xDrag = -(node.scrollWidth - node.parentNode.clientWidth);
 							boundaryReached = true;
 							direction = "left";
 						}
 					}
-					if (opts.constraint != "vertical")
-					{
-						if (node.yDrag > 0)
-						{
+					if (opts.constraint != "vertical") {
+						if (node.yDrag > 0) {
 							node.yDrag = 0;
 							boundaryReached = true;
 							direction = "up";
 						}
 						else if (node.yDrag < 
-							-(node.scrollHeight - node.parentNode.clientHeight))
-						{
+							-(node.scrollHeight - node.parentNode.clientHeight)) {
 							node.yDrag = -(node.scrollHeight - node.parentNode.clientHeight);
 							boundaryReached = true;
 							direction = "down";
 						}
 					}
-					if (boundaryReached)
-					{
+					if (boundaryReached) {
 						node.animating = true;
 						CT.trans.translate(node, {
 							x: node.xDrag,
@@ -226,31 +197,21 @@ CT.drag = {
 					}
 				}
 				if (opts.up)
-				{
 					opts.up(direction);
-				}
 			}
 		};
-		dragCallback = function (direction, distance, dx, dy) {
-			if (node.touchedDown && !node.noDrag)
-			{
+		var dragCallback = function (direction, distance, dx, dy) {
+			if (node.touchedDown && !node.noDrag) {
 				node.dragging = true;
-				if (opts.constraint != "vertical")
-				{
+				if (opts.constraint != "vertical") {
 					if (node.yDrag > -(node.scrollHeight - 
 						 (2 * node.parentNode.clientHeight / 3)))
-					{
 						node.yDrag += dy;
-					}
 				}
-				if (opts.constraint != "horizontal")
-				{
-					if (Math.abs(node.xDrag) < 
-						(node.scrollWidth - 
-						 (2 * node.parentNode.clientWidth / 3)))
-					{
+				if (opts.constraint != "horizontal") {
+					if (Math.abs(node.xDrag) < (node.scrollWidth - 
+						(2 * node.parentNode.clientWidth / 3)))
 						node.xDrag += dx;
-					}
 				}
 				CT.trans.setVenderPrefixed(node, "transform",
 					"translate3d(" + node.xDrag + "px," + 
@@ -261,44 +222,28 @@ CT.drag = {
 					opts.scroll();
 			}
 		};
-		swipeCallback =  function (direction, distance, dx, dy, pixelsPerSecond) {
-			var xMod = opts.interval ? node.xDrag % opts.interval : -dx;
-			var yMod = opts.interval ? node.yDrag % opts.interval : pixelsPerSecond * .3;
-			if (node.animating == false)
-			{
+		var swipeCallback = function (direction, distance, dx, dy, pixelsPerSecond) {
+			var interval = getInterval(),
+				xMod = interval ? node.xDrag % interval : -dx,
+				yMod = interval ? node.yDrag % interval : pixelsPerSecond * .3;
+			if (node.animating == false) {
 				if (opts.constraint != "horizontal" && node.xDrag <= 0 && 
-					Math.abs(node.xDrag) < (node.scrollWidth - 
-					node.parentNode.clientWidth))
-				{
+					Math.abs(node.xDrag) < (node.scrollWidth - node.parentNode.clientWidth)) {
 					if (direction == "right")
-					{
 						node.xDrag -= xMod;
-					}
 					else if (direction == "left")
-					{
-						node.xDrag += (opts.interval ? -(opts.interval + xMod) : xMod);
-					}
+						node.xDrag += (interval ? -(interval + xMod) : xMod);
 					else
-					{
 						return;
-					}
 				}
 				if (opts.constraint != "vertical" && node.yDrag <= 0 
-					&& node.yDrag > -(node.scrollHeight - 
-					node.parentNode.clientHeight))
-				{
+					&& node.yDrag > -(node.scrollHeight - node.parentNode.clientHeight)) {
 					if (direction == "up")
-					{
 						node.yDrag -= yMod;
-					}
 					else if (direction == "down")
-					{
-						node.yDrag -= (opts.interval ? -(opts.interval + yMod) : -yMod);
-					}
+						node.yDrag -= (interval ? -(interval + yMod) : -yMod);
 					else
-					{
 						return;
-					}
 				}
 				node.animating = true;
 				CT.trans.translate(node, {
@@ -306,7 +251,7 @@ CT.drag = {
 					y: node.yDrag,
 					cb: function() {
 						node.animating = false;
-						upCallback(direction);//legit?
+						upCallback(direction); // legit?
 					}
 				});
 			}
