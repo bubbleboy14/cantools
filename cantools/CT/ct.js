@@ -10,6 +10,10 @@ functionality of the framework, as follows.
     - CT.net.get(path, qsp, isjson)
       - issues a GET request via synchronous XHR
       - optionally parses query string object and unpacks response as JSON
+    - CT.net.put(path, params, cb, headers)
+      - issues a PUT request via asynchronous XHR
+    - CT.net.delete(path, params, cb, headers)
+      - issues a DELETE request via asynchronous XHR
 
 #### Also includes:
  - CT.net.setSpinner(bool) (default: false)
@@ -220,6 +224,12 @@ var CT = {
 		                CT.net._fallback_error("request to " + path + " failed!");
 		        }
 		    }, headers);
+		},
+		"put": function(path, params, cb, headers) {
+			CT.net.xhr(path, "PUT", params, true, cb, headers);
+		},
+		"delete": function(path, params, cb, headers) {
+			CT.net.xhr(path, "DELETE", params, true, cb, headers);
 		},
 		"get": function(path, qsp, isjson) {
 			var d, qs, key, cachedVersion, cache = CT.net._cache && isjson;
