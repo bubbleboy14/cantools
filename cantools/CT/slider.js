@@ -69,6 +69,7 @@ CT.slider.Slider = CT.Class({
 		if (this.opts.autoSlideInterval)
 			this._autoSlide = setInterval(this._autoSlideCallback, this.opts.autoSlideInterval);
 		CT.gesture.listen("down", this.container, this.clearAutoSlide);
+		this.opts.node.onresize = this.trans;
 		this._reflow();
 	},
 	_reflow: function() {
