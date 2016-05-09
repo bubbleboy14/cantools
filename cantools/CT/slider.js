@@ -49,54 +49,35 @@ CT.slider.Slider = CT.Class({
 		this.nextButton = CT.dom.node(CT.dom.node(">", "span"), "div",
 			"slider-btn nxt sb-" + this.opts.arrowPosition);
 		this.index = this.pos = 0;
-		this.width = CT.align.width(this.opts.node);
-		this.height = CT.align.height(this.opts.node);
-		this.full = this.opts.frames.length * this[this.dimension];
-		var cstyle = {};
-		cstyle[CT.slider.orientation2dim[opts.orientation]] = this.full + "px";
 		this.container = CT.dom.node("", "div",
-			"carousel-container full" + CT.slider.other_dim[this.dimension],
-			null, null, cstyle);
+			"carousel-container full" + CT.slider.other_dim[this.dimension]);
 		this.opts.node.appendChild(CT.dom.node([
 			this.container,
 			this.circlesContainer,
 			this.prevButton,
 			this.nextButton
-		], "div", "carousel", null, null, {
-			width: this.width + "px",
-			height: this.height + "px"
-		}));
+		], "div", "carousel fullwidth fullheight"));
 		this.opts.frames.forEach(this.addFrame);
 		CT.gesture.listen("tap", this.prevButton, this.prevButtonCallback);
 		CT.gesture.listen("tap", this.nextButton, this.nextButtonCallback);
 		this.dragOpts = {
 			constraint: CT.slider.other_orientation[opts.orientation],
-			interval: this[this.dimension],
-			up: this.updatePosition
+			up: this.updatePosition,
+			interval: "auto"
 		};
 		CT.drag.makeDraggable(this.container, this.dragOpts);
 		if (this.opts.autoSlideInterval)
 			this._autoSlide = setInterval(this._autoSlideCallback, this.opts.autoSlideInterval);
 		CT.gesture.listen("down", this.container, this.clearAutoSlide);
-		this.opts.node.onresize = this._resize;
-		setTimeout(this._resize, 1000);
+		this._reflow();
 	},
-	_resize_frame: function(n) {
-		n.style[this.dimension] = this[this.dimension] + "px";
-		return n;
-	},
-	_resize: function() {
-		this.width = CT.align.width(this.opts.node);
-		this.height = CT.align.height(this.opts.node);
-		if (!this.width || !this.height)
-			return setTimeout(this._resize, 1000);
-		var dim = this.dimension, v = this[dim];
-		this.full = this.opts.frames.length * v;
-		this.dragOpts.interval = v;
-		this.container.style[dim] = this.full + "px";
-		this.container.parentNode.style.width = this.width + "px";
-		this.container.parentNode.style.height = this.height + "px";
-		CT.dom.each(this.container, this._resize_frame);
+	_reflow: function() {
+		CT.dom.mod({
+			targets: this.container.childNodes,
+			property: this.dimension,
+			value: (100 / this.container.childNodes.length) + "%"
+		});
+		this.container.style[this.dimension] = (this.opts.frames.length * 100) + "%";
 	},
 	clearAutoSlide: function () {
 		if (this._autoSlide) {
@@ -116,7 +97,9 @@ CT.slider.Slider = CT.Class({
 			this.activeCircle = circle;
 		}
 		this.circlesContainer.appendChild(circle);
-		this.container.appendChild(this._resize_frame((new CT.slider.Frame(frame, this)).node));
+		this.container.appendChild((new CT.slider.Frame(frame, this)).node);
+		if (index == undefined) // ad-hoc frame
+			this._reflow();
 	},
 	circleJump: function (index) {
 		var f = function() {
@@ -144,7 +127,8 @@ CT.slider.Slider = CT.Class({
 	},
 	trans: function() {
 		var opts = {};
-		opts[CT.slider.orientation2axis[this.opts.orientation]] = -this.index * this[this.dimension];
+		opts[CT.slider.orientation2axis[this.opts.orientation]] = -this.index
+			* CT.align[this.dimension](this.container) / this.container.childNodes.length;
 		CT.trans.translate(this.container, opts);
 	},
 	shift: function (direction, force) {
