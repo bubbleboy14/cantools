@@ -1,4 +1,4 @@
-# cantools 0.6.7.2
+# cantools 0.6.7.3
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM; a built in administrative interface; and a rich modular JavaScript library.
 
 License: MIT (see LICENSE)
@@ -427,12 +427,13 @@ CT.gesture module. The principle function is makeDraggable(), used as follows:
 This function makes the 'node' node draggable. The 'opts' object may contain
 any or all of the following options:
 
-    - constraint ('horizontal' or 'vertical'): prevents drags in indicated direction
+    - constraint ('horizontal' or 'vertical'): prevents drags in indicated direction.
     - interval (number): 'chunks' total drag area into sections, causing drags to
                          always settle on areas corresponding to multiples of 'interval',
-                         and swipes to slide between such areas
-    - force (bool, default false): forces non-native scrolling
-    - up, down, drag, scroll, swipe (functions): optional gesture callbacks
+                         and swipes to slide between such areas. if value is 'auto',
+                         we use width / number_of_child_nodes.
+    - force (bool, default false): forces non-native scrolling.
+    - up, down, drag, scroll, swipe (functions): optional gesture callbacks.
 
 ## CT.gesture
 ### Import line: 'CT.require("CT.gesture");'
