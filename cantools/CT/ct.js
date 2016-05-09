@@ -377,12 +377,18 @@ CT.log._silent = false;
 CT.log.set = function(bool) {
 	CT.log._silent = bool;
 };
+CT.log._loggerCounts = {};
 CT.log.getLogger = function(component) {
+	var lc = CT.log._loggerCounts;
+	if ( ! (component in lc) )
+		lc[component] = 0;
+	var signature = component + " {" + lc[component] + "}";
+	lc[component] += 1;
 	var logger = function() {
 		var str_arr = [];
 		for (var i = 0; i < logger.arguments.length; i++)
 			str_arr.push(CT.log._fix(logger.arguments[i]));
-		CT.log("[" + component + "] " + str_arr.join(" "));
+		CT.log("[" + signature + "] " + str_arr.join(" "));
 	};
 	return logger;
 };
