@@ -233,6 +233,13 @@ CT.dom = {
 		};
 		return iframe;
 	},
+	"pad": function(psize) {
+		psize = psize || 1;
+		var ptxt = "";
+		for (var i = 0; i < psize; i++)
+			ptxt += "&nbsp;";
+		return CT.dom.node(ptxt, "span");
+	},
 
 	// iframe getters
 	"getDoc": function(iframe) {
