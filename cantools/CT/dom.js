@@ -680,15 +680,19 @@ CT.dom = {
 	"remove": function(n) {
 		n && n.parentNode && n.parentNode.removeChild(n);
 	},
-	"setContent": function(targetNode, content) {
+	"addContent": function(targetNode, content) {
 		if (typeof content == "function")
 			content = content();
+		if (Array.isArray(content))
+			content = CT.dom.node(content);
 		if (typeof content == "string")
-			targetNode.innerHTML = content;
-		else {
-			targetNode.innerHTML = "";
+			targetNode.innerHTML += content;
+		else
 			targetNode.appendChild(content);
-		}
+	},
+	"setContent": function(targetNode, content) {
+		targetNode.innerHTML = "";
+		CT.dom.addContent(targetNode, content);
 	},
 	"addEach": function(parent, subs) {
 		subs.forEach(function(node) { // must wrap
