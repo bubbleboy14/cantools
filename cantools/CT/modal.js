@@ -14,11 +14,24 @@ CT.modal.Modal = CT.Class({
 	"CLASSNAME": "CT.modal.Modal",
 	"visible": false,
 	"setup": {
+		"_centerv": function(parent) {
+			return (parent.clientHeight - this.node.clientHeight) / 2;
+		},
+		"_centerh": function(parent) {
+			return (parent.clientWidth - this.node.clientWidth) / 2;
+		},
+		"_fallbacks": function(parent) {
+			var n = this.node;
+			if (!(n.style.top || n.top_out))
+				n.style.top = this.setup._centerv(parent) + "px";
+			if (!(n.style.left || n.left_out))
+				n.style.left = this.setup._centerh(parent) + "px";
+		},
 		"_add": function(parent) {
-			if (parent instanceof Node)
-				parent.appendChild(this.node);
-			else
-				document.body.appendChild(this.node);
+			var n = this.node;
+			parent = (parent instanceof Node) ? parent : document.body;
+			CT.dom.addContent(parent, n);
+			this.setup._fallbacks(parent);
 		},
 		"none": function() {
 			var n = this.node;
@@ -55,35 +68,39 @@ CT.modal.Modal = CT.Class({
 			var n = this.node, add = this.setup._add,
 				origin = this.opts.slide.origin,
 				center = this.opts.slide.center,
-				parent = document.body, // ensure modal starts outside window
+				centerv = this.setup._centerv,
+				centerh = this.setup._centerh,
+				fallbacks = this.setup._fallbacks,
 				ver = true, hor = true;
 
-			var _refresh = function() {
+			var _refresh = function(parent) {
+				parent = (parent instanceof Node) ? parent : document.body;
 				if (origin.startsWith("top")) {
 					n.top_out = n.style.top = -n.clientHeight + "px";
-					n.top_in = center ? "50%" : "0px";
+					n.top_in = (center ? centerv(parent) : 0) + "px";
 				}
 				else if (origin.startsWith("bottom")) {
 					n.top_out = n.style.top = parent.clientHeight + "px";
-					n.top_in = center ? "50%" : ((parent.clientHeight - n.clientHeight) + "px");
+					n.top_in = (center ? centerv(parent) : (parent.clientHeight - n.clientHeight)) + "px";
 				}
 				else
 					ver = false;
 				if (origin.endsWith("left")) {
 					n.left_out = n.style.left = -n.clientWidth + "px";
-					n.left_in = center ? "50%" : "0px";
+					n.left_in = (center ? centerh(parent) : 0) + "px";
 				}
 				else if (origin.endsWith("right")) {
 					n.left_out = n.style.left = parent.clientWidth + "px";
-					n.left_in = center ? "50%" : ((parent.clientWidth - n.clientWidth) + "px");
+					n.left_in = (center ? centerh(parent) : (parent.clientWidth - n.clientWidth)) + "px";
 				}
 				else
 					hor = false;
+				fallbacks(parent);
 			};
 
 			n.show = function(parent) {
 				add(parent);
-				_refresh();
+				_refresh(parent);
 				setTimeout(function() {
 					ver && CT.trans.trans({ node: n, property: "top", value: n.top_in });
 					hor && CT.trans.trans({ node: n, property: "left", value: n.left_in });
@@ -124,8 +141,8 @@ CT.modal.Modal = CT.Class({
 	"clear": function() {
 		this.node.innerHTML = "";
 	},
-	"add": function(node) {
-		this.node.appendChild(node);
+	"add": function(content) {
+		CT.dom.addContent(this.node, content);
 	},
 	"set": function(node, addClose) {
 		this.clear();
@@ -134,7 +151,7 @@ CT.modal.Modal = CT.Class({
 	},
 	"init": function(opts) {
 		this.opts = opts = CT.merge(opts, {
-			"className": "basicmodal",
+			"className": "basicpopup",
 			"transition": "none",
 			"slide": { // only applies if transition is 'slide'
 				"origin": "top",
@@ -145,8 +162,8 @@ CT.modal.Modal = CT.Class({
 		this.node.modal = this;
 		this.setup[opts.transition]();
 		this.build();
-		if (opts.node)
-			this.add(opts.node);
+		if (opts.content || opts.node) // 'node' is now deprecated :'(
+			this.add(opts.content || opts.node);
 	}
 });
 
