@@ -22,9 +22,9 @@ CT.modal.Modal = CT.Class({
 		},
 		"_fallbacks": function(parent) {
 			var n = this.node;
-			if (!(n.style.top || n.top_out))
+			if (!n.style.top)
 				n.style.top = this.setup._centerv(parent) + "px";
-			if (!(n.style.left || n.left_out))
+			if (!n.style.left)
 				n.style.left = this.setup._centerh(parent) + "px";
 		},
 		"_add": function(parent) {
@@ -158,7 +158,12 @@ CT.modal.Modal = CT.Class({
 				"center": true
 			}
 		});
-		this.node = CT.dom.node("", "div", opts.className);
+		var nodeStyle = {};
+		["top", "bottom", "right", "left"].forEach(function(side) {
+			if (side in opts.slide)
+				nodeStyle[side] = opts.slide[side];
+		});
+		this.node = CT.dom.node("", "div", opts.className, null, null, nodeStyle);
 		this.node.modal = this;
 		this.setup[opts.transition]();
 		this.build();

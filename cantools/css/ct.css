@@ -180,6 +180,10 @@
 .top_out {
     top: -250px !important;
 }
+.unlimited {
+    max-height: 100% !important;
+    max-width: 100% !important;
+}
 .vmiddle {
     vertical-align: middle;
 }
