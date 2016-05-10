@@ -55,31 +55,35 @@ CT.modal.Modal = CT.Class({
 			var n = this.node, add = this.setup._add,
 				origin = this.opts.slide.origin,
 				center = this.opts.slide.center,
+				parent = document.body, // ensure modal starts outside window
 				ver = true, hor = true;
 
-			if (origin.startsWith("top")) {
-				n.top_out = n.style.top = -n.clientHeight + "px";
-				n.top_in = center ? "50%" : "0px";
-			}
-			else if (origin.startsWith("bottom")) {
-				n.top_out = n.style.top = parent.clientHeight + "px";
-				n.top_in = center ? "50%" : ((parent.clientHeight - n.clientHeight) + "px");
-			}
-			else
-				ver = false;
-			if (origin.endsWith("left")) {
-				n.left_out = n.style.left = -n.clientWidth + "px";
-				n.left_in = center ? "50%" : "0px";
-			}
-			else if (origin.endsWith("right")) {
-				n.left_out = n.style.left = parent.clientWidth + "px";
-				n.left_in = center ? "50%" : ((parent.clientWidth - n.clientWidth) + "px");
-			}
-			else
-				hor = false;
+			var _refresh = function() {
+				if (origin.startsWith("top")) {
+					n.top_out = n.style.top = -n.clientHeight + "px";
+					n.top_in = center ? "50%" : "0px";
+				}
+				else if (origin.startsWith("bottom")) {
+					n.top_out = n.style.top = parent.clientHeight + "px";
+					n.top_in = center ? "50%" : ((parent.clientHeight - n.clientHeight) + "px");
+				}
+				else
+					ver = false;
+				if (origin.endsWith("left")) {
+					n.left_out = n.style.left = -n.clientWidth + "px";
+					n.left_in = center ? "50%" : "0px";
+				}
+				else if (origin.endsWith("right")) {
+					n.left_out = n.style.left = parent.clientWidth + "px";
+					n.left_in = center ? "50%" : ((parent.clientWidth - n.clientWidth) + "px");
+				}
+				else
+					hor = false;
+			};
 
 			n.show = function(parent) {
 				add(parent);
+				_refresh();
 				setTimeout(function() {
 					ver && CT.trans.trans({ node: n, property: "top", value: n.top_in });
 					hor && CT.trans.trans({ node: n, property: "left", value: n.left_in });
@@ -130,14 +134,14 @@ CT.modal.Modal = CT.Class({
 	},
 	"init": function(opts) {
 		this.opts = opts = CT.merge(opts, {
-			"nodeClass": "basicmodal",
+			"className": "basicmodal",
 			"transition": "none",
 			"slide": { // only applies if transition is 'slide'
 				"origin": "top",
 				"center": true
 			}
 		});
-		this.node = CT.dom.node("", "div", opts.nodeClass);
+		this.node = CT.dom.node("", "div", opts.className);
 		this.node.modal = this;
 		this.setup[opts.transition]();
 		this.build();
