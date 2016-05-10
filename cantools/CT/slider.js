@@ -159,7 +159,8 @@ CT.slider.Frame = CT.Class({
 					null, { backgroundImage: "url(" + opts.img + ")" }),
 				full
 			];
-		CT.drag.makeDraggable(full, { constraint: "horizontal" });
+		// let's revisit this later...
+		// CT.drag.makeDraggable(full, { constraint: "horizontal" });
 		if (opts.title || opts.blurb) {
 			nodes.push(CT.dom.node([
 				CT.dom.node(opts.title, "div", "biggest"),

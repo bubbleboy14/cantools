@@ -5,6 +5,10 @@
 .activetab a {
     color: #670002;
 }
+.bare {
+    padding: 0px !important;
+    margin: 0px !important;
+}
 .basicmodal {
     z-index: 5;
     position: fixed;
@@ -124,6 +128,9 @@
 }
 .grayback {
     background: gray;
+}
+.halfheight {
+    height: 50%;
 }
 .halfwidth {
     width: 50%;
