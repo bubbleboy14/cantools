@@ -335,6 +335,9 @@
 .big {
     font-size: 120%;
 }
+.gigantic {
+    font-size: 400%;
+}
 .italic {
     font-style: italic;
 }
@@ -349,6 +352,12 @@ button, a, .pointer {
 }
 .smaller {
     font-size: 60%;
+}
+.smallest {
+    font-size: 40%;
+}
+.tiny {
+    font-size: 25%;
 }
 .transparent {
     opacity: 0;
