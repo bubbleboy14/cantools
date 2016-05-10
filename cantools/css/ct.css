@@ -32,11 +32,17 @@
     background: white;
     border: 1px solid black;
 }
+.bb {
+    box-sizing: border-box;
+}
 .bigger {
     font-size: 140%;
 }
 .biggest {
     font-size: 180%;
+}
+.block {
+    display: block;
 }
 .blue {
     color: #010068;
