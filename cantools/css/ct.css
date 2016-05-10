@@ -5,6 +5,20 @@
 .activetab a {
     color: #670002;
 }
+.basicmodal {
+    z-index: 5;
+    position: fixed;
+    padding: 10px;
+    background: white;
+    border: 1px solid black;
+    top: 50%;
+    left: 50%;
+    max-height: 400px;
+    width: 550px;
+    margin-top: -200px;
+    margin-left: -275px;
+    overflow-y: auto;
+}
 .basicpopup {
     z-index: 5;
     position: fixed;
@@ -32,6 +46,9 @@
 }
 .bottompadded {
     padding-bottom: 10px;
+}
+.bottombordered {
+    border-bottom: 1px solid black;
 }
 .button_row {
     position: absolute;
@@ -178,6 +195,10 @@
 }
 .hider {
     visibility: hidden;
+}
+.vpadded {
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 /* Slider classes */
 .carousel {
