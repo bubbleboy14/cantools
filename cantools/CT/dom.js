@@ -550,18 +550,16 @@ CT.dom = {
 	    if (useblurs) {
 	        field.onblur = function() {
 	            if (field.value == "") {
-	                if (field.className.indexOf("gray") == -1)
-	                    field.className += " gray";
-	                field.value = useblurs[Math.floor(Math.random()*useblurs.length)];
+	            	field.classList.add("gray");
+	                field.value = useblurs[Math.floor(Math.random() * useblurs.length)];
 	            }
-	            else {
-	                field.className = field.className.replace(" gray", "");
-	            }
+	            else
+	            	field.classList.remove("gray");
 	        };
 	        field.onfocus = function() {
 	            if (useblurs.indexOf(field.value) != -1) {
 	                field.value = "";
-	                field.className = field.className.replace(" gray", "");
+	                field.classList.remove("gray");
 	            }
 	        };
 	        field.onblur();
@@ -604,10 +602,13 @@ CT.dom = {
 	    };
 	    return n;
 	},
-	"smartField": function(cb, classname, id, value, type) {
+	"smartField": function(cb, classname, id, value, type, blurs) {
 		id = id || ("sf" + Math.floor((Math.random() * 100000)));
-		return CT.dom.inputEnterCallback(CT.dom.field(id,
+		var f = CT.dom.inputEnterCallback(CT.dom.field(id,
 			value, classname, type), cb, id);
+		if (blurs)
+			CT.dom.blurField(f, blurs);
+		return f;
 	},
 
 	// rich input stuff
