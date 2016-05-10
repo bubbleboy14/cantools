@@ -14,20 +14,24 @@ CT.modal.Modal = CT.Class({
 	"CLASSNAME": "CT.modal.Modal",
 	"visible": false,
 	"setup": {
+		"_add": function(parent) {
+			if (parent instanceof Node)
+				parent.appendChild(this.node);
+			else
+				document.body.appendChild(this.node);
+		},
 		"none": function() {
 			var n = this.node;
-			n.show = function(parent) {
-				(parent || document.body).appendChild(n);
-			};
+			n.show = this.setup._add;
 			n.hide = function() {
 				CT.dom.remove(n);
 			};
 		},
 		"fade": function() {
-			var n = this.node;
+			var n = this.node, add = this.setup._add;
 			n.show = function(parent) {
 				n.style.opacity = 0;
-				(parent || document.body).appendChild(n);
+				add(parent);
 				setTimeout(function() {
 					CT.trans.trans({
 						node: n,
@@ -48,7 +52,7 @@ CT.modal.Modal = CT.Class({
 			};
 		},
 		"slide": function() {
-			var n = this.node,
+			var n = this.node, add = this.setup._add,
 				origin = this.opts.slide.origin,
 				center = this.opts.slide.center,
 				ver = true, hor = true;
@@ -75,7 +79,7 @@ CT.modal.Modal = CT.Class({
 				hor = false;
 
 			n.show = function(parent) {
-				(parent || document.body).appendChild(n);
+				add(parent);
 				setTimeout(function() {
 					ver && CT.trans.trans({ node: n, property: "top", value: n.top_in });
 					hor && CT.trans.trans({ node: n, property: "left", value: n.left_in });
