@@ -114,6 +114,9 @@
 .grayback {
     background: gray;
 }
+.halfwidth {
+    width: 50%;
+}
 .hidden {
     display: none;
 }
