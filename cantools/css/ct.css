@@ -23,6 +23,8 @@
     z-index: 5;
     position: fixed;
     padding: 10px;
+    max-height: 50%;
+    max-width: 50%;
     background: white;
     border: 1px solid black;
 }
