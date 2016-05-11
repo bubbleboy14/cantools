@@ -65,6 +65,8 @@ class Builder(object):
 		cp(config.init.ctcfg%(self.web_backend,), "ct.cfg")
 		log("demo index page", 1)
 		cp(config.init.html%(self.pname,), os.path.join("html", "index.html"))
+		log("model", 1)
+		cp(config.init.model, "model.py")
 
 	def generate_symlinks(self):
 		log("creating symlinks", 1)
