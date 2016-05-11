@@ -95,8 +95,8 @@ CT.drag = {
 		};
 		node.parentNode.addEventListener('scroll', function (event) { return false; }, false);
 		var getInterval = function() {
-			return opts.interval == "auto" ?
-				(CT.align.width(node) / node.childNodes.length) : opts.interval;
+			return opts.interval == "auto" ? (CT.align[opts.constraint == "horizontal"
+				? "height" : "width"](node) / node.childNodes.length) : opts.interval;
 		};
 		var downCallback = function () {
 			if (node.animating) return;
