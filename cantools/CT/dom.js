@@ -190,7 +190,7 @@ CT.dom = {
 	"range": function(onchange, min, max, value, step, classname, id) {
 		var r = CT.dom.node("", "input", classname, id, {
 			"type": "range",
-			"oninput": function() { onchange(r.value); },
+			"oninput": onchange && function() { onchange(r.value); },
 			"min": min,
 			"max": max,
 			"value": value,

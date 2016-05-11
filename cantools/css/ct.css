@@ -83,6 +83,10 @@
 .centered {
     text-align: center;
 }
+.centered > div {
+    margin-left: auto;
+    margin-right: auto;
+}
 .centeredimg img {
     margin-left: auto;
     margin-right: auto;
@@ -143,6 +147,9 @@
 }
 .hidden {
     display: none;
+}
+.leftalign {
+    text-align: left;
 }
 .lfloat {
     float: left;
