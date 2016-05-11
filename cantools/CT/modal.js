@@ -136,7 +136,8 @@ CT.modal.Modal = CT.Class({
 		this.add(CT.dom.node(CT.dom.link("X", this.hide), "div", "right pointer"));
 	},
 	"build": function() { // override
-		this.addClose();
+		if (!this.opts.noClose)
+			this.addClose();
 	},
 	"clear": function() {
 		this.node.innerHTML = "";
@@ -153,6 +154,7 @@ CT.modal.Modal = CT.Class({
 		this.opts = opts = CT.merge(opts, {
 			"className": "basicpopup",
 			"transition": "none",
+			"noClose": false, // turns off 'x' in corner
 			"slide": { // only applies if transition is 'slide'
 				"origin": "top",
 				"center": true
