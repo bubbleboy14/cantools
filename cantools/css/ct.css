@@ -51,7 +51,7 @@
     font-weight: bold;
 }
 .bordered {
-    border: 1px solid #d3d3d3;
+    border: 1px solid black;
 }
 .bottom_out {
     bottom: -150px !important;

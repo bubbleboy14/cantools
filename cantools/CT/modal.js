@@ -15,10 +15,10 @@ CT.modal.Modal = CT.Class({
 	"visible": false,
 	"setup": {
 		"_centerv": function(parent) {
-			return (parent.clientHeight - this.node.clientHeight) / 2;
+			return ((parent.clientHeight || CT.align.height()) - this.node.clientHeight) / 2;
 		},
 		"_centerh": function(parent) {
-			return (parent.clientWidth - this.node.clientWidth) / 2;
+			return ((parent.clientWidth || CT.align.width()) - this.node.clientWidth) / 2;
 		},
 		"_fallbacks": function(parent) {
 			var n = this.node;
