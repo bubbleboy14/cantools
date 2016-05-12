@@ -267,6 +267,9 @@
 .active-circle {
     background-color: rgba(200, 200, 200, 0.8);
 }
+.bp-left {
+    background-position: left;
+}
 .carousel-container {
     background-color: #404041;
     white-space: nowrap;
@@ -284,9 +287,9 @@
     right: 0px;
     height: 100%;
     width: 100%;
-    transition: width 1s, height 1s;
+/*    transition: width 1s, height 1s;
     -moz-transition: width 1s, height 1s;
-    -webkit-transition: width 1s, height 1s;
+    -webkit-transition: width 1s, height 1s;*/
 }
 .carousel-content-teaser {
     padding: 10px;
@@ -312,10 +315,6 @@
     white-space: normal;
     overflow-x: hidden;
     overflow-y: auto;
-}
-.carousel-retracted {
-    width: 40%;
-    height: 30%;
 }
 .carousel-order-indicator {
     text-align: center;

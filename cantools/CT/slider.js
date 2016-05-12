@@ -10,7 +10,8 @@ the 'opts' object itself, are all optional.
     - node (default: document.body): DOM element in which to build the slider
     - mode (dfault: 'peekaboo'): how to display each frame - 'peekaboo' or 'chunk'
     - autoSlideInterval (default: 5000): how many milliseconds to wait before auto-sliding frames
-    - noAuto (default: false): if true, don't autoslide (trigger later with .resume())
+    - autoSlide (default: true): automatically proceed through frames (else, trigger later with .resume())
+    - pan (default: true): slow-pan frame background images
     - pauseParent (default: null): used by chunked (or custom) Frame to pause parent autoslide
     - bubblePosition (default: 'bottom'): where to position frame indicator bubbles ('top' or 'bottom')
     - arrowPosition (default: 'middle'): where to position navigator arrows
@@ -35,7 +36,8 @@ CT.slider.Slider = CT.Class({
 		this.opts = opts = CT.merge(opts, {
 			frames: [],
 			autoSlideInterval: 5000,
-			noAuto: false,
+			autoSlide: true,
+			pan: true,
 			pauseParent: null,
 			node: document.body,
 			mode: "peekaboo", // or 'chunk'
@@ -72,7 +74,7 @@ CT.slider.Slider = CT.Class({
 			interval: "auto"
 		};
 		CT.drag.makeDraggable(this.container, this.dragOpts);
-		if (this.opts.autoSlideInterval && !this.opts.noAuto)
+		if (this.opts.autoSlideInterval && this.opts.autoSlide)
 			this.resume();
 		CT.gesture.listen("down", this.container, this.pause);
 		this.opts.node.onresize = this.trans;
@@ -164,13 +166,20 @@ CT.slider.Frame = CT.Class({
 	peekaboo: function() {
 		var opts = this.opts, node = this.node,
 			full = CT.dom.node(opts.content, "div", "big carousel-content-full"),
-			nodes = [
-				CT.dom.node(null, "div", "carousel-content-image", null,
-					null, { backgroundImage: "url(" + opts.img + ")" }),
-				full
-			];
+			imageBack = CT.dom.node(null, "div", "carousel-content-image",
+				null, null, { backgroundImage: "url(" + opts.img + ")" }),
+			nodes = [ imageBack, full ];
+
+		if (this.slider.opts.pan) {
+			imageBack.classList.add("bp-left");
+			setTimeout(function() { // isn't in dom yet ;)
+				CT.trans.pan(imageBack);
+			});
+		}
+
 		// let's revisit this later...
 		// CT.drag.makeDraggable(full, { constraint: "horizontal" });
+
 		if (opts.title || opts.blurb) {
 			nodes.push(CT.dom.node([
 				CT.dom.node(opts.title, "div", "biggest"),
@@ -184,15 +193,31 @@ CT.slider.Frame = CT.Class({
 				clearAS();
 				node._retracted = !node._retracted;
 				if (node._retracted) {
-					node.firstChild.classList.add("carousel-retracted");
 					CT.trans.trans({
+						node: imageBack,
+						duration: 1000,
+						property: "width",
+						value: "40%"
+					});
+					CT.trans.trans({
+						node: imageBack,
+						duration: 1000,
+						property: "height",
+						value: "30%",
 						cb: function() {
 							full.style.zIndex = 100;
 						}
 					});
 				} else {
 					full.style.zIndex = -1;
-					node.firstChild.classList.remove("carousel-retracted");
+					["width", "height"].forEach(function(dimension) {
+						CT.trans.trans({
+							node: imageBack,
+							duration: 1000,
+							property: dimension,
+							value: "100%"
+						});
+					});
 				}
 			});
 		}
