@@ -38,9 +38,19 @@ around with DOM elements via CSS transitions. Have at it.
 		property: "background-position",
 		ease: "linear",
 		value: "right"
+	},
+	fadeIn: {
+		duration: 1000,
+		property: "opacity",
+		value: 1
+	},
+	fadeOut: {
+		duration: 1000,
+		property: "opacity",
+		value: 0
 	}
 
-TODO: let's add some more, like scale and fade.
+TODO: let's add some more, like scale.
 */
 
 CT.trans = {
@@ -75,6 +85,16 @@ CT.trans = {
 				property: "background-position",
 				ease: "linear",
 				value: "right"
+			},
+			fadeIn: {
+				duration: 1000,
+				property: "opacity",
+				value: 1
+			},
+			fadeOut: {
+				duration: 1000,
+				property: "opacity",
+				value: 0
 			}
 		}
 	},
@@ -83,7 +103,7 @@ CT.trans = {
 	        node.style[CT.trans._.vender_prefixes[i] + property] = value;
 	},
 	trans: function(opts) {
-		// opts: node, property, value, cb, duration, ease prefix
+		// opts: node, property, value, cb, duration, ease, prefix
 		opts = CT.merge(opts, CT.trans._.defaults.trans);
 		if (opts.node) {
 			var prevTrans = opts.node.style.transition || "",
@@ -138,6 +158,16 @@ CT.trans = {
 			opts.value = opts.value == "left" ? "right" : "left";
 			CT.trans.pan(node, opts);
 		}
+		CT.trans.trans(opts);
+	},
+	fadeIn: function(node, opts) {
+		opts = CT.merge(opts, CT.trans._.defaults.fadeIn);
+		opts.node = node;
+		CT.trans.trans(opts);
+	},
+	fadeOut: function(node, opts) {
+		opts = CT.merge(opts, CT.trans._.defaults.fadeOut);
+		opts.node = node;
 		CT.trans.trans(opts);
 	}
 };
