@@ -31,7 +31,7 @@ CT.modal.Modal = CT.Class({
 			var n = this.node;
 			parent = (parent instanceof Node) ? parent : document.body;
 			CT.dom.addContent(parent, n);
-			this.setup._fallbacks(parent);
+			this.opts.center && this.setup._fallbacks(parent);
 		},
 		"none": function() {
 			var n = this.node;
@@ -67,7 +67,7 @@ CT.modal.Modal = CT.Class({
 		"slide": function() {
 			var n = this.node, add = this.setup._add,
 				origin = this.opts.slide.origin,
-				center = this.opts.slide.center,
+				center = this.opts.center,
 				centerv = this.setup._centerv,
 				centerh = this.setup._centerh,
 				fallbacks = this.setup._fallbacks,
@@ -154,10 +154,10 @@ CT.modal.Modal = CT.Class({
 		this.opts = opts = CT.merge(opts, {
 			"className": "basicpopup",
 			"transition": "none",
+			"center": true,
 			"noClose": false, // turns off 'x' in corner
 			"slide": { // only applies if transition is 'slide'
-				"origin": "top",
-				"center": true
+				"origin": "top"
 			}
 		});
 		var nodeStyle = {};
