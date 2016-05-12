@@ -49,9 +49,9 @@ CT.slider.Slider = CT.Class({
 		this.circlesContainer = CT.dom.node("", "div",
 			"carousel-order-indicator " + opts.bubblePosition);
 		this.prevButton = CT.dom.node(CT.dom.node("<", "span"), "div",
-			"slider-btn prv hidden sb-" + this.opts.arrowPosition);
+			"slider-btn prv hoverglow pointer hidden sb-" + this.opts.arrowPosition);
 		this.nextButton = CT.dom.node(CT.dom.node(">", "span"), "div",
-			"slider-btn nxt sb-" + this.opts.arrowPosition);
+			"slider-btn nxt hoverglow pointer sb-" + this.opts.arrowPosition);
 		this.index = this.pos = 0;
 		this.container = CT.dom.node("", "div",
 			"carousel-container full" + CT.slider.other_dim[this.dimension]);
@@ -103,7 +103,7 @@ CT.slider.Slider = CT.Class({
 		if (typeof frame == "string")
 			frame = { img: frame };
 		var circle = CT.dom.node(frame.label, "div",
-			"indicator-circle " + (frame.label ? "labeled" : "unlabeled") + "-circle");
+			"hoverglow pointer indicator-circle " + (frame.label ? "labeled" : "unlabeled") + "-circle");
 		CT.gesture.listen("tap", circle, this.circleJump(index));
 		this.circlesContainer.appendChild(circle);
 		this.container.appendChild((new CT.slider.Frame(frame, this)).node);
@@ -192,7 +192,7 @@ CT.slider.Frame = CT.Class({
 			var teaser = CT.dom.node([
 				CT.dom.node(opts.title, "div", "biggest"),
 				CT.dom.node(opts.blurb, "div", "bigger")
-			], "div", "carousel-content-teaser transparent pointer");
+			], "div", "carousel-content-teaser transparent hoverglow pointer");
 			nodes.push(teaser);
 			this.on.show = function() {
 				CT.trans.fadeIn(teaser);

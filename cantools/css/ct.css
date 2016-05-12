@@ -148,6 +148,10 @@
 .hidden {
     display: none;
 }
+.hoverglow:hover {
+    box-shadow: 0px 0px 10px yellow;
+    color: yellow;
+}
 .leftalign {
     text-align: left;
 }
@@ -256,7 +260,8 @@
     min-width: 50px;
     min-height: 40px;
     font-size: 150%;
-    cursor: pointer;
+    color: white;
+    font-weight: bold;
 }
 .labeled-circle {
     padding: 15px;
@@ -320,7 +325,6 @@
 }
 .slider-btn {
     position: absolute;
-    cursor: pointer;
     color: white;
     font-size: 1000%;
     font-weight: bold;
@@ -328,9 +332,6 @@
     border-radius: 50%;
     box-shadow: 0px 0px 5px #fff;
     background-color: rgba(200, 200, 200, 0.6);
-}
-.slider-btn:hover {
-    color: yellow;
 }
 .slider-btn span {
     line-height: 1;
