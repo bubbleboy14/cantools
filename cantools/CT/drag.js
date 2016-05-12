@@ -87,12 +87,6 @@ CT.drag = {
 		node.yDrag = 0;
 		node.classList.add('hardware-acceleration');
 		node.style['-webkit-transform'] = "translate3d(0,0,0)";
-		// Don't apply overflow=visible to welcome tutorial carousel container
-		// - this is questionable
-		if (node.className.indexOf("carousel") == -1) {
-			node.style.overflow = "visible";
-			node.parentNode.style.overflow = "visible";
-		};
 		node.parentNode.addEventListener('scroll', function (event) { return false; }, false);
 		var getInterval = function() {
 			return opts.interval == "auto" ? (CT.align[opts.constraint == "horizontal"
@@ -237,7 +231,7 @@ CT.drag = {
 						return;
 				}
 				if (opts.constraint != "vertical" && node.yDrag <= 0 
-					&& node.yDrag > -(node.scrollHeight - node.parentNode.clientHeight)) {
+					&& Math.abs(node.yDrag) > (node.scrollHeight - node.parentNode.clientHeight)) {
 					if (direction == "up")
 						node.yDrag -= yMod;
 					else if (direction == "down")

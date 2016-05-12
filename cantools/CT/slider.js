@@ -22,7 +22,7 @@ as image urls) or of data objects (processed in the addFrame function).
 */
 
 CT.slider = {
-	dir2abs: { right: "forward", left: "backward", down: "forward", up: "backward" },
+	dir2abs: { right: "backward", left: "forward", up: "forward", down: "backward" },
 	other_dim: { height: "width", width: "height" },
 	other_orientation: { vertical: "horizontal", horizontal: "vertical" },
 	orientation2dim: { vertical: "height", horizontal: "width" },
@@ -111,12 +111,12 @@ CT.slider.Slider = CT.Class({
 	circleJump: function (index) {
 		var f = function() {
 			this.pause();
-			this.slide(index);
+			this.updateIndicator(index);
 			this.trans();
 		}.bind(this);
 		return f;
 	},
-	slide: function (index) {
+	updateIndicator: function (index) {
 		this.index = index;
 		this.activeCircle.classList.remove('active-circle');
 		this.activeCircle = this.circlesContainer.childNodes[index];
@@ -126,15 +126,15 @@ CT.slider.Slider = CT.Class({
 	},
 	updatePosition: function (direction, force) {
 		var index = this.index, absdir = CT.slider.dir2abs[direction];
-		if (absdir == "backward" && (force || this.activeCircle.nextSibling))
+		if (absdir == "forward" && (force || this.activeCircle.nextSibling))
 			index += 1;
-		else if (absdir == "forward" && (force || this.activeCircle.previousSibling))
+		else if (absdir == "backward" && (force || this.activeCircle.previousSibling))
 			index -= 1;
-		this.slide(index % this.circlesContainer.childNodes.length);
+		this.updateIndicator(index % this.circlesContainer.childNodes.length);
 	},
 	trans: function() {
-		var opts = {};
-		opts[CT.slider.orientation2axis[this.opts.orientation]] = -this.index
+		var opts = {}, axis = CT.slider.orientation2axis[this.opts.orientation];
+		opts[axis] = this.container[axis + "Drag"] = -this.index
 			* CT.align[this.dimension](this.container) / this.container.childNodes.length;
 		CT.trans.translate(this.container, opts);
 	},
