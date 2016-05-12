@@ -5,6 +5,7 @@ around with DOM elements via CSS transitions. Have at it.
 ### Try out these functions:
 	CT.trans.rotate(node, opts)
 	CT.trans.translate(node, opts)
+	CT.trans.pan(node, opts)
 	CT.trans.trans(opts)
 	CT.trans.setVendorPrefixed(node, property, value)
 	 - sets CSS properties for all vendor prefixes
@@ -31,6 +32,12 @@ around with DOM elements via CSS transitions. Have at it.
 		x: 0,
 		y: 0,
 		z: 0
+	},
+	pan: {
+		duration: 5000,
+		property: "background-position",
+		ease: "linear",
+		value: "right"
 	}
 
 TODO: let's add some more, like scale and fade.
@@ -62,6 +69,12 @@ CT.trans = {
 				x: 0,
 				y: 0,
 				z: 0
+			},
+			pan: {
+				duration: 5000,
+				property: "background-position",
+				ease: "linear",
+				value: "right"
 			}
 		}
 	},
@@ -72,12 +85,16 @@ CT.trans = {
 	trans: function(opts) {
 		// opts: node, property, value, cb, duration, ease prefix
 		opts = CT.merge(opts, CT.trans._.defaults.trans);
-	    opts.node && CT.trans.setVenderPrefixed(opts.node,
-	    	"transition", (CT.trans._.tswap[opts.property] || opts.property)
-	        + " " + opts.duration + "ms " + opts.ease);
+		if (opts.node) {
+			var prevTrans = opts.node.style.transition || "",
+				transComponent = (CT.trans._.tswap[opts.property] || opts.property)
+		        	+ " " + opts.duration + "ms " + opts.ease,
+		        fullTrans = prevTrans ? (prevTrans + ", " + transComponent) : transComponent;
+		    CT.trans.setVenderPrefixed(opts.node, "transition", fullTrans);
+		}
 	    if (opts.cb) {
 	        var transTimeout, wrapper = function () {
-	            opts.node && CT.trans.setVenderPrefixed(opts.node, "transition", "");
+	            opts.node && CT.trans.setVenderPrefixed(opts.node, "transition", prevTrans);
 	            clearTimeout(transTimeout);
 	            transTimeout = null;
 	            if (opts.node) CT.trans._.enames.forEach(function(ename) {
@@ -112,6 +129,15 @@ CT.trans = {
 		opts = CT.merge(opts, CT.trans._.defaults.translate);
 		opts.node = node;
 		opts.value = "translate3d(" + opts.x + "px," + opts.y + "px," + opts.z + "px)",
+		CT.trans.trans(opts);
+	},
+	pan: function(node, opts) { // for background-position
+		opts = CT.merge(opts, CT.trans._.defaults.pan);
+		opts.node = node;
+		opts.cb = function() {
+			opts.value = opts.value == "left" ? "right" : "left";
+			CT.trans.pan(node, opts);
+		}
 		CT.trans.trans(opts);
 	}
 };
