@@ -105,12 +105,14 @@ CT.slider.Slider = CT.Class({
 		var circle = CT.dom.node(frame.label, "div",
 			"indicator-circle " + (frame.label ? "labeled" : "unlabeled") + "-circle");
 		CT.gesture.listen("tap", circle, this.circleJump(index));
+		this.circlesContainer.appendChild(circle);
+		this.container.appendChild((new CT.slider.Frame(frame, this)).node);
 		if (index == 0) {
 			circle.className += " active-circle";
 			this.activeCircle = circle;
+			if (!this.opts.pauseParent) // exclude embedded slider
+				setTimeout(this.container.firstChild.frame.on.show, 500);
 		}
-		this.circlesContainer.appendChild(circle);
-		this.container.appendChild((new CT.slider.Frame(frame, this)).node);
 		if (index == undefined) // ad-hoc frame
 			this._reflow();
 	},
@@ -123,7 +125,9 @@ CT.slider.Slider = CT.Class({
 		return f;
 	},
 	updateIndicator: function (index) {
+		this.container.childNodes[this.index].frame.on.hide();
 		this.index = index;
+		this.container.childNodes[this.index].frame.on.show();
 		this.activeCircle.classList.remove('active-circle');
 		this.activeCircle = this.circlesContainer.childNodes[index];
 		this.activeCircle.classList.add('active-circle');
@@ -163,6 +167,10 @@ CT.slider.Slider = CT.Class({
 
 CT.slider.Frame = CT.Class({
 	CLASSNAME: "CT.slider.Frame",
+	on: { // overwritten by mode functions
+		show: function() {},
+		hide: function() {}
+	},
 	peekaboo: function() {
 		var opts = this.opts, node = this.node,
 			full = CT.dom.node(opts.content, "div", "big carousel-content-full"),
@@ -181,10 +189,17 @@ CT.slider.Frame = CT.Class({
 		// CT.drag.makeDraggable(full, { constraint: "horizontal" });
 
 		if (opts.title || opts.blurb) {
-			nodes.push(CT.dom.node([
+			var teaser = CT.dom.node([
 				CT.dom.node(opts.title, "div", "biggest"),
 				CT.dom.node(opts.blurb, "div", "bigger")
-			], "div", "carousel-content-teaser pointer"));
+			], "div", "carousel-content-teaser transparent pointer");
+			nodes.push(teaser);
+			this.on.show = function() {
+				CT.trans.fadeIn(teaser);
+			};
+			this.on.hide = function() {
+				CT.trans.fadeOut(teaser);
+			};
 		}
 		CT.dom.addEach(node, nodes);
 		if (opts.content) { // assume title/blurb exists
@@ -223,20 +238,23 @@ CT.slider.Frame = CT.Class({
 		}
 	},
 	chunk: function() {
-		new CT.slider.Slider({
+		var slider = new CT.slider.Slider({
 			node: this.node,
 			frames: this.opts.frames,
-			autoSlideInterval: null,
+			autoSlide: false,
 			orientation: CT.slider.other_orientation[this.slider.opts.orientation],
 			pauseParent: this.slider.pause,
 			arrowPosition: "bottom"
 		});
+		this.on.show = slider.container.firstChild.frame.on.show;
+		this.on.hide = slider.container.firstChild.frame.on.hide;
 	},
 	init: function(opts, slider) {
 		this.opts = opts;
 		this.slider = slider;
 		this.node = CT.dom.node("", "div",
 			"carousel-content-container full" + CT.slider.other_dim[slider.dimension]);
+		this.node.frame = this;
 		if (slider.dimension == "width")
 			this.node.style.display = "inline-block";
 		this[slider.opts.mode]();
