@@ -287,9 +287,6 @@
     right: 0px;
     height: 100%;
     width: 100%;
-/*    transition: width 1s, height 1s;
-    -moz-transition: width 1s, height 1s;
-    -webkit-transition: width 1s, height 1s;*/
 }
 .carousel-content-teaser {
     padding: 10px;
