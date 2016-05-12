@@ -1,4 +1,4 @@
-# cantools 0.6.7.3
+# cantools 0.6.7.4
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM; a built in administrative interface; and a rich modular JavaScript library.
 
 License: MIT (see LICENSE)
@@ -227,6 +227,10 @@ functionality of the framework, as follows.
     - CT.net.get(path, qsp, isjson)
       - issues a GET request via synchronous XHR
       - optionally parses query string object and unpacks response as JSON
+    - CT.net.put(path, params, cb, headers)
+      - issues a PUT request via asynchronous XHR
+    - CT.net.delete(path, params, cb, headers)
+      - issues a DELETE request via asynchronous XHR
 
 #### Also includes:
  - CT.net.setSpinner(bool) (default: false)
@@ -619,7 +623,9 @@ the 'opts' object itself, are all optional.
     - node (default: document.body): DOM element in which to build the slider
     - mode (dfault: 'peekaboo'): how to display each frame - 'peekaboo' or 'chunk'
     - autoSlideInterval (default: 5000): how many milliseconds to wait before auto-sliding frames
-    - clearParentAutoSlide (default: null): used by chunked (or custom) Frame to cancel parent autoslide
+    - autoSlide (default: true): automatically proceed through frames (else, trigger later with .resume())
+    - pan (default: true): slow-pan frame background images
+    - pauseParent (default: null): used by chunked (or custom) Frame to pause parent autoslide
     - bubblePosition (default: 'bottom'): where to position frame indicator bubbles ('top' or 'bottom')
     - arrowPosition (default: 'middle'): where to position navigator arrows
     - orientation (default: 'horizontal'): orientation for slider frames to arrange themselves
@@ -653,6 +659,7 @@ around with DOM elements via CSS transitions. Have at it.
 ### Try out these functions:
 	CT.trans.rotate(node, opts)
 	CT.trans.translate(node, opts)
+	CT.trans.pan(node, opts)
 	CT.trans.trans(opts)
 	CT.trans.setVendorPrefixed(node, property, value)
 	 - sets CSS properties for all vendor prefixes
@@ -679,6 +686,12 @@ around with DOM elements via CSS transitions. Have at it.
 		x: 0,
 		y: 0,
 		z: 0
+	},
+	pan: {
+		duration: 5000,
+		property: "background-position",
+		ease: "linear",
+		value: "right"
 	}
 
 TODO: let's add some more, like scale and fade.
