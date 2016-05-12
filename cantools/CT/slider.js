@@ -62,6 +62,10 @@ CT.slider.Slider = CT.Class({
 		this.opts.frames.forEach(this.addFrame);
 		CT.gesture.listen("tap", this.prevButton, this.prevButtonCallback);
 		CT.gesture.listen("tap", this.nextButton, this.nextButtonCallback);
+		if (opts.orientation == "vertical") {
+			CT.trans.rotate(this.nextButton, { degrees: 90 });
+			CT.trans.rotate(this.prevButton, { degrees: 90 });
+		}
 		this.dragOpts = {
 			constraint: CT.slider.other_orientation[opts.orientation],
 			up: this.updatePosition,
