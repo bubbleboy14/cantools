@@ -177,17 +177,12 @@ CT.slider.Frame = CT.Class({
 			imageBack = CT.dom.node(null, "div", "carousel-content-image",
 				null, null, { backgroundImage: "url(" + opts.img + ")" }),
 			nodes = [ imageBack, full ];
-
 		if (this.slider.opts.pan) {
 			imageBack.classList.add("bp-left");
 			setTimeout(function() { // isn't in dom yet ;)
 				CT.trans.pan(imageBack);
 			});
 		}
-
-		// let's revisit this later...
-		// CT.drag.makeDraggable(full, { constraint: "horizontal" });
-
 		if (opts.title || opts.blurb) {
 			var teaser = CT.dom.node([
 				CT.dom.node(opts.title, "div", "biggest"),
