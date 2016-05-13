@@ -64,7 +64,10 @@ def require(line, jspaths, block, inits):
         prefixes = []
         fullp = "window"
         for rword in rsplit:
-            fullp = ".".join([fullp, rword])
+            if rword[0].isalpha():
+                fullp = ".".join([fullp, rword])
+            else:
+                fullp = "%s[%s]"%(fullp, rword)
             tryinit("%s = %s || {}"%(fullp, fullp), inits, prefixes)
         pblock = ";".join(prefixes)
         if pblock:
