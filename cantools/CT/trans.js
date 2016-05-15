@@ -84,7 +84,7 @@ CT.trans = {
 				duration: 5000,
 				property: "background-position",
 				ease: "linear",
-				value: "right"
+				value: "right bottom"
 			},
 			fadeIn: {
 				duration: 1000,
@@ -155,7 +155,7 @@ CT.trans = {
 		opts = CT.merge(opts, CT.trans._.defaults.pan);
 		opts.node = node;
 		opts.cb = function() {
-			opts.value = opts.value == "left" ? "right" : "left";
+			opts.value = opts.value == "left top" ? "right bottom" : "left top";
 			CT.trans.pan(node, opts);
 		}
 		CT.trans.trans(opts);
