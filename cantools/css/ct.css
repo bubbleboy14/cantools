@@ -300,6 +300,7 @@
     white-space: normal;
     position: absolute;
     top: 80px;
+    left: 22.5%;
     border-radius: 15px;
     background-color: rgba(100, 100, 100, 0.7);
 }
@@ -317,6 +318,11 @@
     white-space: normal;
     overflow-x: hidden;
     overflow-y: auto;
+}
+.carousel-content-full div {
+    border: 1px solid gray;
+    margin: 5px;
+    padding: 5px;
 }
 .carousel-order-indicator {
     text-align: center;

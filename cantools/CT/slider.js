@@ -218,6 +218,12 @@ CT.slider.Frame = CT.Class({
 							full.style.zIndex = 100;
 						}
 					});
+					CT.trans.trans({
+						node: teaser,
+						duration: 1000,
+						property: "left",
+						value: "0%"
+					});
 				} else {
 					full.style.zIndex = -1;
 					["width", "height"].forEach(function(dimension) {
@@ -227,6 +233,12 @@ CT.slider.Frame = CT.Class({
 							property: dimension,
 							value: "100%"
 						});
+					});
+					CT.trans.trans({
+						node: teaser,
+						duration: 1000,
+						property: "left",
+						value: "22.5%"
 					});
 				}
 			});

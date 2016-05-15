@@ -87,12 +87,12 @@ CT.trans = {
 				value: "right bottom"
 			},
 			fadeIn: {
-				duration: 1000,
+				duration: 1600,
 				property: "opacity",
 				value: 1
 			},
 			fadeOut: {
-				duration: 1000,
+				duration: 1600,
 				property: "opacity",
 				value: 0
 			}
