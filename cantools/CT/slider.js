@@ -48,10 +48,14 @@ CT.slider.Slider = CT.Class({
 		this.dimension = CT.slider.orientation2dim[opts.orientation];
 		this.circlesContainer = CT.dom.node("", "div",
 			"carousel-order-indicator " + opts.bubblePosition);
+
+		var bclass = "slider-btn hoverglow pointer sb-"
+			+ this.opts.arrowPosition + " sb-" + opts.orientation;
+
 		this.prevButton = CT.dom.node(CT.dom.node("<", "span"), "div",
-			"slider-btn prv hoverglow pointer hidden sb-" + this.opts.arrowPosition);
+			bclass + " prv hidden");
 		this.nextButton = CT.dom.node(CT.dom.node(">", "span"), "div",
-			"slider-btn nxt hoverglow pointer sb-" + this.opts.arrowPosition);
+			bclass + " nxt");
 		this.index = this.pos = 0;
 		this.container = CT.dom.node("", "div",
 			"carousel-container full" + CT.slider.other_dim[this.dimension]);
@@ -64,10 +68,6 @@ CT.slider.Slider = CT.Class({
 		this.opts.frames.forEach(this.addFrame);
 		CT.gesture.listen("tap", this.prevButton, this.prevButtonCallback);
 		CT.gesture.listen("tap", this.nextButton, this.nextButtonCallback);
-		if (opts.orientation == "vertical") {
-			CT.trans.rotate(this.nextButton, { degrees: 90 });
-			CT.trans.rotate(this.prevButton, { degrees: 90 });
-		}
 		this.dragOpts = {
 			constraint: CT.slider.other_orientation[opts.orientation],
 			up: this.updatePosition,

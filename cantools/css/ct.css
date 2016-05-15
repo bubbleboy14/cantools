@@ -53,6 +53,9 @@
 .bordered {
     border: 1px solid black;
 }
+.bottom {
+    bottom: 10px;
+}
 .bottom_out {
     bottom: -150px !important;
 }
@@ -193,6 +196,9 @@
     border: 1px solid gray;
     background: white;
     padding: 2px;
+}
+.top {
+    top: 10px;
 }
 .top_out {
     top: -250px !important;
@@ -346,11 +352,19 @@
     top: 50%;
     margin-top: -100px;
 }
-.top, .sb-top {
-    top: 10px;
+.sb-top {
+    top: 90px;
 }
-.bottom, .sb-bottom {
-    bottom: 10px;
+.sb-vertical {
+    margin-left: 50px;
+    margin-right: 50px;
+    transform: rotate(90deg);
+}
+.sb-horizontal {
+
+}
+.sb-bottom {
+    bottom: 40px;
 }
 .fullbottom {
     left: 10px;
@@ -358,10 +372,10 @@
     bottom: 10px;
 }
 .nxt {
-    right: 50px;
+    right: 10px;
 }
 .prv {
-    left: 50px;
+    left: 10px;
 }
 
 /* required CT ids */
