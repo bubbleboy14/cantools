@@ -1,14 +1,70 @@
 /*
-This module contains two classes, Modal and Prompt.
+This module contains three classes, Modal, LightBox, and Prompt.
 
 ### CT.modal.Modal
 Creates a DOM node that can be transitioned
 on- and off- screen to/from a configurable position.
 
+defaults:
+	{
+		className: "basicpopup",
+		transition: "none", // none|fade|slide
+		center: true,
+		noClose: false, // turns off 'x' in corner
+		slide: { // only applies if transition is 'slide'
+			origin: "top"
+		}
+	}
+
+Note that the optional 'slide' object -- which only applies when
+transition is 'slide', may include 'top', 'left', 'bottom', and 'right'
+properties. For any other transition (when center is false), please
+position your node via css class (specified via 'className' property).
+
+### CT.modal.LightBox (Modal subclass)
+Centered, almost-fullscreen, fade-in, image-backed modal with translucent backdrop.
+
+defaults:
+	{
+		className: "backdrop",
+		transition: "fade",
+		noClose: true
+	}
+
+
 ### CT.modal.Prompt (Modal subclass)
 Includes interface elements for obtaining user input, such as
 a string, a password, or one or more selections from a list.
+
+defaults:
+	{
+		style: "string", // string|password|single-choice|multiple-choice
+		prompt: "",
+		data: []
+	}
 */
+
+CT.modal._defaults = {
+	Modal: {
+		className: "basicpopup",
+		transition: "none",
+		center: true,
+		noClose: false, // turns off 'x' in corner
+		slide: { // only applies if transition is 'slide'
+			origin: "top"
+		}
+	},
+	LightBox: {
+		className: "backdrop",
+		transition: "fade",
+		noClose: true
+	},
+	Prompt: {
+		style: "string",
+		prompt: "",
+		data: []
+	}
+};
 
 CT.modal.Modal = CT.Class({
 	CLASSNAME: "CT.modal.Modal",
@@ -124,10 +180,13 @@ CT.modal.Modal = CT.Class({
 		this.visible = false;
 		this.on.hide();
 	},
-	show: function(n) {
+	_show: function(n) {
 		this.node.show(n);
 		this.visible = true;
 		this.on.show();
+	},
+	show: function(n) {
+		setTimeout(this._show, 0, n); // wait a tick for initialization
 	},
 	showHide: function() {
 		this.visible ? this.hide() : this.show();
@@ -150,17 +209,8 @@ CT.modal.Modal = CT.Class({
 		addClose && this.addClose();
 		this.add(node);
 	},
-	init: function(opts) {
-		this.opts = opts = CT.merge(opts, {
-			"className": "basicpopup",
-			"transition": "none",
-			"center": true,
-			"noClose": false, // turns off 'x' in corner
-			"slide": { // only applies if transition is 'slide'
-				"origin": "top"
-			}
-		});
-		var nodeStyle = {};
+	_buildContent: function() {
+		var opts = this.opts, nodeStyle = {};
 		["top", "bottom", "right", "left"].forEach(function(side) {
 			if (side in opts.slide)
 				nodeStyle[side] = opts.slide[side];
@@ -171,8 +221,24 @@ CT.modal.Modal = CT.Class({
 		this.build();
 		if (opts.content || opts.node) // 'node' is now deprecated :'(
 			this.add(opts.content || opts.node);
+	},
+	init: function(opts) {
+		this.opts = CT.merge(opts, CT.modal._defaults.Modal);
+		setTimeout(this._buildContent); // wait a tick for all inits to run
 	}
 });
+
+CT.modal.LightBox = CT.Class({
+	init: function(opts) {
+		this.opts = CT.merge(opts, CT.modal._defaults.LightBox, CT.modal._defaults.Modal, {
+			content: CT.dom.node(null, "div", "backdrop-img filler", "", {
+				onclick: this.hide
+			}, {
+				backgroundImage: "url(" + this.opts.img + ")"
+			})
+		});
+	}
+}, CT.modal.Modal);
 
 CT.modal.Prompt = CT.Class({
 	CLASSNAME: "CT.modal.Prompt",
@@ -214,10 +280,13 @@ CT.modal.Prompt = CT.Class({
 		this.hide();
 	},
 	build: function() {
-		this.input = this._input[this.opts.style || "string"](this.opts.data || []);
+		this.input = this._input[this.opts.style](this.opts.data);
 		this.node.appendChild(CT.dom.node(this.opts.prompt));
 		this.node.appendChild(this.input);
 		this.node.appendChild(CT.dom.button("Continue", this.submit));
 		this.node.appendChild(CT.dom.button("Cancel", this.hide));
+	},
+	init: function(opts) {
+		this.opts = CT.merge(opts, CT.modal._defaults.Prompt, CT.modal._defaults.Modal);
 	}
 }, CT.modal.Modal);

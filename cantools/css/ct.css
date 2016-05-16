@@ -5,6 +5,20 @@
 .activetab a {
     color: #670002;
 }
+.backdrop {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+}
+.backdrop-img {
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
 .bare {
     padding: 0px !important;
     margin: 0px !important;
@@ -128,7 +142,6 @@
     left: 10px;
     right: 10px;
     padding: 10px;
-    background: white;
 }
 .fullheight {
     height: 100%;
@@ -212,6 +225,9 @@
 }
 .w280 {
     width: 280px;
+}
+.white {
+    background: white;
 }
 .wrap {
     word-wrap: break-word;
