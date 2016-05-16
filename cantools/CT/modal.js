@@ -11,36 +11,36 @@ a string, a password, or one or more selections from a list.
 */
 
 CT.modal.Modal = CT.Class({
-	"CLASSNAME": "CT.modal.Modal",
-	"visible": false,
-	"setup": {
-		"_centerv": function(parent) {
+	CLASSNAME: "CT.modal.Modal",
+	visible: false,
+	setup: {
+		_centerv: function(parent) {
 			return ((parent.clientHeight || CT.align.height()) - this.node.clientHeight) / 2;
 		},
-		"_centerh": function(parent) {
+		_centerh: function(parent) {
 			return ((parent.clientWidth || CT.align.width()) - this.node.clientWidth) / 2;
 		},
-		"_fallbacks": function(parent) {
+		_fallbacks: function(parent) {
 			var n = this.node;
 			if (!n.style.top)
 				n.style.top = this.setup._centerv(parent) + "px";
 			if (!n.style.left)
 				n.style.left = this.setup._centerh(parent) + "px";
 		},
-		"_add": function(parent) {
+		_add: function(parent) {
 			var n = this.node;
 			parent = (parent instanceof Node) ? parent : document.body;
 			CT.dom.addContent(parent, n);
 			this.opts.center && this.setup._fallbacks(parent);
 		},
-		"none": function() {
+		none: function() {
 			var n = this.node;
 			n.show = this.setup._add;
 			n.hide = function() {
 				CT.dom.remove(n);
 			};
 		},
-		"fade": function() {
+		fade: function() {
 			var n = this.node, add = this.setup._add;
 			n.show = function(parent) {
 				n.style.opacity = 0;
@@ -64,7 +64,7 @@ CT.modal.Modal = CT.Class({
 				});
 			};
 		},
-		"slide": function() {
+		slide: function() {
 			var n = this.node, add = this.setup._add,
 				origin = this.opts.slide.origin,
 				center = this.opts.center,
@@ -115,42 +115,42 @@ CT.modal.Modal = CT.Class({
 			};
 		}
 	},
-	"on": {
-		"show": function() {},
-		"hide": function() {}
+	on: {
+		show: function() {},
+		hide: function() {}
 	},
-	"hide": function() {
+	hide: function() {
 		this.node.hide();
 		this.visible = false;
 		this.on.hide();
 	},
-	"show": function(n) {
+	show: function(n) {
 		this.node.show(n);
 		this.visible = true;
 		this.on.show();
 	},
-	"showHide": function() {
+	showHide: function() {
 		this.visible ? this.hide() : this.show();
 	},
-	"addClose": function() {
+	addClose: function() {
 		this.add(CT.dom.node(CT.dom.link("X", this.hide), "div", "right pointer"));
 	},
-	"build": function() { // override
+	build: function() { // override
 		if (!this.opts.noClose)
 			this.addClose();
 	},
-	"clear": function() {
+	clear: function() {
 		this.node.innerHTML = "";
 	},
-	"add": function(content) {
+	add: function(content) {
 		CT.dom.addContent(this.node, content);
 	},
-	"set": function(node, addClose) {
+	set: function(node, addClose) {
 		this.clear();
 		addClose && this.addClose();
 		this.add(node);
 	},
-	"init": function(opts) {
+	init: function(opts) {
 		this.opts = opts = CT.merge(opts, {
 			"className": "basicpopup",
 			"transition": "none",
@@ -175,9 +175,9 @@ CT.modal.Modal = CT.Class({
 });
 
 CT.modal.Prompt = CT.Class({
-	"CLASSNAME": "CT.modal.Prompt",
-	"_input": {
-		"string": function() {
+	CLASSNAME: "CT.modal.Prompt",
+	_input: {
+		string: function() {
 			if (this.opts.autocomplete)
 				return CT.autocomplete.DBGuesser({
 					input: CT.dom.field(),
@@ -188,7 +188,7 @@ CT.modal.Prompt = CT.Class({
 			else
 				return CT.dom.smartField(this.submit);
 		},
-		"password": function() {
+		password: function() {
 			return CT.dom.smartField(this.submit,
 				null, null, null, "password");
 		},
@@ -199,21 +199,21 @@ CT.modal.Prompt = CT.Class({
 			return CT.dom.choices(data, true);
 		}
 	},
-	"on": {
-		"show": function() {
+	on: {
+		show: function() {
 			this.input.focus();
 		},
-		"hide": function() {}
+		hide: function() {}
 	},
-	"submitAC": function(d) {
+	submitAC: function(d) {
 		this.opts.cb(d);
 		this.hide();
 	},
-	"submit": function() {
+	submit: function() {
 		this.opts.cb(this.input.value);
 		this.hide();
 	},
-	"build": function() {
+	build: function() {
 		this.input = this._input[this.opts.style || "string"](this.opts.data || []);
 		this.node.appendChild(CT.dom.node(this.opts.prompt));
 		this.node.appendChild(this.input);
