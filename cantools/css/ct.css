@@ -149,6 +149,12 @@
 .fullwidth {
     width: 100%;
 }
+.full-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
 .gray {
     color: gray;
 }
@@ -227,6 +233,9 @@
     width: 280px;
 }
 .white {
+    color: white;
+}
+.whiteback {
     background: white;
 }
 .wrap {
@@ -460,6 +469,9 @@ button, a, .pointer {
 }
 .transparent {
     opacity: 0;
+}
+.translucent {
+    opacity: 0.7;
 }
 
 .lister {

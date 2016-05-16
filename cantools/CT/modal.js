@@ -28,6 +28,7 @@ defaults:
 	{
 		className: "backdrop",
 		transition: "fade",
+		caption: "",
 		noClose: true
 	}
 
@@ -57,6 +58,7 @@ CT.modal._defaults = {
 	LightBox: {
 		className: "backdrop",
 		transition: "fade",
+		caption: "",
 		noClose: true
 	},
 	Prompt: {
@@ -231,11 +233,13 @@ CT.modal.Modal = CT.Class({
 CT.modal.LightBox = CT.Class({
 	init: function(opts) {
 		this.opts = CT.merge(opts, CT.modal._defaults.LightBox, CT.modal._defaults.Modal, {
-			content: CT.dom.node(null, "div", "backdrop-img filler", "", {
-				onclick: this.hide
-			}, {
-				backgroundImage: "url(" + this.opts.img + ")"
-			})
+			content: CT.dom.node(CT.dom.node(this.opts.caption, "div",
+				"biggest bold padded round translucent full-center white grayback pointer hoverglow"),
+				"div", "backdrop-img filler", "", {
+					onclick: this.hide
+				}, {
+					backgroundImage: "url(" + this.opts.img + ")"
+				})
 		});
 	}
 }, CT.modal.Modal);
