@@ -17,7 +17,7 @@ defaults:
 	}
 
 Note that the optional 'slide' object -- which only applies when
-transition is 'slide', may include 'top', 'left', 'bottom', and 'right'
+transition is 'slide' -- may include 'top', 'left', 'bottom', and 'right'
 properties. For any other transition (when center is false), please
 position your node via css class (specified via 'className' property).
 
@@ -40,7 +40,7 @@ defaults:
 	{
 		style: "string", // string|password|single-choice|multiple-choice
 		prompt: "",
-		data: []
+		data: [] // only applies to choice styles
 	}
 */
 

@@ -1,4 +1,4 @@
-# cantools 0.6.7.4
+# cantools 0.6.7.5
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM; a built in administrative interface; and a rich modular JavaScript library.
 
 License: MIT (see LICENSE)
@@ -470,15 +470,49 @@ between components.
 
 ## CT.modal
 ### Import line: 'CT.require("CT.modal");'
-This module contains two classes, Modal and Prompt.
+This module contains three classes, Modal, LightBox, and Prompt.
 
 ### CT.modal.Modal
 Creates a DOM node that can be transitioned
 on- and off- screen to/from a configurable position.
 
+defaults:
+	{
+		className: "basicpopup",
+		transition: "none", // none|fade|slide
+		center: true,
+		noClose: false, // turns off 'x' in corner
+		slide: { // only applies if transition is 'slide'
+			origin: "top"
+		}
+	}
+
+Note that the optional 'slide' object -- which only applies when
+transition is 'slide' -- may include 'top', 'left', 'bottom', and 'right'
+properties. For any other transition (when center is false), please
+position your node via css class (specified via 'className' property).
+
+### CT.modal.LightBox (Modal subclass)
+Centered, almost-fullscreen, fade-in, image-backed modal with translucent backdrop.
+
+defaults:
+	{
+		className: "backdrop",
+		transition: "fade",
+		noClose: true
+	}
+
+
 ### CT.modal.Prompt (Modal subclass)
 Includes interface elements for obtaining user input, such as
 a string, a password, or one or more selections from a list.
+
+defaults:
+	{
+		style: "string", // string|password|single-choice|multiple-choice
+		prompt: "",
+		data: [] // only applies to choice styles
+	}
 
 ## CT.panel
 ### Import line: 'CT.require("CT.panel");'
@@ -692,9 +726,19 @@ around with DOM elements via CSS transitions. Have at it.
 		property: "background-position",
 		ease: "linear",
 		value: "right"
+	},
+	fadeIn: {
+		duration: 1000,
+		property: "opacity",
+		value: 1
+	},
+	fadeOut: {
+		duration: 1000,
+		property: "opacity",
+		value: 0
 	}
 
-TODO: let's add some more, like scale and fade.
+TODO: let's add some more, like scale.
 
 ## CT.upload
 ### Import line: 'CT.require("CT.upload");'
