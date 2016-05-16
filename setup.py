@@ -26,6 +26,7 @@ setup(
         "yagmail >= 0.4.116",
         "requests >= 2.3.0",
         "slimit",
+        "ply >= 3.7",
         "sqlalchemy >= 1.0.12"
     ],
     entry_points = '''
