@@ -7,12 +7,14 @@ define any of several properties. These individual properties, as well as
 the 'opts' object itself, are all optional.
 
 ### Definable properties are as follows:
-    - node (default: document.body): DOM element in which to build the slider
+    - parent (default: document.body): DOM element in which to build the slider
     - mode (dfault: 'peekaboo'): how to display each frame - 'peekaboo' or 'chunk'
     - autoSlideInterval (default: 5000): how many milliseconds to wait before auto-sliding frames
     - autoSlide (default: true): automatically proceed through frames (else, trigger later with .resume())
+    - navButtons (default: true): include nav bubbles and arrows
     - pan (default: true): slow-pan frame background images
-    - pauseParent (default: null): used by chunked (or custom) Frame to pause parent autoslide
+    - embedded (default: false): if true, don't trigger 'show' cb on frame 1
+    - tapCb (default: null): used, for instance, by chunked Frame to pause parent autoslide
     - bubblePosition (default: 'bottom'): where to position frame indicator bubbles ('top' or 'bottom')
     - arrowPosition (default: 'middle'): where to position navigator arrows
     - orientation (default: 'horizontal'): orientation for slider frames to arrange themselves
@@ -37,9 +39,11 @@ CT.slider.Slider = CT.Class({
 			frames: [],
 			autoSlideInterval: 5000,
 			autoSlide: true,
+			navButtons: true,
 			pan: true,
-			pauseParent: null,
-			node: document.body,
+			embedded: false,
+			tapCb: null,
+			parent: document.body,
 			mode: "peekaboo", // or 'chunk'
 			orientation: "horizontal",
 			arrowPosition: "middle", // or "top" or "middle"
@@ -51,7 +55,10 @@ CT.slider.Slider = CT.Class({
 
 		var bclass = "slider-btn hoverglow pointer sb-"
 			+ this.opts.arrowPosition + " sb-" + opts.orientation;
-
+		if (!opts.navButtons) {
+			bclass += " hider";
+			this.circlesContainer.classList.add("hider");
+		}
 		this.prevButton = CT.dom.node(CT.dom.node("<", "span"), "div",
 			bclass + " prv hidden");
 		this.nextButton = CT.dom.node(CT.dom.node(">", "span"), "div",
@@ -59,12 +66,13 @@ CT.slider.Slider = CT.Class({
 		this.index = this.pos = 0;
 		this.container = CT.dom.node("", "div",
 			"carousel-container full" + CT.slider.other_dim[this.dimension]);
-		this.opts.node.appendChild(CT.dom.node([
+		this.node = CT.dom.node([
 			this.container,
 			this.circlesContainer,
 			this.prevButton,
 			this.nextButton
-		], "div", "carousel fullwidth fullheight"));
+		], "div", "carousel fullwidth fullheight");
+		this.opts.parent.appendChild(this.node);
 		this.opts.frames.forEach(this.addFrame);
 		CT.gesture.listen("tap", this.prevButton, this.prevButtonCallback);
 		CT.gesture.listen("tap", this.nextButton, this.nextButtonCallback);
@@ -77,7 +85,7 @@ CT.slider.Slider = CT.Class({
 		if (this.opts.autoSlideInterval && this.opts.autoSlide)
 			this.resume();
 		CT.gesture.listen("down", this.container, this.pause);
-		this.opts.node.onresize = this.trans;
+		this.opts.parent.onresize = this.trans;
 		this._reflow();
 	},
 	_reflow: function() {
@@ -97,7 +105,7 @@ CT.slider.Slider = CT.Class({
 			clearInterval(this._autoSlide);
 			this._autoSlide = null;
 		}
-		this.opts.pauseParent && this.opts.pauseParent();
+		this.opts.tapCb && this.opts.tapCb();
 	},
 	addFrame: function (frame, index) {
 		if (typeof frame == "string")
@@ -110,7 +118,7 @@ CT.slider.Slider = CT.Class({
 		if (index == 0) {
 			circle.className += " active-circle";
 			this.activeCircle = circle;
-			if (!this.opts.pauseParent) // exclude embedded slider
+			if (this.opts.embedded) // exclude embedded slider
 				setTimeout(this.container.firstChild.frame.on.show, 500);
 		}
 		if (index == undefined) // ad-hoc frame
@@ -246,11 +254,12 @@ CT.slider.Frame = CT.Class({
 	},
 	chunk: function() {
 		var slider = new CT.slider.Slider({
-			node: this.node,
+			parent: this.node,
 			frames: this.opts.frames,
 			autoSlide: false,
 			orientation: CT.slider.other_orientation[this.slider.opts.orientation],
-			pauseParent: this.slider.pause,
+			tapCb: this.slider.pause,
+			embedded: true,
 			arrowPosition: "bottom"
 		});
 		this.on.show = slider.container.firstChild.frame.on.show;
