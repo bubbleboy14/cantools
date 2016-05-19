@@ -13,8 +13,7 @@ the 'opts' object itself, are all optional.
     - autoSlide (default: true): automatically proceed through frames (else, trigger later with .resume())
     - navButtons (default: true): include nav bubbles and arrows
     - pan (default: true): slow-pan frame background images
-    - embedded (default: false): if true, don't trigger 'show' cb on frame 1
-    - tapCb (default: null): used, for instance, by chunked Frame to pause parent autoslide
+    - tapCb (default: null): called when slider is tapped
     - bubblePosition (default: 'bottom'): where to position frame indicator bubbles ('top' or 'bottom')
     - arrowPosition (default: 'middle'): where to position navigator arrows
     - orientation (default: 'horizontal'): orientation for slider frames to arrange themselves
@@ -25,23 +24,20 @@ as image urls) or of data objects (processed in the addFrame function).
 */
 
 CT.slider = {
-	dir2abs: { right: "backward", left: "forward", up: "forward", down: "backward" },
 	other_dim: { height: "width", width: "height" },
 	other_orientation: { vertical: "horizontal", horizontal: "vertical" },
 	orientation2dim: { vertical: "height", horizontal: "width" },
-	orientation2axis: { vertical: "y", horizontal: "x" }
 };
 
 CT.slider.Slider = CT.Class({
 	CLASSNAME: "CT.slider.Slider",
-	init: function (opts) {
+	init: function(opts) {
 		this.opts = opts = CT.merge(opts, {
 			frames: [],
 			autoSlideInterval: 5000,
 			autoSlide: true,
 			navButtons: true,
 			pan: true,
-			embedded: false,
 			tapCb: null,
 			parent: document.body,
 			mode: "peekaboo", // or 'chunk'
@@ -100,14 +96,15 @@ CT.slider.Slider = CT.Class({
 		if (!this._autoSlide)
 			this._autoSlide = setInterval(this._autoSlideCallback, this.opts.autoSlideInterval);
 	},
-	pause: function () {
+	pause: function() {
 		if (this._autoSlide) {
 			clearInterval(this._autoSlide);
 			this._autoSlide = null;
 		}
 		this.opts.tapCb && this.opts.tapCb();
+		this.opts.parent.slider && this.opts.parent.slider.pause();
 	},
-	addFrame: function (frame, index) {
+	addFrame: function(frame, index) {
 		if (typeof frame == "string")
 			frame = { img: frame };
 		var circle = CT.dom.node(frame.label, "div",
@@ -118,13 +115,13 @@ CT.slider.Slider = CT.Class({
 		if (index == 0) {
 			circle.className += " active-circle";
 			this.activeCircle = circle;
-			if (this.opts.embedded) // exclude embedded slider
+			if (!this.opts.parent.slider) // exclude embedded slider
 				setTimeout(this.container.firstChild.frame.on.show, 500);
 		}
 		if (index == undefined) // ad-hoc frame
 			this._reflow();
 	},
-	circleJump: function (index) {
+	circleJump: function(index) {
 		var f = function() {
 			this.pause();
 			this.updateIndicator(index);
@@ -132,7 +129,7 @@ CT.slider.Slider = CT.Class({
 		}.bind(this);
 		return f;
 	},
-	updateIndicator: function (index) {
+	updateIndicator: function(index) {
 		this.container.childNodes[this.index].frame.on.hide();
 		this.index = index;
 		this.container.childNodes[this.index].frame.on.show();
@@ -142,32 +139,39 @@ CT.slider.Slider = CT.Class({
 		CT.dom[this.activeCircle.nextSibling ? "show" : "hide"](this.nextButton);
 		CT.dom[this.activeCircle.previousSibling ? "show" : "hide"](this.prevButton);
 	},
-	updatePosition: function (direction, force) {
-		var index = this.index, absdir = CT.slider.dir2abs[direction];
-		if (absdir == "forward" && (force || this.activeCircle.nextSibling))
-			index += 1;
-		else if (absdir == "backward" && (force || this.activeCircle.previousSibling))
-			index -= 1;
-		this.updateIndicator(index % this.circlesContainer.childNodes.length);
+	updatePosition: function(direction, force) {
+		var index = this.index, absdir = CT.drag._.dir2abs[direction];
+		if (CT.drag._.direction2constraint[direction] != this.opts.orientation) {
+			if (absdir == "forward" && (force || this.activeCircle.nextSibling))
+				index += 1;
+			else if (absdir == "backward" && (force || this.activeCircle.previousSibling))
+				index -= 1;
+			this.updateIndicator(index % this.circlesContainer.childNodes.length);
+		} else if (this.opts.parent.slider) {
+			if (absdir == "forward")
+				this.opts.parent.slider.nextButtonCallback();
+			else if (absdir == "backward")
+				this.opts.parent.slider.prevButtonCallback();
+		}
 	},
 	trans: function() {
-		var opts = {}, axis = CT.slider.orientation2axis[this.opts.orientation];
+		var opts = {}, axis = CT.drag._.orientation2axis[this.opts.orientation];
 		opts[axis] = this.container[axis + "Drag"] = -this.index
 			* CT.align[this.dimension](this.container) / this.container.childNodes.length;
 		CT.trans.translate(this.container, opts);
 	},
-	shift: function (direction, force) {
+	shift: function(direction, force) {
 		this.updatePosition(direction, force);
 		this.trans();
 	},
-	_autoSlideCallback: function () {
+	_autoSlideCallback: function() {
 		this.shift("left", true);
 	},
-	prevButtonCallback: function () {
+	prevButtonCallback: function() {
 		this.pause();
 		this.shift("right");
 	},
-	nextButtonCallback: function () {
+	nextButtonCallback: function() {
 		this.pause();
 		this.shift("left");
 	}
@@ -258,8 +262,6 @@ CT.slider.Frame = CT.Class({
 			frames: this.opts.frames,
 			autoSlide: false,
 			orientation: CT.slider.other_orientation[this.slider.opts.orientation],
-			tapCb: this.slider.pause,
-			embedded: true,
 			arrowPosition: "bottom"
 		});
 		this.on.show = slider.container.firstChild.frame.on.show;
@@ -267,10 +269,10 @@ CT.slider.Frame = CT.Class({
 	},
 	init: function(opts, slider) {
 		this.opts = opts;
-		this.slider = slider;
 		this.node = CT.dom.node("", "div",
 			"carousel-content-container full" + CT.slider.other_dim[slider.dimension]);
 		this.node.frame = this;
+		this.slider = this.node.slider = slider;
 		if (slider.dimension == "width")
 			this.node.style.display = "inline-block";
 		this[slider.opts.mode]();

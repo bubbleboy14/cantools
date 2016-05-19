@@ -23,7 +23,7 @@ CT.drag = {
 			left: "vertical",
 			right: "vertical"
 		},
-		constraint2axis: {
+		orientation2axis: {
 			vertical: "y",
 			horizontal: "x"
 		},
@@ -232,9 +232,9 @@ CT.drag = {
 		var swipeCallback = function(direction, distance, dx, dy, pixelsPerSecond) {
 			var constraint, absdir, axis, dval, minval, mod, interval = getInterval();
 			if (node.animating == false) {
-				for (constraint in _.constraint2axis) {
+				for (constraint in _.orientation2axis) {
 					absdir = _.dir2abs[direction];
-					axis = _.constraint2axis[constraint];
+					axis = _.orientation2axis[constraint];
 					dval = node[axis + "Drag"];
 					minval = minVal(constraint);
 					mod = interval ? (dval % interval) : (constraint == "vertical" ? -dy : -dx);
