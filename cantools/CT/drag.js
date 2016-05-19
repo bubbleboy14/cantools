@@ -17,11 +17,11 @@ any or all of the following options:
 
 CT.drag = {
 	_: {
-		direction2constraint: {
-			up: "horizontal",
-			down: "horizontal",
-			left: "vertical",
-			right: "vertical"
+		direction2orientation: {
+			up: "vertical",
+			down: "vertical",
+			left: "horizontal",
+			right: "horizontal"
 		},
 		orientation2axis: {
 			vertical: "y",
@@ -29,6 +29,7 @@ CT.drag = {
 		},
 		dir2abs: { right: "backward", left: "forward", up: "forward", down: "backward" },
 	},
+	log: CT.log.getLogger("drag"),
 	nativeScroll: function (n, opts) {
 		CT.gesture.listen("up", n, function () {
 			if (opts.up)
@@ -63,11 +64,10 @@ CT.drag = {
 			lastDirection = direction;
 			if (opts.drag)
 				opts.drag(direction, distance, dx, dy);
-			if((atTop && direction == "down") ||
+			if ((atTop && direction == "down") ||
 				(atBottom && direction == "up"))
 				return false;
-			return !opts.constraint ||
-				opts.constraint == CT.drag._.direction2constraint[direction];
+			return opts.constraint != CT.drag._.direction2orientation[direction];
 		}, true, false);
 		CT.gesture.listen("swipe", n, function (direction, distance, dx, dy, pixelsPerSecond) { 
 			if (direction == "up" && (n.parentNode.scrollTop >=
@@ -230,33 +230,35 @@ CT.drag = {
 				return node.parentNode.clientHeight - node.scrollHeight;
 		};
 		var swipeCallback = function(direction, distance, dx, dy, pixelsPerSecond) {
-			var constraint, absdir, axis, dval, minval, mod, interval = getInterval();
-			if (node.animating == false) {
-				for (constraint in _.orientation2axis) {
-					absdir = _.dir2abs[direction];
-					axis = _.orientation2axis[constraint];
-					dval = node[axis + "Drag"];
-					minval = minVal(constraint);
-					mod = interval ? (dval % interval) : (constraint == "vertical" ? -dy : -dx);
-					if (opts.constraint != constraint && dval <= 0 && dval > minval) {
-						if (absdir == "backward")
-							node[axis + "Drag"] -= mod;
-						else if (absdir == "forward")
-							node[axis + "Drag"] += (interval ? -(interval + mod) : mod);
-						else
-							return;
-					}
+			var orientation, absdir, axis, dval, minval, mod, interval = getInterval();
+			if (node.animating)
+				return;
+			if (_.direction2orientation[direction] == opts.constraint)
+				return opts.up && opts.up(direction); // legit??
+			for (orientation in _.orientation2axis) {
+				absdir = _.dir2abs[direction];
+				axis = _.orientation2axis[orientation];
+				dval = node[axis + "Drag"];
+				minval = minVal(orientation);
+				mod = interval ? (dval % interval) : (orientation == "vertical" ? -dy : -dx);
+				if (opts.constraint != orientation && dval <= 0 && dval > minval) {
+					if (absdir == "backward")
+						node[axis + "Drag"] -= mod;
+					else if (absdir == "forward")
+						node[axis + "Drag"] += (interval ? -(interval + mod) : mod);
+					else
+						return CT.drag.log("swipeCallback", direction, "has no abs dir!");
 				}
-				node.animating = true;
-				CT.trans.translate(node, {
-					x: node.xDrag,
-					y: node.yDrag,
-					cb: function() {
-						node.animating = false;
-						upCallback(direction); // legit?
-					}
-				});
 			}
+			node.animating = true;
+			CT.trans.translate(node, {
+				x: node.xDrag,
+				y: node.yDrag,
+				cb: function() {
+					node.animating = false;
+					upCallback(direction); // legit?
+				}
+			});
 		};
 
 		if (node.isDraggable)

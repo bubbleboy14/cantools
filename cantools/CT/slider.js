@@ -27,6 +27,16 @@ CT.slider = {
 	other_dim: { height: "width", width: "height" },
 	other_orientation: { vertical: "horizontal", horizontal: "vertical" },
 	orientation2dim: { vertical: "height", horizontal: "width" },
+	orientation2abs: {
+		vertical: {
+			forward: "up",
+			backward: "down"
+		},
+		horizontal: {
+			forward: "left",
+			backward: "right"
+		}
+	}
 };
 
 CT.slider.Slider = CT.Class({
@@ -58,7 +68,7 @@ CT.slider.Slider = CT.Class({
 		this.prevButton = CT.dom.node(CT.dom.node("<", "span"), "div",
 			bclass + " prv hidden");
 		this.nextButton = CT.dom.node(CT.dom.node(">", "span"), "div",
-			bclass + " nxt");
+			bclass + " nxt" + (opts.frames.length < 2 ? " hidden" : ""));
 		this.index = this.pos = 0;
 		this.container = CT.dom.node("", "div",
 			"carousel-container full" + CT.slider.other_dim[this.dimension]);
@@ -141,18 +151,14 @@ CT.slider.Slider = CT.Class({
 	},
 	updatePosition: function(direction, force) {
 		var index = this.index, absdir = CT.drag._.dir2abs[direction];
-		if (CT.drag._.direction2constraint[direction] != this.opts.orientation) {
+		if (CT.drag._.direction2orientation[direction] == this.opts.orientation) {
 			if (absdir == "forward" && (force || this.activeCircle.nextSibling))
 				index += 1;
 			else if (absdir == "backward" && (force || this.activeCircle.previousSibling))
 				index -= 1;
 			this.updateIndicator(index % this.circlesContainer.childNodes.length);
-		} else if (this.opts.parent.slider) {
-			if (absdir == "forward")
-				this.opts.parent.slider.nextButtonCallback();
-			else if (absdir == "backward")
-				this.opts.parent.slider.prevButtonCallback();
-		}
+		} else if (this.opts.parent.slider)
+			this.opts.parent.slider.shift(direction, force);
 	},
 	trans: function() {
 		var opts = {}, axis = CT.drag._.orientation2axis[this.opts.orientation];
@@ -165,15 +171,15 @@ CT.slider.Slider = CT.Class({
 		this.trans();
 	},
 	_autoSlideCallback: function() {
-		this.shift("left", true);
+		this.shift(CT.slider.orientation2abs[this.opts.orientation].forward, true);
 	},
 	prevButtonCallback: function() {
 		this.pause();
-		this.shift("right");
+		this.shift(CT.slider.orientation2abs[this.opts.orientation].backward);
 	},
 	nextButtonCallback: function() {
 		this.pause();
-		this.shift("left");
+		this.shift(CT.slider.orientation2abs[this.opts.orientation].forward);
 	}
 });
 
