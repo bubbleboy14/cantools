@@ -1,4 +1,4 @@
-# cantools 0.6.7.6
+# cantools 0.6.7.7
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM; a built in administrative interface; and a rich modular JavaScript library.
 
 License: MIT (see LICENSE)
@@ -655,12 +655,13 @@ define any of several properties. These individual properties, as well as
 the 'opts' object itself, are all optional.
 
 ### Definable properties are as follows:
-    - node (default: document.body): DOM element in which to build the slider
+    - parent (default: document.body): DOM element in which to build the slider
     - mode (dfault: 'peekaboo'): how to display each frame - 'peekaboo' or 'chunk'
     - autoSlideInterval (default: 5000): how many milliseconds to wait before auto-sliding frames
     - autoSlide (default: true): automatically proceed through frames (else, trigger later with .resume())
+    - navButtons (default: true): include nav bubbles and arrows
     - pan (default: true): slow-pan frame background images
-    - pauseParent (default: null): used by chunked (or custom) Frame to pause parent autoslide
+    - tapCb (default: null): called when slider is tapped
     - bubblePosition (default: 'bottom'): where to position frame indicator bubbles ('top' or 'bottom')
     - arrowPosition (default: 'middle'): where to position navigator arrows
     - orientation (default: 'horizontal'): orientation for slider frames to arrange themselves
