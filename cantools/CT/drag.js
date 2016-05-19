@@ -16,11 +16,18 @@ any or all of the following options:
 */
 
 CT.drag = {
-	_direction2constraint: {
-		up: "horizontal",
-		down: "horizontal",
-		left: "vertical",
-		right: "vertical"
+	_: {
+		direction2constraint: {
+			up: "horizontal",
+			down: "horizontal",
+			left: "vertical",
+			right: "vertical"
+		},
+		constraint2axis: {
+			vertical: "y",
+			horizontal: "x"
+		},
+		dir2abs: { right: "backward", left: "forward", up: "forward", down: "backward" },
 	},
 	nativeScroll: function (n, opts) {
 		CT.gesture.listen("up", n, function () {
@@ -60,7 +67,7 @@ CT.drag = {
 				(atBottom && direction == "up"))
 				return false;
 			return !opts.constraint ||
-				opts.constraint == CT.drag._direction2constraint[direction];
+				opts.constraint == CT.drag._.direction2constraint[direction];
 		}, true, false);
 		CT.gesture.listen("swipe", n, function (direction, distance, dx, dy, pixelsPerSecond) { 
 			if (direction == "up" && (n.parentNode.scrollTop >=
@@ -82,7 +89,7 @@ CT.drag = {
 		opts = opts || {};
 		if (!opts.interval && !opts.force && !CT.info.isStockAndroid)
 			return CT.drag.nativeScroll(node.firstChild, opts);
-		var downCallback, upCallback, dragCallback, swipeCallback;
+		var _ = CT.drag._;
 		node.xDrag = 0;
 		node.yDrag = 0;
 		node.classList.add('hardware-acceleration');
@@ -216,28 +223,29 @@ CT.drag = {
 					opts.scroll();
 			}
 		};
-		var swipeCallback = function (direction, distance, dx, dy, pixelsPerSecond) {
-			var interval = getInterval(),
-				xMod = interval ? node.xDrag % interval : -dx,
-				yMod = interval ? node.yDrag % interval : pixelsPerSecond * .3;
+		var minVal = function(orientation) {
+			if (orientation == "horizontal")
+				return node.parentNode.clientWidth - node.scrollWidth;
+			else if (orientation == "vertical")
+				return node.parentNode.clientHeight - node.scrollHeight;
+		};
+		var swipeCallback = function(direction, distance, dx, dy, pixelsPerSecond) {
+			var constraint, absdir, axis, dval, minval, mod, interval = getInterval();
 			if (node.animating == false) {
-				if (opts.constraint != "horizontal" && node.xDrag <= 0 && 
-					Math.abs(node.xDrag) < (node.scrollWidth - node.parentNode.clientWidth)) {
-					if (direction == "right")
-						node.xDrag -= xMod;
-					else if (direction == "left")
-						node.xDrag += (interval ? -(interval + xMod) : xMod);
-					else
-						return;
-				}
-				if (opts.constraint != "vertical" && node.yDrag <= 0 
-					&& Math.abs(node.yDrag) > (node.scrollHeight - node.parentNode.clientHeight)) {
-					if (direction == "up")
-						node.yDrag -= yMod;
-					else if (direction == "down")
-						node.yDrag -= (interval ? -(interval + yMod) : -yMod);
-					else
-						return;
+				for (constraint in _.constraint2axis) {
+					absdir = _.dir2abs[direction];
+					axis = _.constraint2axis[constraint];
+					dval = node[axis + "Drag"];
+					minval = minVal(constraint);
+					mod = interval ? (dval % interval) : (constraint == "vertical" ? -dy : -dx);
+					if (opts.constraint != constraint && dval <= 0 && dval > minval) {
+						if (absdir == "backward")
+							node[axis + "Drag"] -= mod;
+						else if (absdir == "forward")
+							node[axis + "Drag"] += (interval ? -(interval + mod) : mod);
+						else
+							return;
+					}
 				}
 				node.animating = true;
 				CT.trans.translate(node, {
