@@ -98,6 +98,14 @@ CT.data = {
 	    return newitems;
 	},
 
+	// random stuff
+	"random": function(max) {
+		return Math.floor(Math.random() * max);
+	},
+	"choice": function(arr) {
+		return arr[CT.data.random(arr.length)];
+	},
+
 	// data acquisition functions -- require backend integration
 	"checkAndDo": function(keys, cb, nlcb, eb, req, getpath, getparams) {
 	    var needed = [];
