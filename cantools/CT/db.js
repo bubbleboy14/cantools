@@ -379,7 +379,7 @@ CT.db.Query = CT.Class({
 				"div", this.opts.showHelp && "italic" || "hidden"),
 			this.filters,
 			CT.dom.button("submit", this._submit)
-		]);
+		], "div", "centered");
 	},
 	_filterables: function() {
 		this.filterables = [];
