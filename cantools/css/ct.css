@@ -167,6 +167,9 @@
 .halfwidth {
     width: 50%;
 }
+.thirdwidth {
+    width: 33%;
+}
 .hidden {
     display: none;
 }
