@@ -2,6 +2,7 @@
 This loader imports almost every CT module.
 
 ### This includes:
+    - CT.Drop
     - CT.Pager
     - CT.align
     - CT.autocomplete
@@ -28,6 +29,7 @@ This loader imports almost every CT module.
     - CT.admin, which is not for typical use.
 */
 
+CT.require("CT.Drop");
 CT.require("CT.Pager");
 CT.require("CT.align");
 CT.require("CT.autocomplete");
