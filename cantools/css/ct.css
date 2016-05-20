@@ -67,6 +67,9 @@
 .bordered {
     border: 1px solid black;
 }
+.bordered-gray {
+    border: 1px solid #ccc;
+}
 .bottom {
     bottom: 10px;
 }
@@ -170,6 +173,9 @@
 .thirdwidth {
     width: 33%;
 }
+.fourthwidth {
+    width: 25%;
+}
 .hidden {
     display: none;
 }
@@ -192,6 +198,9 @@
 }
 .padded {
     padding: 10px;
+}
+.padded5 {
+    padding: 5px;
 }
 .red {
     color: red;
@@ -244,30 +253,32 @@
 .wrap {
     word-wrap: break-word;
 }
-/* autocomplete classes */
-.autocomplete {
+/* drop classes */
+.drop {
   z-index: 10;
   position: absolute;
   max-height: 0px;
   background: white;
   text-align: left;
-  overflow-x: hidden;
-  overflow-y: scroll;
-  -webkit-transition: height 300ms ease-out;
+  overflow: hidden;
+  -webkit-transition: max-height 600ms ease-out;
 }
-.autocomplete div div {
+.drop div div {
   padding: 5px 15px;
   border-bottom: 1px solid gray;
   background: lightgray;
   cursor: pointer;
 }
-.autocomplete div div:hover {
+.drop div div:hover {
   color: white;
   font-weight: bold;
   background-color: darkgray;
 }
-.autocomplete-open {
+.drop-open {
     max-height: 200px;
+}
+.drop-over-auto {
+    overflow-y: auto;
 }
 .hider {
     visibility: hidden;
