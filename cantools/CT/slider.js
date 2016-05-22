@@ -17,6 +17,7 @@ the 'opts' object itself, are all optional.
     - bubblePosition (default: 'bottom'): where to position frame indicator bubbles ('top' or 'bottom')
     - arrowPosition (default: 'middle'): where to position navigator arrows
     - orientation (default: 'horizontal'): orientation for slider frames to arrange themselves
+    - arrows (default: false): use arrow keys to navigate slider
     - frames (default: []): an array of items corresponding to the frames in the slider
 
 The last one, 'frames', must be an array either of strings (interpreted
@@ -44,6 +45,7 @@ CT.slider.Slider = CT.Class({
 	init: function(opts) {
 		this.opts = opts = CT.merge(opts, {
 			frames: [],
+			arrows: false,
 			autoSlideInterval: 5000,
 			autoSlide: true,
 			navButtons: true,
@@ -82,6 +84,12 @@ CT.slider.Slider = CT.Class({
 		this.opts.frames.forEach(this.addFrame);
 		CT.gesture.listen("tap", this.prevButton, this.prevButtonCallback);
 		CT.gesture.listen("tap", this.nextButton, this.nextButtonCallback);
+		if (opts.arrows) {
+			CT.key.on(opts.orientation == "horizontal" ?
+				"LEFT" : "UP", this.prevButtonCallback);
+			CT.key.on(opts.orientation == "horizontal" ?
+				"RIGHT" : "DOWN", this.nextButtonCallback);
+		}
 		this.dragOpts = {
 			constraint: CT.slider.other_orientation[opts.orientation],
 			up: this.updatePosition,
@@ -269,9 +277,17 @@ CT.slider.Frame = CT.Class({
 			autoSlide: false,
 			orientation: CT.slider.other_orientation[this.slider.opts.orientation],
 			arrowPosition: "bottom"
-		});
-		this.on.show = slider.container.firstChild.frame.on.show;
+		}), parent = this.slider;
 		this.on.hide = slider.container.firstChild.frame.on.hide;
+		this.on.show = function() {
+			slider.container.firstChild.frame.on.show();
+			if (parent.opts.arrows) {
+				CT.key.on(slider.opts.orientation == "horizontal" ?
+					"LEFT" : "UP", slider.prevButtonCallback);
+				CT.key.on(slider.opts.orientation == "horizontal" ?
+					"RIGHT" : "DOWN", slider.nextButtonCallback);
+			}
+		};
 	},
 	init: function(opts, slider) {
 		this.opts = opts;
