@@ -222,6 +222,11 @@ CT.slider.Frame = CT.Class({
 				CT.trans.fadeOut(teaser);
 			};
 		}
+		if (opts.pulse) {
+			var pulser = CT.dom.img(opts.pulse, "carousel-pulse");
+			CT.trans.pulse(pulser);
+			nodes.push(pulser);
+		}
 		CT.dom.addEach(node, nodes);
 		if (opts.content) { // assume title/blurb exists
 			var clearAS = this.slider.pause;
@@ -233,7 +238,7 @@ CT.slider.Frame = CT.Class({
 						width: "40%",
 						height: "30%",
 						cb: function() {
-							full.style.zIndex = 100;
+							pulser.style.zIndex = 200;
 						}
 					})
 					CT.trans.trans({
@@ -243,7 +248,7 @@ CT.slider.Frame = CT.Class({
 						value: "0%"
 					});
 				} else {
-					full.style.zIndex = -1;
+					pulser.style.zIndex = 0;
 					CT.trans.resize(imageBack, {
 						width: "100%",
 						height: "100%"

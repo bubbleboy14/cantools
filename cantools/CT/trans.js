@@ -6,6 +6,10 @@ around with DOM elements via CSS transitions. Have at it.
 	CT.trans.rotate(node, opts)
 	CT.trans.translate(node, opts)
 	CT.trans.pan(node, opts)
+	CT.trans.resize(node, opts)
+	CT.trans.fadeIn(node, opts)
+	CT.trans.fadeOut(node, opts)
+	CT.trans.pulse(node, opts)
 	CT.trans.trans(opts)
 	CT.trans.setVendorPrefixed(node, property, value)
 	 - sets CSS properties for all vendor prefixes
@@ -51,6 +55,9 @@ around with DOM elements via CSS transitions. Have at it.
 		duration: 1000,
 		property: "opacity",
 		value: 0
+	},
+	pulse: {
+		wait: 1000
 	}
 
 TODO: let's add some more, like scale.
@@ -101,6 +108,9 @@ CT.trans = {
 				duration: 1600,
 				property: "opacity",
 				value: 0
+			},
+			pulse: {
+				wait: 1000
 			}
 		}
 	},
@@ -202,5 +212,19 @@ CT.trans = {
 		opts = CT.merge(opts, CT.trans._.defaults.fadeOut);
 		opts.node = node;
 		CT.trans.trans(opts);
+	},
+	pulse: function(node, opts) {
+		opts = CT.merge(opts, CT.trans._.defaults.pulse);
+		CT.trans.fadeIn(node, CT.merge({
+			cb: function() {
+				CT.trans.fadeOut(node, CT.merge({
+					cb: function() {
+						setTimeout(function() {
+							CT.trans.pulse(node, opts);
+						}, opts.wait);
+					}
+				}, opts));
+			}
+		}, opts));
 	}
 };

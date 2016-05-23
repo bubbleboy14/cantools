@@ -332,6 +332,7 @@
     color: white;
 }
 .carousel-content-image {
+    z-index: 100;
     background-position: center;
     background-size: cover;
     position: absolute;
@@ -340,7 +341,15 @@
     height: 100%;
     width: 100%;
 }
+.carousel-pulse {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 40%;
+    height: 30%;
+}
 .carousel-content-teaser {
+    z-index: 200;
     padding: 10px;
     margin: 10px;
     width: 55%;
