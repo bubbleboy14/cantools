@@ -72,24 +72,34 @@ CT.modal.Modal = CT.Class({
 	CLASSNAME: "CT.modal.Modal",
 	visible: false,
 	setup: {
-		_centerv: function(parent) {
-			return ((parent.clientHeight || CT.align.height()) - this.node.clientHeight) / 2;
+		_centerv: function(parent, bottom) {
+			var val = parent.clientHeight || CT.align.height();
+			if (bottom)
+				val += this.node.clientHeight;
+			else
+				val -= this.node.clientHeight;
+			return val / 2;
 		},
-		_centerh: function(parent) {
-			return ((parent.clientWidth || CT.align.width()) - this.node.clientWidth) / 2;
+		_centerh: function(parent, right) {
+			var val = parent.clientWidth || CT.align.width();
+			if (right)
+				val += this.node.clientWidth;
+			else
+				val -= this.node.clientWidth;
+			return val / 2;
 		},
 		_fallbacks: function(parent) {
 			var n = this.node;
-			if (!n.style.top)
+			if (!n.style.top && !n.style.bottom)
 				n.style.top = this.setup._centerv(parent) + "px";
-			if (!n.style.left)
+			if (!n.style.left && !n.style.right)
 				n.style.left = this.setup._centerh(parent) + "px";
 		},
-		_add: function(parent) {
+		_add: function(parent, nocenter) {
 			var n = this.node;
 			parent = (parent instanceof Node) ? parent : document.body;
 			CT.dom.addContent(parent, n);
-			this.opts.center && this.setup._fallbacks(parent);
+			this.opts.center && !nocenter && this.setup._fallbacks(parent);
 		},
 		none: function() {
 			var n = this.node;
@@ -129,44 +139,56 @@ CT.modal.Modal = CT.Class({
 				centerv = this.setup._centerv,
 				centerh = this.setup._centerh,
 				fallbacks = this.setup._fallbacks,
-				ver = true, hor = true;
+				ver = false, hor = false;
 
 			var _refresh = function(parent) {
 				parent = (parent instanceof Node) ? parent : document.body;
-				if (origin.startsWith("top")) {
-					n.top_out = n.style.top = -n.clientHeight + "px";
-					n.top_in = (center ? centerv(parent) : 0) + "px";
-				}
-				else if (origin.startsWith("bottom")) {
-					n.top_out = n.style.top = parent.clientHeight + "px";
-					n.top_in = (center ? centerv(parent) : (parent.clientHeight - n.clientHeight)) + "px";
-				}
-				else
-					ver = false;
-				if (origin.endsWith("left")) {
-					n.left_out = n.style.left = -n.clientWidth + "px";
-					n.left_in = (center ? centerh(parent) : 0) + "px";
-				}
-				else if (origin.endsWith("right")) {
-					n.left_out = n.style.left = parent.clientWidth + "px";
-					n.left_in = (center ? centerh(parent) : (parent.clientWidth - n.clientWidth)) + "px";
-				}
-				else
-					hor = false;
+				["top", "bottom"].forEach(function(side, sideIndex) {
+					if (origin.startsWith(side)) {
+						n.style[side] = -n.clientHeight + "px";
+						n._vout = {
+							node: n,
+							property: side,
+							value: n.style[side]
+						};
+						n._vin = {
+							node: n,
+							property: side,
+							value: (center ? centerv(parent, !!sideIndex) : 0) + "px"
+						};
+						ver = true;
+					}
+				});
+				["left", "right"].forEach(function(side, sideIndex) {
+					if (origin.endsWith(side)) {
+						n.style[side] = -n.clientWidth + "px";
+						n._hout = {
+							node: n,
+							property: side,
+							value: n.style[side]
+						};
+						n._hin = {
+							node: n,
+							property: side,
+							value: (center ? centerh(parent, !!sideIndex) : 0) + "px"
+						};
+						hor = true;
+					}
+				});
 				fallbacks(parent);
 			};
 
 			n.show = function(parent) {
-				add(parent);
+				add(parent, true);
 				_refresh(parent);
 				setTimeout(function() {
-					ver && CT.trans.trans({ node: n, property: "top", value: n.top_in });
-					hor && CT.trans.trans({ node: n, property: "left", value: n.left_in });
+					ver && CT.trans.trans(n._vin);
+					hor && CT.trans.trans(n._hin);
 				}, 100);
 			};
 			n.hide = function() {
-				ver && CT.trans.trans({ node: n, property: "top", value: n.top_out });
-				hor && CT.trans.trans({ node: n, property: "left", value: n.left_out });
+				ver && CT.trans.trans(n._vout);
+				hor && CT.trans.trans(n._hout);
 				CT.trans.trans({ cb: function() {
 					CT.dom.remove(n);
 				}});
