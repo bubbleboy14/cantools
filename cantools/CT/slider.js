@@ -229,21 +229,13 @@ CT.slider.Frame = CT.Class({
 				clearAS();
 				node._retracted = !node._retracted;
 				if (node._retracted) {
-					CT.trans.trans({
-						node: imageBack,
-						duration: 1000,
-						property: "width",
-						value: "40%"
-					});
-					CT.trans.trans({
-						node: imageBack,
-						duration: 1000,
-						property: "height",
-						value: "30%",
+					CT.trans.resize(imageBack, {
+						width: "40%",
+						height: "30%",
 						cb: function() {
 							full.style.zIndex = 100;
 						}
-					});
+					})
 					CT.trans.trans({
 						node: teaser,
 						duration: 1000,
@@ -252,13 +244,9 @@ CT.slider.Frame = CT.Class({
 					});
 				} else {
 					full.style.zIndex = -1;
-					["width", "height"].forEach(function(dimension) {
-						CT.trans.trans({
-							node: imageBack,
-							duration: 1000,
-							property: dimension,
-							value: "100%"
-						});
+					CT.trans.resize(imageBack, {
+						width: "100%",
+						height: "100%"
 					});
 					CT.trans.trans({
 						node: teaser,

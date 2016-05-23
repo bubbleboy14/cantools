@@ -39,6 +39,9 @@ around with DOM elements via CSS transitions. Have at it.
 		ease: "linear",
 		value: "right"
 	},
+	resize: {
+		duration: 1000
+	},
 	fadeIn: {
 		duration: 1000,
 		property: "opacity",
@@ -85,6 +88,9 @@ CT.trans = {
 				property: "background-position",
 				ease: "linear",
 				value: "right bottom"
+			},
+			resize: {
+				duration: 1000
 			},
 			fadeIn: {
 				duration: 1600,
@@ -159,6 +165,33 @@ CT.trans = {
 			CT.trans.pan(node, opts);
 		}
 		CT.trans.trans(opts);
+	},
+	resize: function(node, opts) {
+		var width = opts.width,
+			height = opts.height,
+			cb = opts.cb;
+		delete opts.width;
+		delete opts.height;
+		delete opts.cb;
+		opts.node = node;
+		opts = CT.merge(opts, CT.trans._.defaults.resize);
+		if (width) {
+			CT.trans.trans(CT.merge({
+				property: "width",
+				value: width
+			}, opts));
+		}
+		if (height) {
+			CT.trans.trans(CT.merge({
+				property: "height",
+				value: height
+			}, opts));
+		}
+		if (cb) {
+			CT.trans.trans(CT.merge({
+				cb: cb
+			}, opts));
+		}
 	},
 	fadeIn: function(node, opts) {
 		opts = CT.merge(opts, CT.trans._.defaults.fadeIn);
