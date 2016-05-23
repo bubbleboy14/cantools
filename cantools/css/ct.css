@@ -219,6 +219,9 @@
 .shiftleft {
     margin-left: -18px;
 }
+.shiftup {
+    margin-top: -5px;
+}
 .small {
     font-size: 80%;
 }
