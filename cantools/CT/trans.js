@@ -84,7 +84,7 @@ CT.trans = {
 			translate: {
 				duration: 300,
 				property: "transform",
-				ease: "ease-out",
+				ease: "linear",
 				prefix: true,
 				x: 0,
 				y: 0,
@@ -97,7 +97,8 @@ CT.trans = {
 				value: "right bottom"
 			},
 			resize: {
-				duration: 1000
+				duration: 300,
+				ease: "linear"
 			},
 			fadeIn: {
 				duration: 1600,
