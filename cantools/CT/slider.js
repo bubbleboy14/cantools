@@ -11,6 +11,7 @@ the 'opts' object itself, are all optional.
     - mode (dfault: 'peekaboo'): how to display each frame - 'peekaboo' or 'chunk'
     - autoSlideInterval (default: 5000): how many milliseconds to wait before auto-sliding frames
     - autoSlide (default: true): automatically proceed through frames (else, trigger later with .resume())
+    - visible (default: true): maps to visibility css property
     - navButtons (default: true): include nav bubbles and arrows
     - pan (default: true): slow-pan frame background images
     - tapCb (default: null): called when slider is tapped
@@ -48,6 +49,7 @@ CT.slider.Slider = CT.Class({
 			arrows: false,
 			autoSlideInterval: 5000,
 			autoSlide: true,
+			visible: true,
 			navButtons: true,
 			pan: true,
 			tapCb: null,
@@ -79,7 +81,7 @@ CT.slider.Slider = CT.Class({
 			this.circlesContainer,
 			this.prevButton,
 			this.nextButton
-		], "div", "carousel fullwidth fullheight");
+		], "div", "carousel fullwidth fullheight" + (opts.visible ? "" : " hider"));
 		this.opts.parent.appendChild(this.node);
 		this.opts.frames.forEach(this.addFrame);
 		CT.gesture.listen("tap", this.prevButton, this.prevButtonCallback);
@@ -101,6 +103,12 @@ CT.slider.Slider = CT.Class({
 		CT.gesture.listen("down", this.container, this.pause);
 		this.opts.parent.onresize = this.trans;
 		this._reflow();
+	},
+	show: function() {
+		this.node.classList.remove("hider");
+	},
+	hide: function() {
+		this.node.classList.add("hider");
 	},
 	_reflow: function() {
 		CT.dom.mod({
