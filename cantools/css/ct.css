@@ -364,7 +364,6 @@
     background-color: rgba(100, 100, 100, 0.7);
 }
 .carousel-content-full {
-    z-index: -1;
     padding: 10px;
     margin-top: 10px;
     position: absolute;
