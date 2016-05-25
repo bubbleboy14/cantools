@@ -31,7 +31,7 @@ around with DOM elements via CSS transitions. Have at it.
 	translate: {
 		duration: 300,
 		property: "transform",
-		ease: "ease-out",
+		ease: "linear",
 		prefix: true,
 		x: 0,
 		y: 0,
@@ -41,18 +41,19 @@ around with DOM elements via CSS transitions. Have at it.
 		duration: 5000,
 		property: "background-position",
 		ease: "linear",
-		value: "right"
+		value: "right bottom"
 	},
 	resize: {
-		duration: 1000
+		duration: 300,
+		ease: "linear"
 	},
 	fadeIn: {
-		duration: 1000,
+		duration: 1600,
 		property: "opacity",
 		value: 1
 	},
 	fadeOut: {
-		duration: 1000,
+		duration: 1600,
 		property: "opacity",
 		value: 0
 	},
