@@ -15,6 +15,7 @@ the 'opts' object itself, are all optional.
     - navButtons (default: true): include nav bubbles and arrows
     - pan (default: true): slow-pan frame background images
     - tapCb (default: null): called when slider is tapped
+    - startFrame (default: null): label (or index if frames are unlabeled) of frame to slide to initially (disables autoSlide)
     - bubblePosition (default: 'bottom'): where to position frame indicator bubbles ('top' or 'bottom')
     - arrowPosition (default: 'middle'): where to position navigator arrows
     - orientation (default: 'horizontal'): orientation for slider frames to arrange themselves
@@ -51,6 +52,7 @@ CT.slider.Slider = CT.Class({
 			autoSlide: true,
 			visible: true,
 			navButtons: true,
+			startFrame: null,
 			pan: true,
 			tapCb: null,
 			parent: document.body,
@@ -59,6 +61,7 @@ CT.slider.Slider = CT.Class({
 			arrowPosition: "middle", // or "top" or "middle"
 			bubblePosition: "bottom" // or "top"
 		});
+		this.jumpers = {};
 		this.dimension = CT.slider.orientation2dim[opts.orientation];
 		this.circlesContainer = CT.dom.node("", "div",
 			"carousel-order-indicator " + opts.bubblePosition);
@@ -98,11 +101,13 @@ CT.slider.Slider = CT.Class({
 			interval: "auto"
 		};
 		CT.drag.makeDraggable(this.container, this.dragOpts);
-		if (this.opts.autoSlideInterval && this.opts.autoSlide)
+		if (opts.autoSlideInterval && opts.autoSlide && !opts.startFrame)
 			this.resume();
 		CT.gesture.listen("down", this.container, this.pause);
 		this.opts.parent.onresize = this.trans;
 		this._reflow();
+		if (opts.startFrame in this.jumpers)
+			this.jumpers[opts.startFrame]();
 	},
 	showNav: function() {
 		if (this.opts.navButtons) {
@@ -164,8 +169,10 @@ CT.slider.Slider = CT.Class({
 		if (typeof frame == "string")
 			frame = { img: frame };
 		var circle = CT.dom.node(frame.label, "div",
-			"hoverglow pointer indicator-circle " + (frame.label ? "labeled" : "unlabeled") + "-circle");
-		CT.gesture.listen("tap", circle, this.circleJump(index));
+			"hoverglow pointer indicator-circle " +
+			(frame.label ? "labeled" : "unlabeled") + "-circle"),
+			jumper = this.jumpers[frame.label || index] = this.circleJump(index);
+		CT.gesture.listen("tap", circle, jumper);
 		this.circlesContainer.appendChild(circle);
 		this.container.appendChild((new CT.slider.Frame(frame, this)).node);
 		if (index == 0) {
