@@ -1,4 +1,4 @@
-# cantools 0.6.8
+# cantools 0.6.9
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM; a built in administrative interface; and a rich modular JavaScript library.
 
 License: MIT (see LICENSE)
@@ -121,6 +121,11 @@ some reason. It will go through and recount everything.
 
 # Front (JS Library)
 
+## CT.Drop
+### Import line: 'CT.require("CT.Drop");'
+This class makes a drop-down menu, and can be subclassed
+into things like the CT.autocomplete classes.
+
 ## CT.Pager
 ### Import line: 'CT.require("CT.Pager");'
 This class is used to generate a pager, which is a self-refilling DOM element.
@@ -151,6 +156,7 @@ dimensions of and positioning DOM elements.
 This loader imports almost every CT module.
 
 ### This includes:
+    - CT.Drop
     - CT.Pager
     - CT.align
     - CT.autocomplete
@@ -160,6 +166,7 @@ This loader imports almost every CT module.
     - CT.drag
     - CT.dom
     - CT.gesture
+    - CT.key
     - CT.mobile
     - CT.modal
     - CT.panel
@@ -185,12 +192,15 @@ This module contains two classes, Guesser and DBGuesser.
 
 ### CT.autocomplete.Guesser
 
+Guesser is a subclass of CT.Drop.
+
 #### The constructor takes an options object with any or all of the following properties:
     - enterCb (default: doNothing): trigger when user hits enter
     - keyUpCb (default: doNothing): trigger on key up
     - expandCB (default: doNothing): trigger when autocomplete node expands
     - tapCb (default: set input to data[data.label]): trigger on option tap
     - guessCb (default: this.guesser): trigger when it's time to guess
+    - input (required): the input node to which to attach the autocomplete guesser
 
 You might notice that no 'guesser' function is defined on this class.
 This means that you must either pass in a 'guessCb' function to the constructor
@@ -381,46 +391,46 @@ This module contains functions for interacting with the DOM. This includes:
 
 ### simple and compound node creation
 #### CT.dom.node(content, type, classname, id, attrs, style)
-    - content - what goes in the resulting DOM node. may be:
-      - a node
-      - a function
-      - an object
-      - a string or number
-      - an array containing any of the above
-    - type - tag name of resulting DOM node
-    - classname - class of resulting DOM node
-    - id - id of resulting DOM node
-    - attrs - object defining miscellaneous properties of resulting DOM node
-    - style - object mapping CSS properties to values
+	- content - what goes in the resulting DOM node. may be:
+	  - a node
+	  - a function
+	  - an object
+	  - a string or number
+	  - an array containing any of the above
+	- type - tag name of resulting DOM node
+	- classname - class of resulting DOM node
+	- id - id of resulting DOM node
+	- attrs - object defining miscellaneous properties of resulting DOM node
+	- style - object mapping CSS properties to values
 
 All other node generators use CT.dom.node() under the hood. There are many. See code.
 
 ### selectors
 #### CT.dom.id(id, all)
-    - 'all' is a bool indicating whether to also search free-floating nodes.
+	- 'all' is a bool indicating whether to also search free-floating nodes.
 #### CT.dom.className(cname, n)
-    - 'n' is the node to search. defaults to document.
+	- 'n' is the node to search. defaults to document.
 #### CT.dom.tag(tag, n)
-    - 'n' is the node to search. defaults to document.
+	- 'n' is the node to search. defaults to document.
 #### CT.dom.Q(q, n)
-    - executes querySelectorAll(q) on n (defaults to document)
+	- executes querySelectorAll(q) on n (defaults to document)
 
 ### style modding
 #### CT.dom.mod(opts)
-    - 'opts' object must include:
-      - property: CSS property to modify
-      - value: new value
-    - 'opts' object must include one of:
-      - target (node)
-      - targets (node array)
-      - className (string)
-      - id (string)
+	- 'opts' object must include:
+	  - property: CSS property to modify
+	  - value: new value
+	- 'opts' object must include one of:
+	  - target (node)
+	  - targets (node array)
+	  - className (string)
+	  - id (string)
 #### CT.dom.addStyle(text, href, obj)
-    - use EITHER text, href, or obj
-      - text: raw CSS text
-      - href: url of stylesheet
-      - obj: object mapping selector strings to style definitions (specified
-             via embedded objects mapping CSS properties to values)
+	- use EITHER text, href, or obj
+	  - text: raw CSS text
+	  - href: url of stylesheet
+	  - obj: object mapping selector strings to style definitions (specified
+			 via embedded objects mapping CSS properties to values)
 
 ## CT.drag
 ### Import line: 'CT.require("CT.drag");'
@@ -450,6 +460,10 @@ The main one to look out for is listen, defined below.
     - cb - the function to call when something happens
     - stopPropagation - whether to propagate this event beyond node
     - preventDefault - whether to prevent default behavior
+
+## CT.key
+### Import line: 'CT.require("CT.key");'
+This module supports global key bindings.
 
 ## CT.map
 ### Import line: 'CT.require("CT.map");'
@@ -659,12 +673,14 @@ the 'opts' object itself, are all optional.
     - mode (dfault: 'peekaboo'): how to display each frame - 'peekaboo' or 'chunk'
     - autoSlideInterval (default: 5000): how many milliseconds to wait before auto-sliding frames
     - autoSlide (default: true): automatically proceed through frames (else, trigger later with .resume())
+    - visible (default: true): maps to visibility css property
     - navButtons (default: true): include nav bubbles and arrows
     - pan (default: true): slow-pan frame background images
     - tapCb (default: null): called when slider is tapped
     - bubblePosition (default: 'bottom'): where to position frame indicator bubbles ('top' or 'bottom')
     - arrowPosition (default: 'middle'): where to position navigator arrows
     - orientation (default: 'horizontal'): orientation for slider frames to arrange themselves
+    - arrows (default: false): use arrow keys to navigate slider
     - frames (default: []): an array of items corresponding to the frames in the slider
 
 The last one, 'frames', must be an array either of strings (interpreted
@@ -696,6 +712,10 @@ around with DOM elements via CSS transitions. Have at it.
 	CT.trans.rotate(node, opts)
 	CT.trans.translate(node, opts)
 	CT.trans.pan(node, opts)
+	CT.trans.resize(node, opts)
+	CT.trans.fadeIn(node, opts)
+	CT.trans.fadeOut(node, opts)
+	CT.trans.pulse(node, opts)
 	CT.trans.trans(opts)
 	CT.trans.setVendorPrefixed(node, property, value)
 	 - sets CSS properties for all vendor prefixes
@@ -717,7 +737,7 @@ around with DOM elements via CSS transitions. Have at it.
 	translate: {
 		duration: 300,
 		property: "transform",
-		ease: "ease-out",
+		ease: "linear",
 		prefix: true,
 		x: 0,
 		y: 0,
@@ -727,17 +747,24 @@ around with DOM elements via CSS transitions. Have at it.
 		duration: 5000,
 		property: "background-position",
 		ease: "linear",
-		value: "right"
+		value: "right bottom"
+	},
+	resize: {
+		duration: 300,
+		ease: "linear"
 	},
 	fadeIn: {
-		duration: 1000,
+		duration: 1600,
 		property: "opacity",
 		value: 1
 	},
 	fadeOut: {
-		duration: 1000,
+		duration: 1600,
 		property: "opacity",
 		value: 0
+	},
+	pulse: {
+		wait: 1000
 	}
 
 TODO: let's add some more, like scale.
