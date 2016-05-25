@@ -58,6 +58,9 @@
 .block {
     display: block;
 }
+.inline-block {
+    display: inline-block;
+}
 .blue {
     color: #010068;
 }
