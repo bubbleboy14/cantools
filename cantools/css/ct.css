@@ -354,11 +354,11 @@
 .carousel-content-teaser {
     z-index: 200;
     padding: 10px;
-    margin: 10px;
-    width: 55%;
+    width: 56%;
+    height: 28%;
     white-space: normal;
     position: absolute;
-    top: 80px;
+    top: 100px;
     left: 22.5%;
     border-radius: 15px;
     background-color: rgba(100, 100, 100, 0.7);
@@ -371,7 +371,7 @@
     top: 30%;
     right: 10px;
     left: 10px;
-    bottom: 80px;
+    bottom: 10px;
     border-radius: 15px;
     background-color: rgba(0, 0, 0, 0.25);
     white-space: normal;
@@ -408,16 +408,11 @@
 .sb-top {
     top: 90px;
 }
-.sb-vertical {
-    margin-left: 50px;
-    margin-right: 50px;
+.sb-vertical div {
     transform: rotate(90deg);
 }
-.sb-horizontal {
-
-}
 .sb-bottom {
-    bottom: 40px;
+    bottom: 90px;
 }
 .fullbottom {
     left: 10px;

@@ -69,9 +69,9 @@ CT.slider.Slider = CT.Class({
 			bclass += " hider";
 			this.circlesContainer.classList.add("hider");
 		}
-		this.prevButton = CT.dom.node(CT.dom.node("<", "span"), "div",
+		this.prevButton = CT.dom.node(CT.dom.node(CT.dom.node("<", "span")), "div",
 			bclass + " prv hidden");
-		this.nextButton = CT.dom.node(CT.dom.node(">", "span"), "div",
+		this.nextButton = CT.dom.node(CT.dom.node(CT.dom.node(">", "span")), "div",
 			bclass + " nxt" + (opts.frames.length < 2 ? " hidden" : ""));
 		this.index = this.pos = 0;
 		this.container = CT.dom.node("", "div",
@@ -103,6 +103,36 @@ CT.slider.Slider = CT.Class({
 		CT.gesture.listen("down", this.container, this.pause);
 		this.opts.parent.onresize = this.trans;
 		this._reflow();
+	},
+	showNav: function() {
+		if (this.opts.navButtons) {
+			CT.trans.translate(this.prevButton, {
+				x: 0
+			});
+			CT.trans.translate(this.nextButton, {
+				x: 0
+			});
+			CT.trans.translate(this.circlesContainer, {
+				y: 0
+			});
+		}
+		if (this.opts.parent.slider)
+			this.opts.parent.slider.showNav();
+	},
+	hideNav: function() {
+		if (this.opts.navButtons) {
+			CT.trans.translate(this.prevButton, {
+				x: -200
+			});
+			CT.trans.translate(this.nextButton, {
+				x: 200
+			});
+			CT.trans.translate(this.circlesContainer, {
+				y: (this.opts.bubblePosition == "top") && -100 || 100
+			});
+		}
+		if (this.opts.parent.slider)
+			this.opts.parent.slider.hideNav();
 	},
 	show: function() {
 		this.node.classList.remove("hider");
@@ -206,17 +236,58 @@ CT.slider.Frame = CT.Class({
 		hide: function() {}
 	},
 	peekaboo: function() {
-		var opts = this.opts, node = this.node, pulser,
+		var opts = this.opts, node = this.node, slider = this.slider, pulser,
 			full = CT.dom.node(opts.content, "div", "big carousel-content-full"),
 			imageBack = CT.dom.node(null, "div", "carousel-content-image",
 				null, null, { backgroundImage: "url(" + opts.img + ")" }),
 			nodes = [ imageBack, full ];
-		if (this.slider.opts.pan) {
+		if (slider.opts.pan) {
 			imageBack.classList.add("bp-left");
 			setTimeout(function() { // isn't in dom yet ;)
 				CT.trans.pan(imageBack);
 			});
 		}
+		var teaserTap = function() {
+			slider.pause();
+			node._retracted = !node._retracted;
+			if (node._retracted) {
+				CT.trans.resize(imageBack, {
+					width: "40%",
+					height: "30%",
+					cb: function() {
+						if (pulser) pulser.style.zIndex = 200;
+					}
+				});
+				CT.trans.trans({
+					node: teaser,
+					property: "left",
+					value: "10px"
+				});
+				CT.trans.trans({
+					node: teaser,
+					property: "top",
+					value: "0px"
+				});
+				slider.hideNav();
+			} else {
+				if (pulser) pulser.style.zIndex = 0;
+				CT.trans.resize(imageBack, {
+					width: "100%",
+					height: "100%"
+				});
+				CT.trans.trans({
+					node: teaser,
+					property: "left",
+					value: "22.5%"
+				});
+				CT.trans.trans({
+					node: teaser,
+					property: "top",
+					value: "100px"
+				});
+				slider.showNav();
+			}
+		};
 		if (opts.title || opts.blurb) {
 			var teaser = CT.dom.node([
 				CT.dom.node(opts.title, "div", "biggest"),
@@ -228,48 +299,19 @@ CT.slider.Frame = CT.Class({
 			};
 			this.on.hide = function() {
 				CT.trans.fadeOut(teaser);
+				if (node._retracted)
+					teaserTap();
 			};
 		}
 		if (opts.pulse) {
-			pulser = CT.dom.img(opts.pulse, "carousel-pulse");
+			pulser = CT.dom.img(opts.pulse, "carousel-pulse pointer");
 			CT.trans.pulse(pulser);
+			CT.gesture.listen("tap", pulser, teaserTap); // assume content exists
 			nodes.push(pulser);
 		}
 		CT.dom.addEach(node, nodes);
-		if (opts.content) { // assume title/blurb exists
-			var clearAS = this.slider.pause;
-			CT.gesture.listen("tap", node.firstChild.nextSibling.nextSibling, function() {
-				clearAS();
-				node._retracted = !node._retracted;
-				if (node._retracted) {
-					CT.trans.resize(imageBack, {
-						width: "40%",
-						height: "30%",
-						cb: function() {
-							if (pulser) pulser.style.zIndex = 200;
-						}
-					})
-					CT.trans.trans({
-						node: teaser,
-						duration: 1000,
-						property: "left",
-						value: "0%"
-					});
-				} else {
-					if (pulser) pulser.style.zIndex = 0;
-					CT.trans.resize(imageBack, {
-						width: "100%",
-						height: "100%"
-					});
-					CT.trans.trans({
-						node: teaser,
-						duration: 1000,
-						property: "left",
-						value: "22.5%"
-					});
-				}
-			});
-		}
+		if (opts.content) // assume title/blurb exists
+			CT.gesture.listen("tap", teaser, teaserTap);
 	},
 	chunk: function() {
 		var slider = new CT.slider.Slider({
@@ -279,9 +321,11 @@ CT.slider.Frame = CT.Class({
 			orientation: CT.slider.other_orientation[this.slider.opts.orientation],
 			arrowPosition: "bottom"
 		}), parent = this.slider;
-		this.on.hide = slider.container.firstChild.frame.on.hide;
+		this.on.hide = function() {
+			slider.container.childNodes[slider.index].frame.on.hide();
+		};
 		this.on.show = function() {
-			slider.container.firstChild.frame.on.show();
+			slider.container.childNodes[slider.index].frame.on.show();
 			if (parent.opts.arrows) {
 				CT.key.on(slider.opts.orientation == "horizontal" ?
 					"LEFT" : "UP", slider.prevButtonCallback);
