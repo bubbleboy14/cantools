@@ -1,4 +1,4 @@
-# cantools 0.6.9
+# cantools 0.6.9.1
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM; a built in administrative interface; and a rich modular JavaScript library.
 
 License: MIT (see LICENSE)
@@ -677,10 +677,11 @@ the 'opts' object itself, are all optional.
     - navButtons (default: true): include nav bubbles and arrows
     - pan (default: true): slow-pan frame background images
     - tapCb (default: null): called when slider is tapped
+    - startFrame (default: null): label (or index if frames are unlabeled) of frame to slide to initially (disables autoSlide)
     - bubblePosition (default: 'bottom'): where to position frame indicator bubbles ('top' or 'bottom')
     - arrowPosition (default: 'middle'): where to position navigator arrows
     - orientation (default: 'horizontal'): orientation for slider frames to arrange themselves
-    - arrows (default: false): use arrow keys to navigate slider
+    - keys (default: true): use arrow keys to navigate slider, as well as enter key for peekaboo transitions
     - frames (default: []): an array of items corresponding to the frames in the slider
 
 The last one, 'frames', must be an array either of strings (interpreted
