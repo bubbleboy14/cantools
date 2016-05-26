@@ -19,7 +19,7 @@ the 'opts' object itself, are all optional.
     - bubblePosition (default: 'bottom'): where to position frame indicator bubbles ('top' or 'bottom')
     - arrowPosition (default: 'middle'): where to position navigator arrows
     - orientation (default: 'horizontal'): orientation for slider frames to arrange themselves
-    - arrows (default: false): use arrow keys to navigate slider
+    - keys (default: true): use arrow keys to navigate slider, as well as enter key for peekaboo transitions
     - frames (default: []): an array of items corresponding to the frames in the slider
 
 The last one, 'frames', must be an array either of strings (interpreted
@@ -47,7 +47,7 @@ CT.slider.Slider = CT.Class({
 	init: function(opts) {
 		this.opts = opts = CT.merge(opts, {
 			frames: [],
-			arrows: false,
+			keys: true,
 			autoSlideInterval: 5000,
 			autoSlide: true,
 			visible: true,
@@ -89,7 +89,7 @@ CT.slider.Slider = CT.Class({
 		this.opts.frames.forEach(this.addFrame);
 		CT.gesture.listen("tap", this.prevButton, this.prevButtonCallback);
 		CT.gesture.listen("tap", this.nextButton, this.nextButtonCallback);
-		if (opts.arrows) {
+		if (opts.keys) {
 			CT.key.on(opts.orientation == "horizontal" ?
 				"LEFT" : "UP", this.prevButtonCallback);
 			CT.key.on(opts.orientation == "horizontal" ?
@@ -303,6 +303,8 @@ CT.slider.Frame = CT.Class({
 			nodes.push(teaser);
 			this.on.show = function() {
 				CT.trans.fadeIn(teaser);
+				if (slider.opts.keys)
+					CT.key.on("ENTER", teaserTap);
 			};
 			this.on.hide = function() {
 				CT.trans.fadeOut(teaser);
@@ -333,7 +335,7 @@ CT.slider.Frame = CT.Class({
 		};
 		this.on.show = function() {
 			slider.container.childNodes[slider.index].frame.on.show();
-			if (parent.opts.arrows) {
+			if (parent.opts.keys) {
 				CT.key.on(slider.opts.orientation == "horizontal" ?
 					"LEFT" : "UP", slider.prevButtonCallback);
 				CT.key.on(slider.opts.orientation == "horizontal" ?
