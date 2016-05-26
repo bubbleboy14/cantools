@@ -33,6 +33,7 @@ def load(host, port, db, pw):
 				break
 			log("processed %s %s records"%(offset, model), 1)
 	log("finished loading data from sqlite dump file")
+	log("now, run ctindex to finish the job!")
 
 def dump(host, port, db, pw):
 	log("dumping database at %s:%s"%(host, port), important=True)
@@ -53,7 +54,7 @@ def dump(host, port, db, pw):
 		puts += these
 		log("found %s %s records - %s records total"%(len(these), model, len(puts)))
 	log("saving %s records to sqlite dump file"%(len(puts),))
-#	db.put_multi(puts)
+	db.put_multi(puts)
 
 def go():
 	parser = OptionParser("ctmigrate [load|dump] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME]")

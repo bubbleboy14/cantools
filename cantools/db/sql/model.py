@@ -103,11 +103,21 @@ class ModelBase(sa_dbase):
         return self.key.urlsafe()
 
     def mydata(self):
-        return {}
+        cols = {}
+        for cname in self._schema:
+            if not cname.startswith("_"):
+                val = getattr(self, cname)
+                if self._schema[cname] == "key":
+                    val = val.urlsafe()
+                elif self._schema[cname] == "datetimeautostamper":
+                    val = str(val)
+                cols[cname] = val
+        return cols
 
     def data(self):
         d = self.mydata()
         d["key"] = self.id()
+        d["index"] = self.index
         d["label"] = self.label
         d["modelName"] = self.polytype
         return d
