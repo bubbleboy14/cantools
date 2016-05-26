@@ -14,17 +14,19 @@
 from optparse import OptionParser
 from cantools import config
 from cantools.web import fetch
-from cantools.util import error
+from cantools.util import error, log
 
 def load(host, port, db, pw):
 	# for model in schema
 	#   hit db for all records (pages of 500)
 	#   upload to host/port
-	pass
+	log("loading database into %s:%s"%(host, port), important=True)
 
 def dump(host, port, db, pw):
+	log("dumping database at %s:%s"%(host, port), important=True)
 	puts = []
 	for model in db.get_schema():
+		log("retrieving %s entities"%(model,), important=True)
 		mod = db.get_model(model)
 		these = []
 		while 1:
@@ -33,7 +35,10 @@ def dump(host, port, db, pw):
 			these += [mod(**c) for c in chunk]
 			if len(chunk) < 500:
 				break
+			log("got %s %s records"%(len(these), model), 1)
 		puts += these
+		log("found %s %s records - %s records total"%(len(these), model, len(puts)))
+	log("saving %s records to sqlite dump file"%(len(puts),))
 #	db.put_multi(puts)
 
 def go():
@@ -60,6 +65,7 @@ def go():
 	else:
 		error("invalid mode specified ('%s')"%(mode,),
 			"must be 'ctmigrate load' or ctmigrate dump'")
+	log("goodbye")
 
 if __name__ == "__main__":
 	go()
