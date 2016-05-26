@@ -1,4 +1,7 @@
 /* required CT classes */
+.above {
+    z-index: 1000 !important;
+}
 .abs {
     position: absolute;
 }
@@ -167,6 +170,9 @@
 .grayback {
     background: gray;
 }
+.grayback-trans {
+    background-color: rgba(100, 100, 100, 0.8);
+}
 .halfheight {
     height: 50%;
 }
@@ -216,6 +222,11 @@
     -moz-border-radius: 5px;
     -webkit-border-radius: 5px;
 }
+.rightround {
+    border-radius: 0px 15px 15px 0px;
+    -moz-border-radius: 0px 15px 15px 0px;
+    -webkit-border-radius: 0px 15px 15px 0px;
+}
 .rpaddedsmall {
     padding-right: 2px;
 }
@@ -244,8 +255,15 @@
     max-height: 100% !important;
     max-width: 100% !important;
 }
+.vcrunch {
+    margin-top: -25px;
+    margin-bottom: -25px;
+}
 .vmiddle {
     vertical-align: middle;
+}
+.h50 {
+    height: 50px;
 }
 .w280 {
     width: 280px;
