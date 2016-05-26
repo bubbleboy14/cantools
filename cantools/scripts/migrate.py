@@ -11,16 +11,28 @@
 						  (default: dump.db)
 """
 
+import json
 from optparse import OptionParser
 from cantools import config
 from cantools.web import fetch
 from cantools.util import error, log
 
+LIMIT = 500
+
 def load(host, port, db, pw):
-	# for model in schema
-	#   hit db for all records (pages of 500)
-	#   upload to host/port
 	log("loading database into %s:%s"%(host, port), important=True)
+	for model in db.get_schema():
+		log("retrieving %s entities"%(model,), important=True)
+		mod = db.get_model(model)
+		offset = 0
+		while 1:
+			chunk = db.get_page(model, LIMIT, offset)
+			# TODO: push to host:port
+			offset += LIMIT
+			if len(chunk) < LIMIT:
+				break
+			log("processed %s %s records"%(offset, model), 1)
+	log("finished loading data from sqlite dump file")
 
 def dump(host, port, db, pw):
 	log("dumping database at %s:%s"%(host, port), important=True)
@@ -29,11 +41,13 @@ def dump(host, port, db, pw):
 		log("retrieving %s entities"%(model,), important=True)
 		mod = db.get_model(model)
 		these = []
+		offset = 0
 		while 1:
-			chunk = fetch(host, port=port,
-				path="/_db?action=get&modelName=%s&offset=%s&limit=500"%(model, offset))
+			chunk = json.loads(fetch(host, port=port,
+				path="/_db?action=get&modelName=%s&offset=%s&limit=%s"%(model, offset, LIMIT))[1:])
 			these += [mod(**c) for c in chunk]
-			if len(chunk) < 500:
+			offset += LIMIT
+			if len(chunk) < LIMIT:
 				break
 			log("got %s %s records"%(len(these), model), 1)
 		puts += these
