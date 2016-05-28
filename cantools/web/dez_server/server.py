@@ -20,12 +20,17 @@ def dweb():
 def respond(*args, **kwargs):
 	getController().register_handler(args, kwargs)
 
-def fetch(host, path="/", port=80, asjson=False, cb=None, timeout=1, async=False, protocol="http"):
+def fetch(host, path="/", port=80, asjson=False, cb=None, timeout=1, async=False, protocol="http", ctjson=False):
 	if async:
 		return dfetch(host, port, cb, timeout, asjson)
 	if protocol == "https":
 		port = 443
 	result = requests.get("%s://%s:%s%s"%(protocol, host, port, path)).content
+	if ctjson: # sync only
+		if result[0] == "3":
+			return rb64(json.loads(result[1:]), True)
+		else:
+			return json.loads(result[1:])
 	return asjson and json.loads(result) or result
 
 # file uploads
