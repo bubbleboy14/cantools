@@ -11,31 +11,40 @@
 						  (default: dump.db)
 """
 
-import json
+import getpass, datetime, model # model loads schema
 from optparse import OptionParser
-from cantools import config
+from cantools import db
 from cantools.web import fetch
 from cantools.util import error, log
 
 LIMIT = 500
 
-def load(host, port, db, pw):
+def load(host, port, session, pw):
 	log("loading database into %s:%s"%(host, port), important=True)
 	for model in db.get_schema():
 		log("retrieving %s entities"%(model,), important=True)
 		mod = db.get_model(model)
 		offset = 0
 		while 1:
-			chunk = db.get_page(model, LIMIT, offset)
+			chunk = db.get_page(model, LIMIT, offset, session=session)
 			# TODO: push to host:port
 			offset += LIMIT
 			if len(chunk) < LIMIT:
 				break
 			log("processed %s %s records"%(offset, model), 1)
 	log("finished loading data from sqlite dump file")
-	log("now, run ctindex to finish the job!")
 
-def dump(host, port, db, pw):
+def dprep(obj):
+	log("dprep %s"%(obj,))
+	schema = db.get_schema(obj["modelName"])
+	for prop in schema:
+		if schema[prop] == "datetime" and obj[prop]:
+			obj[prop] = datetime.datetime.strptime(obj[prop], "%Y-%m-%d %X")
+	del obj["label"]
+	del obj["modelName"]
+	return obj
+
+def dump(host, port, session, pw):
 	log("dumping database at %s:%s"%(host, port), important=True)
 	puts = []
 	for model in db.get_schema():
@@ -44,9 +53,9 @@ def dump(host, port, db, pw):
 		these = []
 		offset = 0
 		while 1:
-			chunk = json.loads(fetch(host, port=port,
-				path="/_db?action=get&modelName=%s&offset=%s&limit=%s"%(model, offset, LIMIT))[1:])
-			these += [mod(**c) for c in chunk]
+			chunk = fetch(host, port=port, ctjson=True,
+				path="/_db?action=get&modelName=%s&offset=%s&limit=%s"%(model, offset, LIMIT))
+			these += [mod(**dprep(c)) for c in chunk]
 			offset += LIMIT
 			if len(chunk) < LIMIT:
 				break
@@ -54,7 +63,9 @@ def dump(host, port, db, pw):
 		puts += these
 		log("found %s %s records - %s records total"%(len(these), model, len(puts)))
 	log("saving %s records to sqlite dump file"%(len(puts),))
-	db.put_multi(puts)
+	db.put_multi(puts, session=session)
+
+MODES = { "load": load, "dump": dump }
 
 def go():
 	parser = OptionParser("ctmigrate [load|dump] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME]")
@@ -68,15 +79,10 @@ def go():
 	if not args:
 		error("no mode specified -- must be 'ctmigrate load' or 'ctmigrate dump'")
 	mode = args[0]
-	options.port = int(options.port)
-	pw = raw_input("admin password? ")
-	config.db.update("main", "sqlite:///%s"%(options.filename,))
-	import model # loads schema
-	from cantools import db # loads w/ sqlite session
-	if mode is "load":
-		load(options.host, options.port, db, pw)
-	elif mode is "dump":
-		dump(options.host, options.port, db, pw)
+	if mode in MODES:
+		MODES[mode](options.domain, int(options.port),
+			db.Session("sqlite:///%s"%(options.filename,)),
+			getpass.getpass("admin password? "))
 	else:
 		error("invalid mode specified ('%s')"%(mode,),
 			"must be 'ctmigrate load' or ctmigrate dump'")
