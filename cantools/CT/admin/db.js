@@ -118,7 +118,7 @@ CT.admin.db.Editor = CT.Class({
 	},
 	"_table": function() {
 		var k, r, d = this.data, n = this.node = CT.dom.node();
-		["string", "integer", "float", "bool", "datetimeautostamper", "key"].forEach(function(t) {
+		["string", "integer", "float", "bool", "datetime", "key"].forEach(function(t) {
 			// TODO: list (when it's ready)
 			n[t] = CT.dom.node();
 			n.appendChild(n[t]);

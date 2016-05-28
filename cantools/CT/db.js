@@ -182,7 +182,7 @@ CT.db.edit = {
 		"integer": 0,
 		"float": 0.0,
 		"boolean": false,
-		"datetimeautostamper": null,
+		"datetime": null,
 		"key": null
 	},
 	_no_ent: {
@@ -214,7 +214,7 @@ CT.db.edit = {
 				return parseFloat(f.value) || null;
 			if (ptype == "key")
 				return f.data.key;
-			if (ptype == "datetimeautostamper")
+			if (ptype == "datetime")
 				return f.value();
 			return f.value; // string
 		};
@@ -239,7 +239,7 @@ CT.db.edit = {
 				key: val,
 				modelName: modelName
 			})).node;
-		else if (ptype == "datetimeautostamper")
+		else if (ptype == "datetime")
 			valcell = CT.dom.dateSelectors(null, null, opts.startYear, null, null, null, val);
 		valcell.getValue = CT.db.edit._val(valcell, ptype);
 		valcell.rowKey = k;

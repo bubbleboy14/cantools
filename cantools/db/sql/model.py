@@ -109,7 +109,7 @@ class ModelBase(sa_dbase):
                 val = getattr(self, cname)
                 if self._schema[cname] == "key":
                     val = val.urlsafe()
-                elif self._schema[cname] == "datetimeautostamper":
+                elif val and self._schema[cname] == "datetime":
                     val = str(val)
                 cols[cname] = val
         return cols

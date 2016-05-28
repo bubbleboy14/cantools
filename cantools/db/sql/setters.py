@@ -56,7 +56,7 @@ def edit(data, session=session):
             if val:
                 if propname in ent._schema["_kinds"]: # foreignkey
                     val = KeyWrapper(val)
-                elif ent._schema[propname] == "datetimeautostamper" and not isinstance(val, datetime):
+                elif ent._schema[propname] == "datetime" and not isinstance(val, datetime):
                     val = datetime.strptime(val, "%Y-%m-%d %H:%M:%S")
             setattr(ent, propname, val)
     ent.put()
