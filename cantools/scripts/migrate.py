@@ -11,15 +11,16 @@
 						  (default: dump.db)
 """
 
-import getpass, datetime, model # model loads schema
+import getpass, model # model loads schema
 from optparse import OptionParser
 from cantools import db
-from cantools.web import fetch
+from cantools.web import fetch, post
 from cantools.util import error, log
 
 LIMIT = 500
 
-def load(host, port, session, pw):
+def load(host, port, session):
+	pw = getpass.getpass("admin password? ")
 	log("loading database into %s:%s"%(host, port), important=True)
 	for model in db.get_schema():
 		log("retrieving %s entities"%(model,), important=True)
@@ -27,24 +28,18 @@ def load(host, port, session, pw):
 		offset = 0
 		while 1:
 			chunk = db.get_page(model, LIMIT, offset, session=session)
-			# TODO: push to host:port
+			post(host, "/_db", port, {
+				"pw": pw,
+				"action": "put",
+				"data": chunk
+			})
 			offset += LIMIT
 			if len(chunk) < LIMIT:
 				break
 			log("processed %s %s records"%(offset, model), 1)
 	log("finished loading data from sqlite dump file")
 
-def dprep(obj):
-	log("dprep %s"%(obj,))
-	schema = db.get_schema(obj["modelName"])
-	for prop in schema:
-		if schema[prop] == "datetime" and obj[prop]:
-			obj[prop] = datetime.datetime.strptime(obj[prop], "%Y-%m-%d %X")
-	del obj["label"]
-	del obj["modelName"]
-	return obj
-
-def dump(host, port, session, pw):
+def dump(host, port, session):
 	log("dumping database at %s:%s"%(host, port), important=True)
 	puts = []
 	for model in db.get_schema():
@@ -55,7 +50,7 @@ def dump(host, port, session, pw):
 		while 1:
 			chunk = fetch(host, port=port, ctjson=True,
 				path="/_db?action=get&modelName=%s&offset=%s&limit=%s"%(model, offset, LIMIT))
-			these += [mod(**dprep(c)) for c in chunk]
+			these += [mod(**db.dprep(c)) for c in chunk]
 			offset += LIMIT
 			if len(chunk) < LIMIT:
 				break
@@ -81,8 +76,7 @@ def go():
 	mode = args[0]
 	if mode in MODES:
 		MODES[mode](options.domain, int(options.port),
-			db.Session("sqlite:///%s"%(options.filename,)),
-			getpass.getpass("admin password? "))
+			db.Session("sqlite:///%s"%(options.filename,)))
 	else:
 		error("invalid mode specified ('%s')"%(mode,),
 			"must be 'ctmigrate load' or ctmigrate dump'")
