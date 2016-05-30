@@ -62,6 +62,15 @@ around with DOM elements via CSS transitions. Have at it.
 	}
 
 TODO: let's add some more, like scale.
+
+Certain functions (pan() and pulse()) return a CT.trans.Controller instance.
+
+### CT.trans.Controller
+	pause()  - stop the transition (for now)
+	resume() - resume the transition
+	active() - returns status of transition (bool)
+	tick()   - calls cb() if active()
+	init(cb) - cb() is called by tick() if active()
 */
 
 CT.trans = {
@@ -169,14 +178,17 @@ CT.trans = {
 		opts.value = "translate3d(" + opts.x + "px," + opts.y + "px," + opts.z + "px)",
 		CT.trans.trans(opts);
 	},
-	pan: function(node, opts) { // for background-position
+	pan: function(node, opts, wait) { // for background-position
 		opts = CT.merge(opts, CT.trans._.defaults.pan);
 		opts.node = node;
-		opts.cb = function() {
+		var controller = new CT.trans.Controller(function() {
 			opts.value = opts.value == "left top" ? "right bottom" : "left top";
-			CT.trans.pan(node, opts);
-		}
-		CT.trans.trans(opts);
+			CT.trans.trans(opts);
+		});
+		opts.cb = controller.tick;
+		if (!wait)
+			CT.trans.trans(opts);
+		return controller;
 	},
 	resize: function(node, opts) {
 		var width = opts.width,
@@ -215,18 +227,40 @@ CT.trans = {
 		opts.node = node;
 		CT.trans.trans(opts);
 	},
-	pulse: function(node, opts) {
+	pulse: function(node, opts, wait) {
 		opts = CT.merge(opts, CT.trans._.defaults.pulse);
-		CT.trans.fadeIn(node, CT.merge({
-			cb: function() {
-				CT.trans.fadeOut(node, CT.merge({
-					cb: function() {
-						setTimeout(function() {
-							CT.trans.pulse(node, opts);
-						}, opts.wait);
-					}
-				}, opts));
-			}
-		}, opts));
+		var faded, controller = new CT.trans.Controller(function() {
+			faded = !faded;
+			if (faded) {
+				setTimeout(function() {
+					CT.trans.fadeIn(node, opts);
+				}, opts.wait);
+			} else
+				CT.trans.fadeOut(node, opts);
+		});
+		opts.cb = controller.tick;
+		if (!wait)
+			controller.tick();
+		return controller;
 	}
 };
+
+CT.trans.Controller = CT.Class({
+	CLASSNAME: "CT.trans.Controller",
+	pause: function() {
+		this._paused = true;
+	},
+	resume: function() {
+		this._paused = false;
+		this.cb();
+	},
+	active: function() {
+		return !this._paused;
+	},
+	tick: function() {
+		this.active() && this.cb();
+	},
+	init: function(cb) {
+		this.cb = cb;
+	}
+});

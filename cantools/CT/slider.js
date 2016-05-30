@@ -250,9 +250,7 @@ CT.slider.Frame = CT.Class({
 			nodes = [ imageBack, full ];
 		if (slider.opts.pan) {
 			imageBack.classList.add("bp-left");
-			setTimeout(function() { // isn't in dom yet ;)
-				CT.trans.pan(imageBack);
-			});
+			imageBack.controller = CT.trans.pan(imageBack, null, true);
 		}
 		var teaserTap = function() {
 			slider.pause();
@@ -305,16 +303,24 @@ CT.slider.Frame = CT.Class({
 				CT.trans.fadeIn(teaser);
 				if (slider.opts.keys)
 					CT.key.on("ENTER", teaserTap);
+				if (slider.opts.pan)
+					imageBack.controller.resume();
+				if (opts.pulse)
+					pulser.controller.resume();
 			};
 			this.on.hide = function() {
 				CT.trans.fadeOut(teaser);
 				if (node._retracted)
 					teaserTap();
+				if (slider.opts.pan)
+					imageBack.controller.pause();
+				if (opts.pulse)
+					pulser.controller.pause();
 			};
 		}
 		if (opts.pulse) {
 			pulser = CT.dom.img(opts.pulse, "carousel-pulse pointer");
-			CT.trans.pulse(pulser);
+			pulser.controller = CT.trans.pulse(pulser, null, true);
 			CT.gesture.listen("tap", pulser, teaserTap); // assume content exists
 			nodes.push(pulser);
 		}
