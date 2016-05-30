@@ -18,7 +18,6 @@ def _col(colClass, *args, **kwargs):
 	if "primary_key" in kwargs:
 		cargs["primary_key"] = kwargs.pop("primary_key")
 	default = kwargs.pop("default", None)
-
 	if kwargs.pop("repeated", None):
 		return sqlalchemy.Column(ArrayType(**kwargs), *args, **cargs)
 	typeInstance = colClass(**kwargs)
@@ -28,9 +27,13 @@ def _col(colClass, *args, **kwargs):
 	if colClass is DateTimeAutoStamper:
 		col.is_dt_autostamper = True
 		col.should_stamp = typeInstance.should_stamp
-	if colClass is Key:
+		col._ct_type = "datetime"
+	elif colClass is BasicString:
+		col._ct_type = "string"
+	elif colClass is Key:
 		col._kinds = typeInstance.kinds
-	col._ct_type = colClass.__name__.lower()
+	if not hasattr(col, "_ct_type"):
+		col._ct_type = colClass.__name__.lower()
 	col._default = default
 	return col
 
@@ -56,7 +59,7 @@ class DateTimeAutoStamper(BasicDT):
 DateTime = sqlColumn(DateTimeAutoStamper)
 
 # strings, arrays, keys
-sqlString = sqlalchemy.String
+sqlString = sqlalchemy.Binary
 BasicString = basicType(sqlString, StringType)
 String = sqlColumn(BasicString)
 
@@ -92,7 +95,12 @@ class Key(BasicString):
 		BasicString.__init__(self, *args, **kwargs)
 
 	def process_bind_param(self, value, dialect):
-		return value and value.urlsafe()
+		while True:#value and hasattr(value, "urlsafe"):
+			try: # for sqlite weirdness -- do this cleaner?
+				value = value.urlsafe()
+			except:
+				break
+		return value
 
 	def process_result_value(self, value, dialect):
 		return KeyWrapper(value)

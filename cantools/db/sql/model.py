@@ -103,11 +103,31 @@ class ModelBase(sa_dbase):
         return self.key.urlsafe()
 
     def mydata(self):
-        return {}
+        cols = {}
+        for cname in self._schema:
+            if not cname.startswith("_"):
+                val = getattr(self, cname)
+                if self._schema[cname] == "key":
+                    val = val.urlsafe()
+                elif val and self._schema[cname] == "datetime":
+                    val = str(val)[:19]
+                cols[cname] = val
+        return cols
 
     def data(self):
         d = self.mydata()
         d["key"] = self.id()
+        d["index"] = self.index
         d["label"] = self.label
         d["modelName"] = self.polytype
         return d
+
+def dprep(obj): # prepares data object for model
+    schema = get_schema(obj["modelName"])
+    for prop in schema:
+        if schema[prop] == "datetime" and obj[prop]:
+            obj[prop] = datetime.strptime(obj[prop], "%Y-%m-%d %X")
+    if "label" in obj:
+        del obj["label"]
+    del obj["modelName"]
+    return obj

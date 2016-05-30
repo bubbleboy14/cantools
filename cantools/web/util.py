@@ -80,10 +80,19 @@ def set_read(f):
     localvars.read = f
 
 def rdec(data):
-    return unquote(b64decode(data)).decode("utf_8")
+    val = unquote(b64decode(data))
+    try:
+        val = val.decode("utf_8")
+    except:
+        pass
+    return val
 
 def renc(data):
-    return b64encode(quote(data.encode("utf_8")))
+    try:
+        data = data.encode("utf_8")
+    except:
+        pass
+    return b64encode(quote(data))
 
 def rb64(data, de=False):
     if isinstance(data, basestring):
