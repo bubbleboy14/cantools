@@ -1,4 +1,3 @@
-import datetime
 from sqlalchemy import orm
 from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
 from query import *
@@ -111,7 +110,7 @@ class ModelBase(sa_dbase):
                 if self._schema[cname] == "key":
                     val = val.urlsafe()
                 elif val and self._schema[cname] == "datetime":
-                    val = str(val)
+                    val = str(val)[:19]
                 cols[cname] = val
         return cols
 
@@ -127,7 +126,7 @@ def dprep(obj): # prepares data object for model
     schema = get_schema(obj["modelName"])
     for prop in schema:
         if schema[prop] == "datetime" and obj[prop]:
-            obj[prop] = datetime.datetime.strptime(obj[prop], "%Y-%m-%d %X")
+            obj[prop] = datetime.strptime(obj[prop], "%Y-%m-%d %X")
     if "label" in obj:
         del obj["label"]
     del obj["modelName"]
