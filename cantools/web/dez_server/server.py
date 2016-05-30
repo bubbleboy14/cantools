@@ -37,7 +37,9 @@ def fetch(host, path="/", port=80, asjson=False, cb=None, timeout=1, async=False
 	return asjson and json.loads(result) or result
 
 def post(host, path="/", port=80, data=None, protocol="http", asjson=False, ctjson=False):
-	result = requests.post("%s://%s:%s%s"%(protocol, host, port, path), json=data)
+	if ctjson:
+		data = rb64(data)
+	result = requests.post("%s://%s:%s%s"%(protocol, host, port, path), json=data).content
 	if ctjson:
 		return _ctjson(result)
 	return asjson and json.loads(result) or result
