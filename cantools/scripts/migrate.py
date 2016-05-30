@@ -1,5 +1,5 @@
 """
-### Usage: ctmigrate [load|dump] [--domain=DOMAIN] [--port=PORT]
+### Usage: ctmigrate [load|dump] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME]
 
 ### Options:
 	-h, --help            show this help message and exit

@@ -116,7 +116,7 @@ Generates fresh 'static' and 'production' files (from 'development' source files
     -p PORT, --port=PORT  use a specific port (default: 8888)
 
 ## ctmigrate
-### Usage: ctmigrate [load|dump] [--domain=DOMAIN] [--port=PORT]
+### Usage: ctmigrate [load|dump] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME]
 
 ### Options:
 	-h, --help            show this help message and exit
