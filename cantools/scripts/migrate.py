@@ -11,7 +11,7 @@
 						  (default: dump.db)
 """
 
-import getpass, model # model loads schema
+import getpass
 from optparse import OptionParser
 from cantools import db
 from cantools.web import fetch, post
@@ -63,6 +63,7 @@ def dump(host, port, session):
 MODES = { "load": load, "dump": dump }
 
 def go():
+	import model # model loads schema
 	parser = OptionParser("ctmigrate [load|dump] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME]")
 	parser.add_option("-d", "--domain", dest="domain", default="localhost",
 		help="domain of target server (default: localhost)")
