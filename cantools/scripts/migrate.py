@@ -28,11 +28,11 @@ def load(host, port, session):
 		offset = 0
 		while 1:
 			chunk = db.get_page(model, LIMIT, offset, session=session)
-			post(host, "/_db", port, {
+			log(post(host, "/_db", port, {
 				"pw": pw,
 				"action": "put",
 				"data": chunk
-			})
+			}, ctjson=True))
 			offset += LIMIT
 			if len(chunk) < LIMIT:
 				break
