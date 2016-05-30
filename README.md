@@ -115,6 +115,18 @@ Generates fresh 'static' and 'production' files (from 'development' source files
                         use a specific domain (default: localhost)
     -p PORT, --port=PORT  use a specific port (default: 8888)
 
+## ctmigrate
+### Usage: ctmigrate [load|dump] [--domain=DOMAIN] [--port=PORT]
+
+### Options:
+	-h, --help            show this help message and exit
+	-d DOMAIN, --domain=DOMAIN
+						  domain of target server (default: localhost)
+	-p PORT, --port=PORT  port of target server (default: 8080)
+	-f FILENAME, --filename=FILENAME
+						  name of sqlite data file for dumping/loading to/from
+						  (default: dump.db)
+
 ## ctindex
 Run this if your CTRefCount records get messed up for
 some reason. It will go through and recount everything.

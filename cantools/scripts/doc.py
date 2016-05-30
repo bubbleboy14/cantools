@@ -26,7 +26,7 @@ def dsFront(mod):
 def back():
 	log("back", 1)
 	return ["# Back (CLI)"] + map(lambda cmd : dsBack(cmd),
-		["init", "start", "deploy", "pubsub", "index"])
+		["init", "start", "deploy", "pubsub", "migrate", "index"])
 
 def front():
 	log("front", 1)
