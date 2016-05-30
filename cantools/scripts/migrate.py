@@ -80,6 +80,7 @@ def go():
 	else:
 		error("invalid mode specified ('%s')"%(mode,),
 			"must be 'ctmigrate load' or ctmigrate dump'")
+	log("everything seems to have worked -- you might want to run ctindex")
 	log("goodbye")
 
 if __name__ == "__main__":
