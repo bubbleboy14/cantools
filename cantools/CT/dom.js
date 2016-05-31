@@ -240,6 +240,18 @@ CT.dom = {
 			ptxt += "&nbsp;";
 		return CT.dom.node(ptxt, "span");
 	},
+	"marquee": function(content, className, direction) {
+		var n = CT.dom.node(content, "marquee", className, null, {
+			direction: direction || "left",
+			behavior: "alternate"
+		});
+		setTimeout(function() {
+			CT.dom.each(n, function(sub) {
+				sub.style.height = n.clientHeight + "px";
+			});
+		});
+		return n;
+	},
 
 	// iframe getters
 	"getDoc": function(iframe) {
