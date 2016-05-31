@@ -251,6 +251,12 @@
 .top_out {
     top: -250px !important;
 }
+.top0 {
+    top: 0px;
+}
+.bottom0 {
+    bottom: 0px;
+}
 .unlimited {
     max-height: 100% !important;
     max-width: 100% !important;
@@ -264,6 +270,12 @@
 }
 .h50 {
     height: 50px;
+}
+.h100 {
+    height: 100px;
+}
+.h20p {
+    height: 20%;
 }
 .w280 {
     width: 280px;

@@ -248,10 +248,6 @@ CT.slider.Frame = CT.Class({
 			imageBack = CT.dom.node(null, "div", "carousel-content-image",
 				null, null, { backgroundImage: "url(" + opts.img + ")" }),
 			nodes = [ imageBack, full ];
-		if (slider.opts.pan) {
-			imageBack.classList.add("bp-left");
-			imageBack.controller = CT.trans.pan(imageBack, null, true);
-		}
 		var teaserTap = function() {
 			slider.pause();
 			node._retracted = !node._retracted;
@@ -293,30 +289,16 @@ CT.slider.Frame = CT.Class({
 				slider.showNav();
 			}
 		};
+		if (slider.opts.pan) {
+			imageBack.classList.add("bp-left");
+			imageBack.controller = CT.trans.pan(imageBack, null, true);
+		}
 		if (opts.title || opts.blurb) {
 			var teaser = CT.dom.node([
 				CT.dom.node(opts.title, "div", "biggest"),
 				CT.dom.node(opts.blurb, "div", "bigger")
 			], "div", "carousel-content-teaser transparent hoverglow pointer");
 			nodes.push(teaser);
-			this.on.show = function() {
-				CT.trans.fadeIn(teaser);
-				if (slider.opts.keys)
-					CT.key.on("ENTER", teaserTap);
-				if (slider.opts.pan)
-					imageBack.controller.resume();
-				if (opts.pulse)
-					pulser.controller.resume();
-			};
-			this.on.hide = function() {
-				CT.trans.fadeOut(teaser);
-				if (node._retracted)
-					teaserTap();
-				if (slider.opts.pan)
-					imageBack.controller.pause();
-				if (opts.pulse)
-					pulser.controller.pause();
-			};
 		}
 		if (opts.pulse) {
 			pulser = CT.dom.img(opts.pulse, "carousel-pulse pointer");
@@ -324,6 +306,26 @@ CT.slider.Frame = CT.Class({
 			CT.gesture.listen("tap", pulser, teaserTap); // assume content exists
 			nodes.push(pulser);
 		}
+		this.on.show = function() {
+			if (opts.title || opts.blurb)
+				CT.trans.fadeIn(teaser);
+			if (slider.opts.keys)
+				CT.key.on("ENTER", teaserTap);
+			if (slider.opts.pan)
+				imageBack.controller.resume();
+			if (opts.pulse)
+				pulser.controller.resume();
+		};
+		this.on.hide = function() {
+			if (opts.title || opts.blurb)
+				CT.trans.fadeOut(teaser);
+			if (node._retracted)
+				teaserTap();
+			if (slider.opts.pan)
+				imageBack.controller.pause();
+			if (opts.pulse)
+				pulser.controller.pause();
+		};
 		CT.dom.addEach(node, nodes);
 		if (opts.content) // assume title/blurb exists
 			CT.gesture.listen("tap", teaser, teaserTap);
@@ -349,6 +351,33 @@ CT.slider.Frame = CT.Class({
 			}
 		};
 	},
+	menu: function() {
+		var menu = new CT.modal.Modal({
+			transition: "slide",
+			noClose: true,
+			className: "round centered basicpopup above",
+			content: this.opts.buttons.map(function(d) {
+				var n = CT.dom.node([
+					CT.dom.node(d.label || d.page, "div", "biggest bold bottombordered"),
+					CT.dom.node(d.content)
+				], "div", "margined padded bordered round hoverglow pointer inline-block");
+				n.onclick = function() {
+					location = "/" + d.page + ".html";
+				};
+				return n;
+			})
+		});
+		var logos = function(logo) {
+			var arr = [];
+			for (var i = 0; i < 5; i++)
+				arr.push(CT.dom.img(logo));
+			return arr;
+		};
+		this.node.appendChild(CT.dom.marquee(logos(this.opts.logo), "abs top0 h20p fullwidth"));
+		this.node.appendChild(CT.dom.marquee(logos(this.opts.logo), "abs bottom0 h20p fullwidth", "right"));
+		this.on.hide = menu.hide;
+		this.on.show = menu.show;
+	},
 	init: function(opts, slider) {
 		this.opts = opts;
 		this.node = CT.dom.node("", "div",
@@ -357,6 +386,6 @@ CT.slider.Frame = CT.Class({
 		this.slider = this.node.slider = slider;
 		if (slider.dimension == "width")
 			this.node.style.display = "inline-block";
-		this[slider.opts.mode]();
+		this[opts.mode || slider.opts.mode]();
 	}
 });
