@@ -288,7 +288,9 @@ CT.slider.Frame = CT.Class({
 		};
 		if (slider.opts.pan) {
 			imageBack.classList.add("bp-left");
-			imageBack.controller = CT.trans.pan(imageBack, null, true);
+			imageBack.controller = CT.trans.pan(imageBack, {
+				duration: opts.panDuration || slider.opts.autoSlideInterval
+			}, true);
 		}
 		if (opts.tab) {
 			tab = new CT.modal.Modal({
