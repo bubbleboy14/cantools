@@ -14,7 +14,6 @@ the 'opts' object itself, are all optional.
     - visible (default: true): maps to visibility css property
     - navButtons (default: true): include nav bubbles and arrows
     - pan (default: true): slow-pan frame background images
-    - tapCb (default: null): called when slider is tapped
     - startFrame (default: null): label (or index if frames are unlabeled) of frame to slide to initially (disables autoSlide)
     - bubblePosition (default: 'bottom'): where to position frame indicator bubbles ('top' or 'bottom')
     - arrowPosition (default: 'middle'): where to position navigator arrows
@@ -54,7 +53,6 @@ CT.slider.Slider = CT.Class({
 			navButtons: true,
 			startFrame: null,
 			pan: true,
-			tapCb: null,
 			parent: document.body,
 			mode: "peekaboo", // or 'chunk'
 			orientation: "horizontal",
@@ -162,7 +160,6 @@ CT.slider.Slider = CT.Class({
 			clearInterval(this._autoSlide);
 			this._autoSlide = null;
 		}
-		this.opts.tapCb && this.opts.tapCb();
 		this.opts.parent.slider && this.opts.parent.slider.pause();
 	},
 	addFrame: function(frame, index) {
@@ -243,7 +240,7 @@ CT.slider.Frame = CT.Class({
 		hide: function() {}
 	},
 	peekaboo: function() {
-		var opts = this.opts, node = this.node, slider = this.slider, pulser,
+		var opts = this.opts, node = this.node, slider = this.slider, pulser, tab,
 			full = CT.dom.node(opts.content, "div", "big carousel-content-full"),
 			imageBack = CT.dom.node(null, "div", "carousel-content-image",
 				null, null, { backgroundImage: "url(" + opts.img + ")" }),
@@ -293,6 +290,18 @@ CT.slider.Frame = CT.Class({
 			imageBack.classList.add("bp-left");
 			imageBack.controller = CT.trans.pan(imageBack, null, true);
 		}
+		if (opts.tab) {
+			tab = new CT.modal.Modal({
+				content: opts.tab.content,
+				center: false,
+				noClose: true,
+				className: "basicpopup rounder translucent above shiftall",
+				transition: "slide",
+				slide: {
+					origin: opts.tab.origin
+				}
+			});
+		}
 		if (opts.title || opts.blurb) {
 			var teaser = CT.dom.node([
 				CT.dom.node(opts.title, "div", "biggest"),
@@ -315,6 +324,8 @@ CT.slider.Frame = CT.Class({
 				imageBack.controller.resume();
 			if (opts.pulse)
 				pulser.controller.resume();
+			if (opts.tab)
+				tab.show();
 		};
 		this.on.hide = function() {
 			if (opts.title || opts.blurb)
@@ -325,6 +336,8 @@ CT.slider.Frame = CT.Class({
 				imageBack.controller.pause();
 			if (opts.pulse)
 				pulser.controller.pause();
+			if (opts.tab)
+				tab.hide();
 		};
 		CT.dom.addEach(node, nodes);
 		if (opts.content) // assume title/blurb exists
