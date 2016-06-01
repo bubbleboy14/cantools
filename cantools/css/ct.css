@@ -222,6 +222,11 @@
     -moz-border-radius: 5px;
     -webkit-border-radius: 5px;
 }
+.rounder {
+    border-radius: 15px 15px 15px 15px;
+    -moz-border-radius: 15px;
+    -webkit-border-radius: 15px;
+}
 .rightround {
     border-radius: 0px 15px 15px 0px;
     -moz-border-radius: 0px 15px 15px 0px;
@@ -235,6 +240,15 @@
 }
 .shiftup {
     margin-top: -5px;
+}
+.shiftright {
+    margin-right: -15px;
+}
+.shiftdown {
+    margin-bottom: -15px;
+}
+.shiftall {
+    margin: -15px;
 }
 .small {
     font-size: 80%;
@@ -276,6 +290,9 @@
 }
 .h20p {
     height: 20%;
+}
+.w100 {
+    width: 100px;
 }
 .w280 {
     width: 280px;
