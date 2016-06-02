@@ -90,9 +90,8 @@ var CT = {
 		"onImport": function(fullpath) {
 			CT._.scriptImportCb[fullpath].forEach(function(cb) { cb(); });
 		},
-		"onload": [],
-		"triggerOnload": function() {
-			CT._.onload.forEach(function(cb) { cb(); });
+		"triggerOnload": function(n) {
+			(n || window)._ct_onload.forEach(function(cb) { cb(); });
 		}
 	},
 	"info": {
@@ -290,10 +289,15 @@ var CT = {
 				eval(CT.net.get(CT.net.fullPath(modname.replace(/\./g, "/") + ".js")));
 		}
 	},
-	"onload": function(cb) {
-		if (!CT._.onload.length)
-			window.addEventListener('load', CT._.triggerOnload);
-		CT._.onload.push(cb);
+	"onload": function(cb, n) {
+		n = n || window;
+		if (!n._ct_onload) {
+			n._ct_onload = [];
+			n.addEventListener('load', function() {
+				CT._.triggerOnload(n);
+			});
+		}
+		n._ct_onload.push(cb);
 	},
 	"dmerge": function() {
 		var i, k, v, o = {};
