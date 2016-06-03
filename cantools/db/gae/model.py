@@ -37,7 +37,7 @@ class ModelBase(ndb.Model):
     def put(self):
         if not self.index:
             self.index = self.__class__.query().count() + 1
-        super().put()
+        super(ModelBase, self).put()
 
     def rm(self):
         self.key.delete()
