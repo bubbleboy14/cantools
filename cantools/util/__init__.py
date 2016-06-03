@@ -20,6 +20,13 @@ def init_gae():
 		dev_appserver.fix_sys_path()
 		sys.path.insert(0, ".")
 
+def init_remote_ndb():
+	from cantools import config
+	from google.appengine.ext.remote_api import remote_api_stub
+	remote_api_stub.ConfigureRemoteDatastore("", "/remote_api",
+		lambda : ("user@email.com", "password"),
+		servername="%s:%s"%(config.web.host, config.web.port))
+
 def init_ndb(datastore_file="/dev/null"):
 	import os
 	from google.appengine.api import apiproxy_stub_map, datastore_file_stub

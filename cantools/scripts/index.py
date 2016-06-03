@@ -9,7 +9,7 @@ some reason. It will go through and recount everything.
 Run this on a database with lots of missing index values.
 """
 
-from cantools.util import error, log, batch, init_ndb
+from cantools.util import error, log, batch, init_remote_ndb
 from cantools.db import get_schema, get_model, put_multi
 from cantools import config
 if config.web.server == "dez":
@@ -104,7 +104,7 @@ def go():
 	if config.web.server == "dez":
 		dez()
 	else:
-		init_ndb(config.db.main)
+		init_remote_ndb()
 		gae()
 	log("goodbye")
 
