@@ -16,18 +16,20 @@ functionality of the framework, as follows.
       - issues a DELETE request via asynchronous XHR
 
 #### Also includes:
- - CT.net.setSpinner(bool) (default: false)
-   - enables/disables spinner (indicating outstanding request)
- - CT.net.setCache(bool) (default: false)
-   - enables/disables client-side request caching
- - CT.net.setEncoder(func)
-   - sets encoder (upstream data processing function)
-   - must be used in conjunction with cantools.web.setenc()
- - CT.net.setDecoder(func)
-   - sets decoder (downstream data processing function)
-   - must be used in conjunction with cantools.web.setdec()
- - CT.net.xhr(path, method, params, async, cb, headers)
-   - thin wrapper around browser-level XHR abstraction
+	- CT.net.setMode(string) (default: 'ct')
+	  - also supports 'basic', which skips request prepping and response code processing
+	- CT.net.setSpinner(bool) (default: false)
+	  - enables/disables spinner (indicating outstanding request)
+	- CT.net.setCache(bool) (default: false)
+	  - enables/disables client-side request caching
+	- CT.net.setEncoder(func)
+	  - sets encoder (upstream data processing function)
+	  - must be used in conjunction with cantools.web.setenc()
+	- CT.net.setDecoder(func)
+	  - sets decoder (downstream data processing function)
+	  - must be used in conjunction with cantools.web.setdec()
+	- CT.net.xhr(path, method, params, async, cb, headers)
+	  - thin wrapper around browser-level XHR abstraction
 
 ### CT.require(modname, lazy)
 This is the basis of the cantools module system. Any time your code requires
@@ -101,6 +103,7 @@ var CT = {
 	"net": {
 		// defaults
 		"_path": "",
+		"_mode": "ct",
 		"_cache": false,
 		"_encode": false,
 		"_spinner": false,
@@ -108,6 +111,13 @@ var CT = {
 		"_decoder": function (d) { return d; },
 		"_silentFail": true,
 		// functions
+		"setMode": function(mode) {
+			if (mode != "ct" && mode != "basic") {
+				CT.log("CT.net.setMode() - illegal mode specified: " + mode);
+				CT.log("mode must be one of: 'ct', 'basic'");
+			} else
+				CT.net._mode = mode;
+		},
 		"setSpinner": function(bool) {
 			CT.net._spinner = bool;
 		},
@@ -143,7 +153,9 @@ var CT = {
 		    	xhr.setRequestHeader(header, headers[header]);
 		    xhr.onreadystatechange = cb && function() { cb(xhr); };
 		    if (params) {
-		    	params = JSON.stringify(CT.net._rd(params, true));
+		    	if (CT.net._mode == "ct")
+			    	params = CT.net._rd(params, true);
+	    		params = JSON.stringify(params);
 		    	if (CT.net._encode)
 		    		params = CT.net._encoder(params);
 		    }
@@ -153,7 +165,7 @@ var CT = {
 		},
 		"_fallback_error": function(msg) {
 			if (CT.net._silentFail)
-				console.log(msg);
+				CT.log(msg);
 			else
 				alert(msg);
 		},
@@ -197,30 +209,32 @@ var CT = {
 		            	if (CT.net._spinner)
 		            		CT.dom.remove(CT.net._spinner_node);
 		                var data = xhr.responseText.trim();
-		                if (CT.net._encode)
-		                    data = CT.net._decoder(data);
-		                var payload = data.slice(1);
-		                var code = data.charAt(0);
 		                var success = function(b64) {
-		                	var pl = JSON.parse(payload);
+		                	var pl = JSON.parse(data);
 		                	if (b64) pl = CT.net._rd(pl);
 		                	if (CT.net._cache)
 			                	CT.storage.set(signature, pl);
 		                	cb(pl, cbarg);
 		                };
-		                if (code == '0')
-		                	eb(payload, ebarg);
-		                else if (code == "1")
+		                if (CT.net._encode)
+		                    data = CT.net._decoder(data);
+		                if (CT.net._mode == "ct") {
+			                var code = data.charAt(0);
+			                data = data.slice(1);
+			                if (code == '0')
+			                	eb(data, ebarg);
+			                else if (code == "1")
+			                	success();
+			                else if (code == "2")
+			                	eb(atob(data), ebarg);
+			                else if (code == "3")
+			                	success(true);
+			                else
+			                	CT.log("what? bad response code: " + code);
+		                } else
 		                	success();
-		                else if (code == "2")
-		                	eb(atob(payload), ebarg);
-		                else if (code == "3")
-		                	success(true);
-		                else
-		                	CT.log("what? bad response code: " + code);
-		            }
-		            else if (!CT.net._encode)
-		                CT.net._fallback_error("request to " + path + " failed!");
+		            } else
+		            	eb("request to " + path + " failed! (" + xhr.status + " - " + xhr.responseText + ")", ebarg);
 		        }
 		    }, headers);
 		},
