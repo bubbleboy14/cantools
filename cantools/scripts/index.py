@@ -1,14 +1,25 @@
 """
+This script's behavior changes according to the backend of the target project.
+
+### dez
 Run this if your CTRefCount records get messed up for
 some reason. It will go through and recount everything.
+
+### gae
+Run this on a database with lots of missing index values.
 """
 
 from cantools.util import error, log, batch
 from cantools import config
+from cantools.db import get_schema, get_model, put_multi
 if config.web.server == "dez":
-	from cantools.db import session, func, get_schema, get_model, put_multi, refresh_counter
+	from cantools.db import session, func, refresh_counter
 
 counts = { "_counters": 0 }
+
+#
+# dez
+#
 
 def get_keys(kind, reference):
 	log("acquiring %s (%s) keys"%(kind, reference), 1)
@@ -56,17 +67,44 @@ def do_batch(chunk, reference):
 	put_multi(rc)
 	log("saved", 2)
 
-def go():
-	if config.web.server != "dez":
-		error("ctindex only available for dez projects")
-	log("indexing foreignkey references throughout database")
-	import model # load schema
+def dez():
+	log("indexing foreignkey references throughout database", important=True)
 	for kind, references in refmap().items():
 		log("processing table: %s"%(kind,), important=True)
 		for reference, keys in references.items():
 			batch(keys, do_batch, reference)
 	tcount = sum(counts.values()) - counts["_counters"]
 	log("refreshed %s rows and updated %s counters"%(tcount, counts["_counters"]), important=True)
+
+#
+# gae
+#
+
+def gae():
+	log("assigning sequential index properties to all records", important=True)
+	puts = []
+	for kind in get_schema():
+		mod = get_model(kind)
+		items = mod.query().fetch() # gae doesn't support all()...
+		log("%s, %s"%(kind, len(items)), important=True)
+		i = 0
+		for item in items:
+			i += 1
+			item.index = i
+			if not i % 100:
+				log("processed %s"%(i,), 1)
+		log("processed %s %s entities"%(i, kind))
+		puts += items
+	log("saving %s %s"%(len(puts),), important=True)
+#	put_multi(puts)
+
+def go():
+	log("mode: %s"%(config.web.server,), important=True)
+	import model # load schema
+	if config.web.server == "dez":
+		dez()
+	else:
+		gae()
 	log("goodbye")
 
 if __name__ == "__main__":
