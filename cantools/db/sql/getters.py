@@ -1,9 +1,9 @@
-import json, operator
+import json
 from base64 import b64decode
 from datetime import datetime
 from sqlalchemy import func
 from session import session
-from .shared import *
+from ..shared import *
 
 def get_page(modelName, limit, offset, order='index', filters={}, session=session):
     from properties import KeyWrapper

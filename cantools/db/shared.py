@@ -1,3 +1,5 @@
+import operator
+
 modelsubs = {}
 operators = {
     "==": operator.__eq__,
