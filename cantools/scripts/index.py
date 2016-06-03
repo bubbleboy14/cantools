@@ -95,8 +95,8 @@ def gae():
 				log("processed %s"%(i,), 1)
 		log("processed %s %s entities"%(i, kind))
 		puts += items
-	log("saving %s %s records"%(len(puts), kind), important=True)
-#	put_multi(puts)
+	log("saving %s records"%(len(puts),), important=True)
+	put_multi(puts)
 
 def go():
 	log("mode: %s"%(config.web.server,), important=True)
