@@ -1,6 +1,3 @@
-import sys, dev_appserver
-dev_appserver.fix_sys_path()
-sys.path.insert(0, ".")
 from google.appengine.ext import ndb
 from ..shared import *
 

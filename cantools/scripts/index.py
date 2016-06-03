@@ -10,8 +10,8 @@ Run this on a database with lots of missing index values.
 """
 
 from cantools.util import error, log, batch
-from cantools import config
 from cantools.db import get_schema, get_model, put_multi
+from cantools import config
 if config.web.server == "dez":
 	from cantools.db import session, func, refresh_counter
 
