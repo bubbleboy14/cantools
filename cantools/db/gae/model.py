@@ -59,6 +59,7 @@ class ModelBase(ndb.Model):
     def export(self):
         cols = {}
         cols["key"] = self.id()
+        cols["ctkey"] = ct_key(self.modeltype(), self.index)
         cols["index"] = self.index
         cols["label"] = self.label
         cols["modelName"] = self.modeltype()

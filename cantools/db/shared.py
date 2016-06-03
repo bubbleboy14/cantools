@@ -1,4 +1,4 @@
-import operator
+import operator, base64, json
 
 modelsubs = {}
 operators = {
@@ -33,3 +33,9 @@ def dprep(obj): # prepares data object for model
         del obj["label"]
     del obj["modelName"]
     return obj
+
+def ct_key(modelName, index):
+    return base64.b64encode(json.dumps({
+        "index": index,
+        "model": modelName
+    }))

@@ -1,8 +1,8 @@
-import base64, json
 from datetime import datetime
 from properties import KeyWrapper
 from session import session
 from cantools.util import batch
+from ..shared import ct_key
 
 def _init_entity(instance, session=session):
     from lookup import inc_counter, dec_counter
@@ -33,10 +33,7 @@ def init_multi(instances, session=session):
     session.add_all(instances + lookups)
     session.flush()
     for instance in instances:
-        instance.key = instance.key or KeyWrapper(base64.b64encode(json.dumps({
-            "index": instance.index,
-            "model": instance.polytype
-        })))
+        instance.key = instance.key or KeyWrapper(ct_key(instance.index, instance.polytype))
 
 def put_multi(instances, session=session):
     session.init()
