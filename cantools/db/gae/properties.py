@@ -1,4 +1,7 @@
+import dev_appserver
+dev_appserver.fix_sys_path()
 from google.appengine.ext import ndb
+from .shared import *
 
 # column properties
 Integer = ndb.IntegerProperty
@@ -12,8 +15,21 @@ Time = ndb.TimeProperty
 DateTime = ndb.DateTimeProperty
 ForeignKey = ndb.KeyProperty
 
+# ctypes
+Integer._ct_type = "integer"
+Float._ct_type = "float"
+Boolean._ct_type = "boolean"
+String._ct_type = "string"
+Text._ct_type = "text"
+Binary._ct_type = "binary"
+Date._ct_type = "date"
+Time._ct_type = "time"
+DateTime._ct_type = "datetime"
+ForeignKey._ct_type = "key"
+
 # entity keys
 Key = ndb.Key
+KeyWrapper = ndb.Key
 
 # funcs
 get_multi = ndb.get_multi
