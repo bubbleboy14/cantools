@@ -23,9 +23,9 @@ def response():
 				res = get_page(mname, cgi_get("limit"), cgi_get("offset"),
 					cgi_get("order", default="index"), cgi_get("filters", default={}))
 			elif keys:
-				res = [d.data() for d in get_multi(keys)]
+				res = [d.export() for d in get_multi(keys)]
 			else:
-				res = get(cgi_get("key")).data()
+				res = get(cgi_get("key")).export()
 			if config.memcache.db:
 				setmem(sig, res, False)
 		succeed(res)
