@@ -86,7 +86,7 @@ def gae():
 	for kind in get_schema():
 		mod = get_model(kind)
 		items = mod.query().fetch() # gae doesn't support all()...
-		log("%s, %s"%(kind, len(items)), important=True)
+		log("%s (%s)"%(kind, len(items)), important=True)
 		i = 0
 		for item in items:
 			i += 1
@@ -95,7 +95,7 @@ def gae():
 				log("processed %s"%(i,), 1)
 		log("processed %s %s entities"%(i, kind))
 		puts += items
-	log("saving %s %s"%(len(puts),), important=True)
+	log("saving %s %s records"%(len(puts), kind), important=True)
 #	put_multi(puts)
 
 def go():
