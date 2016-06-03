@@ -3,7 +3,7 @@ import config as cfgmod
 config = cfgmod.config
 
 if config.web.server == "gae":
-	util.init_gae(config.db.main)
+	util.init_gae()
 import geo
 from scripts import builder, deploy, init, pubsub, start, index, migrate
 
