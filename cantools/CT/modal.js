@@ -72,20 +72,14 @@ CT.modal.Modal = CT.Class({
 	CLASSNAME: "CT.modal.Modal",
 	visible: false,
 	setup: {
-		_centerv: function(parent, bottom) {
+		_centerv: function(parent) {
 			var val = parent.clientHeight || CT.align.height();
-			if (bottom)
-				val += this.node.clientHeight;
-			else
-				val -= this.node.clientHeight;
+			val -= this.node.clientHeight;
 			return val / 2;
 		},
-		_centerh: function(parent, right) {
+		_centerh: function(parent) {
 			var val = parent.clientWidth || CT.align.width();
-			if (right)
-				val += this.node.clientWidth;
-			else
-				val -= this.node.clientWidth;
+			val -= this.node.clientWidth;
 			return val / 2;
 		},
 		_fallbacks: function(parent) {
@@ -154,7 +148,7 @@ CT.modal.Modal = CT.Class({
 						n._vin = {
 							node: n,
 							property: side,
-							value: (center ? centerv(parent, !!sideIndex) : 0) + "px"
+							value: (center ? centerv(parent) : 0) + "px"
 						};
 						ver = true;
 					}
@@ -170,7 +164,7 @@ CT.modal.Modal = CT.Class({
 						n._hin = {
 							node: n,
 							property: side,
-							value: (center ? centerh(parent, !!sideIndex) : 0) + "px"
+							value: (center ? centerh(parent) : 0) + "px"
 						};
 						hor = true;
 					}
@@ -313,6 +307,6 @@ CT.modal.Prompt = CT.Class({
 		this.node.appendChild(CT.dom.button("Cancel", this.hide));
 	},
 	init: function(opts) {
-		this.opts = CT.merge(opts, CT.modal._defaults.Prompt, CT.modal._defaults.Modal);
+		this.opts = CT.merge(this.opts, opts, CT.modal._defaults.Prompt, CT.modal._defaults.Modal);
 	}
 }, CT.modal.Modal);
