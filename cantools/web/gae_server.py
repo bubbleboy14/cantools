@@ -21,10 +21,18 @@ envelope = {
 respond = do_respond
 set_env(lambda html : envelope[html and 'html' or 'plain'])
 
-# fetch
+# requests
 def fetch(host, path="/", port=80, asjson=False):
     from google.appengine.api.urlfetch import fetch
     raw = fetch("http://%s:%s%s"%(host, port, path)).content
+    if asjson:
+        return json.loads(raw)
+    return raw
+
+def post(host, path="/", port=80, data=None, protocol="http", asjson=False):
+    from google.appengine.api.urlfetch import fetch
+    raw = fetch("%s://%s:%s%s"%(protocol, host, port, path),
+        payload=json.dumps(data), method="POST").content
     if asjson:
         return json.loads(raw)
     return raw
