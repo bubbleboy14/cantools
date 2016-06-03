@@ -1,4 +1,4 @@
-# cantools 0.7.1
+# cantools 0.7.2
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
 License: MIT (see LICENSE)
@@ -255,18 +255,20 @@ functionality of the framework, as follows.
       - issues a DELETE request via asynchronous XHR
 
 #### Also includes:
- - CT.net.setSpinner(bool) (default: false)
-   - enables/disables spinner (indicating outstanding request)
- - CT.net.setCache(bool) (default: false)
-   - enables/disables client-side request caching
- - CT.net.setEncoder(func)
-   - sets encoder (upstream data processing function)
-   - must be used in conjunction with cantools.web.setenc()
- - CT.net.setDecoder(func)
-   - sets decoder (downstream data processing function)
-   - must be used in conjunction with cantools.web.setdec()
- - CT.net.xhr(path, method, params, async, cb, headers)
-   - thin wrapper around browser-level XHR abstraction
+	- CT.net.setMode(string) (default: 'ct')
+	  - also supports 'basic', which skips request prepping and response code processing
+	- CT.net.setSpinner(bool) (default: false)
+	  - enables/disables spinner (indicating outstanding request)
+	- CT.net.setCache(bool) (default: false)
+	  - enables/disables client-side request caching
+	- CT.net.setEncoder(func)
+	  - sets encoder (upstream data processing function)
+	  - must be used in conjunction with cantools.web.setenc()
+	- CT.net.setDecoder(func)
+	  - sets decoder (downstream data processing function)
+	  - must be used in conjunction with cantools.web.setdec()
+	- CT.net.xhr(path, method, params, async, cb, headers)
+	  - thin wrapper around browser-level XHR abstraction
 
 ### CT.require(modname, lazy)
 This is the basis of the cantools module system. Any time your code requires
@@ -688,7 +690,6 @@ the 'opts' object itself, are all optional.
     - visible (default: true): maps to visibility css property
     - navButtons (default: true): include nav bubbles and arrows
     - pan (default: true): slow-pan frame background images
-    - tapCb (default: null): called when slider is tapped
     - startFrame (default: null): label (or index if frames are unlabeled) of frame to slide to initially (disables autoSlide)
     - bubblePosition (default: 'bottom'): where to position frame indicator bubbles ('top' or 'bottom')
     - arrowPosition (default: 'middle'): where to position navigator arrows
@@ -781,6 +782,15 @@ around with DOM elements via CSS transitions. Have at it.
 	}
 
 TODO: let's add some more, like scale.
+
+Certain functions (pan() and pulse()) return a CT.trans.Controller instance.
+
+### CT.trans.Controller
+	pause()  - stop the transition (for now)
+	resume() - resume the transition
+	active() - returns status of transition (bool)
+	tick()   - calls cb() if active()
+	init(cb) - cb() is called by tick() if active()
 
 ## CT.upload
 ### Import line: 'CT.require("CT.upload");'
