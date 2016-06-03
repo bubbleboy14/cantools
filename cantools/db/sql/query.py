@@ -52,8 +52,9 @@ class Query(object):
         self.query = getattr(self.query, modname)(*args, **kwargs)
         return self
 
-    def fetch(self, limit, offset=0, keys_only=False):
-        self.limit(limit)
+    def fetch(self, limit=None, offset=0, keys_only=False):
+        if limit:
+            self.limit(limit)
         if offset:
             self.offset(offset)
         res = self.all()
