@@ -3,30 +3,7 @@ from base64 import b64decode
 from datetime import datetime
 from sqlalchemy import func
 from session import session
-
-modelsubs = {}
-operators = {
-    "==": operator.__eq__,
-    ">=": operator.__ge__,
-    "<=": operator.__le__,
-    "!=": operator.__ne__,
-    ">": operator.__gt__,
-    "<": operator.__lt__
-}
-
-def get_model(modelName):
-    return modelsubs.get(modelName, None)
-
-def get_schema(modname=None):
-    if modname:
-        if not isinstance(modname, basestring):
-            modname = modname.__name__
-        return modelsubs[modname.lower()]._schema
-    s = {}
-    for key, val in modelsubs.items():
-        if key not in ["modelbase", "ctrefcount"]:
-            s[key] = val._schema
-    return s
+from .shared import *
 
 def get_page(modelName, limit, offset, order='index', filters={}, session=session):
     from properties import KeyWrapper
@@ -47,7 +24,7 @@ def get_page(modelName, limit, offset, order='index', filters={}, session=sessio
             query.filter(func.lower(prop).like(val.lower()))
         else:
             query.filter(operators[comp](prop, val))
-    return [d.data() for d in query.order(order).fetch(limit, offset)]
+    return [d.export() for d in query.order(order).fetch(limit, offset)]
 
 def getall(entity=None, query=None, keys_only=False, session=session):
     if query:
