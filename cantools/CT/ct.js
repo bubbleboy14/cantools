@@ -110,7 +110,11 @@ var CT = {
 		"_encoder": function (d) { return d; },
 		"_decoder": function (d) { return d; },
 		"_silentFail": true,
+		"_qsOnly": false,
 		// functions
+		"qsOnly": function() {
+			CT.net._qsOnly = true;
+		},
 		"setMode": function(mode) {
 			if (mode != "ct" && mode != "basic") {
 				CT.log("CT.net.setMode() - illegal mode specified: " + mode);
@@ -146,6 +150,10 @@ var CT = {
 		    var xhr = window.XMLHttpRequest
 		    	? new XMLHttpRequest()
 		    	: new ActiveXObject("Microsoft.XMLHTTP");
+		    if (params && CT.net._qsOnly) {
+		    	path = CT.net._qs(path, params);
+		    	params = null;
+		    }
 		    xhr.open(method, path, async);
 		    if ( !(headers && "Content-Type" in headers))
 			    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -244,14 +252,18 @@ var CT = {
 		"delete": function(path, params, cb, headers) {
 			CT.net.xhr(path, "DELETE", params, true, cb, headers);
 		},
-		"get": function(path, qsp, isjson) {
-			var d, qs, key, cachedVersion, cache = CT.net._cache && isjson;
+		"_qs": function(path, qsp) {
 			if (qsp) {
-				qs = [];
-				for (key in qsp)
+				var qs = [];
+				for (var key in qsp)
 					qs.push(key + "=" + qsp[key]);
 				path += "?" + encodeURI(qs.join("&"));
 			}
+			return path;
+		},
+		"get": function(path, qsp, isjson) {
+			var d, cachedVersion, cache = CT.net._cache && isjson;
+			path = CT.net._qs(path, qsp);
 			if (cache) {
 				cachedVersion = CT.storage.get(path);
 				if (cachedVersion)
