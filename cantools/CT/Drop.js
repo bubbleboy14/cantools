@@ -48,7 +48,7 @@ CT.Drop = CT.Class({
 			this.opts.anchor.onclick = this.slide;
 	},
 	init: function(opts) {
-		opts = CT.merge(opts, {
+		this.opts = opts = CT.merge(opts, {
 			content: CT.dom.node(),
 			setClick: true
 		});
