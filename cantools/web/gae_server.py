@@ -14,7 +14,7 @@ from google.appengine.api import mail
 from util import *
 
 envelope = {
-    'plain': "\n\n%s",
+    'plain': "\n%s",
     'html': "\n\n<html><head></head><body>%s</body></html>"
 }
 
