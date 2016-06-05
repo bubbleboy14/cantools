@@ -20,6 +20,12 @@ def init_gae():
 		dev_appserver.fix_sys_path()
 		sys.path.insert(0, ".")
 
+# these are essentially not recommended. google's
+# rules for operating outside of their native environment
+# are crappy and generally get worse with time. these
+# _sort of_ work, but easily get messed up. if you want
+# to do something remote, just write a web handler that
+# does it for you.
 def init_remote_ndb():
 	from cantools import config
 	from google.appengine.ext.remote_api import remote_api_stub

@@ -9,8 +9,11 @@ some reason. It will go through and recount everything.
 Run this on a database with lots of missing index values.
 """
 
-from cantools.util import error, log, batch, init_remote_ndb
+from getpass import getpass
+from optparse import OptionParser
+from cantools.util import error, log, batch
 from cantools.db import get_schema, get_model, put_multi
+from cantools.web import fetch
 from cantools import config
 if config.web.server == "dez":
 	from cantools.db import session, func, refresh_counter
@@ -67,8 +70,9 @@ def do_batch(chunk, reference):
 	put_multi(rc)
 	log("saved", 2)
 
-def dez():
+def refcount():
 	log("indexing foreignkey references throughout database", important=True)
+	import model # load schema
 	for kind, references in refmap().items():
 		log("processing table: %s"%(kind,), important=True)
 		for reference, keys in references.items():
@@ -80,32 +84,38 @@ def dez():
 # gae
 #
 
-def gae():
-	log("assigning sequential index properties to all records", important=True)
-	puts = []
-	for kind in get_schema():
-		mod = get_model(kind)
-		items = mod.query().fetch() # gae doesn't support all()...
-		log("%s (%s)"%(kind, len(items)), important=True)
-		i = 0
-		for item in items:
-			i += 1
-			item.index = i
-			if not i % 100:
-				log("processed %s"%(i,), 1)
-		log("processed %s %s entities"%(i, kind))
-		puts += items
-	log("saving %s records"%(len(puts),), important=True)
-	put_multi(puts)
+def index(host, port):
+	pw = getpass("what's the admin password? ")
+	log("indexing db at %s:%s"%(host, port), important=True)
+	log("acquiring schema")
+	schema = fetch(host, "/_db?action=schema", port, ctjson=True)
+	for kind in schema:
+		log(fetch(host, "/_db?action=index&pw=%s&kind=%s"%(pw, kind), port))
 
 def go():
-	log("mode: %s"%(config.web.server,), important=True)
-	import model # load schema
-	if config.web.server == "dez":
-		dez()
+	parser = OptionParser("ctindex [--mode=MODE] [--domain=DOMAIN] [--port=PORT]")
+	parser.add_option("-m", "--mode", dest="mode", default="refcount",
+		help="may be: 'refcount' (count up all foreignkey references for sort orders "
+			"and such) or 'index' (assign each record a sequential integer index). "
+			"Note regarding 'index' mode: it _must_ happen remotely; it's generally "
+			"unnecessary unless you're trying to migrate an unindexed database away from "
+			"gae and need an index/key per record; it should be invoked from _outside_ "
+			"-- that's right, outside -- of your project's directory (to avoid loading "
+			"up a bunch of google network tools that may be crappy or cause issues outside "
+			"of their normal 'dev_appserver' environment")
+	parser.add_option("-d", "--domain", dest="domain", default="localhost",
+		help="('index' mode only) what's the domain of the target server? (default: localhost)")
+	parser.add_option("-p", "--port", dest="port", default="8080",
+		help="('index' mode only) what's the port of the target server? (default: 8080)")
+	options, args = parser.parse_args()
+
+	log("mode: %s"%(options.mode,), important=True)
+	if options.mode == "refcount":
+		refcount()
+	elif options.mode == "index":
+		index(options.domain, int(options.port))
 	else:
-		init_remote_ndb()
-		gae()
+		error("unknown mode: %s"%(options.mode,))
 	log("goodbye")
 
 if __name__ == "__main__":
