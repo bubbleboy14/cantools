@@ -1,13 +1,13 @@
 from cantools.web import respond, succeed, fail, cgi_get, cgi_dump, getmem, setmem, clearmem
-from cantools.db import get, get_model, get_schema, get_page, get_multi, put_multi, edit, dprep
+from cantools.db import get, get_model, get_schema, get_page, get_multi, put_multi, edit, dprep, admin
 from cantools import config
 import model # load up all models (for schema)
 
 def response():
-	action = cgi_get("action", choices=["schema", "get", "edit", "delete", "put"])
+	action = cgi_get("action", choices=["schema", "get", "edit", "delete", "put", "index"])
 
 	# edit/delete always require credentials; getters do configurably
-	if not config.db.public or action in ["edit", "delete", "put"]:
+	if not config.db.public or action in ["edit", "delete", "put", "index"]:
 		if cgi_get("pw") != config.admin.pw:
 			fail("wrong")
 
@@ -37,5 +37,7 @@ def response():
 		put_multi([get_model(d["modelName"])(**dprep(d)) for d in cgi_get("data")])
 	elif action == "delete":
 		get(cgi_get("key")).rm()
+	elif action == "index":
+		admin.index(cgi_get("kind"))
 
 respond(response)
