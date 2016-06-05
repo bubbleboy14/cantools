@@ -66,6 +66,11 @@ for key, val in [[term.strip() for term in line.split(" = ")] for line in read("
 		config.db.update(config.web.server, _getpass(val, "db"))
 	elif key == "DB_TEST":
 		config.db.update("test", _getpass(val, "test db"))
+	elif key == "ADMINPWGAE":
+		# this property only exists for local finagling of a gae database (datastore).
+		# this is _not_ for production and frankly should _not_ even be committed to
+		# a repository. use with care!
+		config.admin.update("pw", val)
 	else:
 		target = key.lower()
 		c = config
