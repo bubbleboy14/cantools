@@ -1,5 +1,27 @@
 """
-This script's behavior changes according to the backend of the target project.
+### Usage: ctindex [--mode=MODE] [--domain=DOMAIN] [--port=PORT]
+
+### Options:
+	-h, --help            show this help message and exit
+	-m MODE, --mode=MODE  may be: 'refcount' (default - count up all foreignkey
+	                      references for sort orders and such) or 'index'
+	                      (assign each record a sequential integer index). Note
+	                      regarding 'index' mode: it _must_ happen remotely;
+	                      it's generally unnecessary unless you're trying to
+	                      migrate an unindexed database away from gae and need
+	                      an index/key per record; it should be invoked from
+	                      _outside_ -- that's right, outside -- of your
+	                      project's directory (to avoid loading up a bunch of
+	                      google network tools that may be crappy or cause
+	                      issues outside of their normal 'dev_appserver'
+	                      environment
+	-d DOMAIN, --domain=DOMAIN
+	                      ('index' mode only) what's the domain of the target
+	                      server? (default: localhost)
+	-p PORT, --port=PORT  ('index' mode only) what's the port of the target
+	                      server? (default: 8080)
+
+As you can see, this script's behavior changes according to the backend of the target project.
 
 ### dez
 Run this if your CTRefCount records get messed up for
