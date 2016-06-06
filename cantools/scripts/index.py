@@ -95,7 +95,7 @@ def index(host, port):
 def go():
 	parser = OptionParser("ctindex [--mode=MODE] [--domain=DOMAIN] [--port=PORT]")
 	parser.add_option("-m", "--mode", dest="mode", default="refcount",
-		help="may be: 'refcount' (count up all foreignkey references for sort orders "
+		help="may be: 'refcount' (default - count up all foreignkey references for sort orders "
 			"and such) or 'index' (assign each record a sequential integer index). "
 			"Note regarding 'index' mode: it _must_ happen remotely; it's generally "
 			"unnecessary unless you're trying to migrate an unindexed database away from "
