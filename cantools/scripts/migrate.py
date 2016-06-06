@@ -63,7 +63,6 @@ def dump(host, port, session):
 MODES = { "load": load, "dump": dump }
 
 def go():
-	import model # model loads schema
 	parser = OptionParser("ctmigrate [load|dump] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME]")
 	parser.add_option("-d", "--domain", dest="domain", default="localhost",
 		help="domain of target server (default: localhost)")
@@ -74,6 +73,7 @@ def go():
 	options, args = parser.parse_args()
 	if not args:
 		error("no mode specified -- must be 'ctmigrate load' or 'ctmigrate dump'")
+	import model # model loads schema
 	mode = args[0]
 	if mode in MODES:
 		MODES[mode](options.domain, int(options.port),
