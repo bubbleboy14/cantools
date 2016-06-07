@@ -8,7 +8,7 @@ the 'opts' object itself, are all optional.
 
 ### Definable properties are as follows:
     - parent (default: document.body): DOM element in which to build the slider
-    - mode (dfault: 'peekaboo'): how to display each frame - 'peekaboo' or 'chunk'
+    - mode (dfault: 'peekaboo'): how to display each frame - 'peekaboo', 'chunk', 'menu', or 'profile'
     - autoSlideInterval (default: 5000): how many milliseconds to wait before auto-sliding frames
     - autoSlide (default: true): automatically proceed through frames (else, trigger later with .resume())
     - visible (default: true): maps to visibility css property
@@ -392,6 +392,27 @@ CT.slider.Frame = CT.Class({
 		this.node.appendChild(CT.dom.marquee(logos(this.opts.logo), "abs bottom0 h20p fullwidth", "right"));
 		this.on.hide = menu.hide;
 		this.on.show = menu.show;
+	},
+	profile: function() {
+		var img = CT.dom.node(null, "div", "w2-3 h4-5",
+			null, null, { backgroundImage: "url(" + this.opts.img + ")" }),
+			buttons = CT.dom.node(null, "div", "centered");
+		if (this.slider.opts.pan) {
+			img.classList.add("bp-right");
+			img.controller = CT.trans.pan(img, {
+				duration: this.opts.panDuration || this.slider.opts.autoSlideInterval
+			}, true);
+			this.on.hide = img.controller.pause;
+			this.on.show = img.controller.resume;
+		}
+		for (var b in this.opts.buttons)
+			buttons.appendChild(CT.dom.button(b, this.opts.buttons[b], "round padded margined"));
+		this.node.appendChild(CT.dom.node([
+			CT.dom.node(this.opts.name, "div", "biggest"),
+			CT.dom.node(this.opts.description)
+		], "div", "right thirdwidth"));
+		this.node.appendChild(img);
+		this.node.appendChild(buttons);
 	},
 	init: function(opts, slider) {
 		this.opts = opts;
