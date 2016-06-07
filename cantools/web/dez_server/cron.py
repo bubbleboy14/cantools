@@ -1,5 +1,4 @@
 from rel import timeout
-from dez.logging import get_logger_getter
 from cantools import config
 from cantools.util import read
 from ..util import do_respond
@@ -12,7 +11,7 @@ secsPerUnit = {
 }
 
 class Rule(object):
-    def __init__(self, controller, url, rule):
+    def __init__(self, controller, url, rule, logger_getter):
         self.logger = logger_getter("Rule(%s -> %s)"%(rule, url))
         self.controller = controller
         self.url = url
@@ -41,6 +40,7 @@ class Rule(object):
 
 class Cron(object):
     def __init__(self, controller, logger_getter):
+        self.logger_getter = logger_getter
         self.logger = logger_getter("Cron")
         self.controller = controller
         self.timers = {}
@@ -54,7 +54,8 @@ class Cron(object):
             if line.startswith("  url: "):
                 url = line[7:].strip()
             elif url:
-                self.timers[url] = Rule(self.controller, url, line[12:].strip())
+                self.timers[url] = Rule(self.controller,
+                    url, line[12:].strip(), self.logger_getter)
                 url = None
 
     def start(self):
