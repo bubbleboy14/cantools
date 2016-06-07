@@ -6,7 +6,7 @@ import model # load up all models (for schema)
 def response():
 	action = cgi_get("action", choices=["schema", "get", "edit", "delete", "put", "index"])
 
-	# edit/delete always require credentials; getters do configurably
+	# edit/delete/put/index always require credentials; getters do configurably
 	if not config.db.public or action in ["edit", "delete", "put", "index"]:
 		if cgi_get("pw") != config.admin.pw:
 			fail("wrong")
@@ -15,7 +15,8 @@ def response():
 		succeed(get_schema())
 	elif action == "get":
 		sig = cgi_dump()
-		res = getmem(sig, False)
+		# gae web cache disabled for now ... seems messed up
+		res = config.web.server == "dez" and getmem(sig, False) or None
 		if not res:
 			mname = cgi_get("modelName", required=False)
 			keys = cgi_get("keys", required=False)
@@ -29,7 +30,7 @@ def response():
 				res = [d.export() for d in get_multi(keys)]
 			else:
 				res = get(cgi_get("key")).export()
-			if config.memcache.db:
+			if config.memcache.db and config.web.server == "dez":
 				setmem(sig, res, False)
 		succeed(res)
 	elif action == "edit":
@@ -41,6 +42,6 @@ def response():
 	elif action == "delete":
 		get(cgi_get("key")).rm()
 	elif action == "index":
-		admin.index(cgi_get("kind"))
+		admin.index(cgi_get("kind", default="*"))
 
 respond(response)
