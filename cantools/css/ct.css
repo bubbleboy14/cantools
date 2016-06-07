@@ -1,10 +1,98 @@
+/*
+ * layout
+ */
+
+/* display */
+.block { display: block; }
+.inline-block { display: inline-block; }
+.hidden { display: none; }
+.hider { visibility: hidden; }
+.transparent { opacity: 0; }
+.translucent { opacity: 0.7; }
+
+/* dimensions */
+.h1 { height: 100%; }
+.h1-2 { height: 50%; }
+.h1-3 { height: 33%; }
+.h2-3 { height: 66%; }
+.h1-4 { height: 25%; }
+.h3-4 { height: 75%; }
+.h1-5 { height: 20%; }
+.h2-5 { height: 40%; }
+.h3-5 { height: 60%; }
+.h4-5 { height: 80%; }
+.w1 { width: 100%; }
+.w1-2 { width: 50%; }
+.w1-3 { width: 33%; }
+.w2-3 { width: 66%; }
+.w1-4 { width: 25%; }
+.w3-4 { width: 75%; }
+.w1-5 { width: 20%; }
+.w2-5 { width: 40%; }
+.w3-5 { width: 60%; }
+.w4-5 { width: 80%; }
+
+/* position */
+.abs { position: absolute; }
+.above { z-index: 1000 !important; }
+.right { float: right; }
+.left { float: left; }
+.clearnode { clear: both; }
+.centered { text-align: center; }
+.centered > div {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* size */
+.big { font-size: 120%; }
+.bigger { font-size: 140%; }
+.biggest { font-size: 180%; }
+.gigantic { font-size: 400%; }
+.small { font-size: 80%; }
+.smaller { font-size: 60%; }
+.smallest { font-size: 40%; }
+.tiny { font-size: 25%; }
+
+/* appearance */
+.m5 { margin: 5px; }
+.m10 { margin: 10px; }
+.p5 { padding: 5px; }
+.p10 { padding: 10px; }
+.ph10 {
+    padding-right: 10px;
+    padding-left: 10px;
+}
+.pv10 {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+.bold { font-weight: bold; }
+.italic { font-style: italic; }
+.bordered { border: 1px solid black; }
+.round {
+    border-radius: 5px 5px 5px 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+}
+.rounder {
+    border-radius: 15px 15px 15px 15px;
+    -moz-border-radius: 15px;
+    -webkit-border-radius: 15px;
+}
+
+/* behavior */
+.border-box { box-sizing: border-box; }
+.nowrap { white-space: nowrap; }
+.wrap { word-wrap: break-word; }
+.pointer { cursor: pointer; }
+.scroller { overflow: scroll; }
+.hoverglow:hover {
+    box-shadow: 0px 0px 10px yellow;
+    color: yellow;
+}
+
 /* required CT classes */
-.above {
-    z-index: 1000 !important;
-}
-.abs {
-    position: absolute;
-}
 .activetab a {
     color: #670002;
 }
@@ -52,26 +140,8 @@
 .bb {
     box-sizing: border-box;
 }
-.bigger {
-    font-size: 140%;
-}
-.biggest {
-    font-size: 180%;
-}
-.block {
-    display: block;
-}
-.inline-block {
-    display: inline-block;
-}
 .blue {
     color: #010068;
-}
-.bold {
-    font-weight: bold;
-}
-.bordered {
-    border: 1px solid black;
 }
 .bordered-gray {
     border: 1px solid #ccc;
@@ -109,13 +179,6 @@
     pointer-events: auto;
     cursor: pointer;
 }
-.centered {
-    text-align: center;
-}
-.centered > div {
-    margin-left: auto;
-    margin-right: auto;
-}
 .centeredimg img {
     margin-left: auto;
     margin-right: auto;
@@ -143,9 +206,6 @@
 }
 .choice_cell:hover {
     background: lightgray;
-}
-.clearnode {
-    clear: both;
 }
 .filler {
     position: absolute;
@@ -188,25 +248,6 @@
 .fourthwidth {
     width: 25%;
 }
-.h2-3 {
-    height: 66%;
-}
-.h3-4 {
-    height: 75%;
-}
-.h4-5 {
-    height: 80%;
-}
-.w2-3 {
-    width: 66%;
-}
-.hidden {
-    display: none;
-}
-.hoverglow:hover {
-    box-shadow: 0px 0px 10px yellow;
-    color: yellow;
-}
 .leftalign {
     text-align: left;
 }
@@ -217,9 +258,6 @@
 .nodecoration a {
     text-decoration: none;
 }
-.nowrap {
-    white-space: nowrap;
-}
 .padded {
     padding: 10px;
 }
@@ -228,19 +266,6 @@
 }
 .red {
     color: red;
-}
-.right {
-    float: right;
-}
-.round {
-    border-radius: 5px 5px 5px 5px;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
-}
-.rounder {
-    border-radius: 15px 15px 15px 15px;
-    -moz-border-radius: 15px;
-    -webkit-border-radius: 15px;
 }
 .rightround {
     border-radius: 0px 15px 15px 0px;
@@ -264,9 +289,6 @@
 }
 .shiftall {
     margin: -15px;
-}
-.small {
-    font-size: 80%;
 }
 .tooltip {
     position: absolute;
@@ -321,9 +343,6 @@
 .whiteback {
     background: white;
 }
-.wrap {
-    word-wrap: break-word;
-}
 /* drop classes */
 .drop {
   z-index: 10;
@@ -350,13 +369,6 @@
 }
 .drop-over-auto {
     overflow-y: auto;
-}
-.hider {
-    visibility: hidden;
-}
-.vpadded {
-    padding-top: 10px;
-    padding-bottom: 10px;
 }
 /* Slider classes */
 .carousel {
@@ -528,38 +540,11 @@
 }
 
 /* some extras for funsies */
-.big {
-    font-size: 120%;
-}
-.gigantic {
-    font-size: 400%;
-}
-.italic {
-    font-style: italic;
-}
 .margined {
     margin: 5px;
 }
 button, a, .pointer {
     cursor: pointer;
-}
-.scroller {
-    overflow: scroll;
-}
-.smaller {
-    font-size: 60%;
-}
-.smallest {
-    font-size: 40%;
-}
-.tiny {
-    font-size: 25%;
-}
-.transparent {
-    opacity: 0;
-}
-.translucent {
-    opacity: 0.7;
 }
 
 .lister {
