@@ -68,7 +68,7 @@ class ArrayType(BasicString):
 		return json.dumps(value)
 
 	def process_result_value(self, value, dialect):
-		return json.loads(value)
+		return json.loads(value) or []
 
 class KeyWrapper(object):
 	def __init__(self, urlsafe=None):
@@ -92,6 +92,9 @@ class KeyWrapper(object):
 class Key(BasicString):
 	def __init__(self, *args, **kwargs):
 		self.kinds = kwargs.pop("kinds", [kwargs.pop("kind", "*")])
+		for i in range(len(self.kinds)):
+			if not isinstance(self.kinds[i], basestring):
+				self.kinds[i] = self.kinds[i].__name__.lower()
 		BasicString.__init__(self, *args, **kwargs)
 
 	def process_bind_param(self, value, dialect):
