@@ -14,4 +14,4 @@ ctinit = init.parse_and_make
 ctindex = index.go
 ctmigrate = migrate.go
 
-__version__ = "0.7.2"
+__version__ = "0.7.3"

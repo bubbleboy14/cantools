@@ -1,4 +1,4 @@
-# cantools 0.7.2
+# cantools 0.7.3
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
 License: MIT (see LICENSE)
@@ -128,8 +128,36 @@ Generates fresh 'static' and 'production' files (from 'development' source files
 						  (default: dump.db)
 
 ## ctindex
+### Usage: ctindex [--mode=MODE] [--domain=DOMAIN] [--port=PORT]
+
+### Options:
+	-h, --help            show this help message and exit
+	-m MODE, --mode=MODE  may be: 'refcount' (default - count up all foreignkey
+	                      references for sort orders and such) or 'index'
+	                      (assign each record a sequential integer index). Note
+	                      regarding 'index' mode: it _must_ happen remotely;
+	                      it's generally unnecessary unless you're trying to
+	                      migrate an unindexed database away from gae and need
+	                      an index/key per record; it should be invoked from
+	                      _outside_ -- that's right, outside -- of your
+	                      project's directory (to avoid loading up a bunch of
+	                      google network tools that may be crappy or cause
+	                      issues outside of their normal 'dev_appserver'
+	                      environment
+	-d DOMAIN, --domain=DOMAIN
+	                      ('index' mode only) what's the domain of the target
+	                      server? (default: localhost)
+	-p PORT, --port=PORT  ('index' mode only) what's the port of the target
+	                      server? (default: 8080)
+
+As you can see, this script's behavior changes according to the backend of the target project.
+
+### dez
 Run this if your CTRefCount records get messed up for
 some reason. It will go through and recount everything.
+
+### gae
+Run this on a database with lots of missing index values.
 
 # Front (JS Library)
 
@@ -684,7 +712,7 @@ the 'opts' object itself, are all optional.
 
 ### Definable properties are as follows:
     - parent (default: document.body): DOM element in which to build the slider
-    - mode (dfault: 'peekaboo'): how to display each frame - 'peekaboo' or 'chunk'
+    - mode (dfault: 'peekaboo'): how to display each frame - 'peekaboo', 'chunk', 'menu', or 'profile'
     - autoSlideInterval (default: 5000): how many milliseconds to wait before auto-sliding frames
     - autoSlide (default: true): automatically proceed through frames (else, trigger later with .resume())
     - visible (default: true): maps to visibility css property
