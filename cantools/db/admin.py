@@ -9,12 +9,14 @@ def index(kind): # be careful with this!
 		mod = get_model(kind)
 		items = mod.query().fetch() # gae doesn't support all()...
 		log("assigning sequential index properties to %s %s records"%(len(items), kind), important=True)
-		for item in items:
+		for n in range(len(items)):
+			item = items[n]
 			i += 1
 			item.index = i
-			if not i % 100:
-				log("processed %s %s entities"%(i, kind), 1)
-		log("processed %s %s entities"%(i, kind))
+			if n and not n % 100:
+				log("processed %s %s entities"%(n, kind), 1)
+		log("processed %s %s entities"%(len(items), kind))
+		items and log(items[0])
 		puts += items
-	log("saving %s records"%(len(items),), important=True)
-	put_multi(items)
+	log("saving %s records"%(len(puts),), important=True)
+	put_multi(puts)
