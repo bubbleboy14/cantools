@@ -85,6 +85,9 @@
 .bottompadded {
     padding-bottom: 10px;
 }
+.toppadded {
+    padding-top: 10px;
+}
 .bottombordered {
     border-bottom: 1px solid black;
 }
@@ -184,6 +187,18 @@
 }
 .fourthwidth {
     width: 25%;
+}
+.h2-3 {
+    height: 66%;
+}
+.h3-4 {
+    height: 75%;
+}
+.h4-5 {
+    height: 80%;
+}
+.w2-3 {
+    width: 66%;
 }
 .hidden {
     display: none;
@@ -375,13 +390,14 @@
 }
 .bp-left {
     background-position: left;
+    background-size: cover;
 }
-.carousel-container {
-    white-space: nowrap;
+.bp-right {
+    background-position: right;
+    background-size: cover;
 }
 .carousel-content-container {
     position: relative;
-    font-weight: bold;
     color: white;
 }
 .carousel-content-image {
