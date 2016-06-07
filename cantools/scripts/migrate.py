@@ -85,27 +85,30 @@ def fixkeys(d, schema):
 
 def dump(host, port, session):
 	log("dumping database at %s:%s"%(host, port), important=True)
-	puts = []
+	mods = {}
 	schemas = db.get_schema()
 	for model in schemas:
 		log("retrieving %s entities"%(model,), important=True)
 		schema = schemas[model]
-		mod = db.get_model(model)
+		mods[model] = []
 		limit = "binary" in schema.values() and 5 or LIMIT
-		these = []
 		offset = 0
 		while 1:
 			chunk = fetch(host, port=port, ctjson=True,
 				path="/_db?action=get&modelName=%s&offset=%s&limit=%s"%(model, offset, limit))
 			for c in chunk:
 				fixkeys(c, schema)
-			these += [mod(**db.dprep(c)) for c in chunk]
+			mods[model] += chunk
 			offset += limit
 			if len(chunk) < limit:
 				break
-			log("got %s %s records"%(len(these), model), 1)
-		puts += these
-		log("found %s %s records - %s records total"%(len(these), model, len(puts)))
+			log("got %s %s records"%(offset, model), 1)
+		log("found %s %s records"%(len(mods[model]), model))
+	puts = []
+	log("building models")
+	for model in mods:
+		mod = db.get_model(model)
+		puts += [mod(**db.dprep(c)) for c in mods[model]]
 	log("saving %s records to sqlite dump file"%(len(puts),))
 	db.put_multi(puts, session=session)
 
