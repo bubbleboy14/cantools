@@ -39,20 +39,69 @@ def load(host, port, session):
 			log("processed %s %s records"%(offset, model), 1)
 	log("finished loading data from sqlite dump file")
 
+keys = {}
+missing = {}
+
+def fixmissing(orig):
+	if orig in missing:
+		for d in missing[orig]:
+			for k in d:
+				if type(d[k]) is list:
+					for i in range(len(d[k])):
+						if d[k][i] == orig:
+							d[k][i] = keys[orig]
+				elif d[k] == orig:
+					d[k] = keys[orig]
+		del missing[orig]
+
+def _missing(k, d):
+	if k not in missing:
+		missing[k] = []
+	missing[k].append(d)
+
+def _fix_or_miss(d, kind):
+	dk = d[kind]
+	if type(dk) is list:
+		for i in range(len(dk)):
+			k = dk[i]
+			if k in keys:
+				dk[i] = keys[k]
+			else:
+				_missing(k, d)
+	elif dk:
+		if dk in keys:
+			d[kind] = keys[dk]
+		else:
+			_missing(dk, d)
+
+def fixkeys(d, schema):
+	if "ctkey" in d:
+		orig = d["key"]
+		d["key"] = keys[orig] = d["ctkey"]
+		del d["ctkey"]
+		fixmissing(orig)
+		for kind in schema["_kinds"]:
+			_fix_or_miss(d, kind)
+
 def dump(host, port, session):
 	log("dumping database at %s:%s"%(host, port), important=True)
 	puts = []
-	for model in db.get_schema():
+	schemas = db.get_schema()
+	for model in schemas:
 		log("retrieving %s entities"%(model,), important=True)
+		schema = schemas[model]
 		mod = db.get_model(model)
+		limit = "binary" in schema.values() and 5 or LIMIT
 		these = []
 		offset = 0
 		while 1:
 			chunk = fetch(host, port=port, ctjson=True,
-				path="/_db?action=get&modelName=%s&offset=%s&limit=%s"%(model, offset, LIMIT))
+				path="/_db?action=get&modelName=%s&offset=%s&limit=%s"%(model, offset, limit))
+			for c in chunk:
+				fixkeys(c, schema)
 			these += [mod(**db.dprep(c)) for c in chunk]
-			offset += LIMIT
-			if len(chunk) < LIMIT:
+			offset += limit
+			if len(chunk) < limit:
 				break
 			log("got %s %s records"%(len(these), model), 1)
 		puts += these
