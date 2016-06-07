@@ -85,6 +85,9 @@
 .bottompadded {
     padding-bottom: 10px;
 }
+.toppadded {
+    padding-top: 10px;
+}
 .bottombordered {
     border-bottom: 1px solid black;
 }
@@ -395,7 +398,6 @@
 }
 .carousel-content-container {
     position: relative;
-    font-weight: bold;
     color: white;
 }
 .carousel-content-image {
