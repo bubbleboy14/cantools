@@ -1,14 +1,50 @@
 """
+### Usage: ctindex [--mode=MODE] [--domain=DOMAIN] [--port=PORT]
+
+### Options:
+	-h, --help            show this help message and exit
+	-m MODE, --mode=MODE  may be: 'refcount' (default - count up all foreignkey
+	                      references for sort orders and such) or 'index'
+	                      (assign each record a sequential integer index). Note
+	                      regarding 'index' mode: it _must_ happen remotely;
+	                      it's generally unnecessary unless you're trying to
+	                      migrate an unindexed database away from gae and need
+	                      an index/key per record; it should be invoked from
+	                      _outside_ -- that's right, outside -- of your
+	                      project's directory (to avoid loading up a bunch of
+	                      google network tools that may be crappy or cause
+	                      issues outside of their normal 'dev_appserver'
+	                      environment
+	-d DOMAIN, --domain=DOMAIN
+	                      ('index' mode only) what's the domain of the target
+	                      server? (default: localhost)
+	-p PORT, --port=PORT  ('index' mode only) what's the port of the target
+	                      server? (default: 8080)
+
+As you can see, this script's behavior changes according to the backend of the target project.
+
+### dez
 Run this if your CTRefCount records get messed up for
 some reason. It will go through and recount everything.
+
+### gae
+Run this on a database with lots of missing index values.
 """
 
+from getpass import getpass
+from optparse import OptionParser
 from cantools.util import error, log, batch
+from cantools.db import get_schema, get_model, put_multi
+from cantools.web import fetch
 from cantools import config
 if config.web.server == "dez":
-	from cantools.db import session, func, get_schema, get_model, put_multi, refresh_counter
+	from cantools.db import session, func, refresh_counter
 
 counts = { "_counters": 0 }
+
+#
+# dez
+#
 
 def get_keys(kind, reference):
 	log("acquiring %s (%s) keys"%(kind, reference), 1)
@@ -56,10 +92,8 @@ def do_batch(chunk, reference):
 	put_multi(rc)
 	log("saved", 2)
 
-def go():
-	if config.web.server != "dez":
-		error("ctindex only available for dez projects")
-	log("indexing foreignkey references throughout database")
+def refcount():
+	log("indexing foreignkey references throughout database", important=True)
 	import model # load schema
 	for kind, references in refmap().items():
 		log("processing table: %s"%(kind,), important=True)
@@ -67,6 +101,44 @@ def go():
 			batch(keys, do_batch, reference)
 	tcount = sum(counts.values()) - counts["_counters"]
 	log("refreshed %s rows and updated %s counters"%(tcount, counts["_counters"]), important=True)
+
+#
+# gae
+#
+
+def index(host, port):
+	pw = getpass("what's the admin password? ")
+	log("indexing db at %s:%s"%(host, port), important=True)
+	log(fetch(host, "/_db?action=index&pw=%s"%(pw,), port))
+#	log("acquiring schema")
+#	schema = fetch(host, "/_db?action=schema", port, ctjson=True)
+#	for kind in schema:
+#		log(fetch(host, "/_db?action=index&pw=%s&kind=%s"%(pw, kind), port))
+
+def go():
+	parser = OptionParser("ctindex [--mode=MODE] [--domain=DOMAIN] [--port=PORT]")
+	parser.add_option("-m", "--mode", dest="mode", default="refcount",
+		help="may be: 'refcount' (default - count up all foreignkey references for sort orders "
+			"and such) or 'index' (assign each record a sequential integer index). "
+			"Note regarding 'index' mode: it _must_ happen remotely; it's generally "
+			"unnecessary unless you're trying to migrate an unindexed database away from "
+			"gae and need an index/key per record; it should be invoked from _outside_ "
+			"-- that's right, outside -- of your project's directory (to avoid loading "
+			"up a bunch of google network tools that may be crappy or cause issues outside "
+			"of their normal 'dev_appserver' environment")
+	parser.add_option("-d", "--domain", dest="domain", default="localhost",
+		help="('index' mode only) what's the domain of the target server? (default: localhost)")
+	parser.add_option("-p", "--port", dest="port", default="8080",
+		help="('index' mode only) what's the port of the target server? (default: 8080)")
+	options, args = parser.parse_args()
+
+	log("mode: %s"%(options.mode,), important=True)
+	if options.mode == "refcount":
+		refcount()
+	elif options.mode == "index":
+		index(options.domain, int(options.port))
+	else:
+		error("unknown mode: %s"%(options.mode,))
 	log("goodbye")
 
 if __name__ == "__main__":

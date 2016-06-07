@@ -1,6 +1,30 @@
+from datetime import datetime
 from properties import *
 
+class CTMeta(ndb.MetaModel):
+    def __new__(cls, name, bases, attrs):
+        lname = name.lower()
+        if lname != "modelbase":
+            if "label" not in attrs:
+                for label in ["name", "title"]:
+                    if label in attrs:
+                        attrs["label"] = label
+                        break
+                if "label" not in attrs:
+                    attrs["label"] = "key"
+            schema = attrs["_schema"] = { "_kinds": {}, "_label": attrs["label"] }
+            for key, val in attrs.items():
+                if getattr(val, "_ct_type", None):
+                    schema[key] = val._ct_type
+                    if val._ct_type == "key":
+                        schema["_kinds"][key] = getattr(val, "_kinds", "*") # always * for now...
+        modelsubs[lname] = super(CTMeta, cls).__new__(cls, name, bases, attrs)
+        return modelsubs[lname]
+
 class ModelBase(ndb.Model):
+    __metaclass__ = CTMeta
+    index = Integer()
+
     def __eq__(self, other):
         return self.id() == (other and hasattr(other, "id") and other.id())
 
@@ -9,6 +33,11 @@ class ModelBase(ndb.Model):
 
     def __hash__(self):
         return 0 # ensures proper set-uniquification
+
+    def put(self):
+        if not self.index:
+            self.index = self.__class__.query().count() + 1
+        super(ModelBase, self).put()
 
     def rm(self):
         self.key.delete()
@@ -27,6 +56,27 @@ class ModelBase(ndb.Model):
     def id(self):
         return self.key.urlsafe()
 
+    def export(self):
+        cols = {}
+        cols["key"] = self.id()
+        cols["ctkey"] = ct_key(self.modeltype(), self.index)
+        cols["index"] = self.index
+        cols["label"] = self.label
+        cols["modelName"] = self.modeltype()
+        for cname in self._schema:
+            if not cname.startswith("_"):
+                val = getattr(self, cname)
+                if self._schema[cname] == "key":
+                    if val:
+                        if hasattr(val, "urlsafe"):
+                            val = val.urlsafe()
+                        else: # key list
+                            val = [v.urlsafe() for v in val]
+                elif val and self._schema[cname] == "datetime":
+                    val = str(val)[:19]
+                cols[cname] = val
+        return cols
+
 def getall(entity=None, query=None, keys_only=False):
     cursor = None
     ents = []
@@ -39,4 +89,35 @@ def getall(entity=None, query=None, keys_only=False):
     return ents
 
 def get(key):
-    return ndb.Key(urlsafe=key).get()
+    return Key(urlsafe=key).get()
+
+def get_page(modelName, limit, offset, order='index', filters={}):
+    schema = get_schema(modelName)
+    mod = get_model(modelName)
+    query = mod.query()
+    for key, obj in filters.items():
+        val = obj["value"]
+        comp = obj["comparator"]
+        prop = getattr(mod, key)
+        if schema[key] == "key" and not isinstance(val, KeyWrapper):
+            val = KeyWrapper(val)
+        elif schema[key] == "datetime" and not isinstance(val, datetime):
+            val = datetime.strptime(val, "%Y-%m-%d %H:%M:%S")
+        if comp == "like":
+            query.filter(func.lower(prop).like(val.lower()))
+        else:
+            query.filter(operators[comp](prop, val))
+    return [d.export() for d in query.order(order).fetch(limit, offset=offset)]
+
+def edit(data):
+    ent = "key" in data and get(data["key"]) or get_model(data["modelName"])()
+    for propname, val in data.items():
+        if propname in ent._schema:
+            if val:
+                if propname in ent._schema["_kinds"]: # foreignkey
+                    val = KeyWrapper(val)
+                elif ent._schema[propname] == "datetime" and not isinstance(val, datetime):
+                    val = datetime.strptime(val, "%Y-%m-%d %H:%M:%S")
+            setattr(ent, propname, val)
+    ent.put()
+    return ent
