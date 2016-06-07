@@ -59,7 +59,7 @@ class DateTimeAutoStamper(BasicDT):
 DateTime = sqlColumn(DateTimeAutoStamper)
 
 # strings, arrays, keys
-sqlString = sqlalchemy.Binary
+sqlString = sqlalchemy.Unicode
 BasicString = basicType(sqlString, StringType)
 String = sqlColumn(BasicString)
 
