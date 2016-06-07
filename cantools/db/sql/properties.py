@@ -1,4 +1,4 @@
-import sqlalchemy
+import json, sqlalchemy
 
 class DynamicType(sqlalchemy.TypeDecorator):
 	def __init__(self, *args, **kwargs):
