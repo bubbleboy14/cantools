@@ -20,8 +20,11 @@ def response():
 			mname = cgi_get("modelName", required=False)
 			keys = cgi_get("keys", required=False)
 			if mname:
-				res = get_page(mname, cgi_get("limit"), cgi_get("offset"),
-					cgi_get("order", default="index"), cgi_get("filters", default={}))
+				order = cgi_get("order", default="index")
+				if config.web.server == "gae":
+					order = getattr(get_model(mname), order)
+				res = get_page(mname, int(cgi_get("limit")), int(cgi_get("offset")),
+					order, cgi_get("filters", default={}))
 			elif keys:
 				res = [d.export() for d in get_multi(keys)]
 			else:
