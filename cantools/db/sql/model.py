@@ -114,13 +114,15 @@ class ModelBase(sa_dbase):
                 cols[cname] = val
         return cols
 
-    def data(self):
-        d = self.mydata()
+    def _basic(self, d):
         d["key"] = self.id()
         d["index"] = self.index
         d["label"] = self.label
         d["modelName"] = self.polytype
         return d
 
+    def data(self):
+        return self._basic(self.mydata())
+
     def export(self):
-        return self.data()
+        return self._basic(ModelBase.mydata(self))
