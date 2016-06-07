@@ -67,7 +67,10 @@ class ModelBase(ndb.Model):
             if not cname.startswith("_"):
                 val = getattr(self, cname)
                 if self._schema[cname] == "key":
-                    val = val.urlsafe()
+                    if hasattr(val, "urlsafe"):
+                        val = val.urlsafe()
+                    else: # key list
+                        val = [v.urlsafe() for v in val]
                 elif val and self._schema[cname] == "datetime":
                     val = str(val)[:19]
                 cols[cname] = val
@@ -103,7 +106,7 @@ def get_page(modelName, limit, offset, order='index', filters={}):
             query.filter(func.lower(prop).like(val.lower()))
         else:
             query.filter(operators[comp](prop, val))
-    return [d.export() for d in query.order(order).fetch(limit, offset)]
+    return [d.export() for d in query.order(order).fetch(limit, offset=offset)]
 
 def edit(data):
     ent = "key" in data and get(data["key"]) or get_model(data["modelName"])()
