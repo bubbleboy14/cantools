@@ -106,7 +106,7 @@ CT.admin.db.Editor = CT.Class({
 			rownode = CT.dom.node("", "div", "lister");
 		rownode.appendChild(CT.dom.node(k + ":", "div", "keycell"));
 		ptype = rownode.ptype = this.schema[k];
-		if (CT.db.edit.isSupported(ptype)) {
+		if (CT.db.edit.isSupported(ptype, k)) {
 			valcell = CT.db.edit.input(k, ptype, val, this.modelName, {
 				startYear: 1970 // gotta start somewhere, might as well be epoch...
 			});

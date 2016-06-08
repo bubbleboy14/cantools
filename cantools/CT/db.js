@@ -192,7 +192,9 @@ CT.db.edit = {
 	propertyDefault: function(ptype) {
 		return CT.db.edit._d[ptype];
 	},
-	isSupported: function(ptype) {
+	isSupported: function(ptype, key) {
+		if (key == "label" || key == "_label")
+			return false;
 		// implement list editing soon!!
 		return ptype in CT.db.edit._d;
 	},
