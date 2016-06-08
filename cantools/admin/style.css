@@ -17,6 +17,7 @@
 	width: 90px;
 	background: darkgray;
 	color: darkgreen;
+	overflow-y: auto;
 }
 
 #dbstarred {
