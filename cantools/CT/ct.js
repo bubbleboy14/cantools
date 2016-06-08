@@ -151,7 +151,7 @@ var CT = {
 		    	? new XMLHttpRequest()
 		    	: new ActiveXObject("Microsoft.XMLHTTP");
 		    if (params && CT.net._qsOnly) {
-		    	path = CT.net._qs(path, params);
+		    	path = CT.net.qs(path, params);
 		    	params = null;
 		    }
 		    xhr.open(method, path, async);
@@ -252,7 +252,7 @@ var CT = {
 		"delete": function(path, params, cb, headers) {
 			CT.net.xhr(path, "DELETE", params, true, cb, headers);
 		},
-		"_qs": function(path, qsp) {
+		"qs": function(path, qsp) {
 			if (qsp) {
 				var qs = [];
 				for (var key in qsp)
@@ -263,7 +263,7 @@ var CT = {
 		},
 		"get": function(path, qsp, isjson) {
 			var d, cachedVersion, cache = CT.net._cache && isjson;
-			path = CT.net._qs(path, qsp);
+			path = CT.net.qs(path, qsp);
 			if (cache) {
 				cachedVersion = CT.storage.get(path);
 				if (cachedVersion)
