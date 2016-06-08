@@ -58,11 +58,13 @@ class ModelBase(ndb.Model):
 
     def export(self):
         cols = {}
+        mt = self.modeltype()
         cols["key"] = self.id()
-        cols["ctkey"] = ct_key(self.modeltype(), self.index)
+        cols["ctkey"] = ct_key(mt, self.index)
         cols["index"] = self.index
-        cols["label"] = self.label
-        cols["modelName"] = self.modeltype()
+        cols["modelName"] = mt
+        cols["_label"] = self.label
+        cols["label"] = cols[self.label] or "%s %s"%(mt, self.index)
         for cname in self._schema:
             if not cname.startswith("_"):
                 val = getattr(self, cname)

@@ -104,21 +104,22 @@ class ModelBase(sa_dbase):
 
     def mydata(self):
         cols = {}
-        for cname in self._schema:
-            if not cname.startswith("_"):
-                val = getattr(self, cname)
-                if self._schema[cname] == "key":
+        for key, prop in self._schema.items():
+            if not key.startswith("_"):
+                val = getattr(self, key)
+                if prop == "key":
                     val = val.urlsafe()
-                elif val and self._schema[cname] == "datetime":
+                elif val and prop == "datetime":
                     val = str(val)[:19]
-                cols[cname] = val
+                cols[key] = val
         return cols
 
     def _basic(self, d):
         d["key"] = self.id()
         d["index"] = self.index
-        d["label"] = self.label
         d["modelName"] = self.polytype
+        d["_label"] = self.label
+        d["label"] = d[self.label] or "%s %s"%(self.polytype, self.index)
         return d
 
     def data(self):
