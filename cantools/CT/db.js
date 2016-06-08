@@ -72,7 +72,7 @@ CT.db = {
 	},
 	key2label: function(key) {
 		var d = CT.data.get(key);
-		return d[d.label];
+		return d.label;
 	},
 	isKey: function(modelName, property) {
 		return !!CT.db._schema[modelName]._kinds[property];
@@ -187,8 +187,7 @@ CT.db.edit = {
 	},
 	_no_ent: {
 		"key": null,
-		"label": "name",
-		"name": "(tap to select)"
+		"label": "(tap to select)"
 	},
 	propertyDefault: function(ptype) {
 		return CT.db.edit._d[ptype];
@@ -295,7 +294,7 @@ CT.db.edit.EntityRow = CT.Class({
 		n.fill = function(d) {
 			d = n.data = d || CT.db.edit._no_ent;
 			opts.key = d.key;
-			CT.dom.setContent(n.firstChild, d[d.label]);
+			CT.dom.setContent(n.firstChild, d.label);
 		};
 		if (vdata || !opts.key)
 			n.fill(vdata);

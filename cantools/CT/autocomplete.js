@@ -12,7 +12,7 @@ Guesser is a subclass of CT.Drop.
     - enterCb (default: doNothing): trigger when user hits enter
     - keyUpCb (default: doNothing): trigger on key up
     - expandCB (default: doNothing): trigger when autocomplete node expands
-    - tapCb (default: set input to data[data.label]): trigger on option tap
+    - tapCb (default: set input to data.label): trigger on option tap
     - guessCb (default: this.guesser): trigger when it's time to guess
     - input (required): the input node to which to attach the autocomplete guesser
 
@@ -39,7 +39,7 @@ CT.autocomplete.Guesser = CT.Class({
 	    this.retract();
 	},
 	addTag: function(data) {
-		var tagName = data[data.label];
+		var tagName = data.label;
 		var n = CT.dom.node(tagName, "div", "tagline", "ac" + tagName);
 		var tlower = tagName.toLowerCase();
 		for (var i = 1; i <= tlower.length; i++)
@@ -54,7 +54,7 @@ CT.autocomplete.Guesser = CT.Class({
 		this.input.blur();
 	},
 	_upOne: function(d) {
-		if (!CT.dom.id("ac" + d[d.label]))
+		if (!CT.dom.id("ac" + d.label))
 			this.addTag(d);
 	},
 	_update: function(data) {
@@ -103,7 +103,7 @@ CT.autocomplete.Guesser = CT.Class({
 		this.opts.keyUpCb();
 	},
 	_onTap: function(data) {
-		this.input.value = data[data.label];
+		this.input.value = data.label;
 	},
 	_waitRetract: function() {
 		setTimeout(this.retract, 500);

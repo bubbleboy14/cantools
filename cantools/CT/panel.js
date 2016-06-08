@@ -30,7 +30,7 @@ This function fills the 'node' node with a list of clickable items, each of
 which triggers cb(d), where d is the corresponding object in the 'data' array.
 
     - data (object array): data set used to generate list
-      - for d in data: link content equals d.title || d[d.label]
+      - for d in data: link content equals d.label || d.title
     - cb (function): the callback to invoke when an item is clicked
     - node (node): the list parent node
 */
@@ -38,7 +38,7 @@ which triggers cb(d), where d is the corresponding object in the 'data' array.
 CT.panel = {
 	"lastClicked": {},
 	"trigger": function(data, cb) {
-		var n = CT.dom.node(CT.dom.link(data.title || data[data.label], function() {
+		var n = CT.dom.node(CT.dom.link(data.label || data.title, function() {
 			CT.dom.each(n.parentNode, function(c) {
 				c.className = (c == n) ? "activetab" : "";
 			});
@@ -159,11 +159,11 @@ CT.panel = {
 			content = CT.dom.node(null, null, dataClass, keystring + "panels"),
 			sideBar = CT.dom.node(),
 			pager = new CT.Pager(function(data) {
-				var dnames = data.map(function(d) { return d[d.label]; });
+				var dnames = data.map(function(d) { return d.label; });
 				CT.panel.simple(dnames, keystring, sideBar, content);
 				data.forEach(function(d) {
 					CT.dom.setContent(CT.dom.id(keystring + "content"
-						+ d[d.label].replace(/ /g, ""),
+						+ d.label.replace(/ /g, ""),
 						true), getContent(d));
 				});
 				return sideBar;
