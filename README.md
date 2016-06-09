@@ -1,4 +1,4 @@
-# cantools 0.7.3
+# cantools 0.7.4
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
 License: MIT (see LICENSE)
@@ -238,7 +238,7 @@ Guesser is a subclass of CT.Drop.
     - enterCb (default: doNothing): trigger when user hits enter
     - keyUpCb (default: doNothing): trigger on key up
     - expandCB (default: doNothing): trigger when autocomplete node expands
-    - tapCb (default: set input to data[data.label]): trigger on option tap
+    - tapCb (default: set input to data.label): trigger on option tap
     - guessCb (default: this.guesser): trigger when it's time to guess
     - input (required): the input node to which to attach the autocomplete guesser
 
@@ -284,11 +284,15 @@ functionality of the framework, as follows.
 
 #### Also includes:
 	- CT.net.setMode(string) (default: 'ct')
-	  - also supports 'basic', which skips request prepping and response code processing
+	  - also supports:
+	    - 'basic', which skips request prepping and response code processing
+	    - 'passthrough', which does nothing (doesn't even JSON stringify)
 	- CT.net.setSpinner(bool) (default: false)
 	  - enables/disables spinner (indicating outstanding request)
 	- CT.net.setCache(bool) (default: false)
 	  - enables/disables client-side request caching
+	- CT.net.setSilentFail(bool) (default: true)
+	  - enables/disables alert-level error reporting (if otherwise undefined)
 	- CT.net.setEncoder(func)
 	  - sets encoder (upstream data processing function)
 	  - must be used in conjunction with cantools.web.setenc()
@@ -604,7 +608,7 @@ This function fills the 'node' node with a list of clickable items, each of
 which triggers cb(d), where d is the corresponding object in the 'data' array.
 
     - data (object array): data set used to generate list
-      - for d in data: link content equals d.title || d[d.label]
+      - for d in data: link content equals d.label || d.title
     - cb (function): the callback to invoke when an item is clicked
     - node (node): the list parent node
 
