@@ -258,8 +258,8 @@ var CT = {
 			if (qsp) {
 				var qs = [];
 				for (var key in qsp)
-					qs.push(key + "=" + qsp[key]);
-				path += "?" + encodeURI(qs.join("&"));
+					qs.push(key + "=" + escape(qsp[key]));
+				path += "?" + qs.join("&");
 			}
 			return path;
 		},
