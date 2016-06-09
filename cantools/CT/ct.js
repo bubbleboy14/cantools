@@ -17,11 +17,15 @@ functionality of the framework, as follows.
 
 #### Also includes:
 	- CT.net.setMode(string) (default: 'ct')
-	  - also supports 'basic', which skips request prepping and response code processing
+	  - also supports:
+	    - 'basic', which skips request prepping and response code processing
+	    - 'passthrough', which does nothing (doesn't even JSON stringify)
 	- CT.net.setSpinner(bool) (default: false)
 	  - enables/disables spinner (indicating outstanding request)
 	- CT.net.setCache(bool) (default: false)
 	  - enables/disables client-side request caching
+	- CT.net.setSilentFail(bool) (default: true)
+	  - enables/disables alert-level error reporting (if otherwise undefined)
 	- CT.net.setEncoder(func)
 	  - sets encoder (upstream data processing function)
 	  - must be used in conjunction with cantools.web.setenc()
@@ -110,17 +114,16 @@ var CT = {
 		"_encoder": function (d) { return d; },
 		"_decoder": function (d) { return d; },
 		"_silentFail": true,
-		"_qsOnly": false,
 		// functions
-		"qsOnly": function() {
-			CT.net._qsOnly = true;
-		},
 		"setMode": function(mode) {
-			if (mode != "ct" && mode != "basic") {
+			if (mode != "ct" && mode != "basic" && mode != "passthrough") {
 				CT.log("CT.net.setMode() - illegal mode specified: " + mode);
-				CT.log("mode must be one of: 'ct', 'basic'");
+				CT.log("mode must be one of: 'ct', 'basic', 'passthrough'");
 			} else
 				CT.net._mode = mode;
+		},
+		"setSilentFail": function(bool) {
+			CT.net._silentFail = bool;
 		},
 		"setSpinner": function(bool) {
 			CT.net._spinner = bool;
@@ -150,10 +153,6 @@ var CT = {
 		    var xhr = window.XMLHttpRequest
 		    	? new XMLHttpRequest()
 		    	: new ActiveXObject("Microsoft.XMLHTTP");
-		    if (params && CT.net._qsOnly) {
-		    	path = CT.net.qs(path, params);
-		    	params = null;
-		    }
 		    xhr.open(method, path, async);
 		    if ( !(headers && "Content-Type" in headers))
 			    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -161,9 +160,11 @@ var CT = {
 		    	xhr.setRequestHeader(header, headers[header]);
 		    xhr.onreadystatechange = cb && function() { cb(xhr); };
 		    if (params) {
-		    	if (CT.net._mode == "ct")
-			    	params = CT.net._rd(params, true);
-	    		params = JSON.stringify(params);
+		    	if (CT.net._mode != "passthrough") {
+			    	if (CT.net._mode == "ct")
+				    	params = CT.net._rd(params, true);
+		    		params = JSON.stringify(params);
+		    	}
 		    	if (CT.net._encode)
 		    		params = CT.net._encoder(params);
 		    }
@@ -253,6 +254,7 @@ var CT = {
 			CT.net.xhr(path, "DELETE", params, true, cb, headers);
 		},
 		"qs": function(path, qsp) {
+			path = path || "";
 			if (qsp) {
 				var qs = [];
 				for (var key in qsp)
