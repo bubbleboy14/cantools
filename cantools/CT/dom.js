@@ -672,6 +672,10 @@ CT.dom = {
 		n = n || document.body;
 		n.style.opacity = n.style.opacity == "1" && "0" || "1";
 	},
+	"showHideV": function(n) {
+		n = n || document.body;
+		n.style.visibility = n.style.visibility == "visible" && "hidden" || "visible";
+	},
 	"showHide": function(n, juston, justoff, dstyle) {
 		n = n || document.body;
 		dstyle = dstyle || "block";

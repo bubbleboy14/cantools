@@ -250,7 +250,7 @@ var CT = {
 		"put": function(path, params, cb, headers) {
 			CT.net.xhr(path, "PUT", params, true, cb, headers);
 		},
-		"delete": function(path, params, cb, headers) {
+		"del": function(path, params, cb, headers) {
 			CT.net.xhr(path, "DELETE", params, true, cb, headers);
 		},
 		"qs": function(path, qsp) {
