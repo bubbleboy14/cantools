@@ -30,6 +30,8 @@ def dprep(obj): # prepares data object for model
     for prop in schema:
         if schema[prop] == "datetime" and obj[prop]:
             obj[prop] = datetime.strptime(obj[prop], "%Y-%m-%d %X")
+        elif schema[prop] == "string" and isinstance(obj[prop], unicode):
+            obj[prop] = obj[prop].encode("utf-8")
     for key in ["modelName", "label", "_label", "ctkey", "oldkey"]:
         if key in obj:
             del obj[key]
