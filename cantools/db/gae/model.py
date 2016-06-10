@@ -61,10 +61,10 @@ class ModelBase(ndb.Model):
         mt = self.modeltype()
         cols["key"] = self.id()
         cols["ctkey"] = ct_key(mt, self.index)
+        cols["oldkey"] = str(self.key.to_old_key())
         cols["index"] = self.index
         cols["modelName"] = mt
         cols["_label"] = self.label
-        cols["label"] = cols[self.label] or "%s %s"%(mt, self.index)
         for cname in self._schema:
             if not cname.startswith("_"):
                 val = getattr(self, cname)
@@ -77,6 +77,7 @@ class ModelBase(ndb.Model):
                 elif val and self._schema[cname] == "datetime":
                     val = str(val)[:19]
                 cols[cname] = val
+        cols["label"] = cols[self.label] or "%s %s"%(mt, self.index)
         return cols
 
 def getall(entity=None, query=None, keys_only=False):

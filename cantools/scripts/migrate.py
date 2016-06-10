@@ -77,8 +77,8 @@ def _fix_or_miss(d, kind):
 def fixkeys(d, schema):
 	if "ctkey" in d:
 		orig = d["key"]
-		d["key"] = keys[orig] = d["ctkey"]
-		del d["ctkey"]
+		old = d["oldkey"]
+		d["key"] = keys[orig] = keys[old] = d["ctkey"]
 		fixmissing(orig)
 		for kind in schema["_kinds"]:
 			_fix_or_miss(d, kind)
@@ -105,7 +105,7 @@ def dump(host, port, session):
 			log("got %s %s records"%(offset, model), 1)
 		log("found %s %s records"%(len(mods[model]), model))
 	puts = []
-	log("building models")
+	log("building models", important=True)
 	for model in mods:
 		mod = db.get_model(model)
 		puts += [mod(**db.dprep(c)) for c in mods[model]]
