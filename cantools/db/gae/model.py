@@ -65,16 +65,15 @@ class ModelBase(ndb.Model):
         cols["index"] = self.index
         cols["modelName"] = mt
         cols["_label"] = self.label
-        for cname in self._schema:
+        for cname, prop in self._schema.items():
             if not cname.startswith("_"):
                 val = getattr(self, cname)
-                if self._schema[cname] == "key":
-                    if val:
-                        if hasattr(val, "urlsafe"):
-                            val = val.urlsafe()
-                        else: # key list
-                            val = [v.urlsafe() for v in val]
-                elif val and self._schema[cname] == "datetime":
+                if prop == "key":
+                    if type(val) is list:
+                        val = [v.urlsafe() for v in val]
+                    elif hasattr(val, "urlsafe"):
+                        val = val.urlsafe()
+                elif val and prop == "datetime":
                     val = str(val)[:19]
                 cols[cname] = val
         cols["label"] = cols[self.label] or "%s %s"%(mt, self.index)
