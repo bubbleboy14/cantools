@@ -60,32 +60,63 @@ def _missing(k, d):
 	missing[k].append(d)
 
 def _fix_or_miss(d, kind):
+	f, o = 0, 0
 	dk = d[kind]
 	if type(dk) is list:
 		for i in range(len(dk)):
 			k = dk[i]
 			if k in keys:
+				f += 1
 				dk[i] = keys[k]
 			else:
+				o +=1
 				_missing(k, d)
 	elif dk:
 		if dk in keys:
 			d[kind] = keys[dk]
+			f += 1
 		else:
 			_missing(dk, d)
+			o += 1
+	return f, o
 
-def fixkeys(d, schema):
+def _fix_or_delete(d, kind):
+	dk = d[kind]
+	if type(dk) is list:
+		nk = []
+		f = 0
+		for k in dk:
+			if k in keys:
+				f += 1
+				nk.append(k)
+		d[kind] = nk
+		return f, len(dk) - f
+	elif dk not in keys:
+		d[kind] = None
+		return 0, 1
+	else:
+		return 1, 0
+
+def fixkeys(d, schema, delete=False):
+	fixed, other = 0, 0
 	if "ctkey" in d:
 		orig = d["key"]
 		old = d["oldkey"]
 		d["key"] = keys[orig] = keys[old] = d["ctkey"]
 		fixmissing(orig)
 		for kind in schema["_kinds"]:
-			_fix_or_miss(d, kind)
+			if delete:
+				f, o = _fix_or_delete(d, kind)
+			else:
+				f, o = _fix_or_miss(d, kind)
+			fixed += f
+			other += o
+	return fixed, other
 
 def dump(host, port, session):
 	log("dumping database at %s:%s"%(host, port), important=True)
 	mods = {}
+	fixed, other = 0, 0
 	schemas = db.get_schema()
 	for model in schemas:
 		log("retrieving %s entities"%(model,), important=True)
@@ -97,13 +128,25 @@ def dump(host, port, session):
 			chunk = fetch(host, port=port, ctjson=True,
 				path="/_db?action=get&modelName=%s&offset=%s&limit=%s"%(model, offset, limit))
 			for c in chunk:
-				fixkeys(c, schema)
+				f, o = fixkeys(c, schema)
+				fixed += f
+				other += o
 			mods[model] += chunk
 			offset += limit
 			if len(chunk) < limit:
 				break
 			log("got %s %s records"%(offset, model), 1)
 		log("found %s %s records"%(len(mods[model]), model))
+	log("fixed %s keys (%s unmatched!)"%(fixed, other), important=True)
+	log("killing bad keys", important=True)
+	fixed, other = 0, 0
+	for group in mods:
+		mod = db.get_model(group)
+		for m in mods[group]:
+			f, o = fixkeys(m, mod._schema, True)
+			fixed += f
+			other += o
+	log("verified %s keys -- deleted %s"%(fixed, other), important=True)
 	puts = []
 	log("building models", important=True)
 	for model in mods:
