@@ -20,7 +20,9 @@ def _col(colClass, *args, **kwargs):
 	default = kwargs.pop("default", None)
 	if kwargs.pop("repeated", None):
 		kwargs["isKey"] = colClass is Key
-		return sqlalchemy.Column(ArrayType(**kwargs), *args, **cargs)
+		col = sqlalchemy.Column(ArrayType(**kwargs), *args, **cargs)
+		col._ct_type = "list"
+		return col
 	typeInstance = colClass(**kwargs)
 	col = sqlalchemy.Column(typeInstance, *args, **cargs)
 	if hasattr(typeInstance, "choices"):
@@ -71,8 +73,9 @@ class ArrayType(BasicString):
 
 	def process_bind_param(self, value, dialect):
 		if self.isKey:
-			for i in range(len(vlist)):
-				vlist[i] = vlist[i].urlsafe()
+			for i in range(len(value)):
+				if hasattr(value[i], "urlsafe"):
+					value[i] = value[i].urlsafe()
 		return json.dumps(value)
 
 	def process_result_value(self, value, dialect):
