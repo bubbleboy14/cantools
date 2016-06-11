@@ -19,9 +19,12 @@ def _col(colClass, *args, **kwargs):
 		cargs["primary_key"] = kwargs.pop("primary_key")
 	default = kwargs.pop("default", None)
 	if kwargs.pop("repeated", None):
-		kwargs["isKey"] = colClass is Key
-		col = sqlalchemy.Column(ArrayType(**kwargs), *args, **cargs)
-		col._ct_type = "list"
+		isKey = kwargs["isKey"] = colClass is Key
+		typeInstance = ArrayType(**kwargs)
+		col = sqlalchemy.Column(typeInstance, *args, **cargs)
+		col._ct_type = isKey and "key" or "list"
+		if isKey:
+			col._kinds = typeInstance.kinds
 		return col
 	typeInstance = colClass(**kwargs)
 	col = sqlalchemy.Column(typeInstance, *args, **cargs)
@@ -69,6 +72,11 @@ String = sqlColumn(BasicString)
 class ArrayType(BasicString):
 	def __init__(self, *args, **kwargs):
 		self.isKey = kwargs.pop("isKey", False)
+		if self.isKey:
+			self.kinds = kwargs.pop("kinds", [kwargs.pop("kind", "*")])
+			for i in range(len(self.kinds)):
+				if not isinstance(self.kinds[i], basestring):
+					self.kinds[i] = self.kinds[i].__name__.lower()
 		BasicString.__init__(self, *args, **kwargs)
 
 	def process_bind_param(self, value, dialect):
