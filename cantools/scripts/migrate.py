@@ -41,16 +41,17 @@ def load(host, port, session):
 
 keys = {}
 missing = {}
+realz = set()
 
 def fixmissing(orig):
-	if orig in missing:
+	if orig in missing and orig in keys:
 		for d in missing[orig]:
-			for k in d:
-				if type(d[k]) is list:
-					for i in range(len(d[k])):
-						if d[k][i] == orig:
-							d[k][i] = keys[orig]
-				elif d[k] == orig:
+			for k, v in d.items():
+				if type(v) is list:
+					for i in range(len(v)):
+						if v[i] == orig:
+							v[i] = keys[orig]
+				elif v == orig:
 					d[k] = keys[orig]
 		del missing[orig]
 
@@ -59,64 +60,57 @@ def _missing(k, d):
 		missing[k] = []
 	missing[k].append(d)
 
-def _fix_or_miss(d, kind):
-	f, o = 0, 0
-	dk = d[kind]
+def _fix_or_miss(d, prop):
+	dk = d[prop]
 	if type(dk) is list:
 		for i in range(len(dk)):
 			k = dk[i]
 			if k in keys:
-				f += 1
 				dk[i] = keys[k]
 			else:
-				o +=1
 				_missing(k, d)
 	elif dk:
 		if dk in keys:
-			d[kind] = keys[dk]
-			f += 1
+			d[prop] = keys[dk]
 		else:
 			_missing(dk, d)
-			o += 1
-	return f, o
 
-def _fix_or_delete(d, kind):
-	dk = d[kind]
-	if type(dk) is list:
-		nk = []
-		f = 0
-		for k in dk:
-			if k in keys:
-				f += 1
-				nk.append(k)
-		d[kind] = nk
-		return f, len(dk) - f
-	elif dk not in keys:
-		d[kind] = None
-		return 0, 1
-	else:
-		return 1, 0
-
-def fixkeys(d, schema, delete=False):
-	fixed, other = 0, 0
+def fixkeys(d, schema):
 	if "ctkey" in d:
 		orig = d["key"]
 		old = d["oldkey"]
 		d["key"] = keys[orig] = keys[old] = d["ctkey"]
+		realz.add(d["key"])
 		fixmissing(orig)
-		for kind in schema["_kinds"]:
-			if delete:
-				f, o = _fix_or_delete(d, kind)
-			else:
-				f, o = _fix_or_miss(d, kind)
-			fixed += f
-			other += o
-	return fixed, other
+		fixmissing(old)
+		for prop in schema["_kinds"]:
+			_fix_or_miss(d, prop)
+
+def delmissing(orig):
+	for d in missing[orig]:
+		for k, v in d.items():
+			if type(v) is list:
+				d[k] = [val for val in v if val != orig]
+			elif v == orig:
+				d[k] = None
+	del missing[orig]
+
+def prune():
+	if missing:
+		mlen = len(missing.keys())
+		log("pruning %s missing keys"%(mlen,), important=True)
+		log("searching for matches")
+		for oldkey in missing.keys():
+			fixmissing(oldkey)
+		newlen = len(missing.keys())
+		log("matched %s - %s left over"%(mlen - newlen, newlen))
+		log("deleting stragglers")
+		for oldkey in missing.keys():
+			delmissing(oldkey)
 
 def dump(host, port, session):
 	log("dumping database at %s:%s"%(host, port), important=True)
 	mods = {}
-	fixed, other = 0, 0
 	schemas = db.get_schema()
 	for model in schemas:
 		log("retrieving %s entities"%(model,), important=True)
@@ -128,25 +122,15 @@ def dump(host, port, session):
 			chunk = fetch(host, port=port, ctjson=True,
 				path="/_db?action=get&modelName=%s&offset=%s&limit=%s"%(model, offset, limit))
 			for c in chunk:
-				f, o = fixkeys(c, schema)
-				fixed += f
-				other += o
+				fixkeys(c, schema)
 			mods[model] += chunk
 			offset += limit
 			if len(chunk) < limit:
 				break
 			log("got %s %s records"%(offset, model), 1)
 		log("found %s %s records"%(len(mods[model]), model))
-	log("fixed %s keys (%s unmatched!)"%(fixed, other), important=True)
-	log("killing bad keys", important=True)
-	fixed, other = 0, 0
-	for group in mods:
-		mod = db.get_model(group)
-		for m in mods[group]:
-			f, o = fixkeys(m, mod._schema, True)
-			fixed += f
-			other += o
-	log("verified %s keys -- deleted %s"%(fixed, other), important=True)
+	log("%s unmatched keys!"%(len(missing.keys()),), important=True)
+	prune()
 	puts = []
 	log("building models", important=True)
 	for model in mods:
