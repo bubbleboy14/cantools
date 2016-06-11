@@ -38,7 +38,11 @@ def getall(entity=None, query=None, keys_only=False, session=session):
 def get(b64compkey, session=session):
     if not isinstance(b64compkey, basestring):
         b64compkey = b64compkey.urlsafe()
-    compkey = json.loads(b64decode(b64compkey))
+    try:
+        compkey = json.loads(b64decode(b64compkey))
+    except:
+        from cantools.util import error
+        error("bad key: %s"%(b64compkey,))
     return modelsubs[compkey["model"]].query(session=session).query.get(compkey["index"])
 
 def get_multi(b64keys, session=session):
