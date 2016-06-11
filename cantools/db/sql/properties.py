@@ -19,6 +19,7 @@ def _col(colClass, *args, **kwargs):
 		cargs["primary_key"] = kwargs.pop("primary_key")
 	default = kwargs.pop("default", None)
 	if kwargs.pop("repeated", None):
+		kwargs["isKey"] = colClass is Key
 		return sqlalchemy.Column(ArrayType(**kwargs), *args, **cargs)
 	typeInstance = colClass(**kwargs)
 	col = sqlalchemy.Column(typeInstance, *args, **cargs)
@@ -64,11 +65,22 @@ BasicString = basicType(sqlString, StringType)
 String = sqlColumn(BasicString)
 
 class ArrayType(BasicString):
+	def __init__(self, *args, **kwargs):
+		self.isKey = kwargs.pop("isKey", False)
+		BasicString.__init__(self, *args, **kwargs)
+
 	def process_bind_param(self, value, dialect):
+		if self.isKey:
+			for i in range(len(vlist)):
+				vlist[i] = vlist[i].urlsafe()
 		return json.dumps(value)
 
 	def process_result_value(self, value, dialect):
-		return json.loads(value) or []
+		vlist = json.loads(value) or []
+		if self.isKey:
+			for i in range(len(vlist)):
+				vlist[i] = KeyWrapper(vlist[i])
+		return vlist
 
 class KeyWrapper(object):
 	def __init__(self, urlsafe=None):
