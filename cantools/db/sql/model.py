@@ -29,7 +29,7 @@ class CTMeta(DeclarativeMeta):
                         break
                 if "label" not in attrs:
                     attrs["label"] = "key"
-            schema = attrs["_schema"] = { "_kinds": {}, "_label": attrs["label"] }
+            schema = attrs["_schema"] = merge_schemas(bases, attrs["label"])
             for key, val in attrs.items():
                 if getattr(val, "_ct_type", None):
                     schema[key] = val._ct_type

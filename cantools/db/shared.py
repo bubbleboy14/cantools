@@ -42,3 +42,14 @@ def ct_key(modelName, index):
         "index": index,
         "model": modelName
     }))
+
+def merge_schemas(bases, label):
+    kinds = {}
+    schema = {}
+    for base in bases:
+        if hasattr(base, "_schema"):
+            schema.update(base._schema)
+            kinds.update(base._schema["_kinds"])
+    schema["_kinds"] = kinds
+    schema["_label"] = label
+    return schema
