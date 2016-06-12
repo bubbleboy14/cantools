@@ -80,7 +80,8 @@ def set_read(f):
     localvars.read = f
 
 def rdec(data):
-    val = unquote(b64decode(data))
+    val = unquote(data)
+#    val = unquote(b64decode(data))
     try:
         val = val.decode("utf_8")
     except:
@@ -92,7 +93,8 @@ def renc(data):
         data = data.encode("utf_8")
     except:
         pass
-    return b64encode(quote(data))
+#    return b64encode(quote(data))
+    return quote(data)
 
 def rb64(data, de=False):
     if isinstance(data, basestring):
@@ -303,8 +305,9 @@ def send_image(data):
 
 FILETYPES = {"pdf": "application/pdf", "img": "image/png"}
 
-def send_file(data, file_type):
-    _headers({"Content-Type": FILETYPES[file_type]})
+def send_file(data, file_type=None):
+    if file_type:
+        _headers({"Content-Type": FILETYPES[file_type]})
     _send(data)
     _close()
 

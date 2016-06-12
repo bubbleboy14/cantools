@@ -179,10 +179,12 @@ var CT = {
 				alert(msg);
 		},
 		"_u2l": function (s) {
-		    return btoa(unescape(encodeURIComponent(s)));
+			return encodeURIComponent(s);
+//		    return btoa(unescape(encodeURIComponent(s)));
 		},
 		"_l2u": function (s) {
-		    return decodeURIComponent(escape(atob(s)));
+			return decodeURIComponent(s);
+//		    return decodeURIComponent(escape(atob(s)));
 		},
 		"_rd": function(d, enc) {
 			if (d) {
