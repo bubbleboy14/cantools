@@ -27,11 +27,11 @@ def get_schema(modname=None):
 
 def dprep(obj): # prepares data object for model
     schema = get_schema(obj["modelName"])
-    for prop in schema:
-        if schema[prop] == "datetime" and obj[prop]:
-            obj[prop] = datetime.strptime(obj[prop], "%Y-%m-%d %X")
-        elif schema[prop] == "string" and isinstance(obj[prop], unicode):
-            obj[prop] = obj[prop].encode("utf-8")
+    for key, prop in schema.items():
+        if prop == "datetime" and obj[key]:
+            obj[key] = datetime.strptime(obj[key], "%Y-%m-%d %X")
+        elif prop == "string" and isinstance(obj[key], unicode):
+            obj[key] = obj[key].encode("utf-8")
     for key in ["modelName", "label", "_label", "ctkey", "oldkey"]:
         if key in obj:
             del obj[key]
