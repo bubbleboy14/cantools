@@ -41,6 +41,7 @@ def load(host, port, session):
 
 keys = {}
 missing = {}
+blobs = []
 realz = set()
 
 def fixmissing(orig):
@@ -108,6 +109,21 @@ def prune():
 		for oldkey in missing.keys():
 			delmissing(oldkey)
 
+def checkblobs(d, schema):
+	for key, prop in schema.items():
+		if prop == "binary" and d[key]:
+			blobs.append(d)
+			break
+
+def getblobs(host, port):
+	log("retrieving binaries stored on %s records"%(len(blobs),), important=True)
+	for d in blobs:
+		for key, prop in db.get_schema(d["modelName"]).items():
+			if prop == "binary" and d[key]:
+				log("fetching %s.%s"%(d["key"], key))
+				d[key] = fetch(host, port=port,
+					path="/_db?action=blob&key=%s&property=%s"%(d["key"], key))
+
 def dump(host, port, session):
 	log("dumping database at %s:%s"%(host, port), important=True)
 	mods = {}
@@ -116,21 +132,23 @@ def dump(host, port, session):
 		log("retrieving %s entities"%(model,), important=True)
 		schema = schemas[model]
 		mods[model] = []
-		limit = "binary" in schema.values() and 5 or LIMIT
 		offset = 0
 		while 1:
 			chunk = fetch(host, port=port, ctjson=True,
-				path="/_db?action=get&modelName=%s&offset=%s&limit=%s"%(model, offset, limit))
+				path="/_db?action=get&modelName=%s&offset=%s&limit=%s"%(model, offset, LIMIT))
 			for c in chunk:
 				fixkeys(c, schema)
+				checkblobs(c, schema)
 			mods[model] += chunk
-			offset += limit
-			if len(chunk) < limit:
+			offset += LIMIT
+			if len(chunk) < LIMIT:
 				break
 			log("got %s %s records"%(offset, model), 1)
 		log("found %s %s records"%(len(mods[model]), model))
 	log("%s unmatched keys!"%(len(missing.keys()),), important=True)
 	prune()
+	if blobs:
+		getblobs(host, port)
 	puts = []
 	log("building models", important=True)
 	for model in mods:
