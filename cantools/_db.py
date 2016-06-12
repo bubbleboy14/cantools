@@ -1,10 +1,10 @@
-from cantools.web import respond, succeed, fail, cgi_get, cgi_dump, getmem, setmem, clearmem
+from cantools.web import respond, succeed, fail, send_file, cgi_get, cgi_dump, getmem, setmem, clearmem
 from cantools.db import get, get_model, get_schema, get_page, get_multi, put_multi, edit, dprep, admin
 from cantools import config
 import model # load up all models (for schema)
 
 def response():
-	action = cgi_get("action", choices=["schema", "get", "edit", "delete", "put", "index"])
+	action = cgi_get("action", choices=["schema", "get", "blob", "edit", "delete", "put", "index"])
 
 	# edit/delete/put/index always require credentials; getters do configurably
 	if not config.db.public or action in ["edit", "delete", "put", "index"]:
@@ -33,6 +33,8 @@ def response():
 			if config.memcache.db and config.web.server == "dez":
 				setmem(sig, res, False)
 		succeed(res)
+	elif action == "blob":
+		send_file(getattr(get(cgi_get("key")), cgi_get("property")))
 	elif action == "edit":
 		if config.memcache.db:
 			clearmem()
