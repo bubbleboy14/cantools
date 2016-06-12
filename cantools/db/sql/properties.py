@@ -22,7 +22,7 @@ def _col(colClass, *args, **kwargs):
 		isKey = kwargs["isKey"] = colClass is Key
 		typeInstance = ArrayType(**kwargs)
 		col = sqlalchemy.Column(typeInstance, *args, **cargs)
-		col._ct_type = isKey and "key" or "list"
+		col._ct_type = isKey and "keylist" or "list"
 		if isKey:
 			col._kinds = typeInstance.kinds
 		return col

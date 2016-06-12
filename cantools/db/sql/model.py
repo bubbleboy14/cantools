@@ -108,10 +108,10 @@ class ModelBase(sa_dbase):
             if not key.startswith("_"):
                 val = getattr(self, key)
                 if prop == "key":
-                    if type(val) is list:
-                        val = [v.urlsafe() for v in val]
-                    elif hasattr(val, "urlsafe"):
+                    if hasattr(val, "urlsafe"):
                         val = val.urlsafe()
+                elif prop == "keylist":
+                    val = [v.urlsafe() for v in val]
                 elif val and prop == "datetime":
                     val = str(val)[:19]
                 cols[key] = val
