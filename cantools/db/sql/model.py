@@ -68,7 +68,11 @@ class ModelBase(sa_dbase):
     def _defaults(self):
         for prop in self._schema["_kinds"]:
             if getattr(self, prop, None) is None:
-                setattr(self, prop, KeyWrapper())
+                if self._schema[prop].endswith("list"):
+                    val = []
+                else:
+                    val = KeyWrapper()
+                setattr(self, prop, val)
         self.key = KeyWrapper()
         for key, val in self.__class__.__dict__.items():
             if getattr(self, key, None) is None and getattr(val, "_default", None) is not None:
