@@ -46,7 +46,7 @@ def ct_key(modelName, index):
 
 def merge_schemas(bases, label):
     kinds = {}
-    schema = {}
+    schema = { "index": "immutable", "key": "key_immutable" }
     for base in bases:
         if hasattr(base, "_schema"):
             schema.update(base._schema)
