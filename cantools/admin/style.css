@@ -1,3 +1,8 @@
+html, body {
+	height: 100%;
+	overflow: hidden;
+}
+
 #dbpanels {
 	border: 1px solid black;
 	position: absolute;
