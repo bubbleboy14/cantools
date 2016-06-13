@@ -73,6 +73,8 @@ class ModelBase(ndb.Model):
                         val = [v.urlsafe() for v in val]
                     elif hasattr(val, "urlsafe"):
                         val = val.urlsafe()
+                elif prop == "blob":
+                    val = bool(val)
                 elif val and prop == "datetime":
                     val = str(val)[:19]
                 cols[cname] = val

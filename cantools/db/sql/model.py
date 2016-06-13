@@ -112,6 +112,8 @@ class ModelBase(sa_dbase):
                         val = val.urlsafe()
                 elif prop == "keylist":
                     val = [v.urlsafe() for v in val]
+                elif prop == "blob" and hasattr(val, "urlsafe"):
+                    val = val.urlsafe()
                 elif val and prop == "datetime":
                     val = str(val)[:19]
                 cols[key] = val
