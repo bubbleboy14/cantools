@@ -35,11 +35,14 @@ def getall(entity=None, query=None, keys_only=False, session=session):
         return [r.key for r in res]
     return res
 
-def get(b64compkey, session=session):
+def key2data(b64compkey):
     if not isinstance(b64compkey, basestring):
         b64compkey = b64compkey.urlsafe()
+    return json.loads(b64decode(b64compkey))
+
+def get(b64compkey, session=session):
     try:
-        compkey = json.loads(b64decode(b64compkey))
+        compkey = key2data(b64compkey)
     except:
         from cantools.util import error
         error("bad key: %s"%(b64compkey,))

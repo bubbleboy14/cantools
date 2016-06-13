@@ -19,7 +19,7 @@ from cantools.util import error, log
 
 LIMIT = 500
 
-def load(host, port, session):
+def load(host, port, session, binary=False): # binary kwarg irrelevant
 	pw = getpass.getpass("admin password? ")
 	log("loading database into %s:%s"%(host, port), important=True)
 	for model in db.get_schema():
@@ -41,16 +41,19 @@ def load(host, port, session):
 
 keys = {}
 missing = {}
+blobs = []
+realz = set()
+indices = set()
 
 def fixmissing(orig):
-	if orig in missing:
+	if orig in missing and orig in keys:
 		for d in missing[orig]:
-			for k in d:
-				if type(d[k]) is list:
-					for i in range(len(d[k])):
-						if d[k][i] == orig:
-							d[k][i] = keys[orig]
-				elif d[k] == orig:
+			for k, v in d.items():
+				if type(v) is list:
+					for i in range(len(v)):
+						if v[i] == orig:
+							v[i] = keys[orig]
+				elif v == orig:
 					d[k] = keys[orig]
 		del missing[orig]
 
@@ -59,8 +62,8 @@ def _missing(k, d):
 		missing[k] = []
 	missing[k].append(d)
 
-def _fix_or_miss(d, kind):
-	dk = d[kind]
+def _fix_or_miss(d, prop):
+	dk = d[prop]
 	if type(dk) is list:
 		for i in range(len(dk)):
 			k = dk[i]
@@ -70,20 +73,66 @@ def _fix_or_miss(d, kind):
 				_missing(k, d)
 	elif dk:
 		if dk in keys:
-			d[kind] = keys[dk]
+			d[prop] = keys[dk]
 		else:
 			_missing(dk, d)
 
 def fixkeys(d, schema):
 	if "ctkey" in d:
-		orig = d["key"]
+		orig = d["gaekey"] = d["key"]
 		old = d["oldkey"]
 		d["key"] = keys[orig] = keys[old] = d["ctkey"]
+		realz.add(d["key"])
 		fixmissing(orig)
-		for kind in schema["_kinds"]:
-			_fix_or_miss(d, kind)
+		fixmissing(old)
+		if d["index"] in indices:
+			error("duplicate index! (%s)"%(d["index"],),
+				"try running 'ctindex -m index' ;)")
+		indices.add(d["index"])
+		for prop in schema["_kinds"]:
+			_fix_or_miss(d, prop)
 
-def dump(host, port, session):
+def delmissing(badkey):
+	log("deleting references to %s"%(badkey,), important=True)
+	for d in missing[badkey]:
+		log("purging %s"%(d,), important=True)
+		for k, v in d.items():
+			if type(v) is list:
+				d[k] = [val for val in v if val != badkey]
+			elif v == badkey:
+				d[k] = None
+	del missing[badkey]
+
+def prune():
+	if missing:
+		mlen = len(missing.keys())
+		log("pruning %s missing keys"%(mlen,), important=True)
+		log("searching for matches")
+		for oldkey in missing.keys():
+			fixmissing(oldkey)
+		newlen = len(missing.keys())
+		log("matched %s - %s left over"%(mlen - newlen, newlen))
+		log("deleting stragglers")
+		for oldkey in missing.keys():
+			delmissing(oldkey)
+
+def checkblobs(d, schema):
+	for key, prop in schema.items():
+		if prop == "blob" and d[key]:
+			blobs.append(d)
+			break
+
+def getblobs(host, port):
+	log("retrieving binaries stored on %s records"%(len(blobs),), important=True)
+	for d in blobs:
+		for key, prop in db.get_schema(d["modelName"]).items():
+			if prop == "blob" and d[key]:
+				entkey = d.get("gaekey", d["key"])
+				log("fetching %s.%s (%s.%s)"%(d["modelName"], key, entkey, d[key]))
+				d[key] = fetch(host, port=port,
+					path="/_db?action=blob&key=%s&property=%s"%(entkey, key))
+
+def dump(host, port, session, binary):
 	log("dumping database at %s:%s"%(host, port), important=True)
 	mods = {}
 	schemas = db.get_schema()
@@ -91,19 +140,23 @@ def dump(host, port, session):
 		log("retrieving %s entities"%(model,), important=True)
 		schema = schemas[model]
 		mods[model] = []
-		limit = "binary" in schema.values() and 5 or LIMIT
 		offset = 0
 		while 1:
 			chunk = fetch(host, port=port, ctjson=True,
-				path="/_db?action=get&modelName=%s&offset=%s&limit=%s"%(model, offset, limit))
+				path="/_db?action=get&modelName=%s&offset=%s&limit=%s"%(model, offset, LIMIT))
 			for c in chunk:
 				fixkeys(c, schema)
+				checkblobs(c, schema)
 			mods[model] += chunk
-			offset += limit
-			if len(chunk) < limit:
+			offset += LIMIT
+			if len(chunk) < LIMIT:
 				break
 			log("got %s %s records"%(offset, model), 1)
 		log("found %s %s records"%(len(mods[model]), model))
+	log("%s unmatched keys!"%(len(missing.keys()),), important=True)
+	prune()
+	if binary and blobs:
+		getblobs(host, port)
 	puts = []
 	log("building models", important=True)
 	for model in mods:
@@ -115,13 +168,15 @@ def dump(host, port, session):
 MODES = { "load": load, "dump": dump }
 
 def go():
-	parser = OptionParser("ctmigrate [load|dump] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME]")
+	parser = OptionParser("ctmigrate [load|dump] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME] [-n]")
 	parser.add_option("-d", "--domain", dest="domain", default="localhost",
 		help="domain of target server (default: localhost)")
 	parser.add_option("-p", "--port", dest="port", default=8080,
 		help="port of target server (default: 8080)")
 	parser.add_option("-f", "--filename", dest="filename", default="dump.db",
 		help="name of sqlite data file for dumping/loading to/from (default: dump.db)")
+	parser.add_option("-n", "--no_binary", dest="binary", action="store_false",
+		default=True, help="disable binary download")
 	options, args = parser.parse_args()
 	if not args:
 		error("no mode specified -- must be 'ctmigrate load' or 'ctmigrate dump'")
@@ -129,7 +184,7 @@ def go():
 	mode = args[0]
 	if mode in MODES:
 		MODES[mode](options.domain, int(options.port),
-			db.Session("sqlite:///%s"%(options.filename,)))
+			db.Session("sqlite:///%s"%(options.filename,)), options.binary)
 	else:
 		error("invalid mode specified ('%s')"%(mode,),
 			"must be 'ctmigrate load' or ctmigrate dump'")

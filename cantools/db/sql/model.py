@@ -33,7 +33,7 @@ class CTMeta(DeclarativeMeta):
             for key, val in attrs.items():
                 if getattr(val, "_ct_type", None):
                     schema[key] = val._ct_type
-                    if val._ct_type == "key":
+                    if val._ct_type.startswith("key"):
                         schema["_kinds"][key] = val._kinds
                 if getattr(val, "choices", None):
                     attrs["%s_validator"%(key,)] = sqlalchemy.orm.validates(key)(choice_validator(val.choices))
@@ -68,7 +68,11 @@ class ModelBase(sa_dbase):
     def _defaults(self):
         for prop in self._schema["_kinds"]:
             if getattr(self, prop, None) is None:
-                setattr(self, prop, KeyWrapper())
+                if self._schema[prop].endswith("list"):
+                    val = []
+                else:
+                    val = KeyWrapper()
+                setattr(self, prop, val)
         self.key = KeyWrapper()
         for key, val in self.__class__.__dict__.items():
             if getattr(self, key, None) is None and getattr(val, "_default", None) is not None:
@@ -107,7 +111,12 @@ class ModelBase(sa_dbase):
         for key, prop in self._schema.items():
             if not key.startswith("_"):
                 val = getattr(self, key)
-                if prop == "key":
+                if prop.startswith("key"):
+                    if type(val) is list:
+                        val = [v.urlsafe() for v in val]
+                    elif hasattr(val, "urlsafe"):
+                        val = val.urlsafe()
+                elif prop == "blob" and hasattr(val, "urlsafe"):
                     val = val.urlsafe()
                 elif val and prop == "datetime":
                     val = str(val)[:19]

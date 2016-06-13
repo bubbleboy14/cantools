@@ -27,15 +27,16 @@ def get_schema(modname=None):
 
 def dprep(obj): # prepares data object for model
     schema = get_schema(obj["modelName"])
-    for prop in schema:
-        if schema[prop] == "datetime" and obj[prop]:
-            obj[prop] = datetime.strptime(obj[prop], "%Y-%m-%d %X")
-        elif schema[prop] == "string" and isinstance(obj[prop], unicode):
-            obj[prop] = obj[prop].encode("utf-8")
-    for key in ["modelName", "label", "_label", "ctkey", "oldkey"]:
+    o = {}
+    for key, prop in schema.items():
         if key in obj:
-            del obj[key]
-    return obj
+            if prop == "datetime" and obj[key]:
+                o[key] = datetime.strptime(obj[key], "%Y-%m-%d %X")
+            elif prop == "string" and isinstance(obj[key], unicode):
+                o[key] = obj[key].encode("utf-8")
+            elif key != "_label":
+                o[key] = obj[key]
+    return o
 
 def ct_key(modelName, index):
     return base64.b64encode(json.dumps({
@@ -45,7 +46,7 @@ def ct_key(modelName, index):
 
 def merge_schemas(bases, label):
     kinds = {}
-    schema = {}
+    schema = { "index": "immutable", "key": "key_immutable" }
     for base in bases:
         if hasattr(base, "_schema"):
             schema.update(base._schema)

@@ -28,6 +28,7 @@ cfg = {
 		"gae": "data.db",
 		"dez": "sqlite:///data.db",
 		"test": "sqlite:///data_test.db",
+		"blob": "blob",
 		"echo": False,
 		"public": True # read from db without credentials via _db.py web handler
 	},

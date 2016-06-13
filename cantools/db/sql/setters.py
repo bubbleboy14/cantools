@@ -33,7 +33,7 @@ def init_multi(instances, session=session):
     session.add_all(instances + lookups)
     session.flush()
     for instance in instances:
-        instance.key = instance.key or KeyWrapper(ct_key(instance.index, instance.polytype))
+        instance.key = instance.key or KeyWrapper(ct_key(instance.polytype, instance.index))
 
 def put_multi(instances, session=session):
     session.init()

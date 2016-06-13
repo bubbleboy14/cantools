@@ -80,7 +80,7 @@ def set_read(f):
     localvars.read = f
 
 def rdec(data):
-    val = unquote(b64decode(data))
+    val = unquote(data)
     try:
         val = val.decode("utf_8")
     except:
@@ -92,7 +92,7 @@ def renc(data):
         data = data.encode("utf_8")
     except:
         pass
-    return b64encode(quote(data))
+    return data
 
 def rb64(data, de=False):
     if isinstance(data, basestring):
@@ -104,6 +104,12 @@ def rb64(data, de=False):
         return [rb64(d, de) for d in data]
     return data
 
+def qs_get(x, y):
+    val = localvars.request.getvalue(x, y)
+    if val:
+        val = unquote(val)
+    return val
+
 def cgi_load(force=False):
     localvars.request_string = cgi_read()
     data = config.encode and dec(localvars.request_string) or localvars.request_string
@@ -112,7 +118,7 @@ def cgi_load(force=False):
     except:
         import cgi
         localvars.request = cgi.FieldStorage()
-        setattr(localvars.request, "get", lambda x, y: localvars.request.getvalue(x, y))
+        setattr(localvars.request, "get", qs_get)
     if not localvars.request:
         if force or config.web.server == "dez":
             localvars.request = {}
@@ -303,8 +309,9 @@ def send_image(data):
 
 FILETYPES = {"pdf": "application/pdf", "img": "image/png"}
 
-def send_file(data, file_type):
-    _headers({"Content-Type": FILETYPES[file_type]})
+def send_file(data, file_type=None):
+    if file_type:
+        _headers({"Content-Type": FILETYPES[file_type]})
     _send(data)
     _close()
 
