@@ -43,6 +43,7 @@ keys = {}
 missing = {}
 blobs = []
 realz = set()
+indices = set()
 
 def fixmissing(orig):
 	if orig in missing and orig in keys:
@@ -84,11 +85,17 @@ def fixkeys(d, schema):
 		realz.add(d["key"])
 		fixmissing(orig)
 		fixmissing(old)
+		if d["index"] in indices:
+			error("duplicate index! (%s)"%(d["index"],),
+				"try running 'ctindex -m index' ;)")
+		indices.add(d["index"])
 		for prop in schema["_kinds"]:
 			_fix_or_miss(d, prop)
 
 def delmissing(badkey):
+	log("deleting references to %s"%(badkey,), important=True)
 	for d in missing[badkey]:
+		log("purging %s"%(d,), important=True)
 		for k, v in d.items():
 			if type(v) is list:
 				d[k] = [val for val in v if val != badkey]
@@ -121,7 +128,7 @@ def getblobs(host, port):
 		for key, prop in db.get_schema(d["modelName"]).items():
 			if prop == "blob" and d[key]:
 				entkey = d.get("gaekey", d["key"])
-				log("fetching %s.%s"%(entkey, key))
+				log("fetching %s.%s (%s.%s)"%(d["modelName"], key, entkey, d[key]))
 				d[key] = fetch(host, port=port,
 					path="/_db?action=blob&key=%s&property=%s"%(entkey, key))
 
