@@ -1,4 +1,4 @@
-import json, sqlalchemy
+import os, json, sqlalchemy
 
 class DynamicType(sqlalchemy.TypeDecorator):
 	def __init__(self, *args, **kwargs):
@@ -46,7 +46,7 @@ def _col(colClass, *args, **kwargs):
 def sqlColumn(colClass):
 	return lambda *args, **kwargs : _col(colClass, *args, **kwargs)
 
-for prop in ["Integer", "Float", "Boolean", "Text", "Binary", "Date", "Time"]:
+for prop in ["Integer", "Float", "Boolean", "Text", "Date", "Time"]:
 	sqlprop = getattr(sqlalchemy, prop)
 	globals()["sql%s"%(prop,)] = sqlprop
 	globals()[prop] = sqlColumn(basicType(sqlprop))
@@ -68,6 +68,67 @@ DateTime = sqlColumn(DateTimeAutoStamper)
 sqlString = sqlalchemy.Binary
 BasicString = basicType(sqlString, StringType)
 String = sqlColumn(BasicString)
+
+class BlobWrapper(object):
+	def __init__(self, data="", value=0):
+		self.value = value
+		data and self.set(data) or self._set_path(value)
+
+	def __nonzero__(self):
+		return bool(self.value)
+
+	def get(self):
+		if self.value:
+			from cantools.util import read
+			return read(self.path, binary=True)
+		else:
+			return None
+
+	def _set_path(self, data=None):
+		if data:
+			from cantools import config
+			if not self.value:
+				p, d, f = os.walk(config.db.blob).next()
+				self.value = len(f) + 1
+			self.path = os.path.join(config.db.blob, str(self.value))
+		else:
+			self.value = 0
+			self.path = None
+
+	def set(self, data):
+		self._set_path(data)
+		if data:
+			from cantools.util import write
+			write(data, self.path, binary=True)
+
+	def delete(self):
+		if self.value:
+			from cantools.util import rm
+			rm(self.path)
+			self._set_path()
+
+	def urlsafe(self):
+		return self.path
+
+class Blob(basicType(sqlInteger)):
+	def process_bind_param(self, data, dialect):
+		if type(data) is not BlobWrapper:
+			data = BlobWrapper(data)
+		return data.value
+
+	def process_result_value(self, value, dialect):
+		return BlobWrapper(value=value)
+
+Binary = sqlColumn(Blob)
+
+"""
+class Binary(basicType(sqlString)):
+	def process_bind_param(self, value, dialect):
+		return sqlalchemy.func.HEX(value)
+
+	def process_result_value(self, value, dialect):
+		return sqlalchemy.func.UNHEX(value)
+"""
 
 class ArrayType(BasicString):
 	def __init__(self, *args, **kwargs):
