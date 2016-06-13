@@ -94,7 +94,8 @@ def renc(data):
     except:
         pass
 #    return b64encode(quote(data))
-    return quote(data)
+#    return quote(data)
+    return data
 
 def rb64(data, de=False):
     if isinstance(data, basestring):
@@ -106,6 +107,14 @@ def rb64(data, de=False):
         return [rb64(d, de) for d in data]
     return data
 
+def qs_get(x, y):
+    val = localvars.request.getvalue(x, y)
+#    print val
+    if val:
+        val = unquote(val)
+ #       print val
+    return val
+
 def cgi_load(force=False):
     localvars.request_string = cgi_read()
     data = config.encode and dec(localvars.request_string) or localvars.request_string
@@ -114,7 +123,7 @@ def cgi_load(force=False):
     except:
         import cgi
         localvars.request = cgi.FieldStorage()
-        setattr(localvars.request, "get", lambda x, y: localvars.request.getvalue(x, y))
+        setattr(localvars.request, "get", qs_get)
     if not localvars.request:
         if force or config.web.server == "dez":
             localvars.request = {}
