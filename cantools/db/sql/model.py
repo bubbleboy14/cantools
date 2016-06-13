@@ -33,7 +33,7 @@ class CTMeta(DeclarativeMeta):
             for key, val in attrs.items():
                 if getattr(val, "_ct_type", None):
                     schema[key] = val._ct_type
-                    if val._ct_type == "key":
+                    if val._ct_type.startswith("key"):
                         schema["_kinds"][key] = val._kinds
                 if getattr(val, "choices", None):
                     attrs["%s_validator"%(key,)] = sqlalchemy.orm.validates(key)(choice_validator(val.choices))
