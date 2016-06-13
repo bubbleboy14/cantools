@@ -109,10 +109,8 @@ def rb64(data, de=False):
 
 def qs_get(x, y):
     val = localvars.request.getvalue(x, y)
-#    print val
     if val:
         val = unquote(val)
- #       print val
     return val
 
 def cgi_load(force=False):
