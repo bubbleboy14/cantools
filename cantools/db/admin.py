@@ -16,7 +16,6 @@ def index(kind): # be careful with this!
 			if n and not n % 100:
 				log("processed %s %s entities"%(n, kind), 1)
 		log("processed %s %s entities"%(len(items), kind))
-		items and log(items[0])
 		puts += items
 	log("saving %s records"%(len(puts),), important=True)
 	put_multi(puts)
