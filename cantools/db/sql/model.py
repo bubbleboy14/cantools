@@ -107,11 +107,11 @@ class ModelBase(sa_dbase):
         for key, prop in self._schema.items():
             if not key.startswith("_"):
                 val = getattr(self, key)
-                if prop == "key":
-                    if hasattr(val, "urlsafe"):
+                if prop.startswith("key"):
+                    if type(val) is list:
+                        val = [v.urlsafe() for v in val]
+                    elif hasattr(val, "urlsafe"):
                         val = val.urlsafe()
-                elif prop == "keylist":
-                    val = [v.urlsafe() for v in val]
                 elif prop == "blob" and hasattr(val, "urlsafe"):
                     val = val.urlsafe()
                 elif val and prop == "datetime":

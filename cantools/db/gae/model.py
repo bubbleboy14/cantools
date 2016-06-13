@@ -68,7 +68,7 @@ class ModelBase(ndb.Model):
         for cname, prop in self._schema.items():
             if not cname.startswith("_"):
                 val = getattr(self, cname)
-                if prop == "key":
+                if prop.startswith("key"):
                     if type(val) is list:
                         val = [v.urlsafe() for v in val]
                     elif hasattr(val, "urlsafe"):
