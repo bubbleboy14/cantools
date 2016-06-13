@@ -78,7 +78,7 @@ def _fix_or_miss(d, prop):
 
 def fixkeys(d, schema):
 	if "ctkey" in d:
-		orig = d["key"]
+		orig = d["gaekey"] = d["key"]
 		old = d["oldkey"]
 		d["key"] = keys[orig] = keys[old] = d["ctkey"]
 		realz.add(d["key"])
@@ -111,7 +111,7 @@ def prune():
 
 def checkblobs(d, schema):
 	for key, prop in schema.items():
-		if prop == "binary" and d[key]:
+		if prop == "blob" and d[key]:
 			blobs.append(d)
 			break
 
@@ -119,10 +119,11 @@ def getblobs(host, port):
 	log("retrieving binaries stored on %s records"%(len(blobs),), important=True)
 	for d in blobs:
 		for key, prop in db.get_schema(d["modelName"]).items():
-			if prop == "binary" and d[key]:
-				log("fetching %s.%s"%(d["key"], key))
+			if prop == "blob" and d[key]:
+				entkey = d.get("gaekey", d["key"])
+				log("fetching %s.%s"%(entkey, key))
 				d[key] = fetch(host, port=port,
-					path="/_db?action=blob&key=%s&property=%s"%(d["key"], key))
+					path="/_db?action=blob&key=%s&property=%s"%(entkey, key))
 
 def dump(host, port, session):
 	log("dumping database at %s:%s"%(host, port), important=True)
