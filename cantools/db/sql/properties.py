@@ -72,7 +72,10 @@ String = sqlColumn(BasicString)
 class BlobWrapper(object):
 	def __init__(self, data="", value=0):
 		self.value = value
-		data and self.set(data) or self._set_path(value)
+		if data:
+			self.set(data)
+		else:
+			self._set_path(value)
 
 	def __nonzero__(self):
 		return bool(self.value)
