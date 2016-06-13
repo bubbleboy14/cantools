@@ -81,7 +81,6 @@ def set_read(f):
 
 def rdec(data):
     val = unquote(data)
-#    val = unquote(b64decode(data))
     try:
         val = val.decode("utf_8")
     except:
@@ -93,8 +92,6 @@ def renc(data):
         data = data.encode("utf_8")
     except:
         pass
-#    return b64encode(quote(data))
-#    return quote(data)
     return data
 
 def rb64(data, de=False):
