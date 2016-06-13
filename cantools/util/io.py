@@ -1,8 +1,8 @@
 import json, pprint
 
-def read(fname="_tmp", lines=False, isjson=False, default=None):
+def read(fname="_tmp", lines=False, isjson=False, default=None, binary=False):
     try:
-        f = open(fname, "r")
+        f = open(fname, binary and "rb" or "r")
     except Exception, e:
         if default is not None:
             return default
@@ -16,8 +16,8 @@ def read(fname="_tmp", lines=False, isjson=False, default=None):
     f.close()
     return isjson and json.loads(text) or text
 
-def write(data, fname="_tmp", isjson=False, ispretty=False):
-    f = open(fname, "w")
+def write(data, fname="_tmp", isjson=False, ispretty=False, binary=False):
+    f = open(fname, binary and "wb" or "w")
     f.write(isjson and (ispretty and pprint.pformat(data) or json.dumps(data)) or data)
     f.close()
 
