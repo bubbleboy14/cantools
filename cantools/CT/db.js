@@ -251,9 +251,9 @@ CT.db.edit = {
 CT.db.edit.EntityRow = CT.Class({
 	CLASSNAME: "CT.db.edit.EntityRow",
 	mtable: function() {
-		var k, n = CT.dom.node();
+		var k, s = CT.dom.node("", "div", "h19-20 scroller"), n = CT.dom.node(s, "div", "h1");
 		for (k in this.node.data)
-			n.appendChild(CT.dom.node([
+			s.appendChild(CT.dom.node([
 				CT.dom.node(k + ":", "div", "keycell"),
 				CT.dom.node(this.node.data[k] || "(none)", "span")
 			], "div", "lister"));
@@ -269,6 +269,7 @@ CT.db.edit.EntityRow = CT.Class({
 		this._change && this._change.hide();
 		this._modal = this._modal || new CT.modal.Modal({
 			transition: "fade",
+			className: "basicpopup h3-5",
 			node: this.mtable()
 		});
 		this._modal.show();
