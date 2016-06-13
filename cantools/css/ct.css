@@ -21,6 +21,18 @@
 .h2-5 { height: 40%; }
 .h3-5 { height: 60%; }
 .h4-5 { height: 80%; }
+.h1-10 { height: 10%; }
+.h3-10 { height: 30%; }
+.h7-10 { height: 70%; }
+.h9-10 { height: 90%; }
+.h1-20 { height: 5%; }
+.h3-20 { height: 15%; }
+.h7-20 { height: 35%; }
+.h9-20 { height: 45%; }
+.h11-20 { height: 55%; }
+.h13-20 { height: 65%; }
+.h17-20 { height: 85%; }
+.h19-20 { height: 95%; }
 .w1 { width: 100%; }
 .w1-2 { width: 50%; }
 .w1-3 { width: 33%; }
@@ -31,6 +43,18 @@
 .w2-5 { width: 40%; }
 .w3-5 { width: 60%; }
 .w4-5 { width: 80%; }
+.w1-10 { width: 10%; }
+.w3-10 { width: 30%; }
+.w7-10 { width: 70%; }
+.w9-10 { width: 90%; }
+.w1-20 { width: 5%; }
+.w3-20 { width: 15%; }
+.w7-20 { width: 35%; }
+.w9-20 { width: 45%; }
+.w11-20 { width: 55%; }
+.w13-20 { width: 65%; }
+.w17-20 { width: 85%; }
+.w19-20 { width: 95%; }
 
 /* position */
 .abs { position: absolute; }
@@ -86,7 +110,7 @@
 .nowrap { white-space: nowrap; }
 .wrap { word-wrap: break-word; }
 .pointer { cursor: pointer; }
-.scroller { overflow: scroll; }
+.scroller { overflow: auto; }
 .hoverglow:hover {
     box-shadow: 0px 0px 10px yellow;
     color: yellow;
