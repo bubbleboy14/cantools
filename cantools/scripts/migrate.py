@@ -19,7 +19,7 @@ from cantools.util import error, log
 
 LIMIT = 500
 
-def load(host, port, session):
+def load(host, port, session, binary=False): # binary kwarg irrelevant
 	pw = getpass.getpass("admin password? ")
 	log("loading database into %s:%s"%(host, port), important=True)
 	for model in db.get_schema():
@@ -125,7 +125,7 @@ def getblobs(host, port):
 				d[key] = fetch(host, port=port,
 					path="/_db?action=blob&key=%s&property=%s"%(entkey, key))
 
-def dump(host, port, session):
+def dump(host, port, session, binary):
 	log("dumping database at %s:%s"%(host, port), important=True)
 	mods = {}
 	schemas = db.get_schema()
@@ -148,7 +148,7 @@ def dump(host, port, session):
 		log("found %s %s records"%(len(mods[model]), model))
 	log("%s unmatched keys!"%(len(missing.keys()),), important=True)
 	prune()
-	if blobs:
+	if binary and blobs:
 		getblobs(host, port)
 	puts = []
 	log("building models", important=True)
@@ -161,13 +161,15 @@ def dump(host, port, session):
 MODES = { "load": load, "dump": dump }
 
 def go():
-	parser = OptionParser("ctmigrate [load|dump] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME]")
+	parser = OptionParser("ctmigrate [load|dump] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME] [-n]")
 	parser.add_option("-d", "--domain", dest="domain", default="localhost",
 		help="domain of target server (default: localhost)")
 	parser.add_option("-p", "--port", dest="port", default=8080,
 		help="port of target server (default: 8080)")
 	parser.add_option("-f", "--filename", dest="filename", default="dump.db",
 		help="name of sqlite data file for dumping/loading to/from (default: dump.db)")
+	parser.add_option("-n", "--no_binary", dest="binary", action="store_false",
+		default=True, help="disable binary download")
 	options, args = parser.parse_args()
 	if not args:
 		error("no mode specified -- must be 'ctmigrate load' or 'ctmigrate dump'")
@@ -175,7 +177,7 @@ def go():
 	mode = args[0]
 	if mode in MODES:
 		MODES[mode](options.domain, int(options.port),
-			db.Session("sqlite:///%s"%(options.filename,)))
+			db.Session("sqlite:///%s"%(options.filename,)), options.binary)
 	else:
 		error("invalid mode specified ('%s')"%(mode,),
 			"must be 'ctmigrate load' or ctmigrate dump'")
