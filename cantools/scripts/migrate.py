@@ -87,14 +87,14 @@ def fixkeys(d, schema):
 		for prop in schema["_kinds"]:
 			_fix_or_miss(d, prop)
 
-def delmissing(orig):
-	for d in missing[orig]:
+def delmissing(badkey):
+	for d in missing[badkey]:
 		for k, v in d.items():
 			if type(v) is list:
-				d[k] = [val for val in v if val != orig]
-			elif v == orig:
+				d[k] = [val for val in v if val != badkey]
+			elif v == badkey:
 				d[k] = None
-	del missing[orig]
+	del missing[badkey]
 
 def prune():
 	if missing:
