@@ -34,7 +34,12 @@ def response():
 				setmem(sig, res, False)
 		succeed(res)
 	elif action == "blob":
-		send_file(getattr(get(cgi_get("key")), cgi_get("property")))
+		entity = get(cgi_get("key"))
+		if config.web.server == "dez":
+			blob = getattr(entity, cgi_get("property")).get()
+		else: # gae
+			blob = entity.getBlob()
+		send_file(blob)
 	elif action == "edit":
 		if config.memcache.db:
 			clearmem()
