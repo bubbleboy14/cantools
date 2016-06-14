@@ -7,7 +7,7 @@ functionality of the framework, as follows.
 #### This is where the network stuff lives. Highlights:
 	- CT.net.post(path, params, errMsg, cb, eb, headers, cbarg, ebarg)
 	  - issues a POST request via asynchronous XHR
-	- CT.net.get(path, qsp, isjson)
+	- CT.net.get(path, qsp, isjson, ctjson)
 	  - issues a GET request via synchronous XHR
 	  - optionally parses query string object and unpacks response as JSON
 	- CT.net.put(path, params, cb, headers)
