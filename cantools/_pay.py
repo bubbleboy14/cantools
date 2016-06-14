@@ -24,7 +24,7 @@ def response():
 			if not msg:
 				msg = "%s: %s"%(result.transaction.processor_settlement_response_code,
 					result.transaction.processor_settlement_response_text)
-			fail(msg)
+			fail("%s (%s)"%(result.message, msg))
 	else:
 		succeed(braintree.ClientToken.generate())
 
