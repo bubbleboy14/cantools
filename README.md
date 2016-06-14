@@ -1,4 +1,4 @@
-# cantools 0.7.6
+# cantools 0.7.7
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
 License: MIT (see LICENSE)
@@ -220,7 +220,7 @@ This loader imports almost every CT module.
     - CT.video
 
 ### This excludes:
-    - CT.map and CT.rte, which require large script imports
+    - CT.map, CT.pay, and CT.rte, which require large script imports
     - CT.admin, which is not for typical use.
 
 ## CT.autocomplete
@@ -272,15 +272,15 @@ functionality of the framework, as follows.
 
 ### CT.net
 #### This is where the network stuff lives. Highlights:
-    - CT.net.post(path, params, errMsg, cb, eb, headers, cbarg, ebarg)
-      - issues a POST request via asynchronous XHR
-    - CT.net.get(path, qsp, isjson)
-      - issues a GET request via synchronous XHR
-      - optionally parses query string object and unpacks response as JSON
-    - CT.net.put(path, params, cb, headers)
-      - issues a PUT request via asynchronous XHR
-    - CT.net.delete(path, params, cb, headers)
-      - issues a DELETE request via asynchronous XHR
+	- CT.net.post(path, params, errMsg, cb, eb, headers, cbarg, ebarg)
+	  - issues a POST request via asynchronous XHR
+	- CT.net.get(path, qsp, isjson, ctjson)
+	  - issues a GET request via synchronous XHR
+	  - optionally parses query string object and unpacks response as JSON
+	- CT.net.put(path, params, cb, headers)
+	  - issues a PUT request via asynchronous XHR
+	- CT.net.delete(path, params, cb, headers)
+	  - issues a DELETE request via asynchronous XHR
 
 #### Also includes:
 	- CT.net.setMode(string) (default: 'ct')
@@ -348,12 +348,12 @@ These are required lazily, meaning that they are _not_ included in production-co
 code, and they're only imported as needed (when missing from browser).
 
 #### These include:
-    - JSON
-    - sessionStorage
-    - classList
-    - requestAnimationFrame
-    - Object.values
-    - addEventListener
+	- JSON
+	- sessionStorage
+	- classList
+	- requestAnimationFrame
+	- Object.values
+	- addEventListener
 
 ## CT.data
 ### Import line: 'CT.require("CT.data");'
@@ -663,6 +663,19 @@ and generating links (as in the case of phone numbers); case-modding,
 soft-truncating, and removing script blocks from text; and otherwise messing
 with strings. Also, CT.parse.timeStamp(datetime) goes a long way toward
 making timestamps meaningful to humans.
+
+## CT.pay
+### Import line: 'CT.require("CT.pay");'
+This module contains a class, CT.pay.Form, that, in conjunction
+with a tightly-coupled backend component (_pay.py), provide
+integration with the Braintree payment platform, which supports:
+
+	- PayPal
+	- Credit Cards
+	- Venmo
+	- Apple Pay
+	- Android Pay
+	- Bitcoin?
 
 ## CT.pubsub
 ### Import line: 'CT.require("CT.pubsub");'

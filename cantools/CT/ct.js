@@ -18,8 +18,8 @@ functionality of the framework, as follows.
 #### Also includes:
 	- CT.net.setMode(string) (default: 'ct')
 	  - also supports:
-		- 'basic', which skips request prepping and response code processing
-		- 'passthrough', which does nothing (doesn't even JSON stringify)
+	    - 'basic', which skips request prepping and response code processing
+	    - 'passthrough', which does nothing (doesn't even JSON stringify)
 	- CT.net.setSpinner(bool) (default: false)
 	  - enables/disables spinner (indicating outstanding request)
 	- CT.net.setCache(bool) (default: false)
