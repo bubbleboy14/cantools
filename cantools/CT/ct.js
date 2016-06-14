@@ -290,14 +290,16 @@ var CT = {
 	"scriptImport": function(modpath, cb, delay) {
 		var h = document.getElementsByTagName("head")[0],
 			fp = (modpath.slice(0, 4) == "http") && modpath
-				|| (CT.net.fullPath(modpath.replace(/\./g, "/") + ".js"));
-		if (!(fp in CT._.scriptImportCb)) {
+				|| (CT.net.fullPath(modpath.replace(/\./g, "/") + ".js")),
+			fresh = !(fp in CT._.scriptImportCb);
+		if (fresh)
 			CT._.scriptImportCb[fp] = [];
+		if (cb)
+			CT._.scriptImportCb[fp].push(cb);
+		if (fresh) {
 			h.appendChild(CT.dom.script(fp));
 			h.appendChild(CT.dom.script(null, "CT._.onImport('" + fp + "');", delay));
 		}
-		if (cb)
-			CT._.scriptImportCb[fp].push(cb);
 	},
 	"require": function(modname, lazy) { // lazy only matters compile-time
 		if (modname.slice(0, 4) == "http") {
