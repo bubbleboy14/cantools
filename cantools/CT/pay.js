@@ -11,6 +11,13 @@ integration with the Braintree payment platform, which supports:
 	- Bitcoin?
 */
 
+CT.pay = {
+	_btpath: "https://js.braintreegateway.com/js/braintree-2.24.1.min.js",
+	_setToken: function() {
+		CT.pay._token = CT.net.get("/_pay", null, null, true);
+	}
+};
+
 CT.pay.Form = CT.Class({
 	CLASSNAME: "CT.pay.Form",
 	embed: function(token) {
@@ -35,5 +42,4 @@ CT.pay.Form = CT.Class({
 });
 CT.pay.Form._id = 0;
 
-CT.scriptImport("https://js.braintreegateway.com/js/braintree-2.24.1.min.js",
-	function() { CT.pay._token = CT.net.get("/_pay", null, null, true); });
+CT.scriptImport(CT.pay._btpath, CT.pay._setToken);
