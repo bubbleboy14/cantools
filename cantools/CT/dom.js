@@ -428,6 +428,12 @@ CT.dom = {
 		});
 		return n;
 	},
+	"form": function(content, action, method, classname, id) {
+		return CT.dom.node(content, "form", classname, id, {
+			method: method || "post",
+			action: action
+		});
+	},
 	"spinner": function() {
 		return CT.dom.node(CT.dom.node([
 			CT.dom.node("loading...", "strong"),
