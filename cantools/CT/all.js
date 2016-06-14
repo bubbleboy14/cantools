@@ -26,7 +26,7 @@ This loader imports almost every CT module.
     - CT.video
 
 ### This excludes:
-    - CT.map and CT.rte, which require large script imports
+    - CT.map, CT.pay, and CT.rte, which require large script imports
     - CT.admin, which is not for typical use.
 */
 
