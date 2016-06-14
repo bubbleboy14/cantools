@@ -91,6 +91,7 @@ class Builder(object):
 		sym(os.path.join(self.ctroot, "admin"), "_")
 		sym(os.path.join(self.ctroot, "admin.py"), "admin.py")
 		sym(os.path.join(self.ctroot, "_db.py"), "_db.py")
+		sym(os.path.join(self.ctroot, "_pay.py"), "_pay.py")
 
 	def vcignore(self):
 		log("configuring version control path exclusion", 1)

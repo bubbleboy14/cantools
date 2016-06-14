@@ -32,6 +32,11 @@ cfg = {
 		"echo": False,
 		"public": True # read from db without credentials via _db.py web handler
 	},
+	"pay": {
+		"merchant": None,
+		"public": None,
+		"private": None
+	},
 	"encode": False,
 	"mailer": None, # (override w/ MAILER)
 	"pubsub": {
@@ -75,7 +80,7 @@ cfg = {
 	""",
 	"init": {
 		"vcignore": {
-			".": ["*pyc", "*~", ".ctp", "_", "admin.py", "_db.py", "logs"],
+			".": ["*pyc", "*~", ".ctp", "_", "admin.py", "_db.py", "_pay.py", "logs"],
 			"css": ["ct.css"],
 			"js": ["CT"],
 			"html-production": ["CT"]
@@ -100,6 +105,9 @@ handlers:
 
 - url: /_db
   script: _db.py
+
+- url: /_pay
+  script: _pay.py
 
 ## MODE SWITCHING -- DON'T MESS WITH (unless you know what you're doing)!
 # START mode: dynamic
