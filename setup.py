@@ -27,7 +27,8 @@ setup(
         "requests >= 2.3.0",
         "slimit",
         "ply >= 3.7",
-        "sqlalchemy >= 1.0.12"
+        "sqlalchemy >= 1.0.12",
+        "braintree >= 3.27.0"
     ],
     entry_points = '''
         [console_scripts]
