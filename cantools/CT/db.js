@@ -184,7 +184,9 @@ CT.db.edit = {
 		"boolean": false,
 		"datetime": null,
 		"key": null,
-		"blob": null
+		"blob": null,
+		"list": [],
+		"keylist": []
 	},
 	_no_ent: {
 		"key": null,
@@ -216,13 +218,13 @@ CT.db.edit = {
 				return parseFloat(f.value) || null;
 			if (ptype == "key")
 				return f.data.key;
-			if (ptype == "datetime")
+			if (["datetime", "list", "keylist"].indexOf(ptype) != -1)
 				return f.value();
 			return f.value; // string
 		};
 	},
 	input: function(k, ptype, val, modelName, opts) {
-		var valcell;
+		var valcell, lstyle = { marginLeft: "180px", minHeight: "18px" };
 		opts = opts || {};
 		if (ptype == "string")
 			valcell = CT.dom.field(null, val);
@@ -247,6 +249,16 @@ CT.db.edit = {
 			valcell = val ? CT.dom.link("data blob", null,
 				"/_db?action=blob&value=" + val.slice(5),
 				null, null, null, true) : CT.dom.node("(no value)", "span");
+		else if (ptype == "list")
+			valcell = CT.dom.fieldList(val, null, lstyle);
+		else if (ptype == "keylist")
+			valcell = CT.dom.fieldList(val, function(v) {
+				return (new CT.db.edit.EntityRow({
+					property: k,
+					key: v,
+					modelName: modelName
+				})).node;
+			}, lstyle);
 		valcell.getValue = CT.db.edit._val(valcell, ptype);
 		valcell.rowKey = k;
 		return valcell;
@@ -301,6 +313,7 @@ CT.db.edit.EntityRow = CT.Class({
 			n = this.node = CT.dom.node(CT.dom.link(null, this._change_or_modal), "span");
 		n.fill = function(d) {
 			d = n.data = d || CT.db.edit._no_ent;
+			n.value = d.key;
 			opts.key = d.key;
 			CT.dom.setContent(n.firstChild, d.label);
 		};
