@@ -256,6 +256,13 @@ CT.dom = {
 			ptxt += "&nbsp;";
 		return CT.dom.node(ptxt, "span");
 	},
+	"br": function(bsize) {
+		bsize = bsize || 1;
+		var bs = [];
+		for (var i = 0; i < bsize; i++)
+			bs.push(CT.dom.node(null, "br"));
+		return CT.dom.node(bs);
+	},
 	"marquee": function(content, className, direction) {
 		var n = CT.dom.node(content, "marquee", className, null, {
 			direction: direction || "left",
