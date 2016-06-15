@@ -183,7 +183,8 @@ CT.db.edit = {
 		"float": 0.0,
 		"boolean": false,
 		"datetime": null,
-		"key": null
+		"key": null,
+		"blob": null
 	},
 	_no_ent: {
 		"key": null,
@@ -242,6 +243,10 @@ CT.db.edit = {
 			})).node;
 		else if (ptype == "datetime")
 			valcell = CT.dom.dateSelectors(null, null, opts.startYear, null, null, null, val);
+		else if (ptype == "blob")
+			valcell = val ? CT.dom.link("data blob", null,
+				"/_db?action=blob&value=" + val.slice(5),
+				null, null, null, true) : CT.dom.node("(no value)", "span");
 		valcell.getValue = CT.db.edit._val(valcell, ptype);
 		valcell.rowKey = k;
 		return valcell;
