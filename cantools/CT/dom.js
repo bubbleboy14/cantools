@@ -155,6 +155,22 @@ CT.dom = {
 		return CT.dom.node("", "input", classname, id,
 			(value!=null || type!=null) && {"value": value, "type": type} || null);
 	},
+	"fieldList": function(vals, maker) {
+		var n = CT.dom.node(vals.map(function(v) {
+			var butt = CT.dom.button("(remove)", function() {
+				CT.dom.remove(butt.parentNode);
+			});
+			return CT.dom.node([
+				maker ? maker(v) : CT.dom.field(null, v), butt
+			]);
+		}));
+		n.value = function() {
+			return n.childNodes.map(function(wrapper) {
+				return wrapper.firstChild.value;
+			});
+		};
+		return n;
+	},
 	"textArea": function(id, value, classname) {
 		return CT.dom.node("", "textarea", classname,
 			id, value && {"value": value} || null);
