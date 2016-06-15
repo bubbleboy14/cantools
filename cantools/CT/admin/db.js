@@ -112,6 +112,10 @@ CT.admin.db.Editor = CT.Class({
 				startYear: 1970 // gotta start somewhere, might as well be epoch...
 			});
 			this.inputs.push(valcell);
+			if (valcell.addButton) { // list, keylist
+				rownode.appendChild(valcell.addButton);
+				rownode.appendChild(valcell.empty);
+			}
 		} else
 			valcell = CT.dom.node(val || "null", "span");
 		rownode.appendChild(valcell);
