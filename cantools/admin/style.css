@@ -36,6 +36,14 @@ html, body {
 	color: blue;
 }
 
+.dbpanel, .dbpanel>div:last-child>div {
+	height: 100%;
+}
+
+.dbpanel>div:last-child {
+	height: 96%;
+}
+
 .rcol {
 	border: 1px solid black;
 	float: right;
@@ -48,9 +56,10 @@ html, body {
 
 .data {
 	border: 1px solid black;
-	width: 80%;
+	width: 79%;
 	height: 100%;
 	background: gray;
+	overflow: auto;
 }
 
 .blbox {
