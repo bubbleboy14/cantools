@@ -377,7 +377,7 @@ CT.slider.Frame = CT.Class({
 					CT.dom.node(d.content)
 				], "div", "margined padded bordered round hoverglow pointer inline-block");
 				n.onclick = function() {
-					location = "/" + d.page + ".html";
+					location = d.url || ("/" + d.page + ".html");
 				};
 				return n;
 			})
