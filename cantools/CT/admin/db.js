@@ -75,6 +75,7 @@ CT.admin.db = {
 
 CT.admin.db.Editor = CT.Class({
 	"CLASSNAME": "CT.admin.db.Editor",
+	"_order": ["string", "text", "integer", "float", "datetime", "boolean", "list", "keylist", "key"],
 	"_submit": function() {
 		var data = this.data, changes = {};
 		if (data.key)
@@ -118,14 +119,14 @@ CT.admin.db.Editor = CT.Class({
 	},
 	"_table": function() {
 		var k, r, d = this.data, n = this.node = CT.dom.node();
-		["string", "integer", "float", "bool", "datetime", "key"].forEach(function(t) {
-			// TODO: list (when it's ready)
+		this._order.forEach(function(t) {
 			n[t] = CT.dom.node();
 			n.appendChild(n[t]);
 		});
+		n.appendChild(CT.dom.br());
 		for (k in d) {
 			r = this._row(k);
-			(n[r.ptype] || n).appendChild(r);
+			(k != "_label" && n[r.ptype] || n).appendChild(r);
 		}
 		d.key && n.appendChild(CT.dom.node(CT.dom.button("Delete", function() {
 			var label = d.label;
