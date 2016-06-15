@@ -179,6 +179,7 @@ CT.db = {
 CT.db.edit = {
 	_d: { // unimplemented: list -- no editing (yet) :)
 		"string": "",
+		"text": "",
 		"integer": 0,
 		"float": 0.0,
 		"boolean": false,
@@ -220,7 +221,7 @@ CT.db.edit = {
 				return f.data.key;
 			if (["datetime", "list", "keylist"].indexOf(ptype) != -1)
 				return f.value();
-			return f.value; // string
+			return f.value; // string/text
 		};
 	},
 	input: function(k, ptype, val, modelName, opts) {
@@ -228,6 +229,8 @@ CT.db.edit = {
 		opts = opts || {};
 		if (ptype == "string")
 			valcell = CT.dom.field(null, val);
+		else if (ptype == "text")
+			valcell = CT.dom.textArea(null, val);
 		else if (ptype == "boolean")
 			valcell = CT.dom.checkbox(null, val, {
 				"display": "inline-block",
