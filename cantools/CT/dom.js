@@ -156,17 +156,27 @@ CT.dom = {
 			(value!=null || type!=null) && {"value": value, "type": type} || null);
 	},
 	"fieldList": function(vals, maker, style) {
-		var n = CT.dom.node(vals.map(function(v) {
-			var butt = CT.dom.button("(remove)", function() {
-				CT.dom.remove(butt.parentNode);
-			});
-			return CT.dom.node([
-				maker ? maker(v) : CT.dom.field(null, v), butt
-			]);
-		}), null, null, null, null, style);
+		var input = function(v) { return maker ? maker(v) : CT.dom.field(null, v); },
+			row = function(v) {
+				var butt = CT.dom.button("remove", function() {
+					CT.dom.remove(butt.parentNode);
+				});
+				return CT.dom.node([ butt, input(v) ]);
+			}, n = CT.dom.node(vals.map(row), null, null, null, null, style);
+		n.empty = input();
+		n.addButton = CT.dom.button("add", function() {
+			if (n.empty.value) {
+				n.insertBefore(row(n.empty.value), n.firstChild);
+				if (n.empty.fill)
+					n.empty.fill()
+				else
+					n.empty.value = "";
+			}
+		});
+		n.addButton.style.width = "57px";
 		n.value = function() {
 			return n.childNodes.map(function(wrapper) {
-				return wrapper.firstChild.value;
+				return wrapper.lastChild.value;
 			});
 		};
 		return n;
