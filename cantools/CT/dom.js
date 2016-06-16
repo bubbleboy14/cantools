@@ -74,7 +74,7 @@ CT.dom = {
 	},
 	"node": function(content, type, classname, id, attrs, style) {
 		var d = document.createElement(type || "div");
-		if (content) {
+		if (content != null) {
 			if (Array.isArray(content)) // array of nodes or objects
 				content.forEach(function(item) {
 					d.appendChild(item instanceof Node ? item : CT.dom.node(item));
