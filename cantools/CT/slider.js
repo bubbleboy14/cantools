@@ -93,6 +93,8 @@ CT.slider.Slider = CT.Class({
 			CT.key.on(opts.orientation == "horizontal" ?
 				"RIGHT" : "DOWN", this.nextButtonCallback);
 		}
+		if (opts.orientation == "vertical")
+			CT.gesture.listen("wheel", this.container, this.onWheel);
 		this.dragOpts = {
 			constraint: CT.slider.other_orientation[opts.orientation],
 			up: this.updatePosition,
@@ -106,6 +108,12 @@ CT.slider.Slider = CT.Class({
 		this._reflow();
 		if (opts.startFrame in this.jumpers)
 			this.jumpers[opts.startFrame]();
+	},
+	onWheel: function(pos, delta) {
+		if (delta > 0)
+			this.nextButtonCallback();
+		else
+			this.prevButtonCallback();
 	},
 	showNav: function() {
 		if (this.opts.navButtons) {
