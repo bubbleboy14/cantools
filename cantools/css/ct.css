@@ -58,6 +58,8 @@
 
 /* position */
 .abs { position: absolute; }
+.fixed { position: fixed; }
+.relative { position: relative; }
 .above { z-index: 1000 !important; }
 .right { float: right; }
 .left { float: left; }
@@ -66,6 +68,24 @@
 .centered > div {
     margin-left: auto;
     margin-right: auto;
+}
+
+/* absolute / fixed */
+.ctr {
+    top: 10px;
+    right: 10px;
+}
+.ctl {
+    top: 10px;
+    left: 10px;
+}
+.cbr {
+    bottom: 10px;
+    right: 10px;
+}
+.cbl {
+    bottom: 10px;
+    left: 10px;
 }
 
 /* size */
