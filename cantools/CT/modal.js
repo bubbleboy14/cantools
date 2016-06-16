@@ -210,21 +210,18 @@ CT.modal.Modal = CT.Class({
 		this.visible ? this.hide() : this.show();
 	},
 	addClose: function() {
-		this.add(CT.dom.node(CT.dom.link("X", this.hide), "div", "right pointer"));
+		this.node.insertBefore(CT.dom.node(CT.dom.link("X", this.hide),
+			"div", "abs ctr"), this.node.firstChild);
 	},
-	build: function() { // override
-		if (!this.opts.noClose)
-			this.addClose();
-	},
+	build: function() {}, // override w/ add() calls
 	clear: function() {
-		this.node.innerHTML = "";
+		this.node.lastChild.innerHTML = "";
 	},
 	add: function(content) {
-		CT.dom.addContent(this.node, content);
+		CT.dom.addContent(this.node.lastChild, content);
 	},
-	set: function(node, addClose) {
+	set: function(node) {
 		this.clear();
-		addClose && this.addClose();
 		this.add(node);
 	},
 	_buildContent: function() {
@@ -233,7 +230,10 @@ CT.modal.Modal = CT.Class({
 			if (side in opts.slide)
 				nodeStyle[side] = opts.slide[side];
 		});
-		this.node = CT.dom.node("", "div", opts.className, null, null, nodeStyle);
+		this.node = CT.dom.node(CT.dom.node(null, null, "h1 w1 scroller"),
+			"div", opts.className, null, null, nodeStyle);
+		if (!opts.noClose)
+			this.addClose();
 		this.node.modal = this;
 		this.setup[opts.transition]();
 		this.build();
