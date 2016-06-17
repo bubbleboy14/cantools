@@ -283,6 +283,13 @@ CT.modal.Prompt = CT.Class({
 		},
 		"multiple-choice": function(data) {
 			return CT.dom.choices(data, true);
+		},
+		"file": function() {
+			this.continueButton.disabled = true;
+			return CT.file.getter(function(ctf) {
+				if (ctf.opts.path)
+					this.continueButton.disabled = false;
+			}.bind(this));
 		}
 	},
 	on: {
@@ -296,14 +303,15 @@ CT.modal.Prompt = CT.Class({
 		this.hide();
 	},
 	submit: function() {
-		this.opts.cb(this.input.value);
+		this.opts.cb(this.input.ctfile || this.input.value);
 		this.hide();
 	},
 	build: function() {
+		this.continueButton = CT.dom.button("Continue", this.submit);
 		this.input = this._input[this.opts.style](this.opts.data);
 		this.node.appendChild(CT.dom.node(this.opts.prompt));
 		this.node.appendChild(this.input);
-		this.node.appendChild(CT.dom.button("Continue", this.submit));
+		this.node.appendChild(this.continueButton);
 		this.node.appendChild(CT.dom.button("Cancel", this.hide));
 	},
 	init: function(opts) {

@@ -32,6 +32,8 @@ CT.file.File = CT.Class({
 	},
 	init: function(opts) {
 		this.opts = opts;
+		if (opts.input)
+			opts.input.ctfile = this;
 		this.url = window.URL.createObjectURL(opts.file);
 	}
 });
