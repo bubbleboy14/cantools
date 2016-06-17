@@ -11,6 +11,7 @@ This loader imports almost every CT module.
     - CT.db
     - CT.drag
     - CT.dom
+    - CT.file
     - CT.gesture
     - CT.key
     - CT.mobile
@@ -39,6 +40,7 @@ CT.require("CT.data");
 CT.require("CT.db");
 CT.require("CT.drag");
 CT.require("CT.dom");
+CT.require("CT.file");
 CT.require("CT.gesture");
 CT.require("CT.key");
 CT.require("CT.mobile");
