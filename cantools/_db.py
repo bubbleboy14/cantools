@@ -1,4 +1,4 @@
-from cantools.web import respond, succeed, fail, send_file, cgi_get, cgi_dump, getmem, setmem, clearmem
+from cantools.web import respond, succeed, fail, send_file, cgi_get, cgi_dump, read_file, getmem, setmem, clearmem
 from cantools.db import get, get_model, get_schema, get_page, get_multi, put_multi, edit, dprep, admin, BlobWrapper
 from cantools import config
 import model # load up all models (for schema)
@@ -36,6 +36,7 @@ def response():
 	elif action == "blob":
 		import magic
 		value = cgi_get("value", required=False) # fastest way
+		data = cgi_get("data", required=False)
 		if value:
 			blob = BlobWrapper(value=value).get()
 		else:
@@ -44,7 +45,11 @@ def response():
 				blob = getattr(entity, cgi_get("property")).get()
 			else: # gae
 				blob = entity.getBlob()
-		send_file(blob, magic.from_buffer(blob, True))
+		if data:
+			blob.set(read_file(data))
+			succeed(blob.urlsafe())
+		else:
+			send_file(blob, magic.from_buffer(blob, True))
 	elif action == "edit":
 		if config.memcache.db:
 			clearmem()
