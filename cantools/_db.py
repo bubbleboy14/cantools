@@ -34,6 +34,7 @@ def response():
 				setmem(sig, res, False)
 		succeed(res)
 	elif action == "blob":
+		import magic
 		value = cgi_get("value", required=False) # fastest way
 		if value:
 			blob = BlobWrapper(value=value).get()
@@ -43,7 +44,7 @@ def response():
 				blob = getattr(entity, cgi_get("property")).get()
 			else: # gae
 				blob = entity.getBlob()
-		send_file(blob)
+		send_file(blob, magic.from_buffer(blob, True))
 	elif action == "edit":
 		if config.memcache.db:
 			clearmem()

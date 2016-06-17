@@ -28,6 +28,7 @@ setup(
         "slimit",
         "ply >= 3.7",
         "sqlalchemy >= 1.0.12",
+        "python-magic >= 0.4.11",
         "braintree >= 3.27.0"
     ],
     entry_points = '''

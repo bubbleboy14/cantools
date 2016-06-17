@@ -311,7 +311,7 @@ FILETYPES = {"pdf": "application/pdf", "img": "image/png"}
 
 def send_file(data, file_type=None):
     if file_type:
-        _headers({"Content-Type": FILETYPES[file_type]})
+        _headers({"Content-Type": FILETYPES.get(file_type, file_type)})
     _send(data)
     _close()
 
