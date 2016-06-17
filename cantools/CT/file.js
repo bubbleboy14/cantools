@@ -23,7 +23,7 @@ CT.file.File = CT.Class({
 			null, this.url, null, null, null, true);
 	},
 	upload: function(path, cb) {
-		CT.net.put(path, this.opts.files[0], cb);
+		CT.net.put(path, this.opts.files[0], cb, null, true);
 	},
 	init: function(opts) {
 		this.opts = opts;

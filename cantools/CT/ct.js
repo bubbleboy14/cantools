@@ -149,7 +149,7 @@ var CT = {
 			}
 			return CT.net._path + p;
 		},
-		"xhr": function(path, method, params, async, cb, headers) {
+		"xhr": function(path, method, params, async, cb, headers, passthrough) {
 			var xhr = window.XMLHttpRequest
 				? new XMLHttpRequest()
 				: new ActiveXObject("Microsoft.XMLHTTP");
@@ -160,7 +160,7 @@ var CT = {
 				xhr.setRequestHeader(header, headers[header]);
 			xhr.onreadystatechange = cb && function() { cb(xhr); };
 			if (params) {
-				if (CT.net._mode != "passthrough") {
+				if (!passthrough && CT.net._mode != "passthrough") {
 					if (CT.net._mode == "ct")
 						params = CT.net._rd(params, true);
 					params = JSON.stringify(params);
@@ -251,8 +251,8 @@ var CT = {
 				}
 			}, headers);
 		},
-		"put": function(path, params, cb, headers) {
-			CT.net.xhr(path, "PUT", params, true, cb, headers);
+		"put": function(path, params, cb, headers, passthrough) {
+			CT.net.xhr(path, "PUT", params, true, cb, headers, passthrough);
 		},
 		"del": function(path, params, cb, headers) {
 			CT.net.xhr(path, "DELETE", params, true, cb, headers);
