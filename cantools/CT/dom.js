@@ -151,9 +151,17 @@ CT.dom = {
 	"button": function(content, onclick, classname, id) {
 		return CT.dom.node(content, "button", classname, id, {"onclick": onclick});
 	},
-	"field": function(id, value, classname, type) {
-		return CT.dom.node("", "input", classname, id,
-			(value!=null || type!=null) && {"value": value, "type": type} || null);
+	"field": function(id, value, classname, type, attrs) {
+		attrs = attrs || {};
+		if (value)
+			attrs.value = value;
+		if (type)
+			attrs.type = type;
+		return CT.dom.node("", "input", classname, id, attrs);
+	},
+	"file": function(cb, id, classname) {
+		return CT.dom.field(id, null, classname,
+			"file", { onchange: cb });
 	},
 	"fieldList": function(vals, maker, style) {
 		var input = function(v) { return maker ? maker(v) : CT.dom.field(null, v); },
