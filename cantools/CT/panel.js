@@ -57,7 +57,7 @@ CT.panel = {
 	    var items = CT.dom.className(keystring + "panel");
 	    for (var i = 0; i < items.length; i++)
 	        items[i].className = keystring + "panel hidden";
-	    CT.dom.id(keystring +  "panel" + key).className = keystring + "panel";
+	    CT.dom.id(keystring +  "panel" + key, true).className = keystring + "panel";
 	    if (trysidepanel) {
 	        var n = CT.dom.id(keystring + "panel" + key + "Side");
 	        if (n) n.className = keystring+"panel";
@@ -95,7 +95,7 @@ CT.panel = {
 	    nospace = nospace || key.replace(/ /g, "");
 	    keystring = keystring || "sb";
 	    if (!CT.dom.id(keystring + "panel" + nospace)) {
-	        var n = CT.dom.node("", "div", keystring + "panel", keystring + "panel" + nospace);
+	        var n = CT.dom.node("", "div", keystring + "panel hidden", keystring + "panel" + nospace);
 	        n.appendChild(CT.dom.node(key, "div", "bigger blue bold bottompadded"));
 	        n.appendChild(CT.dom.node("", "div", "", keystring+"content"+nospace));
 	        (panelnode || CT.dom.id(keystring+"panels")).appendChild(n);
