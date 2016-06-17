@@ -27,8 +27,15 @@ CT.file.File = CT.Class({
 		return CT.dom.link(lname || "download",
 			null, this.url, null, null, null, true);
 	},
-	upload: function(path, cb) {
-		CT.net.put(path, this.opts.file, cb, null, true);
+	upload: function(path, cb, params) {
+		var data = this.opts.file;
+		if (params) {
+			data = new FormData();
+			for (var param in params)
+				data.append(param, params[param]);
+			data.append(this.opts.file.name, this.opts.file);
+		}
+		CT.net.put(path, data, cb, null, true);
 	},
 	init: function(opts) {
 		this.opts = opts;
