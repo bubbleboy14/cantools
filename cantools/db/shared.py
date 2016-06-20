@@ -25,13 +25,13 @@ def get_schema(modname=None):
             s[key] = val._schema
     return s
 
-def dprep(obj): # prepares data object for model
-    schema = get_schema(obj["modelName"])
+def dprep(obj, schema=None): # prepares data object for model
+    schema = schema or get_schema(obj["modelName"])
     o = {}
     for key, prop in schema.items():
         if key in obj:
             if prop == "datetime" and obj[key]:
-                o[key] = datetime.strptime(obj[key], "%Y-%m-%d %X")
+                o[key] = datetime.strptime(obj[key].replace("T", " ").replace("Z", ""), "%Y-%m-%d %X")
             elif prop == "string" and isinstance(obj[key], unicode):
                 o[key] = obj[key].encode("utf-8")
             elif key != "_label":
