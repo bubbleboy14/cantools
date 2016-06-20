@@ -94,6 +94,13 @@ CT.db = {
 			}
 		}
 	},
+	eachProp: function(modname, cb) {
+		return Object.keys(CT.db._schema[modname]).filter(function(p) {
+			return ["index", "key", "modelName", "label", "_label", "_kinds"].indexOf(p) == -1;
+		}).map(function(k) {
+			return cb(k);
+		});
+	},
 	reference2label: function(modelName, property) {
 		var t = CT.db._schema[modelName]._kinds[property][0];
 		return {
