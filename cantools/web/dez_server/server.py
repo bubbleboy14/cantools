@@ -46,7 +46,8 @@ def post(host, path="/", port=80, data=None, protocol="http", asjson=False, ctjs
 
 # file uploads
 def read_file(data_field):
-	return data_field.file.read()
+	from response import files
+	return files.pop(data_field)
 
 # memcache stuff
 def getmem(key, tojson=True):
