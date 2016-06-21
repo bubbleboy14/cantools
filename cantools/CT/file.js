@@ -28,14 +28,15 @@ CT.file.File = CT.Class({
 			null, this.url, null, null, null, true);
 	},
 	upload: function(path, cb, params) {
-		var data = this.opts.file;
+		var data = this.opts.file, headers = {};
 		if (params) {
+			headers["Content-Type"] = "multipart/form-data";
 			data = new FormData();
 			for (var param in params)
 				data.append(param, params[param]);
-			data.append(this.opts.file.name, this.opts.file);
+			data.append("data", this.opts.file);
 		}
-		CT.net.put(path, data, cb, null, true);
+		CT.net.put(path, data, cb, headers, true);
 	},
 	init: function(opts) {
 		this.opts = opts;

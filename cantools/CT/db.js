@@ -183,6 +183,53 @@ CT.db = {
 	}
 };
 
+CT.db.Blob = CT.Class({
+	CLASSNAME: "CT.db.Blob",
+	uploadPrompt: function() {
+		(new CT.modal.Prompt({
+			noClose: true,
+			style: "file",
+			transition: "slide",
+			cb: this.upload
+		})).show();
+	},
+	upload: function(ctfile) {
+		var params = { action: "blob" };
+		if (this.index)
+			params.value = this.index;
+		else {
+			params.key = this.opts.key;
+			params.property = this.opts.property;
+		}
+		ctfile.upload("/_db", this._update, params);
+	},
+	_update: function(val) {
+		this.opts.val = val;
+		this._setup();
+	},
+	_setup: function() {
+		if (this.opts.value) {
+			this.index = this.opts.value.slice(5);
+			CT.dom.setContent(this.node, [
+				CT.dom.link("download", null,
+					"/_db?action=blob&value=" + this.index,
+					"blue", null, null, true),
+				CT.dom.pad(),
+				CT.dom.link("upload", this.uploadPrompt, null, "nodecoration blue")
+			]);
+		} else
+			CT.dom.setContent(this.node, CT.dom.link("upload", this.uploadPrompt));
+	},
+	value: function() {
+		return this.index;
+	},
+	init: function(opts) {
+		this.opts = opts;
+		this.node = CT.dom.node();
+		this._setup();
+	}
+});
+
 CT.db.edit = {
 	_d: { // unimplemented: list -- no editing (yet) :)
 		"string": "",
@@ -226,7 +273,7 @@ CT.db.edit = {
 				return parseFloat(f.value) || null;
 			if (ptype == "key")
 				return f.data.key;
-			if (["datetime", "list", "keylist"].indexOf(ptype) != -1)
+			if (["datetime", "list", "keylist", "blob"].indexOf(ptype) != -1)
 				return f.value();
 			return f.value; // string/text
 		};
@@ -256,9 +303,11 @@ CT.db.edit = {
 		else if (ptype == "datetime")
 			valcell = CT.dom.dateSelectors(null, null, opts.startYear, null, null, null, val);
 		else if (ptype == "blob")
-			valcell = val ? CT.dom.link("data blob", null,
-				"/_db?action=blob&value=" + val.slice(5),
-				null, null, null, true) : CT.dom.node("(no value)", "span");
+			valcell = (new CT.db.Blob({
+				key: opts.key,
+				property: k,
+				value: val
+			})).node;
 		else if (ptype == "list")
 			valcell = CT.dom.fieldList(val, null, lstyle);
 		else if (ptype == "keylist")
@@ -278,7 +327,7 @@ CT.db.edit = {
 CT.db.edit.EntityRow = CT.Class({
 	CLASSNAME: "CT.db.edit.EntityRow",
 	mtable: function() {
-		var k, s = CT.dom.node("", "div", "h19-20 scroller"), n = CT.dom.node(s, "div", "h1");
+		var k, s = CT.dom.node("", "div", "h9-10 scroller"), n = CT.dom.node(s, "div", "h1");
 		for (k in this.node.data)
 			s.appendChild(CT.dom.node([
 				CT.dom.node(k + ":", "div", "keycell"),

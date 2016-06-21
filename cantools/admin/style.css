@@ -5,6 +5,7 @@ html, body {
 
 a {
 	font-weight: bold;
+	text-decoration: none;
 }
 
 #dbpanels {
@@ -38,6 +39,8 @@ a {
 	width: 20%;
 	background: darkgray;
 	color: blue;
+	z-index: 1000;
+	overflow: hidden;
 }
 
 .dbpanel, .dbpanel>div:last-child>div {
@@ -45,7 +48,11 @@ a {
 }
 
 .dbpanel>div:last-child {
-	height: 96%;
+	position: absolute;
+	top: 30px;
+	bottom: 1px;
+	left: 0px;
+	right: 0px;
 }
 
 .rcol {
