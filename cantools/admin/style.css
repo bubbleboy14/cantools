@@ -40,6 +40,7 @@ a {
 	background: darkgray;
 	color: blue;
 	z-index: 1000;
+	overflow: hidden;
 }
 
 .dbpanel, .dbpanel>div:last-child>div {
