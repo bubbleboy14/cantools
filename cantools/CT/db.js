@@ -328,7 +328,7 @@ CT.db.edit = {
 CT.db.edit.EntityRow = CT.Class({
 	CLASSNAME: "CT.db.edit.EntityRow",
 	mtable: function() {
-		var k, s = CT.dom.node("", "div", "h19-20 scroller"), n = CT.dom.node(s, "div", "h1");
+		var k, s = CT.dom.node("", "div", "h9-10 scroller"), n = CT.dom.node(s, "div", "h1");
 		for (k in this.node.data)
 			s.appendChild(CT.dom.node([
 				CT.dom.node(k + ":", "div", "keycell"),
