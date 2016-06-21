@@ -38,17 +38,14 @@ def response():
 		value = cgi_get("value", required=False) # fastest way
 		data = cgi_get("data", required=False)
 		if value:
-			blob = BlobWrapper(value=value).get()
+			blob = BlobWrapper(value=value)
 		else:
-			entity = get(cgi_get("key"))
-			if config.web.server == "dez":
-				blob = getattr(entity, cgi_get("property")).get()
-			else: # gae
-				blob = entity.getBlob()
+			blob = getattr(get(cgi_get("key")), cgi_get("property"))
 		if data:
 			blob.set(read_file(data))
 			succeed(blob.urlsafe())
 		else:
+			blob = blob.get()
 			send_file(blob, magic.from_buffer(blob, True))
 	elif action == "edit":
 		if config.memcache.db:
