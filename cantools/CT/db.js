@@ -204,7 +204,6 @@ CT.db.Blob = CT.Class({
 		ctfile.upload("/_db", this._update, params);
 	},
 	_update: function(val) {
-		alert("great!");
 		this.opts.val = val;
 		this._setup();
 	},
