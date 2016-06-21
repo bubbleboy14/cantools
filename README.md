@@ -1,4 +1,4 @@
-# cantools 0.7.7.3
+# cantools 0.7.8
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
 License: MIT (see LICENSE)
@@ -205,6 +205,7 @@ This loader imports almost every CT module.
     - CT.db
     - CT.drag
     - CT.dom
+    - CT.file
     - CT.gesture
     - CT.key
     - CT.mobile
@@ -494,6 +495,11 @@ any or all of the following options:
                          we use width / number_of_child_nodes.
     - force (bool, default false): forces non-native scrolling.
     - up, down, drag, scroll, swipe (functions): optional gesture callbacks.
+
+## CT.file
+### Import line: 'CT.require("CT.file");'
+This module provides functions and a class (CT.file.File) for
+messing with (accessing, uploading, downloading) file objects.
 
 ## CT.gesture
 ### Import line: 'CT.require("CT.gesture");'
