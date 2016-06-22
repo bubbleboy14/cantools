@@ -107,7 +107,7 @@ CT.slider.Slider = CT.Class({
 		this.opts.parent.onresize = this.trans;
 		this._reflow();
 		if (opts.startFrame in this.jumpers)
-			this.jumpers[opts.startFrame]();
+			setTimeout(this.jumpers[opts.startFrame]); // wait one tick for inits
 	},
 	onWheel: function(pos, delta) {
 		if (delta > 0)
@@ -275,6 +275,7 @@ CT.slider.Frame = CT.Class({
 					value: "0px"
 				});
 				slider.hideNav();
+				tab && tab.hide();
 			} else {
 				if (pulser) pulser.style.zIndex = 0;
 				CT.trans.resize(imageBack, {
@@ -292,6 +293,7 @@ CT.slider.Frame = CT.Class({
 					value: "100px"
 				});
 				slider.showNav();
+				tab && tab.show();
 			}
 		};
 		if (slider.opts.pan) {
@@ -334,7 +336,7 @@ CT.slider.Frame = CT.Class({
 				imageBack.controller.resume();
 			if (opts.pulse)
 				pulser.controller.resume();
-			if (opts.tab)
+			if (tab)
 				tab.show();
 		};
 		this.on.hide = function() {
@@ -346,7 +348,7 @@ CT.slider.Frame = CT.Class({
 				imageBack.controller.pause();
 			if (opts.pulse)
 				pulser.controller.pause();
-			if (opts.tab)
+			if (tab)
 				tab.hide();
 		};
 		CT.dom.addEach(node, nodes);
