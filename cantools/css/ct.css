@@ -124,6 +124,10 @@
     -moz-border-radius: 15px;
     -webkit-border-radius: 15px;
 }
+.blockquote {
+    padding: 50px !important;
+    text-align: justify;
+}
 
 /* behavior */
 .border-box { box-sizing: border-box; }
@@ -499,7 +503,7 @@
     overflow-x: hidden;
     overflow-y: auto;
 }
-.carousel-content-full div {
+.carousel-content-full>div {
     border: 1px solid gray;
     margin: 5px;
     padding: 5px;
