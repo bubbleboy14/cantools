@@ -211,7 +211,7 @@ CT.modal.Modal = CT.Class({
 	},
 	addClose: function() {
 		this.node.insertBefore(CT.dom.node(CT.dom.link("X", this.hide),
-			"div", "abs ctr"), this.node.firstChild);
+			"div", "abs ctr above"), this.node.firstChild);
 	},
 	build: function() {}, // override w/ add() calls
 	clear: function() {
