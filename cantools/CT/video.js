@@ -79,18 +79,27 @@ CT.video = {
 	        docid: CT.video.docidFromUrl(vlink)
 	    } : null;
 	},
+	"_embed": function(video, w, h) {
+		var dims = "width=" + w;
+		if (h)
+			dims += " height=" + h;
+	    if (video.player == "google")
+	        return "<embed " + dims + " id=VideoPlayback src=http://video.google.com/googleplayer.swf?docid=" + video.docid + "&hl=en&fs=true allowFullScreen=true allowScriptAccess=always type=application/x-shockwave-flash> </embed>";
+	    else if (video.player == "youtube" || video.player == "vimeo")
+	        return "<iframe src=\"" + CT.video.embed_url[video.player] + video.docid + "?html5=1\" " + dims + " frameborder=0 webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>";
+	    else if (video.player == "ustream")
+	        return "<object type=application/x-shockwave-flash data=http://static-cdn1.ustream.tv/swf/live/viewerqos:21.swf " + dims + "id=utv" + video.docid + " name=utv" + video.docid + "><param name=flashvars value=autoplay=true&locale=en_US&referrer=http%3A%2F%2Fwww.ustream.tv%2Frecorded%2F" + video.docid + "%3Futm_campaign%3Dustre.am%26utm_source%3Dustre.am%2F%3A44gEy%26utm_medium%3Dsocial%26utm_content%3D20150324210416&autoResize=false&enablejsapi=true&sv=6&volume=1&ts=1427256261325&vid=" + video.docid + "&loc=" + video.docid + "&hasticket=false><param name=allowfullscreen value=true><param name=allowscriptaccess value=always><param name=bgcolor value=000000><param name=wmode value=transparent></object>"
+	    else if (CT.video.rawVidTypes.indexOf(video.player) != -1)
+	        return "<video " + dims + " controls><source src=http://" + video.docid + " type=video/" + video.player + "></video>";
+	    else
+	        alert("unknown video player: "+video.player);
+	},
 	"embed": function(video, small) {
 	    var w = small ? 375 : 400;
 	    var h = small ? 315 : 335;
-	    if (video.player == "google")
-	        return "<embed width=" + w + " height=" + h + " id=VideoPlayback src=http://video.google.com/googleplayer.swf?docid=" + video.docid + "&hl=en&fs=true allowFullScreen=true allowScriptAccess=always type=application/x-shockwave-flash> </embed>";
-	    else if (video.player == "youtube" || video.player == "vimeo")
-	        return "<iframe src=\"" + CT.video.embed_url[video.player] + video.docid + "?html5=1\" width=" + w + " height=" + h + " frameborder=0 webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>";
-	    else if (video.player == "ustream")
-	        return "<object type=application/x-shockwave-flash data=http://static-cdn1.ustream.tv/swf/live/viewerqos:21.swf width=" + w + " height=" + h + "id=utv" + video.docid + " name=utv" + video.docid + "><param name=flashvars value=autoplay=true&locale=en_US&referrer=http%3A%2F%2Fwww.ustream.tv%2Frecorded%2F" + video.docid + "%3Futm_campaign%3Dustre.am%26utm_source%3Dustre.am%2F%3A44gEy%26utm_medium%3Dsocial%26utm_content%3D20150324210416&autoResize=false&enablejsapi=true&sv=6&volume=1&ts=1427256261325&vid=" + video.docid + "&loc=" + video.docid + "&hasticket=false><param name=allowfullscreen value=true><param name=allowscriptaccess value=always><param name=bgcolor value=000000><param name=wmode value=transparent></object>"
-	    else if (CT.video.rawVidTypes.indexOf(video.player) != -1)
-	        return "<video width=" + w + " height=" + h + " controls><source src=http://" + video.docid + " type=video/" + video.player + "></video>";
-	    else
-	        alert("unknown video player: "+video.player);
+	    return CT.video._embed(video, w, h);
+	},
+	"fit": function(video) {
+		return CT.video._embed(video, "90%", "90%");
 	}
 };
