@@ -649,7 +649,7 @@ CT.dom = {
 		n.appendChild(CT.dom.node("", "div", "clearnode"));
 	},
 	"inputEnterCallback": function(n, cb, fid) {
-		n.onkeyup = function(e) {
+		n.addEventListener("keyup", function(e) {
 			e = e || window.event;
 			var code = e.keyCode || e.which;
 			if (code == 13 || code == 3) {
@@ -658,7 +658,7 @@ CT.dom = {
 					document.getElementById(fid).focus();
 				cb && cb(n.value);
 			}
-		};
+		});
 		return n;
 	},
 	"smartField": function(cb, classname, id, value, type, blurs) {

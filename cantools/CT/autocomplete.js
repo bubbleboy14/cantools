@@ -128,7 +128,7 @@ CT.autocomplete.Guesser = CT.Class({
 		this.input = opts.input;
 		CT.gesture.listen("down", this.input, this._returnTrue);
 		CT.gesture.listen("up", this.input, this._onUp);
-		this.input.onkeyup = this._onKeyUp;
+		this.input.addEventListener("keyup", this._onKeyUp);
 		this.input.addEventListener("blur", this._waitRetract);
 	}
 }, CT.Drop);
