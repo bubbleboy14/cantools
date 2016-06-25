@@ -15,10 +15,10 @@ Guesser is a subclass of CT.Drop.
     - tapCb (default: set input to data.label): trigger on option tap
     - guessCb (default: this.guesser): trigger when it's time to guess
     - input (required): the input node to which to attach the autocomplete guesser
+    - data (default: []): array of label-containing objects used by default guesser
 
-You might notice that no 'guesser' function is defined on this class.
-This means that you must either pass in a 'guessCb' function to the constructor
-or subclass Guesser, adding this function to the class (as 'guesser').
+To specify custom guessing behavior, either pass in a 'guessCb' function to the
+constructor or subclass Guesser, adding this function to the class (as 'guesser').
 
 ### CT.autocomplete.DBGuesser
 DBGuesser subclasses Guesser, and defines a 'guesser'
@@ -39,22 +39,27 @@ CT.autocomplete.Guesser = CT.Class({
 	    this.retract();
 	},
 	addTag: function(data) {
-		var tagName = data.label;
-		var n = CT.dom.node(tagName, "div", "tagline", "ac" + tagName);
-		var tlower = tagName.toLowerCase();
-		for (var i = 1; i <= tlower.length; i++)
-			n.className += " " + tlower.slice(0, i);
+		var n = CT.dom.node(data.label, "div", "tagline", "ac" + data.label.replace(/ /g, ""));
+		data.label.toLowerCase().split(" ").forEach(function(word) {
+			for (var i = 1; i <= word.length; i++)
+				n.className += " " + word.slice(0, i);
+		});
 		this.node.firstChild.appendChild(n);
 		n.onclick = function() {
 			this.tapTag(data);
 		}.bind(this);
+	},
+	guesser: function(frag) {
+		this._update(this.opts.data.filter(function(d) {
+			return d.label.slice(0, frag.length) == frag;
+		}));
 	},
 	_hide: function() {
 		this.node.className = "drop hider";
 		this.input.blur();
 	},
 	_upOne: function(d) {
-		if (!CT.dom.id("ac" + d.label))
+		if (!CT.dom.id("ac" + d.label.replace(/ /g, "")))
 			this.addTag(d);
 	},
 	_update: function(data) {
@@ -115,7 +120,8 @@ CT.autocomplete.Guesser = CT.Class({
 			expandCb: this._doNothing,
 			tapCb: this._onTap,
 			guessCb: this.guesser,
-			anchor: opts.input
+			anchor: opts.input,
+			data: []
 		});
 		CT.autocomplete.Guesser.id += 1;
 		this.id = CT.autocomplete.Guesser.id;
