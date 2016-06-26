@@ -210,7 +210,7 @@ CT.dom = {
 		}
 		return n;
 	},
-	"select": function(onames, ovalues, id, curvalue, defaultvalue) {
+	"select": function(onames, ovalues, id, curvalue, defaultvalue, onchange) {
 		ovalues = ovalues || onames;
 		var s = CT.dom.node("", "select", "", id);
 		for (var i = 0; i < onames.length; i++) {
@@ -219,6 +219,7 @@ CT.dom = {
 		}
 		if (curvalue)
 			s.value = ovalues.indexOf(curvalue) != -1 && curvalue || defaultvalue;
+		s.onchange = onchange;
 		return s;
 	},
 	"range": function(onchange, min, max, value, step, classname, id) {
