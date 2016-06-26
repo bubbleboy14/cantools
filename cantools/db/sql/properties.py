@@ -65,8 +65,15 @@ class DateTimeAutoStamper(BasicDT):
 DateTime = sqlColumn(DateTimeAutoStamper)
 
 # strings, arrays, keys
-sqlString = sqlalchemy.Binary
-BasicString = basicType(sqlString, StringType)
+#sqlString = sqlalchemy.UnicodeText
+#BasicString = basicType(sqlString, StringType)
+
+class BasicString(basicType(sqlString, StringType)):
+	def process_bind_param(self, data, dialect):
+		if type(data) is not unicode:
+			data = unicode(data)
+		return data
+
 String = sqlColumn(BasicString)
 
 class BlobWrapper(object):
@@ -142,6 +149,12 @@ class ArrayType(BasicString):
 				if not isinstance(self.kinds[i], basestring):
 					self.kinds[i] = self.kinds[i].__name__.lower()
 		BasicString.__init__(self, *args, **kwargs)
+
+	def contains(self, string):
+		pass
+
+	def lacks(self, string):
+		pass
 
 	def process_bind_param(self, value, dialect):
 		if self.isKey:
