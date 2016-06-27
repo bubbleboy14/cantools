@@ -147,7 +147,7 @@ def dump(host, port, session, binary):
 			for c in chunk:
 				fixkeys(c, schema)
 				checkblobs(c, schema)
-			mods[model] += chunk
+			mods[model] += [c for c in chunk if c["modelName"] == model]
 			offset += LIMIT
 			if len(chunk) < LIMIT:
 				break
