@@ -57,9 +57,9 @@
 .w19-20 { width: 95%; }
 
 /* position */
-.abs { position: absolute; }
-.fixed { position: fixed; }
-.relative { position: relative; }
+.abs { position: absolute !important; }
+.fixed { position: fixed !important; }
+.relative { position: relative !important; }
 .above { z-index: 1000 !important; }
 .right { float: right; }
 .left { float: left; }
