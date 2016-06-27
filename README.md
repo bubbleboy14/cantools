@@ -1,4 +1,4 @@
-# cantools 0.7.8.1
+# cantools 0.7.9
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
 License: MIT (see LICENSE)
@@ -242,10 +242,10 @@ Guesser is a subclass of CT.Drop.
     - tapCb (default: set input to data.label): trigger on option tap
     - guessCb (default: this.guesser): trigger when it's time to guess
     - input (required): the input node to which to attach the autocomplete guesser
+    - data (default: []): array of label-containing objects used by default guesser
 
-You might notice that no 'guesser' function is defined on this class.
-This means that you must either pass in a 'guessCb' function to the constructor
-or subclass Guesser, adding this function to the class (as 'guesser').
+To specify custom guessing behavior, either pass in a 'guessCb' function to the
+constructor or subclass Guesser, adding this function to the class (as 'guesser').
 
 ### CT.autocomplete.DBGuesser
 DBGuesser subclasses Guesser, and defines a 'guesser'
