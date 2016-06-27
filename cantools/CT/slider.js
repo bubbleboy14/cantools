@@ -8,7 +8,8 @@ the 'opts' object itself, are all optional.
 
 ### Definable properties are as follows:
     - parent (default: document.body): DOM element in which to build the slider
-    - mode (dfault: 'peekaboo'): how to display each frame - 'peekaboo', 'chunk', 'menu', or 'profile'
+    - mode (default: 'peekaboo'): how to display each frame - 'peekaboo', 'chunk', 'menu', or 'profile'
+    - subMode (default: 'peekaboo'): which mode to use for chunk-mode frames ('peekaboo', 'menu', 'profile')
     - autoSlideInterval (default: 5000): how many milliseconds to wait before auto-sliding frames
     - autoSlide (default: true): automatically proceed through frames (else, trigger later with .resume())
     - visible (default: true): maps to visibility css property
@@ -54,7 +55,8 @@ CT.slider.Slider = CT.Class({
 			startFrame: null,
 			pan: true,
 			parent: document.body,
-			mode: "peekaboo", // or 'chunk'
+			mode: "peekaboo", // or 'menu' or 'profile' or 'chunk'
+			subMode: "peekaboo", // or 'menu' or 'profile'
 			orientation: "horizontal",
 			arrowPosition: "middle", // or "top" or "middle"
 			bubblePosition: "bottom" // or "top"
@@ -359,6 +361,7 @@ CT.slider.Frame = CT.Class({
 		var slider = new CT.slider.Slider({
 			parent: this.node,
 			frames: this.opts.frames,
+			mode: this.opts.mode || this.slider.opts.subMode,
 			autoSlide: false,
 			orientation: CT.slider.other_orientation[this.slider.opts.orientation],
 			arrowPosition: "bottom"
