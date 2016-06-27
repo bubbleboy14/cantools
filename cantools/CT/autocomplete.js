@@ -109,6 +109,7 @@ CT.autocomplete.Guesser = CT.Class({
 	},
 	_onTap: function(data) {
 		this.input.value = data.label;
+		this.input.onenter && this.input.onenter();
 	},
 	_waitRetract: function() {
 		setTimeout(this.retract, 500);
