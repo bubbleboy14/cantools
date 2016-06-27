@@ -273,9 +273,9 @@ CT.db.edit = {
 				return parseFloat(f.value) || null;
 			if (ptype == "key")
 				return f.data.key;
-			if (["datetime", "list", "keylist", "blob"].indexOf(ptype) != -1)
+			if (["datetime", "blob"].indexOf(ptype) != -1)
 				return f.value();
-			return f.value; // string/text
+			return f.value; // string/text/list/keylist
 		};
 	},
 	input: function(k, ptype, val, modelName, opts) {
@@ -446,7 +446,7 @@ CT.db.Query = CT.Class({
 			order: order,
 			filters: filters
 		});
-		this.node.parentNode.modal.hide();
+		this.node.parentNode.parentNode.modal.hide();
 	},
 	_submitCb: function(opts) {
 		var key = this.modelName + "query" + this.id;
