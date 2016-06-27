@@ -135,6 +135,8 @@
 .wrap { word-wrap: break-word; }
 .pointer { cursor: pointer; }
 .scroller { overflow: auto; }
+.scrollx { overflow-x: auto; overflow-y: hidden; }
+.scrolly { overflow-y: auto; overflow-x: hidden; }
 .hoverglow:hover {
     box-shadow: 0px 0px 10px yellow;
     color: yellow;
