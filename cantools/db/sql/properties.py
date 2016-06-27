@@ -65,8 +65,12 @@ class DateTimeAutoStamper(BasicDT):
 DateTime = sqlColumn(DateTimeAutoStamper)
 
 # strings, arrays, keys
-sqlString = sqlalchemy.Binary
-BasicString = basicType(sqlString, StringType)
+class BasicString(basicType(sqlalchemy.UnicodeText, StringType)):
+	def process_bind_param(self, data, dialect):
+		if data and type(data) is not unicode:
+			data = unicode(data.decode('ascii', 'replace'))
+		return data
+
 String = sqlColumn(BasicString)
 
 class BlobWrapper(object):
