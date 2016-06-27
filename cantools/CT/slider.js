@@ -295,7 +295,7 @@ CT.slider.Frame = CT.Class({
 					value: "100px"
 				});
 				slider.showNav();
-				tab && tab.show();
+				tab && tab.show(slider.opts.parent);
 			}
 		};
 		if (slider.opts.pan) {
@@ -309,7 +309,7 @@ CT.slider.Frame = CT.Class({
 				content: opts.tab.content,
 				center: false,
 				noClose: true,
-				className: "basicpopup rounder translucent above shiftall",
+				className: "basicpopup abs rounder translucent above shiftall",
 				transition: "slide",
 				slide: {
 					origin: opts.tab.origin
@@ -339,7 +339,7 @@ CT.slider.Frame = CT.Class({
 			if (opts.pulse)
 				pulser.controller.resume();
 			if (tab)
-				tab.show();
+				tab.show(slider.opts.parent);
 		};
 		this.on.hide = function() {
 			if (opts.title || opts.blurb)
