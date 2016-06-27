@@ -89,9 +89,12 @@ def rdec(data):
 
 def renc(data):
     try:
-        data = data.encode("utf_8")
+        data = data.decode('ascii', 'replace').encode('utf-8')
     except:
-        pass
+        try:
+            data = data.encode('utf-8')
+        except:
+            pass
     return data
 
 def rb64(data, de=False):

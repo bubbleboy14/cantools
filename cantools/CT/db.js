@@ -273,9 +273,9 @@ CT.db.edit = {
 				return parseFloat(f.value) || null;
 			if (ptype == "key")
 				return f.data.key;
-			if (["datetime", "list", "keylist", "blob"].indexOf(ptype) != -1)
+			if (["datetime", "blob"].indexOf(ptype) != -1)
 				return f.value();
-			return f.value; // string/text
+			return f.value; // string/text/list/keylist
 		};
 	},
 	input: function(k, ptype, val, modelName, opts) {
@@ -308,16 +308,26 @@ CT.db.edit = {
 				property: k,
 				value: val
 			})).node;
-		else if (ptype == "list")
-			valcell = CT.dom.fieldList(val, null, lstyle);
-		else if (ptype == "keylist")
-			valcell = CT.dom.fieldList(val, function(v) {
-				return (new CT.db.edit.EntityRow({
+		else if (ptype == "list") {
+			if (val)
+				valcell = CT.dom.fieldList(val, null, lstyle);
+			else
+				valcell = CT.dom.field();
+		} else if (ptype == "keylist") {
+			if (val)
+				valcell = CT.dom.fieldList(val, function(v) {
+					return (new CT.db.edit.EntityRow({
+						property: k,
+						key: v,
+						modelName: modelName
+					})).node;
+				}, lstyle);
+			else
+				valcell = (new CT.db.edit.EntityRow({
 					property: k,
-					key: v,
 					modelName: modelName
 				})).node;
-			}, lstyle);
+		}
 		valcell.getValue = CT.db.edit._val(valcell, ptype);
 		valcell.rowKey = k;
 		return valcell;
@@ -390,16 +400,18 @@ CT.db.Query = CT.Class({
 	CLASSNAME: "CT.db.Query",
 	_filter: function() {
 		var valcell = CT.dom.node(null, "span"), that = this,
-			compcell = CT.dom.select(["==", ">", "<", ">=", "<=", "!=", "like"]),
-			selectcell = CT.dom.select(this.filterables),
-			rmcell = CT.dom.button("remove", function() {
+			compcell = CT.dom.node(null, "span"),
+			selectcell = CT.dom.select(this.filterables, null, null, null, null, function() {
+				var val = that.schema[selectcell.value];
+				CT.dom.setContent(compcell, val.slice(-4) == "list" ?
+					CT.dom.select(["contains", "lacks"]) :
+					CT.dom.select(["==", ">", "<", ">=", "<=", "!=", "like"]))
+				CT.dom.setContent(valcell,
+					CT.db.edit.input(selectcell.value, val,
+						null, that.modelName, that.opts));
+			}), rmcell = CT.dom.button("remove", function() {
 				CT.dom.remove(selectcell.parentNode);
 			});
-		selectcell.onchange = function() {
-			CT.dom.setContent(valcell,
-				CT.db.edit.input(selectcell.value, that.schema[selectcell.value],
-					null, that.modelName, that.opts));
-		};
 		selectcell.onchange();
 		this.filters.appendChild(CT.dom.node([selectcell, compcell, valcell, rmcell]));
 	},
@@ -425,7 +437,7 @@ CT.db.Query = CT.Class({
 				compcell = propcell.nextSibling,
 				valcell = compcell.nextSibling;
 			filters[propcell.value] = {
-				comparator: compcell.value,
+				comparator: compcell.firstChild.value,
 				value: valcell.firstChild.getValue()
 			};
 		});
@@ -434,7 +446,7 @@ CT.db.Query = CT.Class({
 			order: order,
 			filters: filters
 		});
-		this.node.parentNode.modal.hide();
+		this.node.parentNode.parentNode.modal.hide();
 	},
 	_submitCb: function(opts) {
 		var key = this.modelName + "query" + this.id;
