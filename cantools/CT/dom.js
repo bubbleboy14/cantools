@@ -650,15 +650,17 @@ CT.dom = {
 		n.appendChild(CT.dom.node("", "div", "clearnode"));
 	},
 	"inputEnterCallback": function(n, cb, fid) {
+		n.onenter = function() {
+			// can prevent annoying repeating alert on enter scenarios
+			if (fid)
+				document.getElementById(fid).focus();
+			cb && cb(n.value);
+		};
 		n.addEventListener("keyup", function(e) {
 			e = e || window.event;
 			var code = e.keyCode || e.which;
-			if (code == 13 || code == 3) {
-				// can prevent annoying repeating alert on enter scenarios
-				if (fid)
-					document.getElementById(fid).focus();
-				cb && cb(n.value);
-			}
+			if (code == 13 || code == 3)
+				n.onenter();
 		});
 		return n;
 	},
