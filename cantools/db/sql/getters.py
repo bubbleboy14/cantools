@@ -22,6 +22,10 @@ def get_page(modelName, limit, offset, order='index', filters={}, session=sessio
             val = datetime.strptime(val, "%Y-%m-%d %H:%M:%S")
         if comp == "like":
             query.filter(func.lower(prop).like(val.lower()))
+        elif comp == "contains":
+            query.filter(prop.contains(val))
+        elif comp == "lacks":
+            query.filter(~prop.contains(val))
         else:
             query.filter(operators[comp](prop, val))
     return [d.export() for d in query.order(order).fetch(limit, offset)]

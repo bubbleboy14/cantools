@@ -147,12 +147,6 @@ class ArrayType(BasicString):
 					self.kinds[i] = self.kinds[i].__name__.lower()
 		BasicString.__init__(self, *args, **kwargs)
 
-	def contains(self, string):
-		pass
-
-	def lacks(self, string):
-		pass
-
 	def process_bind_param(self, value, dialect):
 		if self.isKey:
 			for i in range(len(value)):
