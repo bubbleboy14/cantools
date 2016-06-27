@@ -1,4 +1,4 @@
-# cantools 0.7.9
+# cantools 0.7.9.1
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
 License: MIT (see LICENSE)
@@ -735,7 +735,8 @@ the 'opts' object itself, are all optional.
 
 ### Definable properties are as follows:
     - parent (default: document.body): DOM element in which to build the slider
-    - mode (dfault: 'peekaboo'): how to display each frame - 'peekaboo', 'chunk', 'menu', or 'profile'
+    - mode (default: 'peekaboo'): how to display each frame - 'peekaboo', 'chunk', 'menu', or 'profile'
+    - subMode (default: 'peekaboo'): which mode to use for chunk-mode frames ('peekaboo', 'menu', 'profile')
     - autoSlideInterval (default: 5000): how many milliseconds to wait before auto-sliding frames
     - autoSlide (default: true): automatically proceed through frames (else, trigger later with .resume())
     - visible (default: true): maps to visibility css property
