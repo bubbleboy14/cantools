@@ -475,7 +475,7 @@ CT.db.Query = CT.Class({
 	_filterables: function() {
 		this.filterables = [];
 		for (var k in this.schema)
-			if (CT.db.edit.isSupported(this.schema[k]))
+			if (CT.db.edit.isSupported(this.schema[k], k))
 				this.filterables.push(k);
 	},
 	init: function(opts) {
