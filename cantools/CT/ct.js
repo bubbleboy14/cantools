@@ -158,7 +158,9 @@ var CT = {
 				xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 			for (var header in headers)
 				xhr.setRequestHeader(header, headers[header]);
-			xhr.onreadystatechange = cb && function() { cb(xhr); };
+			xhr.onreadystatechange = cb && function() {
+				(xhr.readyState == 4) && cb(xhr);
+			};
 			if (params) {
 				if (!passthrough && CT.net._mode != "passthrough") {
 					if (CT.net._mode == "ct")
@@ -233,22 +235,20 @@ var CT = {
 				document.body.appendChild(CT.net._spinner_node);
 			}
 			CT.net.xhr(path, "POST", params, true, function(xhr) {
-				if (xhr.readyState == 4) {
-					if (xhr.status == 200) {
-						if (CT.net._spinner)
-							CT.dom.remove(CT.net._spinner_node);
-						var data = xhr.responseText.trim();
-						if (CT.net._mode == "ct") {
-							var result = CT.net._ctresponse(data, signature);
-							if (result.success)
-								cb(result.data, cbarg);
-							else
-								eb(result.data, ebarg);
-						} else
-							cb(CT.net._ctsuccess(data, signature), cbarg);
+				if (xhr.status == 200) {
+					if (CT.net._spinner)
+						CT.dom.remove(CT.net._spinner_node);
+					var data = xhr.responseText.trim();
+					if (CT.net._mode == "ct") {
+						var result = CT.net._ctresponse(data, signature);
+						if (result.success)
+							cb(result.data, cbarg);
+						else
+							eb(result.data, ebarg);
 					} else
-						eb("request to " + path + " failed! (" + xhr.status + " - " + xhr.responseText + ")", ebarg);
-				}
+						cb(CT.net._ctsuccess(data, signature), cbarg);
+				} else
+					eb("request to " + path + " failed! (" + xhr.status + " - " + xhr.responseText + ")", ebarg);
 			}, headers);
 		},
 		"put": function(path, params, cb, headers, passthrough) {
