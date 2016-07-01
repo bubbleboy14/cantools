@@ -159,9 +159,9 @@ CT.dom = {
 			attrs.type = type;
 		return CT.dom.node("", "input", classname, id, attrs);
 	},
-	"file": function(cb, id, classname) {
+	"file": function(cb, id, classname, multiple) {
 		return CT.dom.field(id, null, classname,
-			"file", { onchange: cb });
+			"file", { onchange: cb, multiple: multiple });
 	},
 	"fieldList": function(vals, maker, style) {
 		var input = function(v) { return maker ? maker(v) : CT.dom.field(null, v); },
