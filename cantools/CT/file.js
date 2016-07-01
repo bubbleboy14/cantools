@@ -4,14 +4,25 @@ messing with (accessing, uploading, downloading) file objects.
 */
 
 CT.file = {
-	getter: function(cb) { // upload input element. TODO: multi
+	getter: function(cb, multi) { // upload input element
 		var f = CT.dom.file(function(e) {
-			cb(new CT.file.File({
-				input: f,
-				path: f.value,
-				file: f.files[0]
-			}));
-		});
+			if (multi) {
+				var files = []; // can't map, f.files is not a real array
+				for (var i = 0; i < f.files.length; i++)
+					files.push(new CT.file.File({
+						input: f,
+						path: f.value,
+						file: f.files[i]
+					}));
+				cb(files);
+			} else {
+				cb(new CT.file.File({
+					input: f,
+					path: f.value,
+					file: f.files[0]
+				}));
+			}
+		}, null, null, multi);
 		return f;
 	},
 	make: function(data) { // from data
