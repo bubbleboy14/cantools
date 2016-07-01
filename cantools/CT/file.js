@@ -34,9 +34,12 @@ CT.file = {
 
 CT.file.File = CT.Class({
 	CLASSNAME: "CT.file.File",
-	download: function(lname) {
-		return CT.dom.link(lname || "download",
-			null, this.url, null, null, null, true);
+	download: function(dname, lname) {
+		lname = lname || "download";
+		var l = CT.dom.link(lname, null,
+			this.url, null, null, null, true);
+		l.download = dname || (this.opts.path ? this.opts.path.split("\\").pop() : lname);
+		return l;
 	},
 	upload: function(path, cb, params) {
 		var data = this.opts.file, headers = {};
