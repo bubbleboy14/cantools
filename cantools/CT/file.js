@@ -11,7 +11,7 @@ CT.file = {
 				for (var i = 0; i < f.files.length; i++)
 					files.push(new CT.file.File({
 						input: f,
-						path: f.value,
+						path: f.files[i].name,
 						file: f.files[i]
 					}));
 				cb(files);
@@ -38,8 +38,11 @@ CT.file.File = CT.Class({
 		lname = lname || "download";
 		var l = CT.dom.link(lname, null,
 			this.url, null, null, null, true);
-		l.download = dname || (this.opts.path ? this.opts.path.split("\\").pop() : lname);
+		l.download = dname || this.name() || lname;
 		return l;
+	},
+	name: function() {
+		return this.opts.path && this.opts.path.split("\\").pop();
 	},
 	upload: function(path, cb, params) {
 		var data = this.opts.file, headers = {};
