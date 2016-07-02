@@ -26,7 +26,7 @@ CT.admin.db = {
 				}, "fade");
 			}),
 			CT.dom.button("new " + modelName, function() {
-				CT.admin.db.starLink(CT.db.getDefaults(modelName,
+				CT.admin.db.starLink(CT.db.edit.getDefaults(modelName,
 					{ "label": "new " + modelName }), modelName).onclick();
 			})
 		], "div", "right"), pnode.firstChild);
