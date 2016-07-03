@@ -204,7 +204,7 @@ CT.db.Blob = CT.Class({
 		ctfile.upload("/_db", this._update, params);
 	},
 	_update: function(val) {
-		this.opts.val = val;
+		this.opts.value = val;
 		this._setup();
 	},
 	_setup: function() {
@@ -217,15 +217,23 @@ CT.db.Blob = CT.Class({
 				CT.dom.pad(),
 				CT.dom.link("upload", this.uploadPrompt, null, "nodecoration blue")
 			]);
-		} else
-			CT.dom.setContent(this.node, CT.dom.link("upload", this.uploadPrompt));
+		} else if (this.opts.key)
+			CT.dom.setContent(this.node, CT.dom.link("upload",
+				this.uploadPrompt, null, "nodecoration blue"));
+		else
+			CT.dom.setContent(this.node, "(nothing yet)");
 	},
 	value: function() {
 		return this.index;
 	},
+	keyUp: function(key) {
+		this.opts.key = key;
+		this._setup();
+	},
 	init: function(opts) {
 		this.opts = opts;
 		this.node = CT.dom.node();
+		this.node.blob = this;
 		this._setup();
 	}
 });
