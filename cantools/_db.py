@@ -44,6 +44,8 @@ def response():
 			prop = cgi_get("property")
 			blob = getattr(ent, prop)
 		if data:
+			if config.memcache.db:
+				clearmem()
 			if value:
 				blob.set(read_file(data))
 			else: # going by key, property -- must update index
