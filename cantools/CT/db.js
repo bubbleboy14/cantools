@@ -273,7 +273,7 @@ CT.db.edit = {
 				return parseFloat(f.value) || null;
 			if (ptype == "key")
 				return f.data.key;
-			if (["datetime", "blob"].indexOf(ptype) != -1)
+			if (ptype == "datetime")
 				return f.value();
 			return f.value; // string/text/list/keylist
 		};

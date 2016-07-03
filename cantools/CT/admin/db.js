@@ -111,10 +111,12 @@ CT.admin.db.Editor = CT.Class({
 			valcell = CT.db.edit.input(k, ptype, val, this.modelName, {
 				startYear: 1970 // gotta start somewhere, might as well be epoch...
 			});
-			this.inputs.push(valcell);
-			if (valcell.addButton) { // list, keylist
-				rownode.appendChild(valcell.addButton);
-				rownode.appendChild(valcell.empty);
+			if (ptype != "blob") { // handled separately by upload/download links
+				this.inputs.push(valcell);
+				if (valcell.addButton) { // list, keylist
+					rownode.appendChild(valcell.addButton);
+					rownode.appendChild(valcell.empty);
+				}
 			}
 		} else
 			valcell = CT.dom.node(val || "null", "span");
