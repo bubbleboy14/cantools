@@ -44,10 +44,12 @@ def response():
 			prop = cgi_get("property")
 			blob = getattr(ent, prop)
 		if data:
-			blob.set(read_file(data))
-			if not value: # going by key, property -- must update index
-				setattr(ent, prop, blob)
+			if value:
+				blob.set(read_file(data))
+			else: # going by key, property -- must update index
+				setattr(ent, prop, read_file(data))
 				ent.put()
+				blob = getattr(ent, prop)
 			succeed(blob.urlsafe())
 		else:
 			blob = blob.get()
