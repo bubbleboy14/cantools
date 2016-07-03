@@ -77,7 +77,8 @@ CT.admin.db.Editor = CT.Class({
 	"CLASSNAME": "CT.admin.db.Editor",
 	"_order": ["string", "text", "integer", "float", "datetime", "boolean", "list", "keylist", "key", "blob"],
 	"_submit": function() {
-		var data = this.data, changes = {};
+		var data = this.data, blobs = this.blobs, n = this.node,
+			delnode = this._delete, changes = {};
 		if (data.key)
 			changes.key = data.key;
 		else
@@ -93,6 +94,11 @@ CT.admin.db.Editor = CT.Class({
 			if (!data.key) {
 				data.key = resp.key;
 				CT.data.add(data);
+				CT.dom.show(delnode);
+				n.appendChild(CT.admin.db.star(data.key));
+				blobs.forEach(function(b) {
+					b.blob.keyUp(resp.key);
+				});
 			}
 			if (data.label != resp.label) {
 				CT.panel.rename(data.label, resp.label, changes.modelName, "starred");
@@ -109,9 +115,12 @@ CT.admin.db.Editor = CT.Class({
 		ptype = rownode.ptype = this.schema[k];
 		if (CT.db.edit.isSupported(ptype, k)) {
 			valcell = CT.db.edit.input(k, ptype, val, this.modelName, {
+				key: this.data.key,
 				startYear: 1970 // gotta start somewhere, might as well be epoch...
 			});
-			if (ptype != "blob") { // handled separately by upload/download links
+			if (ptype == "blob") // handled separately by upload/download links
+				this.blobs.push(valcell);
+			else {
 				this.inputs.push(valcell);
 				if (valcell.addButton) { // list, keylist
 					rownode.appendChild(valcell.addButton);
@@ -134,7 +143,7 @@ CT.admin.db.Editor = CT.Class({
 			r = this._row(k);
 			(k != "_label" && n[r.ptype] || n).appendChild(r);
 		}
-		d.key && n.appendChild(CT.dom.node(CT.dom.button("Delete", function() {
+		this._delete = CT.dom.node(CT.dom.button("Delete", function() {
 			var label = d.label;
 			if (!confirm("really delete " + label + "?"))
 				return;
@@ -145,7 +154,8 @@ CT.admin.db.Editor = CT.Class({
 			}, "failed to delete " + label, {
 				"key": d.key
 			}, "/_db");
-		}, "red"), "div", "right"));
+		}, "red"), "div", "right" + (!d.key ? " hidden" : ""));
+		n.appendChild(this._delete);
 		n.appendChild(CT.dom.button("Submit", this._submit));
 		d.key && n.appendChild(CT.admin.db.star(d.key));
 	},
@@ -154,6 +164,7 @@ CT.admin.db.Editor = CT.Class({
 		this.schema = CT.db.getSchema(model);
 		this.data = data;
 		this.inputs = [];
+		this.blobs = [];
 		this._table();
 	}
 });
