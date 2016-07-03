@@ -40,9 +40,14 @@ def response():
 		if value:
 			blob = BlobWrapper(value=value)
 		else:
-			blob = getattr(get(cgi_get("key")), cgi_get("property"))
+			ent = get(cgi_get("key"))
+			prop = cgi_get("property")
+			blob = getattr(ent, prop)
 		if data:
 			blob.set(read_file(data))
+			if not value: # going by key, property -- must update index
+				setattr(ent, prop, blob)
+				ent.put()
 			succeed(blob.urlsafe())
 		else:
 			blob = blob.get()
