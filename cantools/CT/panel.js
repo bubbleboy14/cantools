@@ -131,9 +131,11 @@ CT.panel = {
 		var nsold = oldkey.replace(/ /g, ""),
 			nsnew = newkey.replace(/ /g, ""),
 			item = CT.dom.id(keystring + "item" + nsold),
-			panel = CT.dom.id(keystring + "panel" + nsold);
+			panel = CT.dom.id(keystring + "panel" + nsold),
+			content = CT.dom.id(keystring + "content" + nsold);
 		item.id = keystring + "item" + nsnew;
 		panel.id = keystring + "panel" + nsnew;
+		if (content) content.id = keystring + "content" + nsnew;
 		item.firstChild.innerHTML = panel.firstChild.innerHTML = newkey;
 		if (item2keystring) {
 			var item2 = CT.dom.id(item2keystring + "item" + nsold);

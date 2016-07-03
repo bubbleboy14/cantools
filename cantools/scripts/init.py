@@ -57,6 +57,7 @@ class Builder(object):
 		mkdir("html-static")
 		mkdir("html-production")
 		mkdir("logs")
+		mkdir("blob")
 
 	def make_files(self):
 		log("generating configuration", 1)
@@ -77,6 +78,8 @@ class Builder(object):
 				mkdir("css")
 			if not os.path.isdir("img"):
 				mkdir("img")
+			if not os.path.isdir("blob"):
+				mkdir("blob")
 			if not os.path.isdir("logs"):
 				mkdir("logs")
 			lj = os.path.join("logs", "json")
