@@ -28,6 +28,23 @@ CT.admin.db = {
 			CT.dom.button("new " + modelName, function() {
 				CT.admin.db.starLink(CT.db.edit.getDefaults(modelName,
 					{ "label": "new " + modelName }), modelName).onclick();
+			}),
+			CT.dom.button("bulk upload", function() {
+				(new CT.modal.Prompt({
+					noClose: true,
+					style: "file",
+					transition: "slide",
+					cb: function(ctfile) {
+						ctfile.upload("/_db", function() {
+							if (confirm("Nice work! Reload for new stuff?"))
+								location.reload();
+						}, {
+							action: "bulk",
+							modelName: modelName,
+							pw: CT.admin.core._pw
+						});
+					}
+				})).show();
 			})
 		], "div", "right"), pnode.firstChild);
 	},
