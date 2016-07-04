@@ -246,8 +246,9 @@ var CT = {
 			};
 		},
 		"post": function(path, params, errMsg, cb, eb, headers, cbarg, ebarg) {
-			var signature = path + JSON.stringify(params);
+			var signature;
 			if (CT.net._cache) {
+				signature = path + JSON.stringify(params);
 				var cachedVersion = CT.storage.get(signature);
 				if (cachedVersion)
 					return cb(cachedVersion, cbarg);
