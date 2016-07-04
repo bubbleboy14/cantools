@@ -7,13 +7,10 @@ We support Google Video, YouTube, Vimeo, and uStream.
 ### raw formats
 We support mp4, ogg, and webm.
 
-Typically, you'll want to use the embed() function.
+Typically, you'll want to use the fit() function.
 
-### CT.video.embed(video, small) - returns stringified html
-	- video (string): link to video content
-	- small (bool): if true, make it smaller
-
-TODO: replace 'small' bool with flexible styling.
+### CT.video.fit(video)
+	- returns stringified html for a video node fitting snugly inside its parent
 */
 
 CT.video = {
