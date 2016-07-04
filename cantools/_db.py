@@ -1,18 +1,36 @@
 from cantools.web import respond, succeed, fail, send_file, cgi_get, cgi_dump, read_file, getmem, setmem, clearmem
 from cantools.db import get, get_model, get_schema, get_page, get_multi, put_multi, edit, dprep, admin, BlobWrapper
+from cantools.util import getxls
 from cantools import config
 import model # load up all models (for schema)
 
 def response():
-	action = cgi_get("action", choices=["schema", "get", "blob", "edit", "delete", "put", "index"])
+	action = cgi_get("action", choices=["schema", "get", "blob", "edit", "delete", "put", "index", "bulk"])
 
 	# edit/delete/put/index always require credentials; getters do configurably
-	if not config.db.public or action in ["edit", "delete", "put", "index"]:
+	if not config.db.public or action in ["edit", "delete", "put", "index", "bulk"]:
 		if cgi_get("pw") != config.admin.pw:
 			fail("wrong")
 
 	if action == "schema":
 		succeed(get_schema())
+	elif action == "bulk":
+		mname = cgi_get("modelName")
+		data = getxls(read_file(cgi_get("data"))) # add: csv, etc
+		schema = get_schema(mname)
+		mod = get_model(mname)
+		smap = {}
+		headers = data.pop(0)
+		puts = []
+		for index in len(headers):
+			if header in schema:
+				smap[header] = index
+		for properties in data:
+			kwargs = {}
+			for p in smap:
+				kwargs[p] = properties[smap[p]]
+			puts.append(mod(**kwargs))
+		put_multi(puts)
 	elif action == "get":
 		sig = cgi_dump()
 		# gae web cache disabled for now ... seems messed up
