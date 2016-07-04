@@ -7,10 +7,14 @@ import model # load up all models (for schema)
 def response():
 	action = cgi_get("action", choices=["schema", "get", "blob", "edit", "delete", "put", "index", "bulk"])
 
-	# edit/delete/put/index always require credentials; getters do configurably
+	# edit/delete/put/index/bulk always require credentials; getters do configurably
 	if not config.db.public or action in ["edit", "delete", "put", "index", "bulk"]:
 		if cgi_get("pw") != config.admin.pw:
 			fail("wrong")
+
+	# clear cache!
+	if config.memcache.db and action in ["edit", "delete", "put", "bulk"]:
+		clearmem()
 
 	if action == "schema":
 		succeed(get_schema())
@@ -22,7 +26,8 @@ def response():
 		smap = {}
 		headers = data.pop(0)
 		puts = []
-		for index in len(headers):
+		for index in range(len(headers)):
+			header = headers[index]
 			if header in schema:
 				smap[header] = index
 		for properties in data:
@@ -75,8 +80,6 @@ def response():
 			blob = blob.get()
 			send_file(blob, magic.from_buffer(blob, True))
 	elif action == "edit":
-		if config.memcache.db:
-			clearmem()
 		succeed(edit(cgi_get("data")).data())
 	elif action == "put":
 		put_multi([get_model(d["modelName"])(**dprep(d)) for d in cgi_get("data")])
