@@ -183,7 +183,7 @@ CT.dom = {
 		});
 		n.addButton.style.width = "57px";
 		n.value = function() {
-			return n.childNodes.map(function(wrapper) {
+			return CT.dom.map(n, function(wrapper) {
 				return wrapper.lastChild.value;
 			});
 		};
@@ -842,6 +842,12 @@ CT.dom = {
 	"each": function(p, f) {
 		for (var i = 0; i < p.childNodes.length; i++)
 			f(p.childNodes[i]);
+	},
+	"map": function(p, f) {
+		var vals = [];
+		for (var i = 0; i < p.childNodes.length; i++)
+			vals.push(f(p.childNodes[i]));
+		return vals;
 	},
 	"mod": function(opts) {
 		var targets = opts.targets ? opts.targets

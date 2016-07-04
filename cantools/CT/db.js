@@ -281,7 +281,7 @@ CT.db.edit = {
 				return parseFloat(f.value) || null;
 			if (ptype == "key")
 				return f.data.key;
-			if (ptype == "datetime")
+			if (["datetime", "list", "keylist"].indexOf(ptype) != -1)
 				return f.value();
 			return f.value; // string/text/list/keylist
 		};
