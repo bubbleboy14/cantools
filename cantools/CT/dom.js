@@ -754,7 +754,7 @@ CT.dom = {
 			content = content();
 		if (Array.isArray(content))
 			content = CT.dom.node(content);
-		if (typeof content == "string")
+		if (typeof content == "string" || typeof content == "number")
 			targetNode.innerHTML += content;
 		else
 			targetNode.appendChild(content);
