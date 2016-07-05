@@ -399,7 +399,6 @@
   z-index: 10;
   position: absolute;
   max-height: 0px;
-  background: white;
   text-align: left;
   overflow: hidden;
   -webkit-transition: max-height 600ms ease-out;

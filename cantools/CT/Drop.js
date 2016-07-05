@@ -12,13 +12,15 @@ CT.Drop = CT.Class({
 		this.node.style.left = (ipos.left + 2) + "px";
 	},
 	_hide: function() {
-		this.node.className = "drop hider";
+		this.node.className = this.className + " hider";
+		this.opts.onHide && this.opts.onHide();
 	},
 	expand: function(cb) {
+		cb = cb || this.opts.onShow;
 		var n = this.node;
-		this._position();
+		!this.opts.relative && this._position();
 		this.viewing = true;
-		n.className = "drop drop-open";
+		n.className = this.className + " drop-open";
 		CT.trans.trans({
 			node: n,
 			cb: function() {
@@ -31,7 +33,7 @@ CT.Drop = CT.Class({
 		if (!this.viewing)
 			return;
 		this.viewing = false;
-		this.node.className = "drop";
+		this.node.className = this.className;
 		CT.trans.trans({
 			node: this.node,
 			cb: this._hide
@@ -50,11 +52,14 @@ CT.Drop = CT.Class({
 	init: function(opts) {
 		this.opts = opts = CT.merge(opts, {
 			content: CT.dom.node(),
+			parent: document.body,
+			relative: false,
 			setClick: true
 		});
-		this.node = CT.dom.node(opts.content, null, "drop hider");
+		this.className = opts.relative ? "relative drop" : "whiteback drop";
+		this.node = CT.dom.node(opts.content, null, this.className + " hider");
 		this.node.onclick = this.slide;
-		document.body.appendChild(this.node);
+		opts.parent.appendChild(this.node);
 		CT.drag.makeDraggable(this.node, { constraint: "horizontal" });
 		setTimeout(this._setAnchor); // for subclasses that define anchor in constructor
 	}
