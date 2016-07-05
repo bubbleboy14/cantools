@@ -85,7 +85,7 @@ CT.dom = {
 				d.appendChild(content());
 			else if (typeof content == "object")
 				return CT.dom._obj2node(content); // do this without creating 'd' node?
-			else if (typeof content == "string" || typeof content == "number") {
+			else if ((typeof content == "string" && content.length) || typeof content == "number") {
 				if (type == "table")
 					alert("illegal innerHTML set on table! content: " + content);
 				else if (type == "style") {
