@@ -37,25 +37,26 @@ which triggers cb(d), where d is the corresponding object in the 'data' array.
 
 CT.panel = {
 	"lastClicked": {},
-	"trigger": function(data, cb) {
+	"trigger": function(data, cb, activeClass, content) {
 		var label = data.label || data.title || data.name,
-			n = CT.dom.node(null, "div", null, "tl" + label);
+			n = CT.dom.node(null, "div", null, label && ("tl" + label));
+		activeClass = activeClass || "activetab";
 		n.trigger = function() {
 			CT.dom.each(n.parentNode, function(c) {
 				if (c == n)
-					c.classList.add("activetab");
+					c.classList.add(activeClass);
 				else
-					c.classList.remove("activetab");
-				c.className = (c == n) ? "activetab" : "";
+					c.classList.remove(activeClass);
+				c.className = (c == n) ? activeClass : "";
 			});
 			cb(data);
 		};
-		n.appendChild(CT.dom.link(label, n.trigger));
+		n.appendChild(CT.dom.link(content ? content(data) : label, n.trigger));
 		return n;
 	},
-	"triggerList": function(data, cb, node) {
+	"triggerList": function(data, cb, node, activeClass, content) {
 		data.forEach(function(d) {
-			node.appendChild(CT.panel.trigger(d, cb));
+			node.appendChild(CT.panel.trigger(d, cb, activeClass, content));
 		});
 		return node;
 	},
