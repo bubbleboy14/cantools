@@ -56,7 +56,7 @@ CT.Drop = CT.Class({
 			relative: false,
 			setClick: true
 		});
-		this.className = opts.relative ? "relative drop" : "whiteback drop";
+		this.className = opts.relative ? "relative drop above" : "whiteback drop above";
 		this.node = CT.dom.node(opts.content, null, this.className + " hider");
 		this.node.onclick = this.slide;
 		opts.parent.appendChild(this.node);
