@@ -749,6 +749,9 @@ CT.dom = {
 	"remove": function(n) {
 		n && n.parentNode && n.parentNode.removeChild(n);
 	},
+	"clear": function(n) {
+		(n || document.body).innerHTML = "";
+	},
 	"addContent": function(targetNode, content) {
 		if (typeof content == "function")
 			content = content();
@@ -760,7 +763,7 @@ CT.dom = {
 			targetNode.appendChild(content);
 	},
 	"setContent": function(targetNode, content) {
-		targetNode.innerHTML = "";
+		CT.dom.clear(targetNode);
 		CT.dom.addContent(targetNode, content);
 	},
 	"addEach": function(parent, subs) {
