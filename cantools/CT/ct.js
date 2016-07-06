@@ -219,7 +219,7 @@ var CT = {
 				result.data = CT.net._ctsuccess(data, signature, code == "3");
 			return result;
 		},
-		"_xhrcb": function(cb, eb, cbarg, ebarg, errMsg, signature) {
+		"_xhrcb": function(path, cb, eb, cbarg, ebarg, errMsg, signature) {
 			if (CT.net._spinner) {
 				CT.net._spinner_node = CT.net._spinner_node || CT.dom.spinner();
 				document.body.appendChild(CT.net._spinner_node);
@@ -253,14 +253,14 @@ var CT = {
 				if (cachedVersion)
 					return cb(cachedVersion, cbarg);
 			}
-			CT.net.xhr(path, "POST", params, true, CT.net._xhrcb(cb,
-				eb, cbarg, ebarg, errMsg, signature), headers);
+			CT.net.xhr(path, "POST", params, true, CT.net._xhrcb(path,
+				cb, eb, cbarg, ebarg, errMsg, signature), headers);
 		},
 		"put": function(path, params, cb, headers, passthrough) {
-			CT.net.xhr(path, "PUT", params, true, CT.net._xhrcb(cb), headers, passthrough);
+			CT.net.xhr(path, "PUT", params, true, CT.net._xhrcb(path, cb), headers, passthrough);
 		},
 		"del": function(path, params, cb, headers) {
-			CT.net.xhr(path, "DELETE", params, true, CT.net._xhrcb(cb), headers);
+			CT.net.xhr(path, "DELETE", params, true, CT.net._xhrcb(path, cb), headers);
 		},
 		"qs": function(path, qsp) {
 			path = path || "";
