@@ -41,7 +41,7 @@ CT.panel = {
 		var label = data.label || data.title || data.name,
 			n = CT.dom.node(null, "div", null, label && ("tl" + label));
 		activeClass = activeClass || "activetab";
-		n.trigger = function() {
+		n.select = function() {
 			CT.dom.each(n.parentNode, function(c) {
 				if (c == n)
 					c.classList.add(activeClass);
@@ -49,6 +49,9 @@ CT.panel = {
 					c.classList.remove(activeClass);
 				c.className = (c == n) ? activeClass : "";
 			});
+		};
+		n.trigger = function() {
+			n.select();
 			cb(data);
 		};
 		n.appendChild(CT.dom.link(content ? content(data) : label, n.trigger));
