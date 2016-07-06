@@ -279,10 +279,10 @@ CT.modal.Prompt = CT.Class({
 				null, null, null, "password");
 		},
 		"single-choice": function(data) {
-			return CT.dom.choices(data);
+			return CT.dom.choices(this._nodify(data));
 		},
 		"multiple-choice": function(data) {
-			return CT.dom.choices(data, true);
+			return CT.dom.choices(this._nodify(data), true);
 		},
 		"file": function() {
 			this.continueButton.disabled = true;
@@ -305,6 +305,11 @@ CT.modal.Prompt = CT.Class({
 	submit: function() {
 		this.opts.cb(this.input.ctfile || this.input.value);
 		this.hide();
+	},
+	_nodify: function(data) {
+		if (typeof data[0] == "string")
+			return data.map(function(d) { return CT.dom.node(d); } );
+		return data;
 	},
 	build: function() {
 		this.continueButton = CT.dom.button("Continue", this.submit);
