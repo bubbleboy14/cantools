@@ -722,9 +722,14 @@ CT.dom = {
 		n = n || document.body;
 		n.style.opacity = n.style.opacity == "1" && "0" || "1";
 	},
-	"showHideV": function(n) {
+	"showHideV": function(n, juston, justoff) {
 		n = n || document.body;
-		n.style.visibility = n.style.visibility == "visible" && "hidden" || "visible";
+		if (juston)
+			n.style.visibility = "visible";
+		else if (justoff)
+			n.style.visibility = "hidden";
+		else
+			n.style.visibility = n.style.visibility == "visible" && "hidden" || "visible";
 	},
 	"showHide": function(n, juston, justoff, dstyle) {
 		n = n || document.body;
@@ -745,6 +750,12 @@ CT.dom = {
 	},
 	"hide": function(n) {
 		CT.dom.showHide(n, false, true);
+	},
+	"showV": function(n) {
+		CT.dom.showHideV(n, true);
+	},
+	"hideV": function(n) {
+		CT.dom.showHideV(n, false, true);
 	},
 	"remove": function(n) {
 		n && n.parentNode && n.parentNode.removeChild(n);
