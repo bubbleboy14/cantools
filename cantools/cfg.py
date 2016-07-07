@@ -1,3 +1,5 @@
+import os
+
 cfg = {
 	"log": {
 		"allow": ["info", "log", "error"]
@@ -140,7 +142,7 @@ handlers:
    Hello World
   </body>
 </html>""",
-		"ctcfg": 'ENCODE = False\nMODE = dynamic\nWEB_SERVER = %s',
+		"ctcfg": os.linesep.join(['ENCODE = False', 'MODE = dynamic', 'WEB_SERVER = %s'])
 		"model": "from cantools import db"
 	},
 	"about": """# cantools %s
