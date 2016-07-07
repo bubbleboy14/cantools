@@ -65,6 +65,9 @@ class Builder(object):
 		os.chdir(self.pname)
 		for d in config.init.dirs:
 			mkdir(d)
+		for mod in self.plugins.values():
+			for d in mod.init.dirs:
+				mkdir(d)
 
 	def make_files(self):
 		log("generating configuration", 1)
@@ -101,7 +104,7 @@ class Builder(object):
 		sym(os.path.join(self.ctroot, "admin.py"), "admin.py")
 		sym(os.path.join(self.ctroot, "_db.py"), "_db.py")
 		sym(os.path.join(self.ctroot, "_pay.py"), "_pay.py")
-		for plugin, mod in self.plugins.items():
+		for mod in self.plugins.values():
 			for dname, fnames in mod.init.syms.items():
 				for fname in fnames:
 					sym(os.path.join(mod.__ct_mod_path__, dname, fname),
