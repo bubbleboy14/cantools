@@ -38,6 +38,7 @@ class Builder(object):
 			)
 		self.web_backend = web_backend
 		self.refresh_symlinks = refresh_symlinks
+		self.install_plugins()
 		if not refresh_symlinks:
 			self.build_dirs()
 			self.make_files()
@@ -45,18 +46,23 @@ class Builder(object):
 		self.generate_symlinks()
 		log("done! goodbye.", 1)
 
+	def install_plugins(self):
+		pil = len(config.plugins)
+		if pil:
+			log("Installing %s Plugins"%(pil,), 1)
+			for plugin in config.plugins:
+				log(plugin, 2)
+				try:
+					mod = __import__(plugin)
+				except ImportError:
+					cmd("easy_install %s"%(plugin,))
+
 	def build_dirs(self):
 		log("building directories", 1)
 		mkdir(self.pname)
 		os.chdir(self.pname)
-		mkdir("js")
-		mkdir("css")
-		mkdir("img")
-		mkdir("html")
-		mkdir("html-static")
-		mkdir("html-production")
-		mkdir("logs")
-		mkdir("blob")
+		for d in config.init.dirs:
+			mkdir(d)
 
 	def make_files(self):
 		log("generating configuration", 1)
@@ -71,19 +77,9 @@ class Builder(object):
 	def generate_symlinks(self):
 		log("creating symlinks", 1)
 		if self.refresh_symlinks:
-			if not os.path.isdir("js"):
-				mkdir("js")
-			if not os.path.isdir("css"):
-				mkdir("css")
-			if not os.path.isdir("img"):
-				mkdir("img")
-			if not os.path.isdir("blob"):
-				mkdir("blob")
-			if not os.path.isdir("logs"):
-				mkdir("logs")
-			lj = os.path.join("logs", "json")
-			if not os.path.isdir(lj):
-				mkdir(lj)
+			for d in config.init.dirs:
+				if not os.path.isdir(d):
+					mkdir(d)
 		if self.web_backend == "gae":
 			sym(self.ctroot, "cantools")
 		ctp = os.path.join(self.ctroot, "CT")
