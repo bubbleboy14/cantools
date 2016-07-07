@@ -1,19 +1,18 @@
 """
-### Usage: ctinit [projname] [--cantools_path=PATH] [--web_backend=BACKEND]
+### Usage: ctinit [projname] [-r] [--cantools_path=PATH] [--web_backend=BACKEND]
 
 ### Options:
     -h, --help            show this help message and exit
     -c CANTOOLS_PATH, --cantools_path=CANTOOLS_PATH
-                          where is cantools? (default: /your/home/directory)
+                          where is cantools? (default: /guessed/path/from/__file__)
     -w WEB_BACKEND, --web_backend=WEB_BACKEND
                           web backend. options: dez, gae. (default: dez)
     -r, --refresh_symlinks
                           add symlinks to project and configure version control
                           path exclusion (if desired)
 
-TODO :: We shouldn't have to ask for --cantools_path. Instead, this
-        path should be saved in an environment variable on install.
-        Right? Could get complicated.
+NB: it should never be necessary to specify --cantools_path, as this is derived
+from the __file__ property (the location of the ctinit script, init.py).
 """
 
 import os
@@ -21,10 +20,10 @@ from optparse import OptionParser
 from cantools import config
 from cantools.util import log, error, cp, sym, mkdir, rm, cmd
 
-HOME = os.environ.get("HOME", ".")
+CTP = __file__.rsplit("/", 4)[0]
 
 class Builder(object):
-	def __init__(self, pname=None, cantools_path=HOME, web_backend="dez", refresh_symlinks=False):
+	def __init__(self, pname=None, cantools_path=CTP, web_backend="dez", refresh_symlinks=False):
 		if not pname and not refresh_symlinks:
 			pname = raw_input("project name? ")
 		log("Initializing %s Project: %s"%(web_backend, pname or "(refresh)"))
@@ -115,9 +114,9 @@ class Builder(object):
 				rm("_tmp")
 
 def parse_and_make():
-	parser = OptionParser("ctinit [projname] [--cantools_path=PATH] [--web_backend=BACKEND]")
-	parser.add_option("-c", "--cantools_path", dest="cantools_path", default=HOME,
-		help="where is cantools? (default: %s)"%(HOME,))
+	parser = OptionParser("ctinit [projname] [-r] [--cantools_path=PATH] [--web_backend=BACKEND]")
+	parser.add_option("-c", "--cantools_path", dest="cantools_path", default=CTP,
+		help="where is cantools? (default: %s)"%(CTP,))
 	parser.add_option("-w", "--web_backend", dest="web_backend", default="dez",
 		help="web backend. options: dez, gae. (default: dez)")
 	parser.add_option("-r", "--refresh_symlinks", action="store_true",
