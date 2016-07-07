@@ -18,9 +18,9 @@ from the __file__ property (the location of the ctinit script, init.py).
 import os
 from optparse import OptionParser
 from cantools import config
-from cantools.util import log, error, cp, sym, mkdir, rm, cmd
+from cantools.util import log, error, cp, sym, mkdir, rm, cmd, read
 
-CTP = __file__.rsplit("/", 4)[0]
+CTP = __file__.rsplit(os.path.sep, 4)[0]
 
 class Builder(object):
 	def __init__(self, pname=None, cantools_path=CTP, web_backend="dez", refresh_symlinks=False):
@@ -38,6 +38,7 @@ class Builder(object):
 			)
 		self.web_backend = web_backend
 		self.refresh_symlinks = refresh_symlinks
+		self.plugins = {}
 		self.install_plugins()
 		if not refresh_symlinks:
 			self.build_dirs()
@@ -53,7 +54,8 @@ class Builder(object):
 			for plugin in config.plugins:
 				log(plugin, 2)
 				try:
-					mod = __import__(plugin)
+					mod = self.plugins[plugin] = __import__(plugin)
+					mod.__ct_mod_path__ = mod.__file__.rsplit(os.path.sep, 1)[0]
 				except ImportError:
 					cmd("easy_install %s"%(plugin,))
 
@@ -73,6 +75,10 @@ class Builder(object):
 		cp(config.init.html%(self.pname,), os.path.join("html", "index.html"))
 		log("model", 1)
 		cp(config.init.model, "model.py")
+		for plugin, mod in self.plugins.items():
+			for fname in mod.init.copies:
+				log("%s [%s]"%(fname, plugin), 1)
+				cp(read(os.path.join(mod.__ct_mod_path__, fname), fname)
 
 	def generate_symlinks(self):
 		log("creating symlinks", 1)
@@ -90,6 +96,13 @@ class Builder(object):
 		sym(os.path.join(self.ctroot, "admin.py"), "admin.py")
 		sym(os.path.join(self.ctroot, "_db.py"), "_db.py")
 		sym(os.path.join(self.ctroot, "_pay.py"), "_pay.py")
+		for plugin, mod in self.plugins.items():
+			for dname, fnames in mod.init.syms.items():
+				for fname in fnames:
+					sym(os.path.join(mod.__ct_mod_path__, dname, fname), fname)
+					if not config.init.vcignore[dname]:
+						config.init.vcignore[dname] = []
+					config.init.vcignore[dname].append(fname)
 
 	def vcignore(self):
 		log("configuring version control path exclusion", 1)
