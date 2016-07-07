@@ -123,7 +123,9 @@ class Builder(object):
 				rm("_tmp")
 
 def parse_and_make():
-	parser = OptionParser("ctinit [projname] [-r] [--cantools_path=PATH] [--web_backend=BACKEND]")
+	parser = OptionParser("ctinit [projname] [-r] [--plugins=P1|P2|P3] [--cantools_path=PATH] [--web_backend=BACKEND]")
+	parser.add_option("-p", "--plugins", dest="plugins", default="",
+		help="which plugins would you like to use in your project?")
 	parser.add_option("-c", "--cantools_path", dest="cantools_path", default=CTP,
 		help="where is cantools? (default: %s)"%(CTP,))
 	parser.add_option("-w", "--web_backend", dest="web_backend", default="dez",
@@ -131,6 +133,7 @@ def parse_and_make():
 	parser.add_option("-r", "--refresh_symlinks", action="store_true",
 		dest="refresh_symlinks", default=False, help="add symlinks to project and configure version control path exclusion (if desired)")
 	options, args = parser.parse_args()
+	config.update("plugins", list(set(config.plugins + options.plugins.split("|"))))
 	Builder(len(args) and args[0], options.cantools_path,
 		options.web_backend, options.refresh_symlinks)
 
