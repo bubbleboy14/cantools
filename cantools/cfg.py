@@ -2,6 +2,7 @@ cfg = {
 	"log": {
 		"allow": ["info", "log", "error"]
 	},
+	"plugins": [],
 	"geo": {
 		"test": False,
 		"zip": "google", # google|geonames
@@ -79,6 +80,7 @@ cfg = {
 		</noscript>
 	""",
 	"init": {
+		"dirs": ["js", "css", "img", "logs", "blob", "html", "html-static", "html-production"],
 		"vcignore": {
 			".": ["*pyc", "*~", ".ctp", "_", "admin.py", "_db.py", "_pay.py", "logs"],
 			"css": ["ct.css"],
