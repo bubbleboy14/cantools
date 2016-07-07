@@ -70,7 +70,10 @@ class Builder(object):
 		log("generating configuration", 1)
 		cp((self.web_backend == "gae") and "%s\r\n%s"%(config.init.yaml.gae,
 			config.init.yaml.core)%(self.pname,) or config.init.yaml.core, "app.yaml")
-		cp(config.init.ctcfg%(self.web_backend,), "ct.cfg")
+		cfg = config.init.ctcfg%(self.web_backend,)
+		if self.plugins:
+			cfg = os.linesep.join([cfg, "PLUGINS = %s"%("|".join(self.plugins.keys()),)])
+		cp(cfg, "ct.cfg")
 		log("demo index page", 1)
 		cp(config.init.html%(self.pname,), os.path.join("html", "index.html"))
 		log("model", 1)
