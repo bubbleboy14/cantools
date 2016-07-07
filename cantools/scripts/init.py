@@ -78,7 +78,7 @@ class Builder(object):
 		for plugin, mod in self.plugins.items():
 			for fname in mod.init.copies:
 				log("%s [%s]"%(fname, plugin), 1)
-				cp(read(os.path.join(mod.__ct_mod_path__, fname), fname)
+				cp(read(os.path.join(mod.__ct_mod_path__, fname), fname))
 
 	def generate_symlinks(self):
 		log("creating symlinks", 1)
@@ -110,7 +110,7 @@ class Builder(object):
 		if itype == "git":
 			log("configuring git", 2)
 			cfg = config.init.vcignore["."]
-			for path in ["css", "js"]:
+			for path in [p for p in config.init.vcignore.keys() if p != "."]:
 				for fname in config.init.vcignore[path]:
 					cfg.append(os.path.join(path, fname))
 			cp("\n".join(cfg), ".gitignore")
