@@ -76,9 +76,11 @@ class Builder(object):
 		log("model", 1)
 		cp(config.init.model, "model.py")
 		for plugin, mod in self.plugins.items():
-			for fname in mod.init.copies:
-				log("%s [%s]"%(fname, plugin), 1)
-				cp(read(os.path.join(mod.__ct_mod_path__, fname), fname))
+			for dname, fnames in mod.init.copies.items():
+				for fname in fnames:
+					log("%s [%s]"%(fname, plugin), 1)
+					cp(read(os.path.join(mod.__ct_mod_path__, dname, fname)),
+						os.path.join(dname, fname))
 
 	def generate_symlinks(self):
 		log("creating symlinks", 1)
@@ -99,7 +101,8 @@ class Builder(object):
 		for plugin, mod in self.plugins.items():
 			for dname, fnames in mod.init.syms.items():
 				for fname in fnames:
-					sym(os.path.join(mod.__ct_mod_path__, dname, fname), fname)
+					sym(os.path.join(mod.__ct_mod_path__, dname, fname),
+						os.path.join(dname, fname))
 					if not config.init.vcignore[dname]:
 						config.init.vcignore[dname] = []
 					config.init.vcignore[dname].append(fname)
