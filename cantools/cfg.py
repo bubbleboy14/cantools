@@ -142,7 +142,7 @@ handlers:
    Hello World
   </body>
 </html>""",
-		"ctcfg": os.linesep.join(['ENCODE = False', 'MODE = dynamic', 'WEB_SERVER = %s'])
+		"ctcfg": os.linesep.join(['ENCODE = False', 'MODE = dynamic', 'WEB_SERVER = %s']),
 		"model": "from cantools import db"
 	},
 	"about": """# cantools %s

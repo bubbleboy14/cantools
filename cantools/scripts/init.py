@@ -110,7 +110,7 @@ class Builder(object):
 					sym(os.path.join(mod.__ct_mod_path__, dname, fname),
 						os.path.join(dname, fname))
 					if not config.init.vcignore[dname]:
-						config.init.vcignore[dname] = []
+						config.init.vcignore.update(dname, [])
 					config.init.vcignore[dname].append(fname)
 
 	def vcignore(self):
