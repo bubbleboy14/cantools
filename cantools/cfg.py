@@ -150,21 +150,28 @@ This portable modern web framework is the application-neutral backbone of Civil 
 
 License: MIT (see LICENSE)
 
-## Package Installation
-  - package: https://pypi.python.org/pypi/ct
-  - command: easy_install ct
-
-## Repository Installation
+## Repository Installation (full)
+  - upside: includes full codebase (not just Python)
   - site: https://github.com/bubbleboy14/cantools
   - steps
     - git clone https://github.com/bubbleboy14/cantools.git
     - cd cantools
-    - python setup.py install
+    - python setup.py develop
+
+## Package Installation (limited -- not recommended)
+  - downside
+    - does _not_ include full package (such as client-side web files)
+    - enough to mess around with cantools -- not enough to develop end-to-end applications
+  - package: https://pypi.python.org/pypi/ct
+  - command: easy_install ct
 
 ## Hello World
-This takes less than a moment. Pop open a terminal:
+This takes less than a moment. Pop open a terminal in your home directory:
 
-	~$ easy_install ct
+	~$ git clone https://github.com/bubbleboy14/cantools.git
+	~$ cd cantools/
+	~/cantools$ python setup.py develop
+	~/cantools$ cd ..
 	~$ ctinit hello_world
 	~$ cd hello_world/
 	~/hello_world$ ctstart

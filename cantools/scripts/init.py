@@ -13,8 +13,13 @@
                           add symlinks to project and configure version control
                           path exclusion (if desired)
 
-NB: it should never be necessary to specify --cantools_path, as this is derived
-from the __file__ property (the location of the ctinit script, init.py).
+NB: it may be necessary to specify --cantools_path. Normally, this is derived from
+the __file__ property (the location of the ctinit script, init.py). However, if the
+package lives in your Python dist-packages (as with 'easy_install', as well as
+'setup.py install'), it does not contain the client-side files necessary for an
+end-to-end web application, and these files therefore cannot be symlinked into your
+new project. In these cases, indicate --cantools_path (the path to the cloned cantools
+repository on your computer), and everything should work fine.
 """
 
 import os
@@ -22,7 +27,7 @@ from optparse import OptionParser
 from cantools import config
 from cantools.util import log, error, cp, sym, mkdir, rm, cmd, read
 
-CTP = __file__.rsplit(os.path.sep, 4)[0]
+CTP = __file__.rsplit(os.path.sep, 2)[0]
 
 class Builder(object):
 	def __init__(self, pname=None, cantools_path=CTP, web_backend="dez", refresh_symlinks=False):
@@ -30,7 +35,7 @@ class Builder(object):
 			pname = raw_input("project name? ")
 		log("Initializing %s Project: %s"%(web_backend, pname or "(refresh)"))
 		self.pname = pname
-		self.ctroot = os.path.join(cantools_path, "cantools", "cantools")
+		self.ctroot = cantools_path
 		if not os.path.exists(self.ctroot):
 			error("failed to establish cantools root",
 				"We tried: %s"%(self.ctroot,),
