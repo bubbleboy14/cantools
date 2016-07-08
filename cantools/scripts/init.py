@@ -1,8 +1,10 @@
 """
-### Usage: ctinit [projname] [-r] [--cantools_path=PATH] [--web_backend=BACKEND]
+### Usage: ctinit [projname] [-r] [--plugins=P1|P2|P3] [--cantools_path=PATH] [--web_backend=BACKEND]
 
 ### Options:
     -h, --help            show this help message and exit
+    -p PLUGINS, --plugins=PLUGINS
+                          which plugins would you like to use in your project?
     -c CANTOOLS_PATH, --cantools_path=CANTOOLS_PATH
                           where is cantools? (default: /guessed/path/from/__file__)
     -w WEB_BACKEND, --web_backend=WEB_BACKEND
