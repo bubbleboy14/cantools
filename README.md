@@ -1,23 +1,30 @@
-# cantools 0.7.10
+# cantools 0.7.10.1
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
 License: MIT (see LICENSE)
 
-## Package Installation
-  - package: https://pypi.python.org/pypi/ct
-  - command: easy_install ct
-
-## Repository Installation
+## Repository Installation (full)
+  - upside: includes full codebase (not just Python)
   - site: https://github.com/bubbleboy14/cantools
   - steps
     - git clone https://github.com/bubbleboy14/cantools.git
     - cd cantools
-    - python setup.py install
+    - python setup.py develop
+
+## Package Installation (limited -- not recommended)
+  - downside
+    - does _not_ include full package (such as client-side web files)
+    - enough to mess around with cantools -- not enough to develop end-to-end applications
+  - package: https://pypi.python.org/pypi/ct
+  - command: easy_install ct
 
 ## Hello World
-This takes less than a moment. Pop open a terminal:
+This takes less than a moment. Pop open a terminal in your home directory:
 
-	~$ easy_install ct
+	~$ git clone https://github.com/bubbleboy14/cantools.git
+	~$ cd cantools/
+	~/cantools$ python setup.py develop
+	~/cantools$ cd ..
 	~$ ctinit hello_world
 	~$ cd hello_world/
 	~/hello_world$ ctstart
@@ -41,8 +48,13 @@ And that's it. Open http://localhost:8080/ in your browser and call it a day.
                           add symlinks to project and configure version control
                           path exclusion (if desired)
 
-NB: it should never be necessary to specify --cantools_path, as this is derived
-from the __file__ property (the location of the ctinit script, init.py).
+NB: it may be necessary to specify --cantools_path. Normally, this is derived from
+the __file__ property (the location of the ctinit script, init.py). However, if the
+package lives in your Python dist-packages (as with 'easy_install', as well as
+'setup.py install'), it does not contain the client-side files necessary for an
+end-to-end web application, and these files therefore cannot be symlinked into your
+new project. In these cases, indicate --cantools_path (the path to the cloned cantools
+repository on your computer), and everything should work fine.
 
 ## ctstart
 
