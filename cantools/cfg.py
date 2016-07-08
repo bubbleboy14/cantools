@@ -1,7 +1,10 @@
+import os
+
 cfg = {
 	"log": {
 		"allow": ["info", "log", "error"]
 	},
+	"plugins": [],
 	"geo": {
 		"test": False,
 		"zip": "google", # google|geonames
@@ -79,6 +82,7 @@ cfg = {
 		</noscript>
 	""",
 	"init": {
+		"dirs": ["js", "css", "img", "logs", "blob", "html", "html-static", "html-production"],
 		"vcignore": {
 			".": ["*pyc", "*~", ".ctp", "_", "admin.py", "_db.py", "_pay.py", "logs"],
 			"css": ["ct.css"],
@@ -138,7 +142,7 @@ handlers:
    Hello World
   </body>
 </html>""",
-		"ctcfg": 'ENCODE = False\nMODE = dynamic\nWEB_SERVER = %s',
+		"ctcfg": os.linesep.join(['ENCODE = False', 'MODE = dynamic', 'WEB_SERVER = %s']),
 		"model": "from cantools import db"
 	},
 	"about": """# cantools %s

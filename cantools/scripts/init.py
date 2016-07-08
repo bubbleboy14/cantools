@@ -18,9 +18,9 @@ from the __file__ property (the location of the ctinit script, init.py).
 import os
 from optparse import OptionParser
 from cantools import config
-from cantools.util import log, error, cp, sym, mkdir, rm, cmd
+from cantools.util import log, error, cp, sym, mkdir, rm, cmd, read
 
-CTP = __file__.rsplit("/", 4)[0]
+CTP = __file__.rsplit(os.path.sep, 4)[0]
 
 class Builder(object):
 	def __init__(self, pname=None, cantools_path=CTP, web_backend="dez", refresh_symlinks=False):
@@ -38,6 +38,8 @@ class Builder(object):
 			)
 		self.web_backend = web_backend
 		self.refresh_symlinks = refresh_symlinks
+		self.plugins = {}
+		self.install_plugins()
 		if not refresh_symlinks:
 			self.build_dirs()
 			self.make_files()
@@ -45,45 +47,53 @@ class Builder(object):
 		self.generate_symlinks()
 		log("done! goodbye.", 1)
 
+	def install_plugins(self):
+		pil = len(config.plugins)
+		if pil:
+			log("Installing %s Plugins"%(pil,), 1)
+			for plugin in config.plugins:
+				log(plugin, 2)
+				try:
+					mod = self.plugins[plugin] = __import__(plugin)
+					mod.__ct_mod_path__ = mod.__file__.rsplit(os.path.sep, 1)[0]
+				except ImportError:
+					cmd("easy_install %s"%(plugin,))
+
 	def build_dirs(self):
 		log("building directories", 1)
 		mkdir(self.pname)
 		os.chdir(self.pname)
-		mkdir("js")
-		mkdir("css")
-		mkdir("img")
-		mkdir("html")
-		mkdir("html-static")
-		mkdir("html-production")
-		mkdir("logs")
-		mkdir("blob")
+		for d in config.init.dirs:
+			mkdir(d)
+		for mod in self.plugins.values():
+			for d in mod.init.dirs:
+				mkdir(d)
 
 	def make_files(self):
 		log("generating configuration", 1)
 		cp((self.web_backend == "gae") and "%s\r\n%s"%(config.init.yaml.gae,
 			config.init.yaml.core)%(self.pname,) or config.init.yaml.core, "app.yaml")
-		cp(config.init.ctcfg%(self.web_backend,), "ct.cfg")
+		cfg = config.init.ctcfg%(self.web_backend,)
+		if self.plugins:
+			cfg = os.linesep.join([cfg, "PLUGINS = %s"%("|".join(self.plugins.keys()),)])
+		cp(cfg, "ct.cfg")
 		log("demo index page", 1)
 		cp(config.init.html%(self.pname,), os.path.join("html", "index.html"))
 		log("model", 1)
 		cp(config.init.model, "model.py")
+		for plugin, mod in self.plugins.items():
+			for dname, fnames in mod.init.copies.items():
+				for fname in fnames:
+					log("%s [%s]"%(fname, plugin), 1)
+					cp(read(os.path.join(mod.__ct_mod_path__, dname, fname)),
+						os.path.join(dname, fname))
 
 	def generate_symlinks(self):
 		log("creating symlinks", 1)
 		if self.refresh_symlinks:
-			if not os.path.isdir("js"):
-				mkdir("js")
-			if not os.path.isdir("css"):
-				mkdir("css")
-			if not os.path.isdir("img"):
-				mkdir("img")
-			if not os.path.isdir("blob"):
-				mkdir("blob")
-			if not os.path.isdir("logs"):
-				mkdir("logs")
-			lj = os.path.join("logs", "json")
-			if not os.path.isdir(lj):
-				mkdir(lj)
+			for d in config.init.dirs:
+				if not os.path.isdir(d):
+					mkdir(d)
 		if self.web_backend == "gae":
 			sym(self.ctroot, "cantools")
 		ctp = os.path.join(self.ctroot, "CT")
@@ -94,6 +104,14 @@ class Builder(object):
 		sym(os.path.join(self.ctroot, "admin.py"), "admin.py")
 		sym(os.path.join(self.ctroot, "_db.py"), "_db.py")
 		sym(os.path.join(self.ctroot, "_pay.py"), "_pay.py")
+		for mod in self.plugins.values():
+			for dname, fnames in mod.init.syms.items():
+				for fname in fnames:
+					sym(os.path.join(mod.__ct_mod_path__, dname, fname),
+						os.path.join(dname, fname))
+					if not config.init.vcignore[dname]:
+						config.init.vcignore.update(dname, [])
+					config.init.vcignore[dname].append(fname)
 
 	def vcignore(self):
 		log("configuring version control path exclusion", 1)
@@ -101,7 +119,7 @@ class Builder(object):
 		if itype == "git":
 			log("configuring git", 2)
 			cfg = config.init.vcignore["."]
-			for path in ["css", "js"]:
+			for path in [p for p in config.init.vcignore.keys() if p != "."]:
 				for fname in config.init.vcignore[path]:
 					cfg.append(os.path.join(path, fname))
 			cp("\n".join(cfg), ".gitignore")
@@ -114,7 +132,9 @@ class Builder(object):
 				rm("_tmp")
 
 def parse_and_make():
-	parser = OptionParser("ctinit [projname] [-r] [--cantools_path=PATH] [--web_backend=BACKEND]")
+	parser = OptionParser("ctinit [projname] [-r] [--plugins=P1|P2|P3] [--cantools_path=PATH] [--web_backend=BACKEND]")
+	parser.add_option("-p", "--plugins", dest="plugins", default="",
+		help="which plugins would you like to use in your project?")
 	parser.add_option("-c", "--cantools_path", dest="cantools_path", default=CTP,
 		help="where is cantools? (default: %s)"%(CTP,))
 	parser.add_option("-w", "--web_backend", dest="web_backend", default="dez",
@@ -122,6 +142,7 @@ def parse_and_make():
 	parser.add_option("-r", "--refresh_symlinks", action="store_true",
 		dest="refresh_symlinks", default=False, help="add symlinks to project and configure version control path exclusion (if desired)")
 	options, args = parser.parse_args()
+	config.update("plugins", list(set(config.plugins + options.plugins.split("|"))))
 	Builder(len(args) and args[0], options.cantools_path,
 		options.web_backend, options.refresh_symlinks)
 
