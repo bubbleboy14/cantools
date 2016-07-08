@@ -1,16 +1,13 @@
-# cantools 0.7.9.7
+# cantools 0.7.10
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
 License: MIT (see LICENSE)
 
-## Package Installation (limited)
+## Package Installation
   - package: https://pypi.python.org/pypi/ct
   - command: easy_install ct
-  - downside: you have to figure out the path to cantools
 
-## Repository Installation (full)
-  - upside: easiest way to know the path to cantools
-    - for the time being, you need to know this to run ctinit
+## Repository Installation
   - site: https://github.com/bubbleboy14/cantools
   - steps
     - git clone https://github.com/bubbleboy14/cantools.git
@@ -18,12 +15,9 @@ License: MIT (see LICENSE)
     - python setup.py install
 
 ## Hello World
-This takes less than a moment. Pop open a terminal in your home directory:
+This takes less than a moment. Pop open a terminal:
 
-	~$ git clone https://github.com/bubbleboy14/cantools.git
-	~$ cd cantools/
-	~/cantools$ python setup.py install
-	~/cantools$ cd ..
+	~$ easy_install ct
 	~$ ctinit hello_world
 	~$ cd hello_world/
 	~/hello_world$ ctstart
@@ -33,21 +27,22 @@ And that's it. Open http://localhost:8080/ in your browser and call it a day.
 # Back (CLI)
 
 ## ctinit
-### Usage: ctinit [projname] [--cantools_path=PATH] [--web_backend=BACKEND]
+### Usage: ctinit [projname] [-r] [--plugins=P1|P2|P3] [--cantools_path=PATH] [--web_backend=BACKEND]
 
 ### Options:
     -h, --help            show this help message and exit
+    -p PLUGINS, --plugins=PLUGINS
+                          which plugins would you like to use in your project?
     -c CANTOOLS_PATH, --cantools_path=CANTOOLS_PATH
-                          where is cantools? (default: /your/home/directory)
+                          where is cantools? (default: /guessed/path/from/__file__)
     -w WEB_BACKEND, --web_backend=WEB_BACKEND
                           web backend. options: dez, gae. (default: dez)
     -r, --refresh_symlinks
                           add symlinks to project and configure version control
                           path exclusion (if desired)
 
-TODO :: We shouldn't have to ask for --cantools_path. Instead, this
-        path should be saved in an environment variable on install.
-        Right? Could get complicated.
+NB: it should never be necessary to specify --cantools_path, as this is derived
+from the __file__ property (the location of the ctinit script, init.py).
 
 ## ctstart
 
