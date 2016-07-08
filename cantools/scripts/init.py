@@ -116,12 +116,16 @@ class Builder(object):
 				for fname in fnames:
 					sym(os.path.join(mod.__ct_mod_path__, dname, fname),
 						os.path.join(dname, fname))
-					if not config.init.vcignore[dname]:
-						config.init.vcignore.update(dname, [])
-					config.init.vcignore[dname].append(fname)
 
 	def vcignore(self):
 		log("configuring version control path exclusion", 1)
+		for plugin, mod in self.plugins.items():
+			log("loading rules for plugin: %s"%(plugin,), 2)
+			for dname, fnames in mod.init.syms.items():
+				for fname in fnames:
+					if not config.init.vcignore[dname]:
+						config.init.vcignore.update(dname, [])
+					config.init.vcignore[dname].append(fname)
 		itype = raw_input("would you like to generate exclusion rules for symlinks and dot files (if you select svn, we will add the project to your repository first)? [NO/git/svn] ")
 		if itype == "git":
 			log("configuring git", 2)
