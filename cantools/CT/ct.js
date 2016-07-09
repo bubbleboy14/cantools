@@ -245,7 +245,7 @@ var CT = {
 					eb("request to " + path + " failed! (" + xhr.status + " - " + xhr.responseText + ")", ebarg);
 			};
 		},
-		"post": function(path, params, errMsg, cb, eb, headers, cbarg, ebarg) {
+		"post": function(path, params, errMsg, cb, eb, headers, cbarg, ebarg, sync) {
 			var signature;
 			if (CT.net._cache) {
 				signature = path + JSON.stringify(params);
@@ -253,7 +253,7 @@ var CT = {
 				if (cachedVersion)
 					return cb(cachedVersion, cbarg);
 			}
-			CT.net.xhr(path, "POST", params, true, CT.net._xhrcb(path,
+			return CT.net.xhr(path, "POST", params, !sync, CT.net._xhrcb(path,
 				cb, eb, cbarg, ebarg, errMsg, signature), headers);
 		},
 		"put": function(path, params, cb, headers, passthrough) {
