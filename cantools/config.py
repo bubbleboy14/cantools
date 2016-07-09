@@ -74,9 +74,9 @@ for key, val in [[term.strip() for term in line.split(" = ")] for line in read("
 	else:
 		target = key.lower()
 		c = config
+		if target in ["pubsub_botnames", "log_allow", "geo_user_geonames", "geo_user_google", "plugins"]:
+			val = val.split("|")
 		if "_" in target:
-			if target in ["pubsub_botnames", "log_allow", "geo_user_geonames", "geo_user_google", "plugins"]:
-				val = val.split("|")
 			path, target = target.rsplit("_", 1)
 			for part in path.split("_"):
 				c = getattr(c, part)
