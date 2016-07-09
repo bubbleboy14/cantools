@@ -107,6 +107,9 @@ handlers:
 - url: /img
   static_dir: img
 
+- url: /blob
+  static_dir: blob
+
 - url: /_db
   script: _db.py
 
