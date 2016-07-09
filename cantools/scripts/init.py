@@ -153,7 +153,8 @@ def parse_and_make():
 	parser.add_option("-r", "--refresh_symlinks", action="store_true",
 		dest="refresh_symlinks", default=False, help="add symlinks to project and configure version control path exclusion (if desired)")
 	options, args = parser.parse_args()
-	config.update("plugins", list(set(config.plugins + options.plugins.split("|"))))
+	if options.plugins:
+		config.update("plugins", list(set(config.plugins + options.plugins.split("|"))))
 	Builder(len(args) and args[0], options.cantools_path,
 		options.web_backend, options.refresh_symlinks)
 
