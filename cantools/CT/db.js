@@ -108,7 +108,7 @@ CT.db = {
 			property: CT.db._schema[t]._label
 		};
 	},
-	get: function(modelName, cb, limit, offset, order, filters) {
+	get: function(modelName, cb, limit, offset, order, filters, sync) {
 		var qdata = {
 			"action": "get",
 			"modelName": modelName,
@@ -119,10 +119,10 @@ CT.db = {
 			qdata.order = order;
 		if (filters)
 			qdata.filters = filters;
-		CT.net.post("/_db", qdata, null, function(d) {
+		return CT.net.post("/_db", qdata, null, function(d) {
 			CT.data.addSet(d);
 			cb(d);
-		});
+		}, null, null, null, null, sync);
 	},
 	multi: function(keys, cb) {
 		var needed = keys.filter(function(k) {
