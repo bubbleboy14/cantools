@@ -34,7 +34,7 @@ Run this on a database with lots of missing index values.
 from getpass import getpass
 from optparse import OptionParser
 from cantools.util import error, log, batch
-from cantools.db import get_schema, get_model, put_multi
+from cantools.db import get_schema, get_model, put_multi, unpad_key
 from cantools.web import fetch
 from cantools import config
 if config.web.server == "dez":
@@ -115,11 +115,35 @@ def index(host, port):
 #	for kind in schema:
 #		log(fetch(host, "/_db?action=index&pw=%s&kind=%s"%(pw, kind), port))
 
+#
+# url safety
+#
+def urlsafe():
+	log("updating key/keylist properties with urlsafe keys")
+	import model
+	schema = get_schema()
+	puts = []
+	for mod in schema:
+		mods = get_model(mod).query().all()
+		log("%s (%s)"%(mod, len(mods)), 1)
+		for m in mods:
+			m.key = unpad_key(m.key.urlsafe())
+			for prop in schema[mod]["_kinds"]:
+				if schema[mod][prop] == "key":
+					setattr(m, prop, unpad_key(getattr(m, prop).urlsafe()))
+				else: # keylist
+					setattr(m, prop, [unpad_key(k.urlsafe()) for k in getattr(m, prop)])
+			puts.append(m)
+	log("saving records")
+	put_multi(puts)
+	log("updated %s keys"%(len(puts),), important=True)
+
 def go():
 	parser = OptionParser("ctindex [--mode=MODE] [--domain=DOMAIN] [--port=PORT]")
 	parser.add_option("-m", "--mode", dest="mode", default="refcount",
 		help="may be: 'refcount' (default - count up all foreignkey references for sort orders "
-			"and such) or 'index' (assign each record a sequential integer index). "
+			"and such); 'index' (assign each record a sequential integer index); 'urlsafekeys' "
+			"(update all key/keylist properties to use urlsafe keys introduced in ct 0.8). "
 			"Note regarding 'index' mode: it _must_ happen remotely; it's generally "
 			"unnecessary unless you're trying to migrate an unindexed database away from "
 			"gae and need an index/key per record; it should be invoked from _outside_ "
@@ -137,6 +161,8 @@ def go():
 		refcount()
 	elif options.mode == "index":
 		index(options.domain, int(options.port))
+	elif options.mode == "urlsafekeys":
+		urlsafe()
 	else:
 		error("unknown mode: %s"%(options.mode,))
 	log("goodbye")
