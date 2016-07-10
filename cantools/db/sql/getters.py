@@ -40,7 +40,7 @@ def getall(entity=None, query=None, keys_only=False, session=session):
     return res
 
 def b64d(compkey):
-    from properties import pad_key
+    from cantools.db import pad_key
     return b64decode(pad_key(compkey))
 
 def key2data(b64compkey):

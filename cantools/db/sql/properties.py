@@ -161,14 +161,9 @@ class ArrayType(BasicString):
 				vlist[i] = KeyWrapper(vlist[i])
 		return vlist
 
-def pad_key(compkey):
-	if compkey[-3:-1] == "CT":
-		compkey = compkey[:-3] + int(compkey[-1]) * "="
-	return compkey
-
 class KeyWrapper(object):
 	def __init__(self, urlsafe=None):
-		self.value = urlsafe and pad_key(urlsafe)
+		self.value = urlsafe
 
 	def __nonzero__(self):
 		return bool(self.value)
@@ -183,10 +178,7 @@ class KeyWrapper(object):
 		self.get().rm() # should be more efficient way...
 
 	def urlsafe(self):
-		val = self.value and self.value.strip("=")
-		if val != self.value:
-			val += "CT" + str(len(self.value) - len(val))
-		return val
+		return self.value
 
 class Key(BasicString):
 	def __init__(self, *args, **kwargs):
