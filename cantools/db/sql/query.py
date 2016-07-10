@@ -52,6 +52,9 @@ class Query(object):
         self.query = getattr(self.query, modname)(*args, **kwargs)
         return self
 
+    def copy(self, *args, **kwargs):
+        return Query(self.mod, *args, **kwargs)
+
     def fetch(self, limit=None, offset=0, keys_only=False):
         if limit:
             self.limit(limit)
