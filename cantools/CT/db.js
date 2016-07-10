@@ -178,7 +178,7 @@ CT.db = {
 		var o = CT.db._opts, key = k || modelName,
 			cnode = cnode || CT.dom.id(o.panel_key + "content" + key);
 		cnode.appendChild(CT.panel.pager(o.builder(modelName),
-			CT.db._refill(modelName, order, filters), 10, "rcol", "data", key));
+			CT.db._refill(modelName, order, filters), 40, "rcol", "data", key));
 		o.post_pager && o.post_pager(key, modelName);
 	}
 };
