@@ -194,7 +194,7 @@ class Key(BasicString):
 				value = value.urlsafe()
 			except:
 				break
-		return pad_key(value)
+		return value
 
 	def process_result_value(self, value, dialect):
 		return KeyWrapper(value)
