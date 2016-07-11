@@ -4,17 +4,19 @@
 ### Options:
 	-h, --help            show this help message and exit
 	-m MODE, --mode=MODE  may be: 'refcount' (default - count up all foreignkey
-	                      references for sort orders and such) or 'index'
-	                      (assign each record a sequential integer index). Note
-	                      regarding 'index' mode: it _must_ happen remotely;
-	                      it's generally unnecessary unless you're trying to
-	                      migrate an unindexed database away from gae and need
-	                      an index/key per record; it should be invoked from
-	                      _outside_ -- that's right, outside -- of your
-	                      project's directory (to avoid loading up a bunch of
-	                      google network tools that may be crappy or cause
-	                      issues outside of their normal 'dev_appserver'
-	                      environment
+	                      references for sort orders and such); 'index' (assign
+	                      each record a sequential integer index); 'urlsafekeys'
+	                      (update all key/keylist properties to use urlsafe keys
+	                      introduced in ct 0.8); 'cleanup' (delete zero-count
+	                      reference counters). Note regarding 'index' mode: it
+	                      _must_ happen remotely; it's generally unnecessary
+	                      unless you're trying to migrate an unindexed database
+	                      away from gae and need an index/key per record; it
+	                      should be invoked from _outside_ -- that's right,
+	                      outside -- of your project's directory (to avoid
+	                      loading up a bunch of google network tools that may be
+	                      crappy or cause issues outside of their normal
+	                      'dev_appserver' environment
 	-d DOMAIN, --domain=DOMAIN
 	                      ('index' mode only) what's the domain of the target
 	                      server? (default: localhost)
@@ -25,16 +27,19 @@ As you can see, this script's behavior changes according to the backend of the t
 
 ### dez
 Run this if your CTRefCount records get messed up for
-some reason. It will go through and recount everything.
+some reason. It will go through and recount everything
+(in the default 'refcount' mode -- the other modes,
+'urlsafekeys' and 'cleanup', are for migrating a CT-mediated
+database from an older deployment to CT 0.8 or newer).
 
 ### gae
-Run this on a database with lots of missing index values.
+Run this in 'index' mode on a database with lots of missing index values.
 """
 
 from getpass import getpass
 from optparse import OptionParser
 from cantools.util import error, log, batch
-from cantools.db import get_schema, get_model, put_multi, unpad_key
+from cantools.db import get_schema, get_model, put_multi, delete_multi, unpad_key
 from cantools.web import fetch
 from cantools import config
 if config.web.server == "dez":
@@ -119,7 +124,7 @@ def index(host, port):
 # url safety
 #
 def urlsafe():
-	log("updating key/keylist properties with urlsafe keys")
+	log("updating key/keylist properties with urlsafe keys", important=True)
 	import model
 	schema = get_schema()
 	puts = []
@@ -137,13 +142,24 @@ def urlsafe():
 	log("saving records")
 	put_multi(puts)
 	log("updated %s keys"%(len(puts),), important=True)
+	if raw_input("want to prune zero-count reference counters? (y/N)").lower().startswith("y"):
+		cleanup()
+
+def cleanup():
+	log("cleaning up zero-count reference counters", important=True)
+	from cantools.db import lookup
+	ctrz = lookup.CTRefCount.query(lookup.CTRefCount.count == 0).all()
+	log("deleting %s zero-count reference counters"%(len(ctrz),))
+	delete_multi(ctrz)
+	log("all gone!")
 
 def go():
 	parser = OptionParser("ctindex [--mode=MODE] [--domain=DOMAIN] [--port=PORT]")
 	parser.add_option("-m", "--mode", dest="mode", default="refcount",
-		help="may be: 'refcount' (default - count up all foreignkey references for sort orders "
-			"and such); 'index' (assign each record a sequential integer index); 'urlsafekeys' "
-			"(update all key/keylist properties to use urlsafe keys introduced in ct 0.8). "
+		help="may be: 'refcount' (default - count up all foreignkey references for sort "
+			"orders and such); 'index' (assign each record a sequential integer index); "
+			"'urlsafekeys' (update all key/keylist properties to use urlsafe keys "
+			"introduced in ct 0.8); 'cleanup' (delete zero-count reference counters). "
 			"Note regarding 'index' mode: it _must_ happen remotely; it's generally "
 			"unnecessary unless you're trying to migrate an unindexed database away from "
 			"gae and need an index/key per record; it should be invoked from _outside_ "
@@ -163,6 +179,8 @@ def go():
 		index(options.domain, int(options.port))
 	elif options.mode == "urlsafekeys":
 		urlsafe()
+	elif options.mode == "cleanup":
+		cleanup()
 	else:
 		error("unknown mode: %s"%(options.mode,))
 	log("goodbye")
