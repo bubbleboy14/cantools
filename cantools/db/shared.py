@@ -38,11 +38,22 @@ def dprep(obj, schema=None): # prepares data object for model
                 o[key] = obj[key]
     return o
 
+def pad_key(compkey):
+    if compkey[-3:-1] == "CT":
+        compkey = compkey[:-3] + int(compkey[-1]) * "="
+    return compkey
+
+def unpad_key(compkey):
+    val = compkey and compkey.strip("=")
+    if val != compkey:
+        val += "CT" + str(len(compkey) - len(val))
+    return val
+
 def ct_key(modelName, index):
-    return base64.b64encode(json.dumps({
+    return unpad_key(base64.b64encode(json.dumps({
         "index": index,
         "model": modelName
-    }))
+    })))
 
 def merge_schemas(bases, label):
     kinds = {}

@@ -39,10 +39,14 @@ def getall(entity=None, query=None, keys_only=False, session=session):
         return [r.key for r in res]
     return res
 
+def b64d(compkey):
+    from cantools.db import pad_key
+    return b64decode(pad_key(compkey))
+
 def key2data(b64compkey):
     if not isinstance(b64compkey, basestring):
         b64compkey = b64compkey.urlsafe()
-    return json.loads(b64decode(b64compkey))
+    return json.loads(b64d(b64compkey))
 
 def get(b64compkey, session=session):
     try:
@@ -56,7 +60,7 @@ def get_multi(b64keys, session=session):
     # b64keys can be Key instances or b64 key strings
     if b64keys and not isinstance(b64keys[0], basestring):
         b64keys = [k.urlsafe() for k in b64keys]
-    keys = [json.loads(b64decode(k)) for k in b64keys]
+    keys = [json.loads(b64d(k)) for k in b64keys]
     ents = {}
     res = {}
     for k in keys:
