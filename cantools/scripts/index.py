@@ -132,6 +132,9 @@ def urlsafe():
 		mods = get_model(mod).query().all()
 		log("%s (%s)"%(mod, len(mods)), 1)
 		for m in mods:
+			if m.polytype != mod:
+				log("skipping! (%s != %s)"%(m.polytype, mod), 2)
+				continue
 			m.key = unpad_key(m.key.urlsafe())
 			for prop in schema[mod]["_kinds"]:
 				if schema[mod][prop] == "key":
