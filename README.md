@@ -1,4 +1,4 @@
-# cantools 0.7.10.2
+# cantools 0.8
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
 License: MIT (see LICENSE)
@@ -140,17 +140,19 @@ Generates fresh 'static' and 'production' files (from 'development' source files
 ### Options:
 	-h, --help            show this help message and exit
 	-m MODE, --mode=MODE  may be: 'refcount' (default - count up all foreignkey
-	                      references for sort orders and such) or 'index'
-	                      (assign each record a sequential integer index). Note
-	                      regarding 'index' mode: it _must_ happen remotely;
-	                      it's generally unnecessary unless you're trying to
-	                      migrate an unindexed database away from gae and need
-	                      an index/key per record; it should be invoked from
-	                      _outside_ -- that's right, outside -- of your
-	                      project's directory (to avoid loading up a bunch of
-	                      google network tools that may be crappy or cause
-	                      issues outside of their normal 'dev_appserver'
-	                      environment
+	                      references for sort orders and such); 'index' (assign
+	                      each record a sequential integer index); 'urlsafekeys'
+	                      (update all key/keylist properties to use urlsafe keys
+	                      introduced in ct 0.8); 'cleanup' (delete zero-count
+	                      reference counters). Note regarding 'index' mode: it
+	                      _must_ happen remotely; it's generally unnecessary
+	                      unless you're trying to migrate an unindexed database
+	                      away from gae and need an index/key per record; it
+	                      should be invoked from _outside_ -- that's right,
+	                      outside -- of your project's directory (to avoid
+	                      loading up a bunch of google network tools that may be
+	                      crappy or cause issues outside of their normal
+	                      'dev_appserver' environment
 	-d DOMAIN, --domain=DOMAIN
 	                      ('index' mode only) what's the domain of the target
 	                      server? (default: localhost)
@@ -161,10 +163,13 @@ As you can see, this script's behavior changes according to the backend of the t
 
 ### dez
 Run this if your CTRefCount records get messed up for
-some reason. It will go through and recount everything.
+some reason. It will go through and recount everything
+(in the default 'refcount' mode -- the other modes,
+'urlsafekeys' and 'cleanup', are for migrating a CT-mediated
+database from an older deployment to CT 0.8 or newer).
 
 ### gae
-Run this on a database with lots of missing index values.
+Run this in 'index' mode on a database with lots of missing index values.
 
 # Front (JS Library)
 
