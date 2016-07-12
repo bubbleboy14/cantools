@@ -120,6 +120,8 @@ class ModelBase(sa_dbase):
                     val = val.urlsafe()
                 elif val and prop == "datetime":
                     val = str(val)[:19]
+                elif prop in ["string", "text"]:
+                    val = val or ""
                 cols[key] = val
         return cols
 
