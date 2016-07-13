@@ -16,7 +16,7 @@
 	                      outside -- of your project's directory (to avoid
 	                      loading up a bunch of google network tools that may be
 	                      crappy or cause issues outside of their normal
-	                      'dev_appserver' environment
+	                      'dev_appserver' environment)
 	-d DOMAIN, --domain=DOMAIN
 	                      ('index' mode only) what's the domain of the target
 	                      server? (default: localhost)
@@ -168,7 +168,7 @@ def go():
 			"gae and need an index/key per record; it should be invoked from _outside_ "
 			"-- that's right, outside -- of your project's directory (to avoid loading "
 			"up a bunch of google network tools that may be crappy or cause issues outside "
-			"of their normal 'dev_appserver' environment")
+			"of their normal 'dev_appserver' environment)")
 	parser.add_option("-d", "--domain", dest="domain", default="localhost",
 		help="('index' mode only) what's the domain of the target server? (default: localhost)")
 	parser.add_option("-p", "--port", dest="port", default="8080",
