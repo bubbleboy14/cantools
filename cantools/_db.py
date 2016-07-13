@@ -4,16 +4,18 @@ from cantools.util import getxls
 from cantools import config
 import model # load up all models (for schema)
 
+changers = ["edit", "delete", "put", "index", "bulk"]
+
 def response():
 	action = cgi_get("action", choices=["schema", "get", "blob", "edit", "delete", "put", "index", "bulk"])
 
 	# edit/delete/put/index/bulk always require credentials; getters do configurably
-	if not config.db.public or action in ["edit", "delete", "put", "index", "bulk"]:
+	if not config.db.public or action in changers:
 		if cgi_get("pw") != config.admin.pw:
 			fail("wrong")
 
 	# clear cache!
-	if config.memcache.db and action in ["edit", "delete", "put", "bulk"]:
+	if config.memcache.db and action in changers:
 		clearmem()
 
 	if action == "schema":
