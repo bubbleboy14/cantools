@@ -1,5 +1,5 @@
 """
-### Usage: ctindex [--mode=MODE] [--domain=DOMAIN] [--port=PORT]
+### Usage: ctindex [--mode=MODE] [--domain=DOMAIN] [--port=PORT] [--skip=SKIP]
 
 ### Options:
 	-h, --help            show this help message and exit
@@ -22,6 +22,9 @@
 	                      server? (default: localhost)
 	-p PORT, --port=PORT  ('index' mode only) what's the port of the target
 	                      server? (default: 8080)
+	-s SKIP, --skip=SKIP  skip these tables ('index' mode only) - use '|' as
+	                      separator, such as 'table1|table2|table3' (default:
+	                      none)
 
 As you can see, this script's behavior changes according to the backend of the target project.
 
@@ -127,14 +130,17 @@ def _index_kind(kind, host, port, pw):
 		retry += 1
 		log("trying again (retry: %s)"%(retry,))
 
-def index(host, port):
+def index(host, port, skips):
 	pw = getpass("what's the admin password? ")
 	log("indexing db at %s:%s"%(host, port), important=True)
 #	log(fetch(host, "/_db?action=index&pw=%s"%(pw,), port))
 	log("acquiring schema")
 	schema = fetch(host, "/_db?action=schema", port, ctjson=True)
 	for kind in schema:
-		_index_kind(kind, host, port, pw)
+		if kind in skips:
+			log("skipping %s"%(kind,), important=True)
+		else:
+			_index_kind(kind, host, port, pw)
 
 #
 # url safety
@@ -173,7 +179,7 @@ def cleanup():
 	log("all gone!")
 
 def go():
-	parser = OptionParser("ctindex [--mode=MODE] [--domain=DOMAIN] [--port=PORT]")
+	parser = OptionParser("ctindex [--mode=MODE] [--domain=DOMAIN] [--port=PORT] [--skip=SKIP]")
 	parser.add_option("-m", "--mode", dest="mode", default="refcount",
 		help="may be: 'refcount' (default - count up all foreignkey references for sort "
 			"orders and such); 'index' (assign each record a sequential integer index); "
@@ -189,13 +195,15 @@ def go():
 		help="('index' mode only) what's the domain of the target server? (default: localhost)")
 	parser.add_option("-p", "--port", dest="port", default="8080",
 		help="('index' mode only) what's the port of the target server? (default: 8080)")
+	parser.add_option("-s", "--skip", dest="skip", default="",
+		help="skip these tables ('index' mode only) - use '|' as separator, such as 'table1|table2|table3' (default: none)")
 	options, args = parser.parse_args()
 
 	log("mode: %s"%(options.mode,), important=True)
 	if options.mode == "refcount":
 		refcount()
 	elif options.mode == "index":
-		index(options.domain, int(options.port))
+		index(options.domain, int(options.port), options.skip and options.skip.split("|") or [])
 	elif options.mode == "urlsafekeys":
 		urlsafe()
 	elif options.mode == "cleanup":
