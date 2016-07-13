@@ -32,6 +32,7 @@ function, which uses the CT.db module to acquire data.
 
 CT.autocomplete.Guesser = CT.Class({
 	CLASSNAME: "CT.autocomplete.Guesser",
+	targets: [],
 	_doNothing: function() {},
 	_returnTrue: function() { return true; },
 	tapTag: function(data) {
@@ -45,6 +46,7 @@ CT.autocomplete.Guesser = CT.Class({
 				n.className += " " + word.slice(0, i);
 		});
 		this.node.firstChild.appendChild(n);
+		this.targets.push(n);
 		n.onclick = function() {
 			this.tapTag(data);
 		}.bind(this);
@@ -79,20 +81,51 @@ CT.autocomplete.Guesser = CT.Class({
 			return true;
 		}
 	},
+	_unselect: function() {
+		if (this.selection) {
+			this.selection.classList.remove("drop-selection");
+			this.selection = null;
+		}
+	},
+	_select: function(godown) { // else go up
+		if (this.targets.length) {
+			var index = this.targets.indexOf(this.selection);
+			index += godown ? 1 : -1;
+			if (index < 0)
+				index = this.targets.length - 1;
+			else if (index >= this.targets.length)
+				index = 0;
+			this._unselect();
+			this.selection = this.targets[index];
+			this.selection.classList.add("drop-selection");
+			this.selection.scrollIntoViewIfNeeded();
+		}
+	},
 	_onKeyUp: function(e) {
 		e = e || window.event;
 		var code = e.keyCode || e.which;
-		if (code == 13 || code == 3) {
-			this.input.blur();
-			this.opts.enterCb(this.input.value);
+		if (code == 27)
+			return this._retract();
+		if (code == 38 || code == 40)
+			this._select(code == 40);
+		else if (code == 13 || code == 3) {
+			if (this.selection) {
+				this.selection.onclick();
+				this._unselect();
+				this.targets.length = 0;
+			} else {
+				this.input.blur();
+				this.opts.enterCb(this.input.value);
+			}
 		} else if (this.input.value) {
-			var tagfrag = this.input.value.toLowerCase(),
-				targets = CT.dom.className(tagfrag, this.node);
+			var tagfrag = this.input.value.toLowerCase();
+			this.targets = CT.dom.className(tagfrag, this.node);
+			this._unselect();
 			CT.dom.mod({
 				className: "tagline",
 				hide: true
 			});
-			if (targets.length)
+			if (this.targets.length)
 				CT.dom.mod({
 					className: tagfrag,
 					show: true
@@ -111,7 +144,18 @@ CT.autocomplete.Guesser = CT.Class({
 		this.input.value = data.label;
 		this.input.onenter && this.input.onenter();
 	},
+	_focus: function() {
+		this.input.focus();
+	},
+	_retract: function() {
+		this._unselect();
+		this.targets.length = 0;
+		this.retract();
+		setTimeout(this._focus, 500);
+	},
 	_waitRetract: function() {
+		this._unselect();
+		this.targets.length = 0;
 		setTimeout(this.retract, 500);
 	},
 	init: function(opts) {

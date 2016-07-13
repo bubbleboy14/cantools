@@ -24,7 +24,7 @@ CT.Drop = CT.Class({
 		CT.trans.trans({
 			node: n,
 			cb: function() {
-				n.className += " drop-auto-over";
+				n.className += " scrolly";
 				cb && cb();
 			}
 		});
