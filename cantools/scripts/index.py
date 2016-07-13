@@ -46,6 +46,7 @@ if config.web.server == "dez":
 	from cantools.db import session, func, refresh_counter
 
 counts = { "_counters": 0 }
+RETRIES = 5
 
 #
 # dez
@@ -111,6 +112,21 @@ def refcount():
 # gae
 #
 
+def _log_fetch(host, url, port):
+	res = fetch(host, url, port)
+	log(res)
+	return res
+
+def _index_kind(kind, host, port, pw):
+	log("indexing %s"%(kind,), important=True)
+	retry = 0
+	while "Error" in _log_fetch(host, "/_db?action=index&pw=%s&kind=%s"%(pw, kind), port):
+		log("error indexing %s"%(kind,), important=True)
+		if retry == RETRIES:
+			error("tried %s times! sorry."%(retry,))
+		retry += 1
+		log("trying again (retry: %s)"%(retry,))
+
 def index(host, port):
 	pw = getpass("what's the admin password? ")
 	log("indexing db at %s:%s"%(host, port), important=True)
@@ -118,7 +134,7 @@ def index(host, port):
 	log("acquiring schema")
 	schema = fetch(host, "/_db?action=schema", port, ctjson=True)
 	for kind in schema:
-		log(fetch(host, "/_db?action=index&pw=%s&kind=%s"%(pw, kind), port))
+		_index_kind(kind, host, port, pw)
 
 #
 # url safety
