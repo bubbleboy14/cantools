@@ -13,7 +13,7 @@ class Query(object):
         self.mod = mod
         self.schema = get_schema(mod)
         self.session = kwargs.pop("session", session)
-        self.query = self.session.query(mod)
+        self.query = kwargs.pop("query", self.session.query(mod))
         for fname in _passthru:
             setattr(self, fname, self._qpass(fname))
         for fname in _qmod:
@@ -53,6 +53,7 @@ class Query(object):
         return self
 
     def copy(self, *args, **kwargs):
+        kwargs["query"] = self.query
         return Query(self.mod, *args, **kwargs)
 
     def fetch(self, limit=None, offset=0, keys_only=False):
