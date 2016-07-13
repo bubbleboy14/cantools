@@ -1,9 +1,8 @@
-from cantools.util import log
 from cantools.db import get_model, get_schema, put_multi
+from cantools.util import log
 
-def index(kind): # be careful with this!
+def index(kind, i=0): # be careful with this!
 	kinds = kind == "*" and get_schema().keys() or [kind]
-	i = 0
 	puts = []
 	for kind in kinds:
 		mod = get_model(kind)
@@ -19,3 +18,4 @@ def index(kind): # be careful with this!
 		puts += items
 	log("saving %s records"%(len(puts),), important=True)
 	put_multi(puts)
+	return i
