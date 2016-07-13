@@ -79,12 +79,12 @@ def response():
 		else:
 			if not value and hasattr(ent, "getBlob"): # for custom blob construction (such as split up gae blobs)
 				blob = ent.getBlob()
-			else:
-				blob = blob.get()
 			if config.web.server == "gae":
 				send_file(blob) # no magic :'(
 			else:
 				import magic
+				if hasattr(blob, "get"): # if not getBlob(), essentially
+					blob = blob.get()
 				send_file(blob, magic.from_buffer(blob, True))
 	elif action == "edit":
 		succeed(edit(cgi_get("data")).data())
