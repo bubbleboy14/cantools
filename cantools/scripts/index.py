@@ -114,11 +114,11 @@ def refcount():
 def index(host, port):
 	pw = getpass("what's the admin password? ")
 	log("indexing db at %s:%s"%(host, port), important=True)
-	log(fetch(host, "/_db?action=index&pw=%s"%(pw,), port))
-#	log("acquiring schema")
-#	schema = fetch(host, "/_db?action=schema", port, ctjson=True)
-#	for kind in schema:
-#		log(fetch(host, "/_db?action=index&pw=%s&kind=%s"%(pw, kind), port))
+#	log(fetch(host, "/_db?action=index&pw=%s"%(pw,), port))
+	log("acquiring schema")
+	schema = fetch(host, "/_db?action=schema", port, ctjson=True)
+	for kind in schema:
+		log(fetch(host, "/_db?action=index&pw=%s&kind=%s"%(pw, kind), port))
 
 #
 # url safety
