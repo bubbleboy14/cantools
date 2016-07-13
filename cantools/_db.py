@@ -1,5 +1,5 @@
 from cantools.web import respond, succeed, fail, send_file, cgi_get, cgi_dump, read_file, getmem, setmem, clearmem
-from cantools.db import get, get_model, get_schema, get_page, get_multi, put_multi, edit, dprep, admin, BlobWrapper
+from cantools.db import get, get_model, get_schema, get_page, get_multi, put_multi, edit, dprep, admin
 from cantools.util import getxls
 from cantools import config
 import model # load up all models (for schema)
@@ -57,10 +57,10 @@ def response():
 				setmem(sig, res, False)
 		succeed(res)
 	elif action == "blob":
-		import magic
 		value = cgi_get("value", required=False) # fastest way
 		data = cgi_get("data", required=False)
 		if value:
+			from cantools.db import BlobWrapper # keep gae happy
 			blob = BlobWrapper(value=value)
 		else:
 			ent = get(cgi_get("key"))
@@ -77,8 +77,15 @@ def response():
 				blob = getattr(ent, prop)
 			succeed(blob.urlsafe())
 		else:
-			blob = blob.get()
-			send_file(blob, magic.from_buffer(blob, True))
+			if not value and hasattr(ent, "getBlob"): # for custom blob construction (such as split up gae blobs)
+				blob = ent.getBlob()
+			else:
+				blob = blob.get()
+			if config.web.server == "gae":
+				send_file(blob) # no magic :'(
+			else:
+				import magic
+				send_file(blob, magic.from_buffer(blob, True))
 	elif action == "edit":
 		succeed(edit(cgi_get("data")).data())
 	elif action == "put":
