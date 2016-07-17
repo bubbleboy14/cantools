@@ -1,4 +1,4 @@
-# cantools 0.8.1
+# cantools 0.8.2
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
 License: MIT (see LICENSE)
@@ -123,19 +123,22 @@ Generates fresh 'static' and 'production' files (from 'development' source files
     -p PORT, --port=PORT  use a specific port (default: 8888)
 
 ## ctmigrate
-### Usage: ctmigrate [load|dump] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME]
+### Usage: ctmigrate [load|dump] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME] [--skip=SKIP] [-n]
 
 ### Options:
 	-h, --help            show this help message and exit
 	-d DOMAIN, --domain=DOMAIN
-						  domain of target server (default: localhost)
+	                      domain of target server (default: localhost)
 	-p PORT, --port=PORT  port of target server (default: 8080)
 	-f FILENAME, --filename=FILENAME
-						  name of sqlite data file for dumping/loading to/from
-						  (default: dump.db)
+	                      name of sqlite data file for dumping/loading to/from
+	                      (default: dump.db)
+	-s SKIP, --skip=SKIP  don't dump these tables - use '|' as separator, such
+	                      as 'table1|table2|table3' (default: none)
+	-n, --no_binary       disable binary download
 
 ## ctindex
-### Usage: ctindex [--mode=MODE] [--domain=DOMAIN] [--port=PORT]
+### Usage: ctindex [--mode=MODE] [--domain=DOMAIN] [--port=PORT] [--skip=SKIP]
 
 ### Options:
 	-h, --help            show this help message and exit
@@ -152,12 +155,15 @@ Generates fresh 'static' and 'production' files (from 'development' source files
 	                      outside -- of your project's directory (to avoid
 	                      loading up a bunch of google network tools that may be
 	                      crappy or cause issues outside of their normal
-	                      'dev_appserver' environment
+	                      'dev_appserver' environment)
 	-d DOMAIN, --domain=DOMAIN
 	                      ('index' mode only) what's the domain of the target
 	                      server? (default: localhost)
 	-p PORT, --port=PORT  ('index' mode only) what's the port of the target
 	                      server? (default: 8080)
+	-s SKIP, --skip=SKIP  skip these tables ('index' mode only) - use '|' as
+	                      separator, such as 'table1|table2|table3' (default:
+	                      none)
 
 As you can see, this script's behavior changes according to the backend of the target project.
 
