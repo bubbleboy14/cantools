@@ -38,10 +38,13 @@ class Query(object):
 
     def _qpass(self, fname):
         def qp(*args, **kwargs):
+            from cantools import config
             qkey = "Query.%s: %s %s (%s)"%(fname, args, kwargs, self.query)
-            start_timer(qkey)
+            if "timer" in config.log.allow:
+                start_timer(qkey)
             res = getattr(self.query, fname)(*args, **kwargs)
-            end_timer(qkey)
+            if "timer" in config.log.allow:
+                end_timer(qkey)
             return res
         return qp
 
