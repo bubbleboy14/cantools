@@ -40,10 +40,10 @@ class Query(object):
         def qp(*args, **kwargs):
             from cantools import config
             qkey = "Query.%s: %s %s (%s)"%(fname, args, kwargs, self.query)
-            if "timer" in config.log.allow:
+            if "query" in config.log.allow:
                 start_timer(qkey)
             res = getattr(self.query, fname)(*args, **kwargs)
-            if "timer" in config.log.allow:
+            if "query" in config.log.allow:
                 end_timer(qkey)
             return res
         return qp
