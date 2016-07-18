@@ -85,7 +85,7 @@ def response():
 				import magic
 				if hasattr(blob, "get"): # if not getBlob(), essentially
 					blob = blob.get()
-				send_file(blob, magic.from_buffer(blob, True))
+				send_file(blob, blob and magic.from_buffer(blob, True))
 	elif action == "edit":
 		succeed(edit(cgi_get("data")).data())
 	elif action == "put":
