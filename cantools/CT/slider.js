@@ -407,7 +407,7 @@ CT.slider.Frame = CT.Class({
 		this.on.show = menu.show;
 	},
 	profile: function() {
-		var img = CT.dom.node(null, "div", "w2-3 h4-5",
+		var img = CT.dom.node(null, "div", "w2-3 h1",
 			null, null, { backgroundImage: "url(" + this.opts.img + ")" }),
 			buttons = CT.dom.node(null, "div", "centered");
 		if (this.slider.opts.pan) {
@@ -422,10 +422,10 @@ CT.slider.Frame = CT.Class({
 			buttons.appendChild(CT.dom.button(b, this.opts.buttons[b], "round padded margined"));
 		this.node.appendChild(CT.dom.node([
 			CT.dom.node(this.opts.name, "div", "biggest"),
-			CT.dom.node(this.opts.description)
+			CT.dom.node(this.opts.description),
+			buttons
 		], "div", "right thirdwidth"));
 		this.node.appendChild(img);
-		this.node.appendChild(buttons);
 	},
 	init: function(opts, slider) {
 		this.opts = opts;
