@@ -53,10 +53,13 @@ CT.Drop = CT.Class({
 		this.opts = opts = CT.merge(opts, {
 			content: CT.dom.node(),
 			parent: document.body,
+			rows: false,
 			relative: false,
 			setClick: true
 		});
-		this.className = opts.relative ? "relative drop above" : "whiteback drop above";
+		this.className = opts.relative ? "relative drop" : "whiteback drop above";
+		if (this.opts.rows)
+			this.className += " drop-rows";
 		this.node = CT.dom.node(opts.content, null, this.className + " hider");
 		this.node.onclick = this.slide;
 		opts.parent.appendChild(this.node);
