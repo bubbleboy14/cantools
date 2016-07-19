@@ -93,10 +93,12 @@
 .big { font-size: 120%; }
 .bigger { font-size: 140%; }
 .biggest { font-size: 180%; }
+.biggerest { font-size: 230%; }
 .gigantic { font-size: 400%; }
 .small { font-size: 80%; }
 .smaller { font-size: 60%; }
 .smallest { font-size: 40%; }
+.smallerest { font-size: 30%; }
 .tiny { font-size: 25%; }
 
 /* appearance */
@@ -480,7 +482,7 @@
     z-index: 200;
     padding: 10px;
     width: 56%;
-    height: 28%;
+    min-height: 28%;
     white-space: normal;
     position: absolute;
     top: 100px;
