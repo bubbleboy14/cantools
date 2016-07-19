@@ -61,7 +61,14 @@
 .abs { position: absolute !important; }
 .fixed { position: fixed !important; }
 .relative { position: relative !important; }
+.high { z-index: 100 !important; }
+.higher { z-index: 200 !important; }
+.highest { z-index: 300 !important; }
 .above { z-index: 1000 !important; }
+.low { z-index: -100 !important; }
+.lower { z-index: -200 !important; }
+.lowest { z-index: -300 !important; }
+.below { z-index: -1000 !important; }
 .right { float: right; }
 .left { float: left; }
 .clearnode { clear: both; }
@@ -102,8 +109,10 @@
 .tiny { font-size: 25%; }
 
 /* appearance */
+.m0 { margin: 0px !important; }
 .m5 { margin: 5px; }
 .m10 { margin: 10px; }
+.p0 { padding: 0px !important; }
 .p5 { padding: 5px; }
 .p10 { padding: 10px; }
 .ph10 {
@@ -396,6 +405,9 @@
 .whiteback {
     background: white;
 }
+.whitelink a {
+    color: white;
+}
 /* drop classes */
 .drop {
   z-index: 10;
@@ -405,13 +417,13 @@
   overflow: hidden;
   -webkit-transition: max-height 600ms ease-out;
 }
-.drop div div {
+.drop-rows div div {
   padding: 5px 15px;
   border-bottom: 1px solid gray;
   background: lightgray;
   cursor: pointer;
 }
-.drop div div:hover, .drop-selection {
+.drop-rows div div:hover, .drop-selection {
   color: white;
   font-weight: bold;
   background-color: darkgray !important;
