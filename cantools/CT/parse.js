@@ -204,7 +204,16 @@ CT.parse = {
 	    return b.replace(/^\s+|\s+$/g,"");
 	},
 
-	// relative timestamps
+	// timestamps
+	"date2string": function(d, spaces) {
+		var month = d.getMonth() + 1, date = d.getDate();
+		if (month < 10)
+			month = '0' + month;
+		if (date < 10)
+			date = '0' + date;
+		return d.getFullYear() + '-' + month + '-' + date + (spaces ? '' : 'T') + d.getHours()
+			+ ':' + d.getMinutes() + ':' + d.getSeconds() + (spaces ? '' : 'Z');
+	},
 	"_stampString": function(diff, name) {
 	    if (!diff) return false;
 	    return diff + " " + name + (diff == 1 ? "" : "s");
