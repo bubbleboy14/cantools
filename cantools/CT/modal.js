@@ -266,6 +266,7 @@ CT.modal.Prompt = CT.Class({
 		string: function() {
 			if (this.opts.autocomplete)
 				return CT.autocomplete.DBGuesser({
+					rows: true,
 					input: CT.dom.field(),
 					tapCb: this.submitAC,
 					property: this.opts.autocomplete.property,

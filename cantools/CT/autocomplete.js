@@ -173,7 +173,7 @@ CT.autocomplete.Guesser = CT.Class({
 		});
 		CT.autocomplete.Guesser.id += 1;
 		this.id = CT.autocomplete.Guesser.id;
-		this.input = opts.input;
+		this.input = this.anchor = opts.input;
 		CT.gesture.listen("down", this.input, this._returnTrue);
 		CT.gesture.listen("up", this.input, this._onUp);
 		this.input.addEventListener("keyup", this._onKeyUp);
