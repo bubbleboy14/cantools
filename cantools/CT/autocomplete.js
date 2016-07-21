@@ -168,6 +168,9 @@ CT.autocomplete.Guesser = CT.Class({
 			anchor: opts.input,
 			data: []
 		});
+		opts.data = opts.data.map(function(d) {
+			return typeof d == "string" ? { label: d } : d;
+		});
 		CT.autocomplete.Guesser.id += 1;
 		this.id = CT.autocomplete.Guesser.id;
 		this.input = opts.input;
