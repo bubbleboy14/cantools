@@ -205,14 +205,14 @@ CT.parse = {
 	},
 
 	// timestamps
-	"date2string": function(d, spaces) {
+	"date2string": function(d, noletters) {
 		var month = d.getMonth() + 1, date = d.getDate();
 		if (month < 10)
 			month = '0' + month;
 		if (date < 10)
 			date = '0' + date;
-		return d.getFullYear() + '-' + month + '-' + date + (spaces ? '' : 'T') + d.getHours()
-			+ ':' + d.getMinutes() + ':' + d.getSeconds() + (spaces ? '' : 'Z');
+		return d.getFullYear() + '-' + month + '-' + date + (noletters ? ' ' : 'T') + d.getHours()
+			+ ':' + d.getMinutes() + ':' + d.getSeconds() + (noletters ? '' : 'Z');
 	},
 	"_stampString": function(diff, name) {
 	    if (!diff) return false;
