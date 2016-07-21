@@ -55,14 +55,16 @@ CT.Drop = CT.Class({
 			parent: document.body,
 			rows: false,
 			relative: false,
-			setClick: true
+			setClick: true,
+			setNodeClick: true
 		});
 		this.className = opts.relative ? "relative drop" : "whiteback drop above";
 		if (this.opts.rows)
 			this.className += " drop-rows";
 		this.anchor = opts.anchor;
 		this.node = CT.dom.node(opts.content, null, this.className + " hider");
-		this.node.onclick = this.slide;
+		if (opts.setNodeClick)
+			this.node.onclick = this.slide;
 		opts.parent.appendChild(this.node);
 		CT.drag.makeDraggable(this.node, { constraint: "horizontal" });
 		setTimeout(this._setAnchor); // for subclasses that define anchor in constructor
