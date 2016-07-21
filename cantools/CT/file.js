@@ -34,10 +34,10 @@ CT.file = {
 
 CT.file.File = CT.Class({
 	CLASSNAME: "CT.file.File",
-	download: function(dname, lname) {
+	download: function(dname, lname, dclass) {
 		lname = lname || "download";
 		var l = CT.dom.link(lname, null,
-			this.url, null, null, null, true);
+			this.url, dclass, null, null, true);
 		l.download = dname || this.name() || lname;
 		return l;
 	},
