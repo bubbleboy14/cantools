@@ -7,7 +7,8 @@ CT.Drop = CT.Class({
 	CLASSNAME: "CT.Drop",
 	_position: function() {
 		var ipos = CT.align.offset(this.anchor);
-		this.node.style.width = (this.anchor.clientWidth + 2) + "px";
+		if (this.opts.setWidth)
+			this.node.style.width = (this.anchor.clientWidth + 2) + "px";
 		this.node.style.top = (ipos.top + this.anchor.clientHeight) + "px";
 		this.node.style.left = (ipos.left + 2) + "px";
 	},
@@ -56,10 +57,11 @@ CT.Drop = CT.Class({
 			rows: false,
 			relative: false,
 			setClick: true,
-			setNodeClick: true
+			setNodeClick: true,
+			setWidth: false
 		});
 		this.className = opts.relative ? "relative drop" : "whiteback drop above";
-		if (this.opts.rows)
+		if (opts.rows)
 			this.className += " drop-rows";
 		this.anchor = opts.anchor;
 		this.node = CT.dom.node(opts.content, null, this.className + " hider");
