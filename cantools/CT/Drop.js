@@ -58,7 +58,7 @@ CT.Drop = CT.Class({
 			relative: false,
 			setClick: true,
 			setNodeClick: true,
-			setWidth: false
+			setWidth: true
 		});
 		this.className = opts.relative ? "relative drop" : "whiteback drop above";
 		if (opts.rows)
