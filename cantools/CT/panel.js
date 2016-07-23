@@ -106,7 +106,7 @@ CT.panel = {
 	        newnode.firstChild.innerHTML = newhtml;
 	    CT.mobile && CT.mobile.mobileSnap();
 	},
-	"add": function(key, trysidepanel, keystring, itemnode, panelnode, nospace, icon, cb) {
+	"add": function(key, trysidepanel, keystring, itemnode, panelnode, nospace, icon, cb, condition) {
 	    nospace = nospace || key.replace(/ /g, "");
 	    keystring = keystring || "sb";
 	    if (!CT.dom.id(keystring + "panel" + nospace)) {
@@ -121,6 +121,7 @@ CT.panel = {
 	    else {
 	        itemnode = itemnode || CT.dom.id(keystring+"items");
 	        var clickfunc = function() {
+	        	if (condition && !condition()) return;
 	            CT.panel.swap(nospace, trysidepanel, keystring);
 	            cb && cb();
 	        };
@@ -157,19 +158,19 @@ CT.panel = {
 	    var l = CT.dom.id(keystring+"item"+nospace);
 	    if (l) l.style.display = "none";
 	},
-	"load": function(pnames, trysidepanel, keystring, itemnode, panelnode, nospaces, icons, noclear, stillswap, cbs) {
+	"load": function(pnames, trysidepanel, keystring, itemnode, panelnode, nospaces, icons, noclear, stillswap, cbs, condition) {
 	    keystring = keystring || "sb";
 	    if (!noclear)
 	        (itemnode || CT.dom.id(keystring+"items")).innerHTML = "";
 	    for (var i = 0; i < pnames.length; i++)
 	        CT.panel.add(pnames[i], trysidepanel, keystring, itemnode,
 	            panelnode, nospaces && nospaces[i] || null,
-	            icons && icons[i] || null, cbs && cbs[i] || null);
+	            icons && icons[i] || null, cbs && cbs[i] || null, condition);
 	    if (pnames.length && (stillswap || (!itemnode && !noclear)))
 	        CT.panel.swap(pnames[0], trysidepanel, keystring);
 	},
-	"simple": function(pnames, keystring, itemnode, panelnode, cbs) {
-		CT.panel.load(pnames, null, keystring, itemnode, panelnode, null, null, null, true, cbs);
+	"simple": function(pnames, keystring, itemnode, panelnode, cbs, condition) {
+		CT.panel.load(pnames, null, keystring, itemnode, panelnode, null, null, null, true, cbs, condition);
 	},
 	"pager": function(getContent, request, limit, colClass, dataClass, ks) {
 		var keystring = ks || ("p" + CT.Pager._id),
