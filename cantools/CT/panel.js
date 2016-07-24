@@ -37,18 +37,25 @@ which triggers cb(d), where d is the corresponding object in the 'data' array.
 
 CT.panel = {
 	"lastClicked": {},
-	"accordion": function(data, triggerCb, activeClass, renderCb, condition) {
+	"accordion": function(data, triggerCb, activeClass, renderCb, condition, notick) {
 		var t, n = CT.dom.node(null, null, "tabbed pointer");
 		data.forEach(function(d) {
 			if (d.children) {
-				t = CT.dom.node(d.name);
+				var tick = CT.dom.node(">", "div", "inline-block ph10" + (notick && " hidden" || ""));
+				t = CT.dom.node([tick, CT.dom.node(d.name, "div", "inline-block")]);
 				n.appendChild(t);
 				new CT.Drop({
 					anchor: t,
 					parent: n,
 					relative: true,
 					constrained: false,
-					content: CT.panel.accordion(d.children, triggerCb, activeClass, renderCb, condition)
+					content: CT.panel.accordion(d.children, triggerCb, activeClass, renderCb, condition),
+					onShow: function() {
+						CT.trans.rotate(tick, { duration: 100, degrees: 90 });
+					},
+					onHide: function() {
+						CT.trans.rotate(tick, { duration: 100, degrees: 0 });
+					}
 				});
 			} else {
 				t = CT.panel.trigger(d, triggerCb, activeClass, renderCb, condition);
