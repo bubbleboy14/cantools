@@ -18,10 +18,10 @@ CT.Drop = CT.Class({
 	},
 	expand: function(cb) {
 		cb = cb || this.opts.onShow;
-		var n = this.node;
+		var n = this.node, cls = this.opts.constrained ? "open" : "unconstrained";
 		!this.opts.relative && this._position();
 		this.viewing = true;
-		n.className = this.className + " drop-open";
+		n.className = this.className + " drop-" + cls;
 		CT.trans.trans({
 			node: n,
 			cb: function() {
@@ -58,7 +58,8 @@ CT.Drop = CT.Class({
 			relative: false,
 			setClick: true,
 			setNodeClick: true,
-			setWidth: true
+			setWidth: true,
+			constrained: true
 		});
 		this.className = opts.relative ? "relative drop" : "whiteback drop above";
 		if (opts.rows)
