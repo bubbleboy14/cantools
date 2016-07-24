@@ -327,6 +327,9 @@
 .padded5 {
     padding: 5px;
 }
+.tabbed {
+    padding-left: 20px;
+}
 .red {
     color: red;
 }
@@ -428,6 +431,9 @@
   color: white;
   font-weight: bold;
   background-color: darkgray !important;
+}
+.drop-unconstrained {
+    max-height: none;
 }
 .drop-open {
     max-height: 200px;
