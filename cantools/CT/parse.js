@@ -224,6 +224,11 @@ CT.parse = {
 		return d.getFullYear() + '-' + month + '-' + date + (noletters ? ' ' : 'T') + d.getHours()
 			+ ':' + d.getMinutes() + ':' + d.getSeconds() + (noletters ? '' : 'Z');
 	},
+	"string2date": function(s) {
+		var year, month, rest;
+		[year, month, rest] = s.split("-");
+		return new Date(year, parseInt(month) - 1, rest.slice(0, 2));
+	},
 	"_stampString": function(diff, name) {
 	    if (!diff) return false;
 	    return diff + " " + name + (diff == 1 ? "" : "s");
