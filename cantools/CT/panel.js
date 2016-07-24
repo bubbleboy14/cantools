@@ -37,6 +37,26 @@ which triggers cb(d), where d is the corresponding object in the 'data' array.
 
 CT.panel = {
 	"lastClicked": {},
+	"accordion": function(data, triggerCb, activeClass, renderCb, condition) {
+		var t, n = CT.dom.node(null, null, "tabbed pointer");
+		data.forEach(function(d) {
+			if (d.children) {
+				t = CT.dom.node(d.name);
+				n.appendChild(t);
+				new CT.Drop({
+					anchor: t,
+					parent: n,
+					relative: true,
+					constrained: false,
+					content: CT.panel.accordion(d.children, triggerCb, activeClass, renderCb, condition)
+				});
+			} else {
+				t = CT.panel.trigger(d, triggerCb, activeClass, renderCb, condition);
+				n.appendChild(t);
+			}
+		});
+		return n;
+	},
 	"trigger": function(data, cb, activeClass, content, condition) {
 		var label = data.label || data.title || data.name || data,
 			n = CT.dom.node(null, "div", null, label && ("tl" + label));
