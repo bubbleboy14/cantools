@@ -203,6 +203,16 @@ CT.parse = {
 	    // regex from http://www.somacon.com/p355.php
 	    return b.replace(/^\s+|\s+$/g,"");
 	},
+	"niceNum": function(n) {
+		if (n < 999) return n;
+		var str = n.toString(),
+			pos = str.length - 3;
+		while (pos > 0) {
+			str = str.slice(0, pos) + "," + str.slice(pos);
+			pos -= 3;
+		}
+		return str;
+	},
 
 	// timestamps
 	"date2string": function(d, noletters) {

@@ -126,6 +126,7 @@
 .bold { font-weight: bold; }
 .italic { font-style: italic; }
 .bordered { border: 1px solid black; }
+.noborder { border: 0px; }
 .round {
     border-radius: 5px 5px 5px 5px;
     -moz-border-radius: 5px;
