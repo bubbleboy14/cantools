@@ -823,7 +823,7 @@ CT.dom = {
 			text = text.join("\n");
 		}
 		var node = href ? CT.dom.node(null, "link", null, null,
-			{ "href": href }) : CT.dom.node(text, "style");
+			{ "href": href, "rel": "stylesheet" }) : CT.dom.node(text, "style");
 		CT.dom.tag("head")[0].appendChild(node);
 	},
 
