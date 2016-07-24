@@ -432,9 +432,6 @@
   font-weight: bold;
   background-color: darkgray !important;
 }
-.drop-unconstrained {
-    max-height: none;
-}
 .drop-open {
     max-height: 200px;
 }

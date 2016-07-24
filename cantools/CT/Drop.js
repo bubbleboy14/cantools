@@ -18,10 +18,15 @@ CT.Drop = CT.Class({
 	},
 	expand: function(cb) {
 		cb = cb || this.opts.onShow;
-		var n = this.node, cls = this.opts.constrained ? "open" : "unconstrained";
+		var n = this.node;
 		!this.opts.relative && this._position();
 		this.viewing = true;
-		n.className = this.className + " drop-" + cls;
+		if (this.opts.constrained)
+			n.className = this.className + " drop-open";
+		else {
+			n.className = this.className;
+			n.style.maxHeight = this.opts.content.scrollHeight + "px";
+		}
 		CT.trans.trans({
 			node: n,
 			cb: function() {
@@ -35,6 +40,8 @@ CT.Drop = CT.Class({
 			return;
 		this.viewing = false;
 		this.node.className = this.className;
+		if (!this.opts.constrained)
+			this.node.style.maxHeight = "0px";
 		CT.trans.trans({
 			node: this.node,
 			cb: this._hide
