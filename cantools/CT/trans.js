@@ -136,7 +136,8 @@ CT.trans = {
 			var prevTrans = opts.node.style.transition || "",
 				transComponent = (CT.trans._.tswap[opts.property] || opts.property)
 		        	+ " " + opts.duration + "ms " + opts.ease,
-		        fullTrans = prevTrans ? (prevTrans + ", " + transComponent) : transComponent;
+		        fullTrans = (prevTrans && prevTrans.indexOf(transComponent) == -1)
+		        	? (prevTrans + ", " + transComponent) : transComponent;
 		    CT.trans.setVenderPrefixed(opts.node, "transition", fullTrans);
 		}
 	    if (opts.cb) {
