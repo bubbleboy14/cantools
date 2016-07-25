@@ -18,19 +18,19 @@ CT.Drop = CT.Class({
 	},
 	expand: function(cb) {
 		cb = cb || this.opts.onShow;
-		var n = this.node;
+		var n = this.node, opts = this.opts;
 		!this.opts.relative && this._position();
 		this.viewing = true;
-		if (this.opts.constrained)
+		if (opts.constrained)
 			n.className = this.className + " drop-open";
 		else {
 			n.className = this.className;
-			n.style.maxHeight = this.opts.content.scrollHeight + "px";
+			n.style.maxHeight = opts.content.scrollHeight + "px";
 		}
 		CT.trans.trans({
 			node: n,
 			cb: function() {
-				n.className += " scrolly";
+				if (opts.constrained) n.className += " scrolly";
 				cb && cb();
 			}
 		});
