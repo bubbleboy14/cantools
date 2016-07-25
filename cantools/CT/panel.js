@@ -65,7 +65,7 @@ CT.panel = {
 		});
 		return n;
 	},
-	"trigger": function(data, cb, activeClass, content, condition) {
+	"trigger": function(data, cb, activeClass, content, condition, rmbutton) {
 		var label = data.label || data.title || data.name || data,
 			n = CT.dom.node(null, "div", null, label && ("tl" + label));
 		activeClass = activeClass || "activetab";
@@ -84,13 +84,18 @@ CT.panel = {
 			n.select();
 			cb(data);
 		};
+		n.remove = function() {
+			CT.dom.remove(n);
+		};
+		if (rmbutton) 
+			n.appendChild(CT.dom.link("X", n.remove, null, "right"));
 		n.appendChild(CT.dom.link(content ? content(data) : label, n.trigger));
 		return n;
 	},
-	"triggerList": function(data, cb, node, activeClass, content, condition) {
+	"triggerList": function(data, cb, node, activeClass, content, condition, rmbutton) {
 		node = node || CT.dom.node();
 		data.forEach(function(d) {
-			node.appendChild(CT.panel.trigger(d, cb, activeClass, content, condition));
+			node.appendChild(CT.panel.trigger(d, cb, activeClass, content, condition, rmbutton));
 		});
 		return node;
 	},
