@@ -86,6 +86,7 @@ CT.panel = {
 		};
 		n.remove = function() {
 			CT.dom.remove(n);
+			n.onRemove && n.onRemove();
 		};
 		if (rmbutton) 
 			n.appendChild(CT.dom.link("X", n.remove, null, "right"));
