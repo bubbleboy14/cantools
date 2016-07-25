@@ -172,6 +172,7 @@ CT.trans = {
 			CT.trans.rotate(node, opts);
 		};
 		CT.trans.trans(opts);
+		return node;
 	},
 	translate: function(node, opts) {
 		opts = CT.merge(opts, CT.trans._.defaults.translate);
