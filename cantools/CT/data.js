@@ -65,14 +65,14 @@ CT.data = {
 			return arr.splice(elindex, 1);
 	},
 	"sum": function(arr) {
-		return arr.reduce(function(a, b) {
+		return arr.length ? arr.reduce(function(a, b) {
 			if (Array.isArray(a)) {
 				return a.map(function(v, i) {
 					return v + b[i];
 				});
 			}
 			return a + b;
-		});
+		}) : arr;
 	},
 
 	// cache
