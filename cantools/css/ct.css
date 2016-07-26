@@ -6,7 +6,8 @@
 .block { display: block; }
 .inline-block { display: inline-block; }
 .hidden { display: none; }
-.hider { visibility: hidden; }
+.hider, .invisible { visibility: hidden; }
+.visible { visibility: visible; }
 .transparent { opacity: 0; }
 .translucent { opacity: 0.7; }
 
