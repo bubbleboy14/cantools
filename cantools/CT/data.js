@@ -64,6 +64,16 @@ CT.data = {
 		if (elindex != -1)
 			return arr.splice(elindex, 1);
 	},
+	"sum": function(arr) {
+		return arr.reduce(function(a, b) {
+			if (Array.isArray(a)) {
+				return a.map(function(v, i) {
+					return v + b[i];
+				});
+			}
+			return a + b;
+		});
+	},
 
 	// cache
 	"has": function(key) {
