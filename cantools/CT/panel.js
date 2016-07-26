@@ -37,12 +37,26 @@ which triggers cb(d), where d is the corresponding object in the 'data' array.
 
 CT.panel = {
 	"lastClicked": {},
-	"accordion": function(data, triggerCb, activeClass, content, condition, notick) {
-		var t, n = CT.dom.node(null, null, "tabbed pointer");
+	"accordion": function(data, triggerCb, activeClass, content, condition, notick, rmbutton, ricon) {
+		var n = CT.dom.node(null, null, "tabbed pointer", "ac" + data.name);
+		n.add = function(tdata, makeFirst) {
+			var t = CT.panel.trigger(tdata, triggerCb, activeClass, content, condition, rmbutton, ricon);
+			if (makeFirst)
+				n.insertBefore(t, n.firstChild);
+			else
+				n.appendChild(t);
+			return t;
+		};
 		data.forEach(function(d) {
 			if (d.children) {
-				var tick = CT.dom.node(">", "div", "inline-block" + (notick && " hidden" || ""));
-				t = CT.dom.node([tick, CT.dom.node(content ? content(d) : d.name, "div", "inline-block")]);
+				var tick = CT.dom.node(">", "div", "inline-block" + (notick && " hidden" || "")),
+					t = CT.dom.node(),
+					tline = [tick, CT.dom.node(content ? content(d) : d.name, "div", "inline-block")];
+				if (ricon)
+					tline.unshift(CT.dom.node(ricon(d), "div", "right rpaddedsmall"));
+				CT.dom.setContent(t, tline);
+				t.content = CT.panel.accordion(d.children, triggerCb,
+					activeClass, content, condition, notick, rmbutton, ricon);
 				n.appendChild(t);
 				new CT.Drop({
 					anchor: t,
@@ -50,7 +64,7 @@ CT.panel = {
 					relative: true,
 					constrained: false,
 					setNodeClick: false,
-					content: CT.panel.accordion(d.children, triggerCb, activeClass, content, condition, notick),
+					content: t.content,
 					onShow: function() {
 						CT.trans.rotate(tick, { duration: 100, degrees: 90 });
 					},
@@ -58,14 +72,12 @@ CT.panel = {
 						CT.trans.rotate(tick, { duration: 100, degrees: 0 });
 					}
 				});
-			} else {
-				t = CT.panel.trigger(d, triggerCb, activeClass, content, condition);
-				n.appendChild(t);
-			}
+			} else
+				n.add(d);
 		});
 		return n;
 	},
-	"trigger": function(data, cb, activeClass, content, condition, rmbutton) {
+	"trigger": function(data, cb, activeClass, content, condition, rmbutton, ricon) {
 		var label = data.label || data.title || data.name || data,
 			n = CT.dom.node(null, "div", null, label && ("tl" + label));
 		activeClass = activeClass || "activetab";
@@ -88,6 +100,8 @@ CT.panel = {
 			CT.dom.remove(n);
 			n.onRemove && n.onRemove();
 		};
+		if (ricon)
+			n.appendChild(CT.dom.node(ricon(data), "div", "right rpaddedsmall"));
 		if (rmbutton) 
 			n.appendChild(CT.dom.link("X", n.remove, null, "right"));
 		n.appendChild(CT.dom.link(content ? content(data) : label, n.trigger));
