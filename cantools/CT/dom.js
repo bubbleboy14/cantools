@@ -134,7 +134,7 @@ CT.dom = {
 	},
 	"script": function(src, content, delay) {
 		if (delay)
-			content = "setTimeout(function() { " + content + " }, 1000);";
+			content = "setTimeout(function() { " + content + " }, " + delay + ");";
 		return CT.dom.node(content, "script", null, null, { "src": src });
 	},
 	"link": function(content, onclick, href, classname, id, attrs, newtab) {
