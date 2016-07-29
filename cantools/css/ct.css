@@ -80,6 +80,10 @@
     margin-left: auto;
     margin-right: auto;
 }
+.up10 { margin-top: -10px; }
+.down10 { margin-bottom: -10px; }
+.left10 { margin-left: -10px; }
+.right10 { margin-right: -10px; }
 
 /* absolute / fixed */
 .ctr {
