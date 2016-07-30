@@ -74,6 +74,15 @@ CT.data = {
 			return a + b;
 		}) : arr;
 	},
+	"alpha": function(arr, prop) {
+		return arr.sort(function(a, b) {
+			if (prop) {
+				a = a[prop];
+				b = b[prop];
+			}
+			return (a < b) ? -1 : (a > b) ? 1 : 0;
+		});
+	},
 
 	// cache
 	"has": function(key) {
