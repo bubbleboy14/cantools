@@ -758,6 +758,8 @@ CT.dom = {
 		CT.dom.showHideV(n, false, true);
 	},
 	"remove": function(n) {
+		if (!n) return;
+		if (typeof n == "string") n = CT.dom.id(n);
 		n && n.parentNode && n.parentNode.removeChild(n);
 	},
 	"clear": function(n) {
