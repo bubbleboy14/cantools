@@ -5,6 +5,7 @@
 /* display */
 .block { display: block; }
 .inline-block { display: inline-block; }
+.inline { display: inline; }
 .hidden { display: none; }
 .hider, .invisible { visibility: hidden; }
 .visible { visibility: visible; }
@@ -80,6 +81,9 @@
     margin-left: auto;
     margin-right: auto;
 }
+.vtop { vertical-align: top; }
+.vmiddle { vertical-align: middle; }
+.vbottom { vertical-align: bottom; }
 .up10 { margin-top: -10px; }
 .down10 { margin-bottom: -10px; }
 .left10 { margin-left: -10px; }
@@ -164,8 +168,9 @@
 
 /* behavior */
 .border-box { box-sizing: border-box; }
-.nowrap { white-space: nowrap; }
 .wrap { word-wrap: break-word; }
+.nowrap { white-space: nowrap; }
+.nonowrap { white-space: normal; }
 .pointer { cursor: pointer; }
 .scroller { overflow: auto; }
 .noflow { overflow: hidden; }
@@ -389,12 +394,6 @@
 .top_out {
     top: -250px !important;
 }
-.top0 {
-    top: 0px;
-}
-.bottom0 {
-    bottom: 0px;
-}
 .unlimited {
     max-height: 100% !important;
     max-width: 100% !important;
@@ -402,9 +401,6 @@
 .vcrunch {
     margin-top: -25px;
     margin-bottom: -25px;
-}
-.vmiddle {
-    vertical-align: middle;
 }
 .h50 {
     height: 50px;
