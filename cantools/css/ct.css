@@ -168,6 +168,7 @@
 .wrap { word-wrap: break-word; }
 .pointer { cursor: pointer; }
 .scroller { overflow: auto; }
+.noflow { overflow: hidden; }
 .scrollx { overflow-x: auto !important; overflow-y: hidden; }
 .scrolly { overflow-y: auto !important; overflow-x: hidden; }
 .hoverglow:hover {
