@@ -38,7 +38,7 @@ which triggers cb(d), where d is the corresponding object in the 'data' array.
 CT.panel = {
 	"lastClicked": {},
 	"accordion": function(data, triggerCb, activeClass, content, condition, notick, rmbutton, ricon) {
-		var n = CT.dom.node(null, null, "tabbed pointer", "ac" + data.name);
+		var n = CT.dom.node(null, null, "tabbed", "ac" + data.name);
 		n.add = function(tdata, makeFirst) {
 			var t = CT.panel.trigger(tdata, triggerCb, activeClass, content, condition, rmbutton, ricon);
 			if (makeFirst)
@@ -51,7 +51,7 @@ CT.panel = {
 			if (d.children) {
 				var tick = CT.dom.node(">", "div", "inline-block" + (notick && " hidden" || "")),
 					t = CT.dom.node(),
-					tline = [tick, CT.dom.node(content ? content(d) : d.name, "div", "inline-block")];
+					tline = [tick, CT.dom.link(content ? content(d) : d.name, null, null, "inline-block pointer")];
 				if (ricon)
 					tline.unshift(CT.dom.node(ricon(d), "div", "right rpaddedsmall"));
 				CT.dom.setContent(t, tline);
