@@ -15,6 +15,7 @@ the 'opts' object itself, are all optional.
     - visible (default: true): maps to visibility css property
     - navButtons (default: true): include nav bubbles and arrows
     - pan (default: true): slow-pan frame background images
+    - translucentTeaser (default: true): translucent box around teaser text (otherwise opaque)
     - startFrame (default: null): label (or index if frames are unlabeled) of frame to slide to initially (disables autoSlide)
     - bubblePosition (default: 'bottom'): where to position frame indicator bubbles ('top' or 'bottom')
     - arrowPosition (default: 'middle'): where to position navigator arrows
@@ -54,6 +55,7 @@ CT.slider.Slider = CT.Class({
 			navButtons: true,
 			startFrame: null,
 			pan: true,
+			translucentTeaser: true,
 			parent: document.body,
 			mode: "peekaboo", // or 'menu' or 'profile' or 'chunk'
 			subMode: "peekaboo", // or 'menu' or 'profile'
@@ -320,7 +322,8 @@ CT.slider.Frame = CT.Class({
 			var teaser = CT.dom.node([
 				CT.dom.node(opts.title, "div", "biggest"),
 				CT.dom.node(opts.blurb, "div", "bigger")
-			], "div", "carousel-content-teaser transparent hoverglow pointer");
+			], "div", "carousel-content-teaser transparent hoverglow pointer cc-teaser-"
+				+ (slider.opts.translucentTeaser ? "trans" : "opaque"));
 			nodes.push(teaser);
 		}
 		if (opts.pulse) {
@@ -363,6 +366,8 @@ CT.slider.Frame = CT.Class({
 			frames: this.opts.frames,
 			mode: this.opts.mode || this.slider.opts.subMode,
 			autoSlide: false,
+			pan: this.slider.opts.pan,
+			translucentTeaser: this.slider.opts.translucentTeaser,
 			orientation: CT.slider.other_orientation[this.slider.opts.orientation],
 			arrowPosition: "bottom"
 		}), parent = this.slider;
