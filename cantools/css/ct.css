@@ -423,6 +423,9 @@
 .white {
     color: white;
 }
+.black {
+    color: black;
+}
 .whiteback {
     background: white;
 }
@@ -521,8 +524,16 @@
     top: 100px;
     left: 22.5%;
     border-radius: 15px;
+}
+
+.cc-teaser-trans {
     background-color: rgba(100, 100, 100, 0.7);
 }
+
+.cc-teaser-opaque {
+    background-color: rgba(100, 100, 100, 1);
+}
+
 .carousel-content-full {
     padding: 10px;
     margin-top: 10px;
