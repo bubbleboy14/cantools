@@ -633,6 +633,19 @@
 }
 
 /* some extras for funsies */
+.overlay {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    -webkit-transition: opacity 500ms;
+    -moz-transition: opacity 500ms;
+    -o-transition: opacity 500ms;
+    transition: opacity 500ms;
+}
+.overlay:hover {
+    opacity: 1;
+}
 .margined {
     margin: 5px;
 }
