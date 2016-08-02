@@ -254,8 +254,7 @@ CT.slider.Frame = CT.Class({
 	peekaboo: function() {
 		var opts = this.opts, node = this.node, slider = this.slider, pulser, tab,
 			full = CT.dom.node(opts.content, "div", "big carousel-content-full"),
-			imageBack = CT.dom.node(null, "div", "carousel-content-image",
-				null, null, { backgroundImage: "url(" + opts.img + ")" }),
+			imageBack = CT.dom.node(CT.dom.img(opts.img, "abs"), "div", "w1 h1 noflow carousel-content-image"),
 			nodes = [ imageBack, full ];
 		var teaserTap = function() {
 			slider.pause();
@@ -301,8 +300,7 @@ CT.slider.Frame = CT.Class({
 			}
 		};
 		if (slider.opts.pan) {
-			imageBack.classList.add("bp-left");
-			imageBack.controller = CT.trans.pan(imageBack, {
+			imageBack.controller = CT.trans.pan(imageBack.firstChild, {
 				duration: opts.panDuration || slider.opts.autoSlideInterval
 			}, true);
 		}
@@ -412,12 +410,10 @@ CT.slider.Frame = CT.Class({
 		this.on.show = menu.show;
 	},
 	profile: function() {
-		var img = CT.dom.node(null, "div", "w2-3 h1",
-			null, null, { backgroundImage: "url(" + this.opts.img + ")" }),
+		var img = CT.dom.node(CT.dom.img(this.opts.img, "abs"), "div", "w2-3 h1 noflow abs"),
 			buttons = CT.dom.node(null, "div", "centered");
 		if (this.slider.opts.pan) {
-			img.classList.add("bp-right");
-			img.controller = CT.trans.pan(img, {
+			img.controller = CT.trans.pan(img.firstChild, {
 				duration: this.opts.panDuration || this.slider.opts.autoSlideInterval
 			}, true);
 			this.on.hide = img.controller.pause;
