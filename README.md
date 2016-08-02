@@ -1,4 +1,4 @@
-# cantools 0.8.2.8
+# cantools 0.8.2.9
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
 License: MIT (see LICENSE)
@@ -796,6 +796,7 @@ around with DOM elements via CSS transitions. Have at it.
 ### Try out these functions:
 	CT.trans.rotate(node, opts)
 	CT.trans.translate(node, opts)
+	CT.trans.wobble(node, opts)
 	CT.trans.pan(node, opts, wait)
 	CT.trans.resize(node, opts)
 	CT.trans.fadeIn(node, opts)
@@ -827,6 +828,11 @@ around with DOM elements via CSS transitions. Have at it.
 		x: 0,
 		y: 0,
 		z: 0
+	},
+	wobble: {
+		axis: "x",
+		radius: 50,
+		duration: 100
 	},
 	pan: {
 		duration: 5000,
