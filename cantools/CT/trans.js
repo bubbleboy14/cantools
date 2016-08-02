@@ -5,6 +5,7 @@ around with DOM elements via CSS transitions. Have at it.
 ### Try out these functions:
 	CT.trans.rotate(node, opts)
 	CT.trans.translate(node, opts)
+	CT.trans.wobble(node, opts)
 	CT.trans.pan(node, opts, wait)
 	CT.trans.resize(node, opts)
 	CT.trans.fadeIn(node, opts)
@@ -36,6 +37,11 @@ around with DOM elements via CSS transitions. Have at it.
 		x: 0,
 		y: 0,
 		z: 0
+	},
+	wobble: {
+		axis: "x",
+		radius: 50,
+		duration: 100
 	},
 	pan: {
 		duration: 5000,
@@ -99,6 +105,11 @@ CT.trans = {
 				x: 0,
 				y: 0,
 				z: 0
+			},
+			wobble: {
+				axis: "x",
+				radius: 50,
+				duration: 100
 			},
 			pan: {
 				duration: 5000,
@@ -177,8 +188,35 @@ CT.trans = {
 	translate: function(node, opts) {
 		opts = CT.merge(opts, CT.trans._.defaults.translate);
 		opts.node = node;
+		if (opts.axis)
+			opts[opts.axis] = opts.value;
 		opts.value = "translate3d(" + opts.x + "px," + opts.y + "px," + opts.z + "px)",
 		CT.trans.trans(opts);
+	},
+	wobble: function(node, opts) {
+		opts = CT.merge(opts, CT.trans._.defaults.wobble);
+		CT.trans.translate(node, {
+			axis: opts.axis,
+			ease: "ease-out",
+			value: opts.radius,
+			duration: opts.duration,
+			cb: function() {
+				CT.trans.translate(node, {
+					axis: opts.axis,
+					ease: "ease-in-out",
+					value: -opts.radius,
+					duration: opts.duration * 2,
+					cb: function() {
+						CT.trans.translate(node, {
+							axis: opts.axis,
+							ease: "ease-in",
+							value: 0,
+							duration: opts.duration
+						});
+					}
+				});
+			}
+		});
 	},
 	pan: function(node, opts, wait) {
 		opts = CT.merge(opts, CT.trans._.defaults.pan);
