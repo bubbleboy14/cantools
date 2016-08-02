@@ -66,13 +66,21 @@ CT.Drop = CT.Class({
 			setClick: true,
 			setNodeClick: true,
 			setWidth: true,
-			constrained: true
+			constrained: true,
+			translucent: false,
+			round: false,
+			border: null
 		});
-		this.className = opts.relative ? "relative drop" : "whiteback drop above";
+		this.className = opts.relative ? "relative drop" :
+			((opts.translucent ? "whitebacktrans" : "whiteback") + " drop above");
+		if (opts.round)
+			this.className += " round";
 		if (opts.rows)
 			this.className += " drop-rows";
 		this.anchor = opts.anchor;
 		this.node = CT.dom.node(opts.content, null, this.className + " hider");
+		if (opts.border)
+			this.node.style.border = "1px solid " + opts.border;
 		if (opts.setNodeClick)
 			this.node.onclick = this.slide;
 		opts.parent.appendChild(this.node);
