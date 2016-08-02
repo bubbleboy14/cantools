@@ -429,6 +429,9 @@
 .whiteback {
     background: white;
 }
+.whitebacktrans {
+    background: rgba(255, 255, 255, 0.9);
+}
 .whitelink a {
     color: white;
 }
