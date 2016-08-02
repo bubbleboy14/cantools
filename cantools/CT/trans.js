@@ -5,7 +5,7 @@ around with DOM elements via CSS transitions. Have at it.
 ### Try out these functions:
 	CT.trans.rotate(node, opts)
 	CT.trans.translate(node, opts)
-	CT.trans.pan(node, opts)
+	CT.trans.pan(node, opts, wait)
 	CT.trans.resize(node, opts)
 	CT.trans.fadeIn(node, opts)
 	CT.trans.fadeOut(node, opts)
@@ -39,9 +39,9 @@ around with DOM elements via CSS transitions. Have at it.
 	},
 	pan: {
 		duration: 5000,
-		property: "background-position",
 		ease: "linear",
-		value: "right bottom"
+		x: 0,
+		y: 0
 	},
 	resize: {
 		duration: 300,
@@ -102,9 +102,9 @@ CT.trans = {
 			},
 			pan: {
 				duration: 5000,
-				property: "background-position",
 				ease: "linear",
-				value: "right bottom"
+				x: 0,
+				y: 0
 			},
 			resize: {
 				duration: 300,
@@ -180,16 +180,25 @@ CT.trans = {
 		opts.value = "translate3d(" + opts.x + "px," + opts.y + "px," + opts.z + "px)",
 		CT.trans.trans(opts);
 	},
-	pan: function(node, opts, wait) { // for background-position
+	pan: function(node, opts, wait) {
 		opts = CT.merge(opts, CT.trans._.defaults.pan);
-		opts.node = node;
+		node.onload = node.onresize = function() {
+			node._vertical = node.clientWidth / node.parentNode.clientWidth
+				< node.clientHeight / node.parentNode.clientHeight;
+			node.classList.add(node._vertical ? "w1" : "h1");
+			if (!wait)
+				CT.trans.translate(node, opts);
+		};
 		var controller = new CT.trans.Controller(function() {
-			opts.value = opts.value == "left top" ? "right bottom" : "left top";
-			CT.trans.trans(opts);
+			var prop = node._vertical ? "y" : "x",
+				dim = node._vertical ? "clientHeight" : "clientWidth";
+			if (opts[prop])
+				opts[prop] = 0;
+			else
+				opts[prop] = node.parentNode[dim] - node[dim];
+			CT.trans.translate(node, opts);
 		});
 		opts.cb = controller.tick;
-		if (!wait)
-			CT.trans.trans(opts);
 		return controller;
 	},
 	resize: function(node, opts) {
