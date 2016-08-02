@@ -1,4 +1,4 @@
-# cantools 0.8.2.7
+# cantools 0.8.2.8
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
 License: MIT (see LICENSE)
@@ -760,6 +760,7 @@ the 'opts' object itself, are all optional.
     - visible (default: true): maps to visibility css property
     - navButtons (default: true): include nav bubbles and arrows
     - pan (default: true): slow-pan frame background images
+    - translucentTeaser (default: true): translucent box around teaser text (otherwise opaque)
     - startFrame (default: null): label (or index if frames are unlabeled) of frame to slide to initially (disables autoSlide)
     - bubblePosition (default: 'bottom'): where to position frame indicator bubbles ('top' or 'bottom')
     - arrowPosition (default: 'middle'): where to position navigator arrows
@@ -795,7 +796,7 @@ around with DOM elements via CSS transitions. Have at it.
 ### Try out these functions:
 	CT.trans.rotate(node, opts)
 	CT.trans.translate(node, opts)
-	CT.trans.pan(node, opts)
+	CT.trans.pan(node, opts, wait)
 	CT.trans.resize(node, opts)
 	CT.trans.fadeIn(node, opts)
 	CT.trans.fadeOut(node, opts)
@@ -829,9 +830,9 @@ around with DOM elements via CSS transitions. Have at it.
 	},
 	pan: {
 		duration: 5000,
-		property: "background-position",
 		ease: "linear",
-		value: "right bottom"
+		x: 0,
+		y: 0
 	},
 	resize: {
 		duration: 300,
