@@ -104,7 +104,7 @@ class Builder(object):
 		if self.web_backend == "gae":
 			sym(self.ctroot, "cantools")
 		ctp = os.path.join(self.ctroot, "CT")
-		sym(ctp, os.path.join("js", "CT"))
+		sym(ctp, os.path.join(config.js.path, "CT"))
 		sym(ctp, os.path.join("html-production", "CT"))
 		sym(os.path.join(self.ctroot, "css", "ct.css"), os.path.join("css", "ct.css"))
 		sym(os.path.join(self.ctroot, "admin"), "_")
@@ -127,6 +127,7 @@ class Builder(object):
 						config.init.vcignore.update(dname, [])
 					config.init.vcignore[dname].append(fname)
 		itype = raw_input("would you like to generate exclusion rules for symlinks and dot files (if you select svn, we will add the project to your repository first)? [NO/git/svn] ")
+		config.init.vcignore.update(config.js.path, config.init.vcignore.js)
 		if itype == "git":
 			log("configuring git", 2)
 			cfg = config.init.vcignore["."]
