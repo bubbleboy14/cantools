@@ -40,16 +40,20 @@ CT.panel = {
 	"accordion": function(data, triggerCb, activeClass, content, condition, notick, rmbutton, ricon) {
 		var n = CT.dom.node(null, null, "tabbed", "ac" + data.name);
 		n.add = function(tdata, makeFirst, addAlpha) {
-			var i, t = CT.panel.trigger(tdata, triggerCb, activeClass, content, condition, rmbutton, ricon);
+			var i, inserted, t = CT.panel.trigger(tdata, triggerCb,
+				activeClass, content, condition, rmbutton, ricon);
 			if (makeFirst)
 				n.insertBefore(t, n.firstChild);
 			else if (addAlpha) {
 				for (i = 0; i < n.childNodes.length; i++) {
 					if (n.childNodes[i].data.name > t.data.name) {
 						n.insertBefore(t, n.childNodes[i]);
+						inserted = true;
 						break;
 					}
 				}
+				if (!inserted)
+					n.appendChild(t);
 			} else
 				n.appendChild(t);
 			return t;
