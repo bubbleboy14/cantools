@@ -147,6 +147,9 @@
     padding-top: 10px;
     padding-bottom: 10px;
 }
+.pr15 {
+    padding-right: 15px;
+}
 .bold { font-weight: bold; }
 .italic { font-style: italic; }
 .bordered { border: 1px solid black; }
