@@ -304,7 +304,7 @@ CT.modal.Prompt = CT.Class({
 		this.hide();
 	},
 	submit: function() {
-		this.opts.cb(this.input.ctfile || this.input.value);
+		this.opts.cb(this.input.ctfile || this.opts.data[this.input.value] || this.input.value);
 		this.hide();
 	},
 	_nodify: function(data) {
