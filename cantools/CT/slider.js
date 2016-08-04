@@ -357,6 +357,8 @@ CT.slider.Frame = CT.Class({
 		CT.dom.addEach(node, nodes);
 		if (opts.content) // assume title/blurb exists
 			CT.gesture.listen("tap", teaser, teaserTap);
+		else if (opts.onclick)
+			CT.gesture.listen("tap", teaser, opts.onclick);
 	},
 	chunk: function() {
 		var slider = new CT.slider.Slider({
