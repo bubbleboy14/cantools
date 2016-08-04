@@ -69,6 +69,7 @@
 .higher { z-index: 200 !important; }
 .highest { z-index: 300 !important; }
 .above { z-index: 1000 !important; }
+.mosthigh { z-index: 99999 !important; }
 .low { z-index: -100 !important; }
 .lower { z-index: -200 !important; }
 .lowest { z-index: -300 !important; }
