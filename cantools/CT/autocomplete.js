@@ -53,11 +53,15 @@ CT.autocomplete.Guesser = CT.Class({
 	},
 	guesser: function(frag) {
 		this._update(this.opts.data.filter(function(d) {
-			return d.label.slice(0, frag.length) == frag;
+			var i, parts = d.label.toLowerCase().split(" ");
+			for (i = 0; i < parts.length; i++)
+				if (parts[i].slice(0, frag.length) == frag)
+					return true;
 		}));
 	},
 	_hide: function() {
-		this.node.className = "drop hider";
+		this.node.className = this.className + " hider";
+		this.opts.onHide && this.opts.onHide();
 		this.input.blur();
 	},
 	_upOne: function(d) {
@@ -159,7 +163,10 @@ CT.autocomplete.Guesser = CT.Class({
 		setTimeout(this.retract, 500);
 	},
 	init: function(opts) {
-		this.opts = opts = CT.merge(opts, this.opts, {
+		this.opts = opts = CT.merge(opts, {
+			rows: true,
+			setClick: false
+		}, this.opts, {
 			enterCb: this._doNothing,
 			keyUpCb: this._doNothing,
 			expandCb: this._doNothing,
@@ -168,6 +175,10 @@ CT.autocomplete.Guesser = CT.Class({
 			anchor: opts.input,
 			data: []
 		});
+		if (opts.rows && this.className.indexOf("drop-rows") == -1) {
+			this.className += " drop-rows";
+			this.node.classList.add("drop-rows");
+		}
 		opts.data = opts.data.map(function(d) {
 			return typeof d == "string" ? { label: d } : d;
 		});
