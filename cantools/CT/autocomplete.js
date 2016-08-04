@@ -159,7 +159,7 @@ CT.autocomplete.Guesser = CT.Class({
 		setTimeout(this.retract, 500);
 	},
 	init: function(opts) {
-		opts = this.opts = CT.merge(opts, {
+		this.opts = opts = CT.merge(opts, this.opts, {
 			enterCb: this._doNothing,
 			keyUpCb: this._doNothing,
 			expandCb: this._doNothing,
