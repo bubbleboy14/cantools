@@ -17,6 +17,7 @@ CT.pubsub = {
 		"args": null,
 		"open": false,
 		"initialized": false,
+		"autohistory": false,
 		"reconnect": true,
 		"reconnect_interval": 250,
 		"log": CT.log.getLogger("CT.pubsub"),
@@ -38,7 +39,7 @@ CT.pubsub = {
 			"channel": function(data) {
 				CT.pubsub._.channels[data.channel] = data;
 				CT.pubsub._.cb.subscribe(data);
-				data.history.forEach(CT.pubsub._.process.publish);
+				CT.pubsub._.autohistory && data.history.forEach(CT.pubsub._.process.publish);
 			},
 			"publish": function(data) {
 				CT.pubsub._.cb.message(data);
@@ -111,6 +112,9 @@ CT.pubsub = {
 	},
 	"set_reconnect": function(bool) {
 		CT.pubsub._.reconnect = bool;
+	},
+	"set_autohistory": function(bool) {
+		CT.pubsub._.autohistory = bool;
 	},
 	"set_cb": function(action, cb) {
 		// action: message|subscribe|join|leave|open|close|error|pm
