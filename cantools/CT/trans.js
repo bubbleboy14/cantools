@@ -227,7 +227,7 @@ CT.trans = {
 				node.classList.add(node._vertical ? "w1" : "h1");
 				if (!wait)
 					CT.trans.translate(node, opts);
-			}); // wait a moment...
+			}, 500); // wait a moment...
 		};
 		var controller = new CT.trans.Controller(function() {
 			var prop = node._vertical ? "y" : "x",
