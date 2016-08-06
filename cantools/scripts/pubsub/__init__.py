@@ -23,4 +23,4 @@ def get_addr_and_start():
     parser.add_option("-p", "--port", dest="port", default=config.pubsub.port,
         help="use a specific port (default: %s)"%(config.pubsub.port,))
     options, arguments = parser.parse_args()
-    start(options.domain, options.port)
+    start(options.domain, int(options.port))
