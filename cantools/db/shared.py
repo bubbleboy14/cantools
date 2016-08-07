@@ -12,7 +12,7 @@ operators = {
 }
 
 def get_model(modelName):
-    return modelsubs.get(modelName, None)
+    return modelsubs.get(modelName.lower(), None)
 
 def get_schema(modname=None):
     if modname:
