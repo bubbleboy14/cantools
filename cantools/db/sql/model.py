@@ -52,6 +52,7 @@ class ModelBase(sa_dbase):
         "polymorphic_identity": "modelbase",
         "with_polymorphic": "*"
     }
+    _data_omit = []
 
     def __init__(self, *args, **kwargs):
         sa_dbase.__init__(self, *args, **kwargs)
@@ -106,9 +107,11 @@ class ModelBase(sa_dbase):
     def id(self):
         return self.key.urlsafe()
 
-    def mydata(self):
+    def mydata(self, isexport=False):
         cols = {}
         for key, prop in self._schema.items():
+            if not isexport and key in self._data_omit:
+                continue
             if not key.startswith("_"):
                 val = getattr(self, key)
                 if prop.startswith("key"):
@@ -137,4 +140,4 @@ class ModelBase(sa_dbase):
         return self._basic(self.mydata())
 
     def export(self):
-        return self._basic(ModelBase.mydata(self))
+        return self._basic(ModelBase.mydata(self, True))
