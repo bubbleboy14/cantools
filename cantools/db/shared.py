@@ -1,4 +1,4 @@
-import operator, base64, json
+import operator, base64, json, hashlib
 from datetime import datetime
 
 modelsubs = {}
@@ -65,3 +65,6 @@ def merge_schemas(bases, label):
     schema["_kinds"] = kinds
     schema["_label"] = label
     return schema
+
+def hashpass(password, date):
+    return hashlib.md5(password + str(date.date()).replace('-','')).hexdigest()
