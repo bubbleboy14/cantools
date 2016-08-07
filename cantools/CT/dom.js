@@ -628,9 +628,12 @@ CT.dom = {
 	},
 	"blurField": function(field, useblurs) {
 		useblurs = CT.dom._blurs[field.id] = useblurs || CT.dom._blurs[field.id];
+		var pw = field.type == "password";
 		if (useblurs) {
 			field.onblur = function() {
 				if (field.value == "") {
+					if (pw)
+						field.type = "";
 					field.classList.add("gray");
 					field.value = useblurs[Math.floor(Math.random() * useblurs.length)];
 				}
@@ -640,6 +643,8 @@ CT.dom = {
 			field.onfocus = function() {
 				if (useblurs.indexOf(field.value) != -1) {
 					field.value = "";
+					if (pw)
+						field.type = "password";
 					field.classList.remove("gray");
 				}
 			};
