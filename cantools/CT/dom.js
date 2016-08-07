@@ -210,17 +210,39 @@ CT.dom = {
 		}
 		return n;
 	},
-	"select": function(onames, ovalues, id, curvalue, defaultvalue, onchange) {
+	"select": function(onames, ovalues, id, curvalue, defaultvalue, onchange, other) {
 		ovalues = ovalues || onames;
 		var s = CT.dom.node("", "select", "", id);
+		if (other) {
+			if (ovalues.indexOf("other") == -1) {
+				ovalues.push("other");
+				if (ovalues != onames)
+					onames.push("other");
+			}
+			s.other = CT.dom.field(null, null, "hidden");
+			s.container = CT.dom.node([s, s.other]);
+			s.container.value = function() {
+				if (s.value == "other")
+					return s.other.value.trim();
+				return s.value;
+			};
+		}
 		for (var i = 0; i < onames.length; i++) {
 			s.appendChild(CT.dom.node(onames[i], "option",
 				"", "", {"value": ovalues[i]}));
 		}
 		if (curvalue)
 			s.value = ovalues.indexOf(curvalue) != -1 && curvalue || defaultvalue;
-		s.onchange = onchange;
-		return s;
+		s.onchange = function() {
+			if (other) {
+				if (s.value == "other")
+					s.other.style.display = "block";
+				else
+					s.other.style.display = "none";
+			}
+			onchange && onchange();
+		};
+		return s.container || s;
 	},
 	"range": function(onchange, min, max, value, step, classname, id) {
 		var r = CT.dom.node("", "input", classname, id, {
