@@ -305,6 +305,10 @@ CT.dom = {
 
 	// composite nodes
 	"checkboxAndLabel": function(cbid, ischecked, lname, lclass, cclass, onclick) {
+		if (!lname && cbid.indexOf(" ") != -1) {
+			lname = cbid;
+			cbid = cbid.replace(/ /g, "");
+		}
 		var n = CT.dom.node("", "div", cclass);
 		var cbname = cbid+"checkbox";
 		var cb = CT.dom.checkbox(cbname, ischecked);
