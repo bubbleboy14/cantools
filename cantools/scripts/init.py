@@ -54,17 +54,36 @@ class Builder(object):
 		self.generate_symlinks()
 		log("done! goodbye.", 1)
 
+	def _getplugs(self, plugs):
+		for plugin in plugs:
+			log("Plugin: %s"%(plugin,), 2)
+			try:
+				mod = self.plugins[plugin] = __import__(plugin)
+				mod.__ct_mod_path__ = mod.__file__.rsplit(os.path.sep, 1)[0]
+				if hasattr(mod, "model"):
+					log("adding %s imports to model"%(len(mod.model),), 3)
+					config.init.update("model",
+						"%s\r\n%s"%(config.init.model,
+							"\r\n".join(["from %s import %s"%(m,
+								k.split(", ")) for (m, k) in mod.model.items()])))
+				if hasattr(mod, "routes"):
+					log("adding %s routes to app.yaml"%(len(mod.routes),), 3)
+					config.init.yaml.update("core",
+						"%s\r\n\r\n%s"(config.init.yaml.core,
+							"\r\n\r\n".join(["- url: %s\r\n  script: %s"%(u, s) for (u,
+								s) in mod.routes.items()])))
+				if hasattr(mod, "requires"):
+					log("installing %s ct dependencies"%(len(mod.requires),), 3)
+					self._getplugs(mod.requires)
+			except ImportError:
+				log("plugin '%s' not found! attempting install."%(plugin,), important=True)
+				cmd("easy_install %s"%(plugin,))
+
 	def install_plugins(self):
 		pil = len(config.plugins)
 		if pil:
 			log("Installing %s Plugins"%(pil,), 1)
-			for plugin in config.plugins:
-				log(plugin, 2)
-				try:
-					mod = self.plugins[plugin] = __import__(plugin)
-					mod.__ct_mod_path__ = mod.__file__.rsplit(os.path.sep, 1)[0]
-				except ImportError:
-					cmd("easy_install %s"%(plugin,))
+			self._getplugs(config.plugins)
 
 	def build_dirs(self):
 		log("building directories", 1)
@@ -89,11 +108,12 @@ class Builder(object):
 		log("model", 1)
 		cp(config.init.model, "model.py")
 		for plugin, mod in self.plugins.items():
-			for dname, fnames in mod.init.copies.items():
-				for fname in fnames:
-					log("%s [%s]"%(fname, plugin), 1)
-					cp(read(os.path.join(mod.__ct_mod_path__, dname, fname)),
-						os.path.join(dname, fname))
+			if hasattr(mod.init, "copies"):
+				for dname, fnames in mod.init.copies.items():
+					for fname in fnames:
+						log("%s [%s]"%(fname, plugin), 1)
+						cp(read(os.path.join(mod.__ct_mod_path__, dname, fname)),
+							os.path.join(dname, fname))
 
 	def generate_symlinks(self):
 		log("creating symlinks", 1)
