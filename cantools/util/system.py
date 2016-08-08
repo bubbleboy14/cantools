@@ -14,7 +14,7 @@ def sym(src, dest, safe=False):
 		log("symlinking failed (%s) - file exists: %s"%(e, dest), 3)
 		if not safe:
 			rm(dest)
-			sym(src, dest)
+			sym(src, dest, True)
 
 def mkdir(pname):
 	log("new directory: %s"%(pname,), 2)
