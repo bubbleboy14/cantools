@@ -12,6 +12,7 @@
     -r, --refresh_symlinks
                           add symlinks to project and configure version control
                           path exclusion (if desired)
+    -u, --update          update cantools and all managed plugins
 
 NB: it may be necessary to specify --cantools_path. Normally, this is derived from
 the __file__ property (the location of the ctinit script, init.py). However, if the
@@ -20,6 +21,18 @@ package lives in your Python dist-packages (as with 'easy_install', as well as
 end-to-end web application, and these files therefore cannot be symlinked into your
 new project. In these cases, indicate --cantools_path (the path to the cloned cantools
 repository on your computer), and everything should work fine.
+
+Generally speaking, one should clone the cantools github repository, 'setup.py install'
+it (for the 'ct' commands), and then run 'setup.py develop', which will point 'cantools'
+at your cloned cantools repo and keep the package up to date as you periodically 'git pull'
+the latest version. Similarly, plugins should be kept in 'develop' mode, as they also will
+generally have non-python files of consequence.
+
+In most cases, the developer won't have to pay much attention to this stuff, because
+initializing or refreshing a project will automatically install any necessary plugins
+that aren't already present. Similarly, the --update flag pulls down the latest versions
+of cantools and all managed plugins. Thus, plugins are dealt with under the hood without
+any need for the developer to know or do anything beyond 'ctinit -r'.
 """
 
 import os
@@ -52,38 +65,62 @@ class Builder(object):
 			self.make_files()
 		self.vcignore()
 		self.generate_symlinks()
-		log("done! goodbye.", 1)
+
+	def _install(self, plug):
+		log("Building Package: %s"%(plug,), important=True)
+		curdir = os.getcwd()
+		if not os.path.isdir(config.plugin.path):
+			mkdir(config.plugin.path)
+		os.chdir(config.plugin.path)
+		log("cloning repository", important=True)
+		cmd("git clone https://github.com/%s/%s.git"%(config.plugin.base, plug))
+		os.chdir(plug)
+		log("installing plugin", important=True)
+		cmd("sudo python setup.py install")
+		cmd("sudo python setup.py develop")
+		os.chdir("%s/.."%(self.ctroot,))
+		log("restoring cantools develop status", important=True)
+		cmd("sudo python setup.py develop")
+		os.chdir(curdir)
+		try:
+			self._getplug(plug)
+		except ImportError:
+			error("Installed %s. Please re-run 'ctinit -r' to complete."%(plug,))
+
+	def _getplug(self, plugin):
+		log("Installing Plugin: %s"%(plugin,), important=True)
+		mod = self.plugins[plugin] = __import__(plugin)
+		mod.__ct_mod_path__ = mod.__file__.rsplit(os.path.sep, 1)[0]
+		if hasattr(mod, "model"):
+			log("adding %s imports to model"%(len(mod.model),), 3)
+			config.init.update("model",
+				"%s\r\n%s"%(config.init.model,
+					"\r\n".join(["from %s import %s"%(m,
+						k.split(", ")) for (m, k) in mod.model.items()])))
+		if hasattr(mod, "routes"):
+			log("adding %s routes to app.yaml"%(len(mod.routes),), 3)
+			config.init.yaml.update("core",
+				"%s\r\n\r\n%s"(config.init.yaml.core,
+					"\r\n\r\n".join(["- url: %s\r\n  script: %s"%(u, s) for (u,
+						s) in mod.routes.items()])))
+		if hasattr(mod, "requires"):
+			log("installing %s ct dependencies"%(len(mod.requires),), 3)
+			self._getplugs(mod.requires)
 
 	def _getplugs(self, plugs):
 		for plugin in plugs:
 			log("Plugin: %s"%(plugin,), 2)
 			try:
-				mod = self.plugins[plugin] = __import__(plugin)
-				mod.__ct_mod_path__ = mod.__file__.rsplit(os.path.sep, 1)[0]
-				if hasattr(mod, "model"):
-					log("adding %s imports to model"%(len(mod.model),), 3)
-					config.init.update("model",
-						"%s\r\n%s"%(config.init.model,
-							"\r\n".join(["from %s import %s"%(m,
-								k.split(", ")) for (m, k) in mod.model.items()])))
-				if hasattr(mod, "routes"):
-					log("adding %s routes to app.yaml"%(len(mod.routes),), 3)
-					config.init.yaml.update("core",
-						"%s\r\n\r\n%s"(config.init.yaml.core,
-							"\r\n\r\n".join(["- url: %s\r\n  script: %s"%(u, s) for (u,
-								s) in mod.routes.items()])))
-				if hasattr(mod, "requires"):
-					log("installing %s ct dependencies"%(len(mod.requires),), 3)
-					self._getplugs(mod.requires)
+				self._getplug(plugin)
 			except ImportError:
 				log("plugin '%s' not found! attempting install."%(plugin,), important=True)
-				cmd("easy_install %s"%(plugin,))
+				self._install(plugin)
 
 	def install_plugins(self):
-		pil = len(config.plugins)
+		pil = len(config.plugin.modules)
 		if pil:
 			log("Installing %s Plugins"%(pil,), 1)
-			self._getplugs(config.plugins)
+			self._getplugs(config.plugin.modules)
 
 	def build_dirs(self):
 		log("building directories", 1)
@@ -163,6 +200,20 @@ class Builder(object):
 				cmd("svn propset svn:ignore -F _tmp %s"%(root,))
 				rm("_tmp")
 
+def update():
+	log("Updating cantools and managed plugins", important=True)
+	os.chdir(CTP)
+	log("retrieving latest cantools", 1)
+	cmd("git pull")
+	if os.path.isdir(config.plugin.path):
+		dname, dirs, files = os.walk(config.plugin.path).next()
+		log("updating %s managed plugins"%(len(dirs),), 1)
+		for d in dirs:
+			os.chdir(os.path.join(config.plugin.path, d))
+			log("retrieving latest %s"%(d,), 2)
+			cmd("git pull")
+	log("finished updates", 1)
+
 def parse_and_make():
 	parser = OptionParser("ctinit [projname] [-r] [--plugins=P1|P2|P3] [--cantools_path=PATH] [--web_backend=BACKEND]")
 	parser.add_option("-p", "--plugins", dest="plugins", default="",
@@ -173,11 +224,17 @@ def parse_and_make():
 		help="web backend. options: dez, gae. (default: dez)")
 	parser.add_option("-r", "--refresh_symlinks", action="store_true",
 		dest="refresh_symlinks", default=False, help="add symlinks to project and configure version control path exclusion (if desired)")
+	parser.add_option("-u", "--update", action="store_true",
+		dest="update", default=False, help="update cantools and all managed plugins")
 	options, args = parser.parse_args()
-	if options.plugins:
-		config.update("plugins", list(set(config.plugins + options.plugins.split("|"))))
-	Builder(len(args) and args[0], options.cantools_path,
-		options.web_backend, options.refresh_symlinks)
+	if options.update:
+		update()
+	else:
+		if options.plugins:
+			config.plugin.update("modules", list(set(config.plugin.modules + options.plugins.split("|"))))
+		Builder(len(args) and args[0], options.cantools_path,
+			options.web_backend, options.refresh_symlinks)
+	log("done! goodbye.")
 
 if __name__ == "__main__":
 	parse_and_make()
