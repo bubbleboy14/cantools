@@ -1,4 +1,4 @@
-# cantools 0.8.4.1
+# cantools 0.8.4.2
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
 License: MIT (see LICENSE)
@@ -47,6 +47,7 @@ And that's it. Open http://localhost:8080/ in your browser and call it a day.
     -r, --refresh_symlinks
                           add symlinks to project and configure version control
                           path exclusion (if desired)
+    -u, --update          update cantools and all managed plugins
 
 NB: it may be necessary to specify --cantools_path. Normally, this is derived from
 the __file__ property (the location of the ctinit script, init.py). However, if the
@@ -55,6 +56,18 @@ package lives in your Python dist-packages (as with 'easy_install', as well as
 end-to-end web application, and these files therefore cannot be symlinked into your
 new project. In these cases, indicate --cantools_path (the path to the cloned cantools
 repository on your computer), and everything should work fine.
+
+Generally speaking, one should clone the cantools github repository, 'setup.py install'
+it (for the 'ct' commands), and then run 'setup.py develop', which will point 'cantools'
+at your cloned cantools repo and keep the package up to date as you periodically 'git pull'
+the latest version. Similarly, plugins should be kept in 'develop' mode, as they also will
+generally have non-python files of consequence.
+
+In most cases, the developer won't have to pay much attention to this stuff, because
+initializing or refreshing a project will automatically install any necessary plugins
+that aren't already present. Similarly, the --update flag pulls down the latest versions
+of cantools and all managed plugins. Thus, plugins are dealt with under the hood without
+any need for the developer to know or do anything beyond 'ctinit -r'.
 
 ## ctstart
 
