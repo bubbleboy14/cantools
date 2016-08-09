@@ -413,23 +413,15 @@ CT.slider.Frame = CT.Class({
 		this.on.show = menu.show;
 	},
 	profile: function() {
-		var img = CT.dom.node(CT.dom.img(this.opts.img, "abs"), "div", "w2-3 h1 noflow abs"),
-			buttons = CT.dom.node(null, "div", "centered");
-		if (this.slider.opts.pan) {
-			img.controller = CT.trans.pan(img.firstChild, {
-				duration: this.opts.panDuration || this.slider.opts.autoSlideInterval
-			}, true);
-			this.on.hide = img.controller.pause;
-			this.on.show = img.controller.resume;
-		}
-		for (var b in this.opts.buttons)
-			buttons.appendChild(CT.dom.button(b, this.opts.buttons[b], "round padded margined"));
-		this.node.appendChild(CT.dom.node([
-			CT.dom.node(this.opts.name, "div", "biggest"),
-			CT.dom.node(this.opts.description),
-			buttons
-		], "div", "right thirdwidth"));
-		this.node.appendChild(img);
+		CT.dom.addContent(this.node, CT.layout.profile({
+			img: this.opts.img,
+			pan: this.slider.opts.pan,
+			panDuration: this.opts.panDuration || this.slider.opts.autoSlideInterval,
+			buttons: this.opts.buttons,
+			name: this.opts.name,
+			description: this.opts.description,
+			controllerHook: this.on
+		}));
 	},
 	init: function(opts, slider) {
 		this.opts = opts;
