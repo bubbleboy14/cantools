@@ -1,3 +1,21 @@
+/*
+This module provides functions that generate common UI elements. These include:
+
+### header(opts) - defaults:
+	logo: "Placeholder Logo"
+	right: []
+	centerLogo: true
+
+### footer(opts) - defaults:
+	logo: "Placeholder Logo"
+	links: []
+	contact: {}
+
+### grid: function(data, columns, rows, hardheight) - defaults:
+    columns: 3
+    rows: 4
+*/
+
 CT.layout = {
 	header: function(opts) {
 		opts = CT.merge(opts, {
