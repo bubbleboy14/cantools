@@ -60,43 +60,48 @@ class Builder(object):
 		log("done! goodbye.", 1)
 
 	def _install(self, plug):
-		log("Installing: %s"%(plug,), important=True)
+		log("Building Package: %s"%(plug,), important=True)
 		curdir = os.getcwd()
 		if not os.path.isdir(config.plugin.path):
 			mkdir(config.plugin.path)
 		os.chdir(os.plugin.path)
-		log("cloning repository", 1)
+		log("cloning repository", 3)
 		cmd("git clone https://github.com/%s/%s.git"%(config.plugin.base, plug))
 		os.chdir(plug)
-		log("installing plugin", 1)
+		log("installing plugin", 3)
 		cmd("python setup.py install")
 		cmd("python setup.py develop")
 		os.chdir("%s/.."%(self.ctroot,))
-		log("restoring cantools develop status", 1)
+		log("restoring cantools develop status", 3)
 		cmd("python setup.py develop")
 		os.chdir(curdir)
+		_getplug(plug)
+
+	def _getplug(self, plugin):
+		log("Installing Plugin: %s"%(plugin,), important=True)
+		mod = self.plugins[plugin] = __import__(plugin)
+		mod.__ct_mod_path__ = mod.__file__.rsplit(os.path.sep, 1)[0]
+		if hasattr(mod, "model"):
+			log("adding %s imports to model"%(len(mod.model),), 3)
+			config.init.update("model",
+				"%s\r\n%s"%(config.init.model,
+					"\r\n".join(["from %s import %s"%(m,
+						k.split(", ")) for (m, k) in mod.model.items()])))
+		if hasattr(mod, "routes"):
+			log("adding %s routes to app.yaml"%(len(mod.routes),), 3)
+			config.init.yaml.update("core",
+				"%s\r\n\r\n%s"(config.init.yaml.core,
+					"\r\n\r\n".join(["- url: %s\r\n  script: %s"%(u, s) for (u,
+						s) in mod.routes.items()])))
+		if hasattr(mod, "requires"):
+			log("installing %s ct dependencies"%(len(mod.requires),), 3)
+			self._getplugs(mod.requires)
 
 	def _getplugs(self, plugs):
 		for plugin in plugs:
 			log("Plugin: %s"%(plugin,), 2)
 			try:
-				mod = self.plugins[plugin] = __import__(plugin)
-				mod.__ct_mod_path__ = mod.__file__.rsplit(os.path.sep, 1)[0]
-				if hasattr(mod, "model"):
-					log("adding %s imports to model"%(len(mod.model),), 3)
-					config.init.update("model",
-						"%s\r\n%s"%(config.init.model,
-							"\r\n".join(["from %s import %s"%(m,
-								k.split(", ")) for (m, k) in mod.model.items()])))
-				if hasattr(mod, "routes"):
-					log("adding %s routes to app.yaml"%(len(mod.routes),), 3)
-					config.init.yaml.update("core",
-						"%s\r\n\r\n%s"(config.init.yaml.core,
-							"\r\n\r\n".join(["- url: %s\r\n  script: %s"%(u, s) for (u,
-								s) in mod.routes.items()])))
-				if hasattr(mod, "requires"):
-					log("installing %s ct dependencies"%(len(mod.requires),), 3)
-					self._getplugs(mod.requires)
+				self._getplug(plugin)
 			except ImportError:
 				log("plugin '%s' not found! attempting install."%(plugin,), important=True)
 				self._install(plugin)
