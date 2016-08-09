@@ -20,12 +20,19 @@ package lives in your Python dist-packages (as with 'easy_install', as well as
 'setup.py install'), it does not contain the client-side files necessary for an
 end-to-end web application, and these files therefore cannot be symlinked into your
 new project. In these cases, indicate --cantools_path (the path to the cloned cantools
-repository on your computer), and everything should work fine. Generally speaking,
-one should clone the cantools github repository, 'setup.py install' it (for the 'ct'
-commands), and then run 'setup.py develop', which will point 'cantools' at your cloned
-cantools repo and keep the package up to date as you periodically 'git pull' the latest
-version. Similarly, plugins should be kept in 'develop' mode, as they also will generally
-have non-python files of consequence.
+repository on your computer), and everything should work fine.
+
+Generally speaking, one should clone the cantools github repository, 'setup.py install'
+it (for the 'ct' commands), and then run 'setup.py develop', which will point 'cantools'
+at your cloned cantools repo and keep the package up to date as you periodically 'git pull'
+the latest version. Similarly, plugins should be kept in 'develop' mode, as they also will
+generally have non-python files of consequence.
+
+In most cases, the developer won't have to pay much attention to this stuff, because
+initializing or refreshing a project will automatically install any necessary plugins
+that aren't already present. Similarly, the --update flag pulls down the latest versions
+of cantools and all managed plugins. Thus, plugins are dealt with under the hood without
+any need for the developer to know or do anything beyond 'ctinit -r'.
 """
 
 import os
