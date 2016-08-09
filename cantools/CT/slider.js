@@ -218,7 +218,7 @@ CT.slider.Slider = CT.Class({
 				index += 1;
 			else if (absdir == "backward" && (force || this.activeCircle.previousSibling))
 				index -= 1;
-			else if (this.circlesContainer.childNodes.length)
+			if (this.circlesContainer.childNodes.length)
 				this.updateIndicator(index % this.circlesContainer.childNodes.length);
 		} else if (this.opts.parent.slider)
 			this.opts.parent.slider.shift(direction, force);
