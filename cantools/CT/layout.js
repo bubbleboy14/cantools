@@ -12,8 +12,8 @@ This module provides functions that generate common UI elements. These include:
 	contact: {}
 
 ### grid: function(data, columns, rows, hardheight) - defaults:
-    columns: 3
-    rows: 4
+	columns: 3
+	rows: 4
 */
 
 CT.layout = {
