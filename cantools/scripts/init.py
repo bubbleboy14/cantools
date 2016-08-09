@@ -64,18 +64,21 @@ class Builder(object):
 		curdir = os.getcwd()
 		if not os.path.isdir(config.plugin.path):
 			mkdir(config.plugin.path)
-		os.chdir(os.plugin.path)
-		log("cloning repository", 3)
+		os.chdir(config.plugin.path)
+		log("cloning repository", important=True)
 		cmd("git clone https://github.com/%s/%s.git"%(config.plugin.base, plug))
 		os.chdir(plug)
-		log("installing plugin", 3)
-		cmd("python setup.py install")
-		cmd("python setup.py develop")
+		log("installing plugin", important=True)
+		cmd("sudo python setup.py install")
+		cmd("sudo python setup.py develop")
 		os.chdir("%s/.."%(self.ctroot,))
-		log("restoring cantools develop status", 3)
-		cmd("python setup.py develop")
+		log("restoring cantools develop status", important=True)
+		cmd("sudo python setup.py develop")
 		os.chdir(curdir)
-		_getplug(plug)
+		try:
+			self._getplug(plug)
+		except ImportError:
+			error("Installed %s. Please re-run 'ctinit -r' to complete."%(plug,))
 
 	def _getplug(self, plugin):
 		log("Installing Plugin: %s"%(plugin,), important=True)
