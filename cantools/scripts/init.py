@@ -12,6 +12,7 @@
     -r, --refresh_symlinks
                           add symlinks to project and configure version control
                           path exclusion (if desired)
+    -u, --update          update cantools and all managed plugins
 
 NB: it may be necessary to specify --cantools_path. Normally, this is derived from
 the __file__ property (the location of the ctinit script, init.py). However, if the
