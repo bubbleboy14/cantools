@@ -1,4 +1,4 @@
-# cantools 0.8.4
+# cantools 0.8.4.1
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
 License: MIT (see LICENSE)
@@ -534,6 +534,24 @@ The main one to look out for is listen, defined below.
 ## CT.key
 ### Import line: 'CT.require("CT.key");'
 This module supports global key bindings.
+
+## CT.layout
+### Import line: 'CT.require("CT.layout");'
+This module provides functions that generate common UI elements. These include:
+
+### header(opts) - defaults:
+	logo: "Placeholder Logo"
+	right: []
+	centerLogo: true
+
+### footer(opts) - defaults:
+	logo: "Placeholder Logo"
+	links: []
+	contact: {}
+
+### grid(data, columns, rows, hardheight) - defaults:
+	columns: 3
+	rows: 4
 
 ## CT.map
 ### Import line: 'CT.require("CT.map");'
