@@ -19,7 +19,12 @@ package lives in your Python dist-packages (as with 'easy_install', as well as
 'setup.py install'), it does not contain the client-side files necessary for an
 end-to-end web application, and these files therefore cannot be symlinked into your
 new project. In these cases, indicate --cantools_path (the path to the cloned cantools
-repository on your computer), and everything should work fine.
+repository on your computer), and everything should work fine. Generally speaking,
+one should clone the cantools github repository, 'setup.py install' it (for the 'ct'
+commands), and then run 'setup.py develop', which will point 'cantools' at your cloned
+cantools repo and keep the package up to date as you periodically 'git pull' the latest
+version. Similarly, plugins should be kept in 'develop' mode, as they also will generally
+have non-python files of consequence.
 """
 
 import os
@@ -54,6 +59,23 @@ class Builder(object):
 		self.generate_symlinks()
 		log("done! goodbye.", 1)
 
+	def _install(self, plug):
+		log("Installing: %s"%(plug,), important=True)
+		curdir = os.getcwd()
+		if not os.path.isdir(config.plugin.path):
+			mkdir(config.plugin.path)
+		os.chdir(os.plugin.path)
+		log("cloning repository", 1)
+		cmd("git clone https://github.com/%s/%s.git"%(config.plugin.base, plug))
+		os.chdir(plug)
+		log("installing plugin", 1)
+		cmd("python setup.py install")
+		cmd("python setup.py develop")
+		os.chdir("%s/.."%(self.ctroot,))
+		log("restoring cantools develop status", 1)
+		cmd("python setup.py develop")
+		os.chdir(curdir)
+
 	def _getplugs(self, plugs):
 		for plugin in plugs:
 			log("Plugin: %s"%(plugin,), 2)
@@ -77,13 +99,13 @@ class Builder(object):
 					self._getplugs(mod.requires)
 			except ImportError:
 				log("plugin '%s' not found! attempting install."%(plugin,), important=True)
-				cmd("easy_install %s"%(plugin,))
+				self._install(plugin)
 
 	def install_plugins(self):
-		pil = len(config.plugins)
+		pil = len(config.plugin.modules)
 		if pil:
 			log("Installing %s Plugins"%(pil,), 1)
-			self._getplugs(config.plugins)
+			self._getplugs(config.plugin.modules)
 
 	def build_dirs(self):
 		log("building directories", 1)
@@ -175,7 +197,7 @@ def parse_and_make():
 		dest="refresh_symlinks", default=False, help="add symlinks to project and configure version control path exclusion (if desired)")
 	options, args = parser.parse_args()
 	if options.plugins:
-		config.update("plugins", list(set(config.plugins + options.plugins.split("|"))))
+		config.plugin.update("modules", list(set(config.plugin.modules + options.plugins.split("|"))))
 	Builder(len(args) and args[0], options.cantools_path,
 		options.web_backend, options.refresh_symlinks)
 
