@@ -57,7 +57,6 @@ class Builder(object):
 			self.make_files()
 		self.vcignore()
 		self.generate_symlinks()
-		log("done! goodbye.", 1)
 
 	def _install(self, plug):
 		log("Building Package: %s"%(plug,), important=True)
@@ -190,6 +189,20 @@ class Builder(object):
 				cmd("svn propset svn:ignore -F _tmp %s"%(root,))
 				rm("_tmp")
 
+def update():
+	log("Updating cantools and managed plugins", important=True)
+	os.chdir(CTP)
+	log("retrieving latest cantools", 1)
+	cmd("git pull")
+	if os.path.isdir(config.plugin.path):
+		dname, dirs, files = os.walk(config.plugin.path).next()
+		log("updating %s managed plugins"%(len(dirs),), 1)
+		for d in dirs:
+			os.chdir(os.path.join(config.plugin.path, d))
+			log("retrieving latest %s"%(d,), 2)
+			cmd("git pull")
+	log("finished updates", 1)
+
 def parse_and_make():
 	parser = OptionParser("ctinit [projname] [-r] [--plugins=P1|P2|P3] [--cantools_path=PATH] [--web_backend=BACKEND]")
 	parser.add_option("-p", "--plugins", dest="plugins", default="",
@@ -200,11 +213,17 @@ def parse_and_make():
 		help="web backend. options: dez, gae. (default: dez)")
 	parser.add_option("-r", "--refresh_symlinks", action="store_true",
 		dest="refresh_symlinks", default=False, help="add symlinks to project and configure version control path exclusion (if desired)")
+	parser.add_option("-u", "--update", action="store_true",
+		dest="update", default=False, help="update cantools and all managed plugins")
 	options, args = parser.parse_args()
-	if options.plugins:
-		config.plugin.update("modules", list(set(config.plugin.modules + options.plugins.split("|"))))
-	Builder(len(args) and args[0], options.cantools_path,
-		options.web_backend, options.refresh_symlinks)
+	if options.update:
+		update()
+	else:
+		if options.plugins:
+			config.plugin.update("modules", list(set(config.plugin.modules + options.plugins.split("|"))))
+		Builder(len(args) and args[0], options.cantools_path,
+			options.web_backend, options.refresh_symlinks)
+	log("done! goodbye.")
 
 if __name__ == "__main__":
 	parse_and_make()
