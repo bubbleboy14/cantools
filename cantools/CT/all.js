@@ -43,6 +43,7 @@ CT.require("CT.dom");
 CT.require("CT.file");
 CT.require("CT.gesture");
 CT.require("CT.key");
+CT.require("CT.layout");
 CT.require("CT.mobile");
 CT.require("CT.modal");
 CT.require("CT.panel");

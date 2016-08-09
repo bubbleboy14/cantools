@@ -117,6 +117,7 @@
 .bigger { font-size: 140%; }
 .biggest { font-size: 180%; }
 .biggerest { font-size: 230%; }
+.biggerester { font-size: 300%; }
 .gigantic { font-size: 400%; }
 .small { font-size: 80%; }
 .smaller { font-size: 60%; }
@@ -601,6 +602,24 @@
 }
 
 /* required CT ids */
+#header {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    top: 0px;
+    height: 45px;
+    padding: 30px;
+    border-radius: 0px 0px 7px 7px;
+    overflow: hidden;
+    z-index: 10000;
+}
+#footer {
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+    left: 0px;
+    height: 120px;
+}
 #top_buttons {
     top: 3px;
 }
