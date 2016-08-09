@@ -502,27 +502,6 @@ CT.dom = {
 			action: action
 		});
 	},
-	"grid": function(data, columns, rows, hardheight) {
-		var className = "w1-" + (columns || 3) + " h1-" + (rows || 4)
-			+ " noflow inline-block hoverglow pointer";
-		return CT.dom.node(data.map(function(d) {
-			var nstyle = {
-				backgroundImage: "url(" + d.img + ")",
-				backgroundPosition: "center",
-				backgroundSize: "cover"
-			};
-			if (hardheight)
-				nstyle.height = hardheight + "px";
-			return CT.dom.node(CT.dom.node(d.label,
-				"div", "biggest centered p20p overlay", null, null, {
-					paddingTop: "20%"
-				}), "div", className, null, {
-					onclick: d.onclick || function() {
-						location = d.link;
-					}
-				}, nstyle);
-		}), "div", "full");
-	},
 	"spinner": function() {
 		return CT.dom.node(CT.dom.node([
 			CT.dom.node("loading...", "strong"),
