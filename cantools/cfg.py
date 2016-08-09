@@ -4,7 +4,11 @@ cfg = {
 	"log": {
 		"allow": ["info", "log", "error"]
 	},
-	"plugins": [],
+	"plugin": {
+		"modules": [],
+		"path": "%s/.ctplug"%(os.environ.get("HOME"),),
+		"base": "bubbleboy14", # change to 'cantools' account or something
+	},
 	"geo": {
 		"test": False,
 		"zip": "google", # google|geonames
