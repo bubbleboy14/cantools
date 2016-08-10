@@ -24,7 +24,7 @@ CT.layout = {
 			centerLogo: true
 		});
 		var content = [];
-		if (opts.right.length) {
+		if (opts.right instanceof Node || opts.right.length) {
 			if (opts.centerLogo)
 				content.push(CT.dom.node(opts.right, "div", "right padded"));
 			else
@@ -110,7 +110,7 @@ CT.layout = {
 		return [
 			CT.dom.node([
 				CT.dom.node(opts.name, "div", "biggest"),
-				CT.dom.node(opts.description),
+				CT.dom.node(opts.description || opts.blurb),
 				buttons
 			], "div", "right w1-3"),
 			img
