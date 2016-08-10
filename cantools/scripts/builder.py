@@ -103,18 +103,15 @@ def build(nothing, dirname, fnames):
     through for dynamic imports (CT.require statements), injects modules
     wherever necessary, and sticks the result in a big <script> tag.
     """
-    if ".svn" in dirname:
-        return
-    for bd in config.build.compiled_dirs.values():
-        checkdir(bd)
-    for fname in bfiles(dirname, fnames):
-        for mode, compdir in config.build.compiled_dirs.items():
-            fulldir = dirname.replace(config.build.dynamic_dir, compdir)
+    for mode, compdir in config.build.compiled_dirs.items():
+        todir = dirname.replace(config.build.dynamic_dir, compdir)
+        log("Target Directory: %s"%(todir,), important=True)
+        checkdir(todir)
+        for fname in bfiles(dirname, fnames):
             frompath = os.path.join(dirname, fname)
-            topath = os.path.join(fulldir, fname)
+            topath = os.path.join(todir, fname)
             data = read(frompath)
             log('building: %s -> %s'%(frompath, topath), important=True)
-            checkdir(fulldir)
             if "fonts" in dirname or not fname.endswith(".html"):
                 log('copying non-html file', 1)
             else:
@@ -123,7 +120,7 @@ def build(nothing, dirname, fnames):
                     jspaths, jsblock = compilejs(js)
                     if mode is "static":
                         log("static mode", 1)
-                        js = '\n'.join([p.endswith("js") and '<script src="%s"></script>'%(p,) or '<script>%s</script>'%(p,) for p in jspaths])
+                        js = '\n'.join([p.endswith("js") and '<script src="/%s"></script>'%(p,) or '<script>%s</script>'%(p,) for p in jspaths])
                     elif mode is "production":
                         log("production mode", 1)
                         txt = compress(txt)
@@ -135,6 +132,8 @@ def build(nothing, dirname, fnames):
                 else:
                     data = txt
             write(data, topath)
+    for fname in [f for f in fnames if os.path.isdir(os.path.join(dirname, f))]:
+        os.path.walk(os.path.join(dirname, fname), build, None)
 
 if __name__ == "__main__":
-    os.path.walk(config.build.dynamic_dir, build, "html")
+    os.path.walk(config.build.dynamic_dir, build, None)
