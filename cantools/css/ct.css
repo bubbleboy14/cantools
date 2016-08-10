@@ -602,7 +602,7 @@
 }
 
 /* required CT ids */
-#header {
+#ctheader {
     position: absolute;
     left: 0px;
     right: 0px;
@@ -613,7 +613,7 @@
     overflow: hidden;
     z-index: 10000;
 }
-#footer {
+#ctfooter {
     position: absolute;
     bottom: 0px;
     right: 0px;

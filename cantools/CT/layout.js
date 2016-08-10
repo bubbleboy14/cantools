@@ -37,7 +37,7 @@ CT.layout = {
 		else
 			content.push(CT.dom.link(opts.logo, null, "/",
 				"w1-2 biggest bold block nodecoration abs top0 bottom0 left0"));
-		CT.dom.setContent(CT.dom.id("header"), CT.dom.node(content, "div", "h1 w1"));
+		CT.dom.setContent(CT.dom.id("ctheader"), CT.dom.node(content, "div", "h1 w1"));
 	},
 	footer: function(opts) {
 		opts = CT.merge(opts, {
@@ -65,7 +65,7 @@ CT.layout = {
 		if (opts.bottom)
 			content.push(CT.dom.node(opts.bottom, "div", "small bline centered"));
 		document.body.classList.add("footered");
-		document.body.appendChild(CT.dom.node(content, "div", null, "footer"));
+		document.body.appendChild(CT.dom.node(content, "div", null, "ctfooter"));
 	},
 	grid: function(data, columns, rows, hardheight) {
 		var className = "w1-" + (columns || 3) + " h1-" + (rows || 4)
