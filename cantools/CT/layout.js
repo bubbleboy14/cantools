@@ -107,6 +107,8 @@ CT.layout = {
 		}
 		for (var b in opts.buttons)
 			buttons.appendChild(CT.dom.button(b, opts.buttons[b], "round padded margined"));
+		if (!opts.name && opts.firstName && opts.lastName)
+			opts.name = opts.firstName + " " + opts.lastName;
 		return [
 			CT.dom.node([
 				CT.dom.node(opts.name, "div", "biggest"),
