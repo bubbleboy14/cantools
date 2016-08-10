@@ -115,7 +115,7 @@ class BlobWrapper(object):
 			self._set_path()
 
 	def urlsafe(self):
-		return self.path
+		return self.path and "/" + "/".join(os.path.split(self.path))
 
 class Blob(basicType(sqlInteger)):
 	def process_bind_param(self, data, dialect):
