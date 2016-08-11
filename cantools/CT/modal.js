@@ -295,7 +295,7 @@ CT.modal.Prompt = CT.Class({
 	},
 	on: {
 		show: function() {
-			this.input.focus();
+			this.input && this.input.focus();
 		},
 		hide: function() {}
 	},
