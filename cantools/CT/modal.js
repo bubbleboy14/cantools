@@ -304,7 +304,8 @@ CT.modal.Prompt = CT.Class({
 		this.hide();
 	},
 	submit: function() {
-		this.opts.cb(this.input.ctfile || this.opts.data[this.input.value] || this.input.value);
+		this.opts.cb(this.input && (this.input.ctfile
+			|| this.opts.data[this.input.value] || this.input.value));
 		this.hide();
 	},
 	_nodify: function(data) {
@@ -314,9 +315,11 @@ CT.modal.Prompt = CT.Class({
 	},
 	build: function() {
 		this.continueButton = CT.dom.button("Continue", this.submit);
-		this.input = this._input[this.opts.style](this.opts.data);
 		this.node.appendChild(CT.dom.node(this.opts.prompt));
-		this.node.appendChild(this.input);
+		if (this.opts.style == "confirm") {
+			this.input = this._input[this.opts.style](this.opts.data);
+			this.node.appendChild(this.input);
+		}
 		this.node.appendChild(this.continueButton);
 		this.node.appendChild(CT.dom.button("Cancel", this.hide));
 	},
