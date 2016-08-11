@@ -316,7 +316,7 @@ CT.modal.Prompt = CT.Class({
 	build: function() {
 		this.continueButton = CT.dom.button("Continue", this.submit);
 		this.node.appendChild(CT.dom.node(this.opts.prompt));
-		if (this.opts.style == "confirm") {
+		if (this.opts.style != "confirm") {
 			this.input = this._input[this.opts.style](this.opts.data);
 			this.node.appendChild(this.input);
 		}
