@@ -470,6 +470,7 @@
     top: 0;
     z-index: 1000;
     overflow: hidden;
+    background: black;
     transition: opacity 500ms ease-in-out;
     -moz-transition: opacity 500ms ease-in-out;
     -webkit-transition: opacity 500ms ease-in-out;

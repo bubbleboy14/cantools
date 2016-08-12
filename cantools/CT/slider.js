@@ -8,8 +8,8 @@ the 'opts' object itself, are all optional.
 
 ### Definable properties are as follows:
     - parent (default: document.body): DOM element in which to build the slider
-    - mode (default: 'peekaboo'): how to display each frame - 'peekaboo', 'chunk', 'menu', or 'profile'
-    - subMode (default: 'peekaboo'): which mode to use for chunk-mode frames ('peekaboo', 'menu', 'profile')
+    - mode (default: 'peekaboo'): how to display each frame - 'peekaboo', 'chunk', 'menu', 'profile', or 'track'
+    - subMode (default: 'peekaboo'): which mode to use for chunk-mode frames ('peekaboo', 'menu', 'profile', 'track')
     - autoSlideInterval (default: 5000): how many milliseconds to wait before auto-sliding frames
     - autoSlide (default: true): automatically proceed through frames (else, trigger later with .resume())
     - visible (default: true): maps to visibility css property
@@ -57,8 +57,8 @@ CT.slider.Slider = CT.Class({
 			pan: true,
 			translucentTeaser: true,
 			parent: document.body,
-			mode: "peekaboo", // or 'menu' or 'profile' or 'chunk'
-			subMode: "peekaboo", // or 'menu' or 'profile'
+			mode: "peekaboo", // or 'menu' or 'profile' or 'chunk' or 'track'
+			subMode: "peekaboo", // or 'menu' or 'profile' or 'track'
 			orientation: "horizontal",
 			arrowPosition: "middle", // or "top" or "middle"
 			bubblePosition: "bottom" // or "top"
@@ -165,7 +165,7 @@ CT.slider.Slider = CT.Class({
 	},
 	resume: function() {
 		if (!this._autoSlide)
-			this._autoSlide = setInterval(this._autoSlideCallback, this.opts.autoSlideInterval);
+			this._autoSlide = setInterval(this.autoSlideCallback, this.opts.autoSlideInterval);
 	},
 	pause: function() {
 		if (this._autoSlide) {
@@ -233,7 +233,7 @@ CT.slider.Slider = CT.Class({
 		this.updatePosition(direction, force);
 		this.trans();
 	},
-	_autoSlideCallback: function() {
+	autoSlideCallback: function() {
 		this.shift(CT.slider.orientation2abs[this.opts.orientation].forward, true);
 	},
 	prevButtonCallback: function() {
@@ -422,6 +422,16 @@ CT.slider.Frame = CT.Class({
 			description: this.opts.description,
 			controllerHook: this.on
 		}));
+	},
+	track: function() {
+		var audio = CT.dom.audio(this.opts.src, false, null, this.slider.autoSlideCallback);
+		this.on.hide = function() { audio.pause(); }; // gotta wrap :-\
+		this.on.show = function() { audio.play(); }; // gotta wrap :-\
+		CT.dom.addContent(this.node, CT.dom.node([
+			CT.dom.node(this.opts.song, "div", "biggest"),
+			CT.dom.node(this.opts.album, "div", "big"),
+			audio
+		], "div", "full-center"));
 	},
 	init: function(opts, slider) {
 		this.opts = opts;
