@@ -10,7 +10,7 @@ CT.Drop = CT.Class({
 		if (this.opts.setWidth)
 			this.node.style.width = (this.anchor.clientWidth + 2) + "px";
 		this.node.style.top = (ipos.top + this.anchor.clientHeight) + "px";
-		this.node.style.left = (ipos.left + 2) + "px";
+		this.node.style.left = (ipos.left + this.opts.shiftH) + "px";
 	},
 	_hide: function() {
 		this.node.className = this.className + " hider";
@@ -62,6 +62,7 @@ CT.Drop = CT.Class({
 			content: CT.dom.node(),
 			parent: document.body,
 			rows: false,
+			shiftH: 2,
 			relative: false,
 			setClick: true,
 			setNodeClick: true,
