@@ -219,7 +219,7 @@ var CT = {
 				result.data = CT.net._ctsuccess(data, signature, code == "3");
 			return result;
 		},
-		"_xhrcb": function(path, cb, eb, cbarg, ebarg, errMsg, signature) {
+		"_xhrcb": function(path, cb, eb, cbarg, ebarg, errMsg, signature, _500as200) {
 			if (CT.net._spinner) {
 				CT.net._spinner_node = CT.net._spinner_node || CT.dom.spinner();
 				document.body.appendChild(CT.net._spinner_node);
@@ -229,7 +229,7 @@ var CT = {
 				CT.net._fallback_error((errMsg || "error") + ": " + payload);
 			};
 			return function(xhr) {
-				if (xhr.status == 200) {
+				if (xhr.status == 200 || (_500as200 && xhr.status == 500)) {
 					if (CT.net._spinner)
 						CT.dom.remove(CT.net._spinner_node);
 					var data = xhr.responseText.trim();
@@ -256,8 +256,9 @@ var CT = {
 			return CT.net.xhr(path, "POST", params, !sync, CT.net._xhrcb(path,
 				cb, eb, cbarg, ebarg, errMsg, signature), headers);
 		},
-		"put": function(path, params, cb, headers, passthrough) {
-			CT.net.xhr(path, "PUT", params, true, CT.net._xhrcb(path, cb), headers, passthrough);
+		"put": function(path, params, cb, headers, passthrough, _500as200) {
+			CT.net.xhr(path, "PUT", params, true, CT.net._xhrcb(path, cb,
+				null, null, null, null, null, _500as200), headers, passthrough);
 		},
 		"del": function(path, params, cb, headers) {
 			CT.net.xhr(path, "DELETE", params, true, CT.net._xhrcb(path, cb), headers);
