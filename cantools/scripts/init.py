@@ -91,21 +91,23 @@ class Builder(object):
 		log("Installing Plugin: %s"%(plugin,), important=True)
 		mod = self.plugins[plugin] = __import__(plugin)
 		mod.__ct_mod_path__ = mod.__file__.rsplit(os.path.sep, 1)[0]
-		if hasattr(mod, "model"):
-			log("adding %s imports to model"%(len(mod.model),), 3)
+		init = mod.init
+		if hasattr(init, "model"):
+			log("adding %s imports to model"%(len(init.model),), 3)
 			config.init.update("model",
 				"%s\r\n%s"%(config.init.model,
 					"\r\n".join(["from %s import %s"%(m,
-						k.split(", ")) for (m, k) in mod.model.items()])))
-		if hasattr(mod, "routes"):
-			log("adding %s routes to app.yaml"%(len(mod.routes),), 3)
+						k.split(", ")) for (m, k) in init.model.items()])))
+		if hasattr(init, "routes"):
+			log("adding %s routes to app.yaml"%(len(init.routes),), 3)
 			config.init.yaml.update("core",
-				"%s\r\n\r\n%s"(config.init.yaml.core,
-					"\r\n\r\n".join(["- url: %s\r\n  script: %s"%(u, s) for (u,
-						s) in mod.routes.items()])))
-		if hasattr(mod, "requires"):
-			log("installing %s ct dependencies"%(len(mod.requires),), 3)
-			self._getplugs(mod.requires)
+				"%s\r\n\r\n%s"%(config.init.yaml.core,
+					"\r\n\r\n".join(["- url: %s\r\n  %s: %s"%(u,
+						s.endswith(".py") and "script" or "static_dir", s) for (u,
+						s) in init.routes.items()])))
+		if hasattr(init, "requires"):
+			log("installing %s ct dependencies"%(len(init.requires),), 3)
+			self._getplugs(init.requires)
 
 	def _getplugs(self, plugs):
 		for plugin in plugs:
