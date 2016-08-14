@@ -97,7 +97,7 @@ class Builder(object):
 			config.init.update("model",
 				"%s\r\n%s"%(config.init.model,
 					"\r\n".join(["from %s import %s"%(m,
-						k.split(", ")) for (m, k) in init.model.items()])))
+						", ".join(k)) for (m, k) in init.model.items()])))
 		if hasattr(init, "routes"):
 			log("adding %s routes to app.yaml"%(len(init.routes),), 3)
 			config.init.yaml.update("core",
