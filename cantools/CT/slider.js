@@ -63,6 +63,8 @@ CT.slider.Slider = CT.Class({
 			arrowPosition: "middle", // or "top" or "middle"
 			bubblePosition: "bottom" // or "top"
 		});
+		if (typeof opts.parent == "string")
+			opts.parent = CT.dom.id(opts.parent);
 		this.jumpers = {};
 		this.dimension = CT.slider.orientation2dim[opts.orientation];
 		this.circlesContainer = CT.dom.node("", "div",
