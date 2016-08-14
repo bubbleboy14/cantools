@@ -97,6 +97,18 @@
 .bottom0 { bottom: 0px; }
 .left0 { left: 0px; }
 .right0 { right: 0px; }
+.all0 {
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+}
+.all10 {
+    top: 10px;
+    right: 10px;
+    bottom: 10px;
+    left: 10px;
+}
 .ctr {
     top: 10px;
     right: 10px;
