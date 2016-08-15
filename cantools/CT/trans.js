@@ -221,15 +221,14 @@ CT.trans = {
 	pan: function(node, opts, wait) {
 		opts = CT.merge(opts, CT.trans._.defaults.pan);
 		var setV = function() {
-			node._vertical = node.clientWidth / node.parentNode.clientWidth
-				< node.clientHeight / node.parentNode.clientHeight;
-			node.classList.add(node._vertical ? "w1" : "h1");
+			node._vertical = CT.dom.cover(node);
 		};
-		node.onload = node.onresize = function() {
+		node.onload = function() {
 			setV();
 			if (!wait)
 				CT.trans.translate(node, opts);
 		};
+		CT.onresize(node.onload);
 		var controller = new CT.trans.Controller(function() {
 			if (node._vertical == undefined)
 				setV();
