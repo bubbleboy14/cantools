@@ -306,6 +306,10 @@ CT.slider.Frame = CT.Class({
 			imageBack.controller = CT.trans.pan(imageBack.firstChild, {
 				duration: opts.panDuration || slider.opts.autoSlideInterval
 			}, true);
+		} else {
+			CT.onload(function() {
+				CT.dom.cover(imageBack.firstChild);
+			}, imageBack.firstChild);
 		}
 		if (opts.tab) {
 			tab = new CT.modal.Modal({
