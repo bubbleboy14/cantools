@@ -11,6 +11,7 @@ the 'opts' object itself, are all optional.
     - mode (default: 'peekaboo'): how to display each frame - 'peekaboo', 'chunk', 'menu', 'profile', or 'track'
     - subMode (default: 'peekaboo'): which mode to use for chunk-mode frames ('peekaboo', 'menu', 'profile', 'track')
     - autoSlideInterval (default: 5000): how many milliseconds to wait before auto-sliding frames
+    - panDuration (default: undefined): pan duration for background images -- defaults to autoSlideInterval
     - autoSlide (default: true): automatically proceed through frames (else, trigger later with .resume())
     - visible (default: true): maps to visibility css property
     - navButtons (default: true): include nav bubbles and arrows
@@ -304,7 +305,7 @@ CT.slider.Frame = CT.Class({
 		};
 		if (slider.opts.pan) {
 			imageBack.controller = CT.trans.pan(imageBack.firstChild, {
-				duration: opts.panDuration || slider.opts.autoSlideInterval
+				duration: opts.panDuration || slider.opts.panDuration || slider.opts.autoSlideInterval
 			}, true);
 		} else {
 			CT.onload(function() {
@@ -422,7 +423,7 @@ CT.slider.Frame = CT.Class({
 		CT.dom.addContent(this.node, CT.layout.profile({
 			img: this.opts.img,
 			pan: this.slider.opts.pan,
-			panDuration: this.opts.panDuration || this.slider.opts.autoSlideInterval,
+			panDuration: this.opts.panDuration || this.slider.opts.panDuration || this.slider.opts.autoSlideInterval,
 			buttons: this.opts.buttons,
 			name: this.opts.name,
 			description: this.opts.description,
