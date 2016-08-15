@@ -704,6 +704,24 @@ CT.dom = {
 		return f;
 	},
 
+	// resizers
+	"_isVerticalOrientation": function(node) {
+		return node.clientWidth / node.parentNode.clientWidth
+			< node.clientHeight / node.parentNode.clientHeight;
+	},
+	"cover": function(node) {
+		var v = CT.dom._isVerticalOrientation(node);
+		node.classList.add(v ? "w1" : "h1");
+		node.classList.remove(v ? "h1" : "w1");
+		return v;
+	},
+	"contain": function(node) {
+		var v = CT.dom._isVerticalOrientation(node);
+		node.classList.add(v ? "h1" : "w1");
+		node.classList.remove(v ? "w1" : "h1");
+		return v;
+	},
+
 	// rich input stuff
 	"_ricounter": 0,
 	"_get_ta_id": function() {
