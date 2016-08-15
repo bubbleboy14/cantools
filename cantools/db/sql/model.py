@@ -141,3 +141,7 @@ class ModelBase(sa_dbase):
 
     def export(self):
         return self._basic(ModelBase.mydata(self, True))
+
+class TimeStampedBase(ModelBase):
+    created = db.DateTime(auto_now_add=True)
+    modified = db.DateTime(auto_now=True)
