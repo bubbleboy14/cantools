@@ -343,6 +343,12 @@ var CT = {
 		}
 		n._ct_onload.push(cb);
 	},
+	"on": function(evt, cb, node) {
+		(node || window).addEventListener(evt, cb);
+	},
+	"onresize": function(cb, n) {
+		CT.on("resize", cb, n);
+	},
 	"dmerge": function() {
 		var i, k, v, o = {};
 		for (i = arguments.length - 1; i > -1; i--) {
