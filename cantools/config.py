@@ -57,6 +57,13 @@ def _getpass(val, ptype):
 	return val
 
 config = Config(cfg)
+
+# load plugins
+for plugin in config.plugin.modules:
+	mod = __import__(plugin)
+	if hasattr(mod.init, "cfg"):
+		config.update(plugin, mod.init.cfg)
+
 for key, val in [[term.strip() for term in line.split(" = ")] for line in read("ct.cfg", True)]:
 	if key.startswith("#"):
 		continue
