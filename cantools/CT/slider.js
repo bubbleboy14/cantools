@@ -341,7 +341,7 @@ CT.slider.Frame = CT.Class({
 		this.on.show = function() {
 			if (opts.title || opts.blurb)
 				CT.trans.fadeIn(teaser);
-			if (slider.opts.keys)
+			if (slider.opts.keys && teaser) // unreg somewhere?
 				CT.key.on("ENTER", teaserTap);
 			if (slider.opts.pan)
 				imageBack.controller.resume();
