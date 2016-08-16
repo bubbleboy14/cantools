@@ -67,6 +67,8 @@ table. The constructor takes an options object ('opts') with three possible entr
 
 CT.db = {
 	_schema: {},
+	_limit: 20,
+	_pagerLimit: 40,
 	key2model: function(key) {
 		return JSON.parse(atob(key)).model;
 	},
@@ -94,6 +96,12 @@ CT.db = {
 			}
 		}
 	},
+	setLimit: function(limit) {
+		CT.db._limit = limit;
+	},
+	setPagerLimit: function(limit) {
+		CT.db._pagerLimit = limit;
+	},
 	eachProp: function(modname, cb) {
 		return Object.keys(CT.db._schema[modname]).filter(function(p) {
 			return ["index", "key", "modelName", "label", "_label", "_kinds"].indexOf(p) == -1;
@@ -112,7 +120,7 @@ CT.db = {
 		var qdata = {
 			"action": "get",
 			"modelName": modelName,
-			"limit": limit || 20,
+			"limit": limit || CT.db._limit,
 			"offset": offset || 0
 		};
 		if (order)
@@ -178,7 +186,8 @@ CT.db = {
 		var o = CT.db._opts, key = k || modelName,
 			cnode = cnode || CT.dom.id(o.panel_key + "content" + key);
 		cnode.appendChild(CT.panel.pager(o.builder(modelName),
-			CT.db._refill(modelName, order, filters), 40, "rcol", "data", key));
+			CT.db._refill(modelName, order, filters),
+			CT.db._pagerLimit, "rcol", "data", key));
 		o.post_pager && o.post_pager(key, modelName);
 	}
 };
