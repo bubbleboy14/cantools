@@ -143,5 +143,5 @@ class ModelBase(sa_dbase):
         return self._basic(ModelBase.mydata(self, True))
 
 class TimeStampedBase(ModelBase):
-    created = db.DateTime(auto_now_add=True)
-    modified = db.DateTime(auto_now=True)
+    created = DateTime(auto_now_add=True)
+    modified = DateTime(auto_now=True)
