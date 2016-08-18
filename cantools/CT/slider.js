@@ -11,7 +11,7 @@ the 'opts' object itself, are all optional.
     - mode (default: 'peekaboo'): how to display each frame - 'peekaboo', 'chunk', 'menu', 'profile', or 'track'
     - subMode (default: 'peekaboo'): which mode to use for chunk-mode frames ('peekaboo', 'menu', 'profile', 'track')
     - autoSlideInterval (default: 5000): how many milliseconds to wait before auto-sliding frames
-    - panDuration (default: undefined): pan duration for background images -- defaults to autoSlideInterval
+    - panDuration (default: autoSlideInterval): pan duration for background images
     - autoSlide (default: true): automatically proceed through frames (else, trigger later with .resume())
     - visible (default: true): maps to visibility css property
     - navButtons (default: true): include nav bubbles and arrows
