@@ -35,7 +35,7 @@ of cantools and all managed plugins. Thus, plugins are dealt with under the hood
 any need for the developer to know or do anything beyond 'ctinit -r'.
 """
 
-import os
+import os, sys
 from optparse import OptionParser
 from cantools import config
 from cantools.util import log, error, cp, sym, mkdir, rm, cmd, read
@@ -82,10 +82,8 @@ class Builder(object):
 		log("restoring cantools develop status", important=True)
 		cmd("sudo python setup.py develop")
 		os.chdir(curdir)
-		try:
-			self._getplug(plug)
-		except ImportError:
-			error("Installed %s. Please re-run 'ctinit -r' to complete."%(plug,))
+		sys.path.insert(0, os.path.join(config.plugin.path, plug))
+		self._getplug(plug)
 
 	def _getplug(self, plugin):
 		log("Installing Plugin: %s"%(plugin,), important=True)
