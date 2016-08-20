@@ -213,10 +213,12 @@ var CT = {
 				success: !!(code % 2)
 			};
 			data = data.slice(1);
-			if (code == "2")
+			if (code == "2" || code == "3")
 				result.data = atob(data); // is a string
 			else if (result.success)
 				result.data = CT.net._ctsuccess(data, signature, code == "3");
+			else
+				result.data = data;
 			return result;
 		},
 		"_xhrcb": function(path, cb, eb, cbarg, ebarg, errMsg, signature, _500as200) {
