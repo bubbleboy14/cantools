@@ -103,6 +103,9 @@ class Builder(object):
 					"\r\n\r\n".join(["- url: %s\r\n  %s: %s"%(u,
 						s.endswith(".py") and "script" or "static_dir", s) for (u,
 						s) in init.routes.items()])))
+		if hasattr(init, "jsconfig"):
+			log("adding %s config entries to core.config (js)"%(len(init.jsconfig.keys()),), 3)
+			config.plugin.config.update(plugin, init.jsconfig)
 		if hasattr(init, "requires"):
 			log("installing %s ct dependencies"%(len(init.requires),), 3)
 			self._getplugs(init.requires)
@@ -128,9 +131,13 @@ class Builder(object):
 		os.chdir(self.pname)
 		for d in config.init.dirs:
 			mkdir(d)
-		for mod in self.plugins.values():
-			for d in mod.init.dirs:
-				mkdir(d)
+		if self.plugins:
+			jsc = os.path.join(config.js.path, "core")
+			log("Plugins Specified - adding %s"%(jsc,), important=True)
+			mkdir(jsc)
+			for mod in self.plugins.values():
+				for d in mod.init.dirs:
+					mkdir(d)
 
 	def make_files(self):
 		log("generating configuration", 1)
@@ -144,13 +151,17 @@ class Builder(object):
 		cp(config.init.html%(self.pname,), os.path.join("html", "index.html"))
 		log("model", 1)
 		cp(config.init.model, "model.py")
-		for plugin, mod in self.plugins.items():
-			if hasattr(mod.init, "copies"):
-				for dname, fnames in mod.init.copies.items():
-					for fname in fnames:
-						log("%s [%s]"%(fname, plugin), 1)
-						cp(read(os.path.join(mod.__ct_mod_path__, dname, fname)),
-							os.path.join(dname, fname))
+		if self.plugins:
+			jscc = os.path.join(config.js.path, "core", "config.js")
+			log("Plugins Specified - building %s"%(jscc,), important=True)
+			cp("core.config = %s"%(config.plugin.config.json(),), jscc)
+			for plugin, mod in self.plugins.items():
+				if hasattr(mod.init, "copies"):
+					for dname, fnames in mod.init.copies.items():
+						for fname in fnames:
+							log("%s [%s]"%(fname, plugin), 1)
+							cp(read(os.path.join(mod.__ct_mod_path__, dname, fname)),
+								os.path.join(dname, fname))
 
 	def generate_symlinks(self):
 		log("creating symlinks", 1)
