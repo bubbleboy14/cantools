@@ -811,6 +811,13 @@ CT.dom = {
 		if (typeof n == "string") n = CT.dom.id(n);
 		n && n.parentNode && n.parentNode.removeChild(n);
 	},
+	"replace": function(target, replacement) {
+		if (target.parentNode) {
+			target.parentNode.insertBefore(typeof replacement == "string"
+				? CT.dom.node(replacement) : replacement, target);
+			target.parentNode.removeChild(target);
+		}
+	},
 	"clear": function(n) {
 		(n || document.body).innerHTML = "";
 	},
