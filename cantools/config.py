@@ -18,6 +18,18 @@ class Config(object):
 	def __contains__(self, key):
 		return key in self._cfg
 
+	def obj(self):
+		obj = {}
+		for k, v in self.items():
+			if v.__class__ == Config:
+				obj[k] = v.obj()
+			else:
+				obj[k] = v
+		return obj
+
+	def json(self):
+		return json.dumps(self.obj(), indent=4)
+
 	# dict compabitility
 	def values(self):
 		return self._cfg.values()

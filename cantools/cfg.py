@@ -5,6 +5,7 @@ cfg = {
 		"allow": ["info", "log", "error"]
 	},
 	"plugin": {
+		"config": {},
 		"modules": [],
 		"path": "%s/.ctplug"%(os.environ.get("HOME"),),
 		"base": "bubbleboy14", # change to 'cantools' account or something
