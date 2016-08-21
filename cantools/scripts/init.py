@@ -90,6 +90,10 @@ class Builder(object):
 		mod = self.plugins[plugin] = __import__(plugin)
 		mod.__ct_mod_path__ = mod.__file__.rsplit(os.path.sep, 1)[0]
 		init = mod.init
+		jscc = os.path.join(mod.__ct_mod_path__, "js", "config.js")
+		if os.path.isfile(jscc):
+			log("adding custom config entries to core.config (js)", 3)
+			config.plugin.config.update(plugin, read(jscc, isjson=True))
 		if hasattr(init, "model"):
 			log("adding %s imports to model"%(len(init.model),), 3)
 			config.init.update("model",
@@ -103,9 +107,6 @@ class Builder(object):
 					"\r\n\r\n".join(["- url: %s\r\n  %s: %s"%(u,
 						s.endswith(".py") and "script" or "static_dir", s) for (u,
 						s) in init.routes.items()])))
-		if hasattr(init, "jsconfig"):
-			log("adding %s config entries to core.config (js)"%(len(init.jsconfig.keys()),), 3)
-			config.plugin.config.update(plugin, init.jsconfig)
 		if hasattr(init, "requires"):
 			log("installing %s ct dependencies"%(len(init.requires),), 3)
 			self._getplugs(init.requires)
