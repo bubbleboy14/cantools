@@ -155,7 +155,7 @@ class Builder(object):
 		if self.plugins:
 			jscc = os.path.join(config.js.path, "core", "config.js")
 			log("Plugins Specified - building %s"%(jscc,), important=True)
-			cp("core.config = %s"%(config.plugin.config.json(),), jscc)
+			cp("core.config = %s;"%(config.plugin.config.json(),), jscc)
 			for plugin, mod in self.plugins.items():
 				if hasattr(mod.init, "copies"):
 					for dname, fnames in mod.init.copies.items():
