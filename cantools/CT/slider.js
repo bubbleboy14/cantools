@@ -422,15 +422,12 @@ CT.slider.Frame = CT.Class({
 		this.on.show = menu.show;
 	},
 	profile: function() {
-		CT.dom.addContent(this.node, CT.layout.profile({
-			img: this.opts.img || this.slider.opts.defaultImg,
-			pan: this.slider.opts.pan,
-			panDuration: this.opts.panDuration || this.slider.opts.panDuration || this.slider.opts.autoSlideInterval,
-			buttons: this.opts.buttons,
-			name: this.opts.name,
-			description: this.opts.description || this.opts.blurb,
+		var opts = CT.merge(this.opts, this.slider.opts, {
+			panDuration: this.slider.opts.autoSlideInterval,
 			controllerHook: this.on
-		}));
+		});
+		opts.img = opts.img || this.slider.opts.defaultImg;
+		CT.dom.addContent(this.node, CT.layout.profile(opts));
 	},
 	track: function() { // add img!
 		var audio = CT.dom.audio(this.opts.src, false, null, this.slider.autoSlideCallback);
