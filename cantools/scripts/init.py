@@ -93,7 +93,7 @@ class Builder(object):
 		jscc = os.path.join(mod.__ct_mod_path__, "js", "config.js")
 		if os.path.isfile(jscc):
 			log("adding custom config entries to core.config (js)", 3)
-			config.plugin.config.update(plugin, read(jscc, isjson=True))
+			config.init.config.update(plugin, read(jscc, isjson=True))
 		if hasattr(init, "model"):
 			log("adding %s imports to model"%(len(init.model),), 3)
 			config.init.update("model",
@@ -132,13 +132,14 @@ class Builder(object):
 		os.chdir(self.pname)
 		for d in config.init.dirs:
 			mkdir(d)
+		jsc = os.path.join(config.js.path, "core")
+		mkdir(jsc)
 		if self.plugins:
-			jsc = os.path.join(config.js.path, "core")
-			log("Plugins Specified - adding %s"%(jsc,), important=True)
-			mkdir(jsc)
+			log("Building Directories for %s Plugins"%(len(self.plugins.keys()),), important=True)
 			for mod in self.plugins.values():
-				for d in mod.init.dirs:
-					mkdir(d)
+				if hasattr(mod.init, "dirs"):
+					for d in mod.init.dirs:
+						mkdir(d)
 
 	def make_files(self):
 		log("generating configuration", 1)
@@ -152,17 +153,20 @@ class Builder(object):
 		cp(config.init.html%(self.pname,), os.path.join("html", "index.html"))
 		log("model", 1)
 		cp(config.init.model, "model.py")
-		if self.plugins:
-			jscc = os.path.join(config.js.path, "core", "config.js")
-			log("Plugins Specified - building %s"%(jscc,), important=True)
-			cp("core.config = %s;"%(config.plugin.config.json(),), jscc)
-			for plugin, mod in self.plugins.items():
-				if hasattr(mod.init, "copies"):
-					for dname, fnames in mod.init.copies.items():
-						for fname in fnames:
-							log("%s [%s]"%(fname, plugin), 1)
-							cp(read(os.path.join(mod.__ct_mod_path__, dname, fname)),
-								os.path.join(dname, fname))
+		jsc = os.path.join(config.js.path, "core.js")
+		jscc = os.path.join(config.js.path, "core", "config.js")
+		jscu = os.path.join(config.js.path, "core", "util.js")
+		log("Building core js files: %s, %s, %s"%(jsc, jscc, jscu), important=True)
+		cp(os.linesep.join(config.init.core), jsc)
+		cp("core.config = %s;"%(config.init.config.json(),), jscc)
+		cp("core.util = %s;"%(config.init.util.json(),), jscu)
+		for plugin, mod in self.plugins.items():
+			if hasattr(mod.init, "copies"):
+				for dname, fnames in mod.init.copies.items():
+					for fname in fnames:
+						log("%s [%s]"%(fname, plugin), 1)
+						cp(read(os.path.join(mod.__ct_mod_path__, dname, fname)),
+							os.path.join(dname, fname))
 
 	def generate_symlinks(self):
 		log("creating symlinks", 1)

@@ -5,7 +5,6 @@ cfg = {
 		"allow": ["info", "log", "error"]
 	},
 	"plugin": {
-		"config": {},
 		"modules": [],
 		"path": "%s/.ctplug"%(os.environ.get("HOME"),),
 		"base": "bubbleboy14", # change to 'cantools' account or something
@@ -87,6 +86,15 @@ cfg = {
 		</noscript>
 	""",
 	"init": {
+		"core": ['CT.require("core.config");', 'CT.require("core.util");'],
+		"config": {
+			"header": {
+				"logo": "Your Logo",
+				"right": []
+			},
+			"css": []
+		},
+		"util": {},
 		"dirs": ["js", "css", "img", "logs", "blob", "html", "html-static", "html-production"],
 		"vcignore": {
 			".": ["*pyc", "*~", ".ctp", "_", "admin.py", "_db.py", "_pay.py", "logs"],
