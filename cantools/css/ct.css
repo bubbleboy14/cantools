@@ -463,7 +463,7 @@
 /* drop classes */
 .drop {
   z-index: 10;
-  position: absolute;
+  position: fixed;
   max-height: 0px;
   text-align: left;
   overflow: hidden;
