@@ -10,6 +10,7 @@ the 'opts' object itself, are all optional.
     - parent (default: document.body): DOM element in which to build the slider
     - mode (default: 'peekaboo'): how to display each frame - 'peekaboo', 'chunk', 'menu', 'profile', or 'track'
     - subMode (default: 'peekaboo'): which mode to use for chunk-mode frames ('peekaboo', 'menu', 'profile', 'track')
+    - defaultImg (default: undefined): fallback img for any frame mode
     - autoSlideInterval (default: 5000): how many milliseconds to wait before auto-sliding frames
     - panDuration (default: autoSlideInterval): pan duration for background images
     - autoSlide (default: true): automatically proceed through frames (else, trigger later with .resume())
@@ -258,7 +259,7 @@ CT.slider.Frame = CT.Class({
 	peekaboo: function() {
 		var opts = this.opts, node = this.node, slider = this.slider, pulser, tab,
 			full = CT.dom.node(opts.content, "div", "big carousel-content-full"),
-			imageBack = CT.dom.node(CT.dom.img(opts.img, "abs"), "div", "w1 h1 noflow carousel-content-image"),
+			imageBack = CT.dom.node(CT.dom.img(opts.img || slider.opts.defaultImg, "abs"), "div", "w1 h1 noflow carousel-content-image"),
 			nodes = [ imageBack, full ];
 		var teaserTap = function() {
 			slider.pause();
@@ -375,6 +376,7 @@ CT.slider.Frame = CT.Class({
 			mode: this.opts.mode || this.slider.opts.subMode,
 			autoSlide: false,
 			pan: this.slider.opts.pan,
+			defaultImg: this.slider.opts.defaultImg,
 			translucentTeaser: this.slider.opts.translucentTeaser,
 			orientation: CT.slider.other_orientation[this.slider.opts.orientation],
 			arrowPosition: "bottom"
@@ -411,7 +413,7 @@ CT.slider.Frame = CT.Class({
 		var logos = function(logo) {
 			var arr = [];
 			for (var i = 0; i < 5; i++)
-				arr.push(CT.dom.img(logo));
+				arr.push(CT.dom.img(logo || this.slider.opts.defaultImg));
 			return arr;
 		};
 		this.node.appendChild(CT.dom.marquee(logos(this.opts.logo), "abs top0 h20p fullwidth"));
@@ -421,16 +423,16 @@ CT.slider.Frame = CT.Class({
 	},
 	profile: function() {
 		CT.dom.addContent(this.node, CT.layout.profile({
-			img: this.opts.img,
+			img: this.opts.img || this.slider.opts.defaultImg,
 			pan: this.slider.opts.pan,
 			panDuration: this.opts.panDuration || this.slider.opts.panDuration || this.slider.opts.autoSlideInterval,
 			buttons: this.opts.buttons,
 			name: this.opts.name,
-			description: this.opts.description,
+			description: this.opts.description || this.opts.blurb,
 			controllerHook: this.on
 		}));
 	},
-	track: function() {
+	track: function() { // add img!
 		var audio = CT.dom.audio(this.opts.src, false, null, this.slider.autoSlideCallback);
 		this.on.hide = function() { audio.pause(); }; // gotta wrap :-\
 		this.on.show = function() { audio.play(); }; // gotta wrap :-\
