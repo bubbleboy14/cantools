@@ -633,6 +633,13 @@
     overflow: hidden;
     z-index: 10000;
 }
+#ctmain {
+    position: absolute;
+    top: 130px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+}
 #ctfooter {
     position: absolute;
     bottom: 0px;
