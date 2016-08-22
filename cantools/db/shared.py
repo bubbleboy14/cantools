@@ -55,7 +55,7 @@ def ct_key(modelName, index):
         "model": modelName
     })))
 
-def merge_schemas(bases, label):
+def merge_schemas(bases, label=None):
     kinds = {}
     schema = { "index": "immutable", "key": "key_immutable" }
     for base in bases:
@@ -63,7 +63,8 @@ def merge_schemas(bases, label):
             schema.update(base._schema)
             kinds.update(base._schema["_kinds"])
     schema["_kinds"] = kinds
-    schema["_label"] = label
+    if label:
+        schema["_label"] = label
     return schema
 
 def hashpass(password, date):

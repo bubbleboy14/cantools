@@ -27,9 +27,7 @@ class CTMeta(DeclarativeMeta):
                     if label in attrs:
                         attrs["label"] = label
                         break
-                if "label" not in attrs:
-                    attrs["label"] = "key"
-            schema = attrs["_schema"] = merge_schemas(bases, attrs["label"])
+            schema = attrs["_schema"] = merge_schemas(bases, attrs.get("label"))
             for key, val in attrs.items():
                 if getattr(val, "_ct_type", None):
                     schema[key] = val._ct_type
@@ -52,6 +50,7 @@ class ModelBase(sa_dbase):
         "polymorphic_identity": "modelbase",
         "with_polymorphic": "*"
     }
+    label = "key"
     _data_omit = []
 
     def __init__(self, *args, **kwargs):
