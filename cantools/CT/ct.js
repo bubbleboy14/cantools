@@ -335,6 +335,12 @@ var CT = {
 				eval(CT.net.get(CT.net.fullPath(modname.replace(/\./g, "/") + ".js")));
 		}
 	},
+	"initCore": function() {
+		core.config.css.forEach(function(css) {
+			CT.dom.addStyle(null, css);
+		});
+		CT.layout.header(core.config.header);
+	},
 	"onload": function(cb, n) {
 		n = n || window;
 		if (!n._ct_onload) {
