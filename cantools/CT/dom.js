@@ -270,7 +270,7 @@ CT.dom = {
 			wrapper.appendChild(nodes[i]);
 		return wrapper;
 	},
-	"audio": function(src, autoplay, onplay, onended, className, id, attrs) {
+	"audio": function(src, autoplay, preload, onplay, onended, className, id, attrs) {
 		attrs = attrs || {};
 		attrs.src = src;
 		if (autoplay)
@@ -279,6 +279,7 @@ CT.dom = {
 			attrs.onplay = onplay;
 		if (onended)
 			attrs.onended = onended;
+		attrs.preload = attrs.preload || preload || "none";
 		return CT.dom.node("", "audio", className, id, attrs);
 	},
 	"iframe": function(src, className, id) {

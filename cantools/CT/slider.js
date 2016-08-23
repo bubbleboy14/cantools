@@ -457,7 +457,8 @@ CT.slider.Frame = CT.Class({
 		CT.dom.addContent(this.node, CT.layout.profile(opts));
 	},
 	track: function() { // add img!
-		var audio = CT.dom.audio(this.opts.src, false, null, this.slider.autoSlideCallback);
+		var audio = CT.dom.audio(this.opts.src, false,
+			false, null, this.slider.autoSlideCallback);
 		this.on.hide = function() { audio.pause(); }; // gotta wrap :-\
 		this.on.show = function() { audio.play(); }; // gotta wrap :-\
 		CT.dom.addContent(this.node, CT.dom.node([
