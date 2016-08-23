@@ -457,10 +457,21 @@ CT.slider.Frame = CT.Class({
 		CT.dom.addContent(this.node, CT.layout.profile(opts));
 	},
 	track: function() { // add img!
-		var audio = CT.dom.audio(this.opts.src, false,
-			false, null, this.slider.autoSlideCallback);
-		this.on.hide = function() { audio.pause(); }; // gotta wrap :-\
-		this.on.show = function() { audio.play(); }; // gotta wrap :-\
+		var audio = CT.dom.audio(this.opts.src, true, false, false,
+			null, this.slider.autoSlideCallback), pause = function() {
+				audio.playing = false;
+				audio.pause();
+			}, resume = function() {
+				audio.playing = true;
+				audio.play();
+			}, pauseResume = function() {
+				audio.playing ? pause() : resume();
+			};
+		this.on.hide = pause;
+		this.on.show = function() {
+			resume();
+			CT.key.on("SPACE", pauseResume);
+		};
 		CT.dom.addContent(this.node, CT.dom.node([
 			CT.dom.node(this.opts.song, "div", "gigantic"),
 			CT.dom.node(this.opts.album, "div", "biggerest"),

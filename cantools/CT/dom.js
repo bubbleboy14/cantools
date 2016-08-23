@@ -270,9 +270,11 @@ CT.dom = {
 			wrapper.appendChild(nodes[i]);
 		return wrapper;
 	},
-	"audio": function(src, autoplay, preload, onplay, onended, className, id, attrs) {
+	"audio": function(src, controls, autoplay, preload, onplay, onended, className, id, attrs) {
 		attrs = attrs || {};
 		attrs.src = src;
+		if (controls)
+			attrs.controls = "true";
 		if (autoplay)
 			attrs.autoplay = "true";
 		if (onplay)
