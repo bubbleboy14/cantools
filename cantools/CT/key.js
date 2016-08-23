@@ -5,7 +5,7 @@ This module supports global key bindings.
 CT.key = {
 	_codes: [null, null, null, null, null, null, null, null, "BACKSPACE", "TAB",
 		null, null, null, "ENTER", null, null, "SHIFT", "CTRL", "ALT", null, "CAPS",
-		null, null, null, null, null, null, "ESCAPE", null, null, null, null, null,
+		null, null, null, null, null, null, "ESCAPE", null, null, null, null, "SPACE",
 		"PAGE_UP", "PAGE_DOWN", "END", "HOME", "LEFT", "UP", "RIGHT", "DOWN", null,
 		"PRINT", null, null, "INSERT", "DELETE", null, "0", "1", "2", "3", "4", "5",
 		"6", "7", "8", "9", null, null, null, null, null, null, null, "a", "b", "c",
