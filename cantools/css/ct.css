@@ -173,6 +173,14 @@
 .italic { font-style: italic; }
 .bordered { border: 1px solid black; }
 .noborder { border: 0px; }
+.shadowed { text-shadow: 1px 1px 1px #fff, 2px 2px 2px #111; }
+.outlined {
+    text-shadow:
+        -2px -2px 0 #000,
+         2px -2px 0 #000,
+        -2px  2px 0 #000,
+         2px  2px 0 #000;
+}
 .round {
     border-radius: 5px 5px 5px 5px;
     -moz-border-radius: 5px;
