@@ -11,6 +11,7 @@ the 'opts' object itself, are all optional.
     - mode (default: 'peekaboo'): how to display each frame - 'peekaboo', 'chunk', 'menu', 'profile', or 'track'
     - subMode (default: 'peekaboo'): which mode to use for chunk-mode frames ('peekaboo', 'menu', 'profile', 'track')
     - defaultImg (default: undefined): fallback img for any frame mode
+    - img (default: undefined): panning background image for whole slider. also works per-chunk.
     - autoSlideInterval (default: 5000): how many milliseconds to wait before auto-sliding frames
     - panDuration (default: autoSlideInterval): pan duration for background images
     - autoSlide (default: true): automatically proceed through frames (else, trigger later with .resume())
@@ -85,12 +86,27 @@ CT.slider.Slider = CT.Class({
 		this.index = this.pos = 0;
 		this.container = CT.dom.node("", "div",
 			"carousel-container full" + CT.slider.other_dim[this.dimension]);
-		this.node = CT.dom.node([
+		var content = [
 			this.container,
 			this.circlesContainer,
 			this.prevButton,
 			this.nextButton
-		], "div", "carousel fullwidth fullheight" + (opts.visible ? "" : " hider"));
+		];
+		if (opts.img) {
+			var imgBack = CT.dom.node(CT.dom.img(opts.img, "abs"), "div", "abs all0 noflow");
+			if (opts.pan) {
+				this.imgBackController = CT.trans.pan(imgBack.firstChild, {
+					duration: opts.panDuration || opts.autoSlideInterval
+				}, true);
+			} else {
+				CT.onload(function() {
+					CT.dom.cover(imgBack.firstChild);
+				}, imgBack.firstChild);
+			}
+			content.unshift(imgBack);
+		}
+		this.node = CT.dom.node(content, "div",
+			"carousel fullwidth fullheight" + (opts.visible ? "" : " hider"));
 		this.opts.parent.appendChild(this.node);
 		this.opts.frames.forEach(this.addFrame);
 		CT.gesture.listen("tap", this.prevButton, this.prevButtonCallback);
@@ -112,10 +128,20 @@ CT.slider.Slider = CT.Class({
 		if (opts.autoSlideInterval && opts.autoSlide && !opts.startFrame)
 			this.resume();
 		CT.gesture.listen("down", this.container, this.pause);
-		this.opts.parent.onresize = this.trans;
+		CT.onresize(this.trans, this.opts.parent);
 		this._reflow();
 		if (opts.startFrame in this.jumpers)
 			setTimeout(this.jumpers[opts.startFrame]); // wait one tick for inits
+	},
+	on: {
+		hide: function() {
+			this.imgBackController && this.imgBackController.pause();
+			this.container.childNodes[this.index].frame.on.hide();
+		},
+		show: function() {
+			this.imgBackController && this.imgBackController.resume();
+			this.container.childNodes[this.index].frame.on.show();
+		}
 	},
 	onWheel: function(pos, delta) {
 		if (delta > 0)
@@ -155,9 +181,11 @@ CT.slider.Slider = CT.Class({
 	},
 	show: function() {
 		this.node.classList.remove("hider");
+		this.on.show();
 	},
 	hide: function() {
 		this.node.classList.add("hider");
+		this.on.hide();
 	},
 	_reflow: function() {
 		CT.dom.mod({
@@ -375,17 +403,16 @@ CT.slider.Frame = CT.Class({
 			frames: this.opts.frames,
 			mode: this.opts.mode || this.slider.opts.subMode,
 			autoSlide: false,
+			img: this.opts.img,
 			pan: this.slider.opts.pan,
 			defaultImg: this.slider.opts.defaultImg,
 			translucentTeaser: this.slider.opts.translucentTeaser,
 			orientation: CT.slider.other_orientation[this.slider.opts.orientation],
 			arrowPosition: "bottom"
 		}), parent = this.slider;
-		this.on.hide = function() {
-			slider.container.childNodes[slider.index].frame.on.hide();
-		};
+		this.on.hide = slider.on.hide;
 		this.on.show = function() {
-			slider.container.childNodes[slider.index].frame.on.show();
+			slider.on.show();
 			if (parent.opts.keys) {
 				CT.key.on(slider.opts.orientation == "horizontal" ?
 					"LEFT" : "UP", slider.prevButtonCallback);
@@ -434,10 +461,10 @@ CT.slider.Frame = CT.Class({
 		this.on.hide = function() { audio.pause(); }; // gotta wrap :-\
 		this.on.show = function() { audio.play(); }; // gotta wrap :-\
 		CT.dom.addContent(this.node, CT.dom.node([
-			CT.dom.node(this.opts.song, "div", "biggest"),
-			CT.dom.node(this.opts.album, "div", "big"),
+			CT.dom.node(this.opts.song, "div", "gigantic"),
+			CT.dom.node(this.opts.album, "div", "biggerest"),
 			audio
-		], "div", "full-center"));
+		], "div", "full-center outlined"));
 	},
 	init: function(opts, slider) {
 		this.opts = opts;
