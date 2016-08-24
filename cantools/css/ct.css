@@ -18,6 +18,8 @@
 .wm1 { max-width: 100%; }
 .hm1-2 { max-height: 50%; }
 .wm1-2 { max-width: 50%; }
+.h200p { height: 200px; }
+.w200p { width: 200px; }
 .hm200p { max-height: 200px; }
 .wm200p { max-width: 200px; }
 .h1 { height: 100%; }
