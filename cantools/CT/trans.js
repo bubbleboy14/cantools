@@ -82,7 +82,6 @@ Certain functions (pan() and pulse()) return a CT.trans.Controller instance.
 CT.trans = {
 	_: {
 		vender_prefixes: [ "-webkit-", "-moz-", "-ms-", "-o-", "" ],
-		tswap: { transform: "-webkit-transform" }, // mobile safari transitions
 		enames: [ "webkitTransitionEnd", "mozTransitionEnd", "oTransitionEnd", "transitionend"],
 		defaults: {
 			trans: {
@@ -145,8 +144,7 @@ CT.trans = {
 		opts = CT.merge(opts, CT.trans._.defaults.trans);
 		if (opts.node) {
 			var prevTrans = opts.node.style.transition || "",
-				transComponent = (CT.trans._.tswap[opts.property] || opts.property)
-		        	+ " " + opts.duration + "ms " + opts.ease,
+				transComponent = opts.property + " " + opts.duration + "ms " + opts.ease,
 		        fullTrans = (prevTrans && prevTrans.indexOf(transComponent) == -1)
 		        	? (prevTrans + ", " + transComponent) : transComponent;
 		    CT.trans.setVenderPrefixed(opts.node, "transition", fullTrans);
