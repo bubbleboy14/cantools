@@ -117,7 +117,7 @@ CT.db = {
 		};
 	},
 	get: function(modelName, cb, limit, offset, order, filters, sync) {
-		var qdata = {
+		var f, v, qdata = {
 			"action": "get",
 			"modelName": modelName,
 			"limit": limit || CT.db._limit,
@@ -125,8 +125,18 @@ CT.db = {
 		};
 		if (order)
 			qdata.order = order;
-		if (filters)
+		if (filters) {
+			for (f in filters) {
+				v = filters[f];
+				if (!v.comparator) {
+					filters[f] = {
+						value: v,
+						comparator: "=="
+					};
+				}
+			}
 			qdata.filters = filters;
+		}
 		return CT.net.post("/_db", qdata, null, function(d) {
 			CT.data.addSet(d);
 			cb(d);
@@ -162,14 +172,20 @@ CT.db = {
 			cb && cb(d);
 		});
 	},
-	init: function(opts) {
+	withSchema: function(cb) {
+		if (CT.db._schema)
+			cb && cb(CT.db._schema);
+		else
+			CT.net.post("/_db", { "action": "schema" }, null, function(schema) {
+				CT.db.setSchema(schema);
+				cb && cb(schema);
+			});
+	},
+	init: function(opts) { // this stuf maybe shouldn't be here ... more like admin.db?
 		CT.db._opts = opts = CT.merge(opts, {
 			panel_key: "db", // required: builder(). also why not: post_pager
 		});
-		CT.net.post("/_db", { "action": "schema" }, null, function(schema) {
-			CT.db.setSchema(schema);
-			opts.cb && opts.cb(schema);
-		});
+		CT.db.withSchema(opts.cb);
 	},
 	query: function(opts, transition) {
 		(new CT.modal.Modal({
