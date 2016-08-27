@@ -20,6 +20,8 @@
 .wm1-2 { max-width: 50%; }
 .h200p { height: 200px; }
 .w200p { width: 200px; }
+.h500p { height: 500px; }
+.w500p { width: 500px; }
 .hm200p { max-height: 200px; }
 .wm200p { max-width: 200px; }
 .h1 { height: 100%; }
@@ -657,6 +659,21 @@
     left: 0px;
     height: 120px;
 }
+.ctlist {
+    position: absolute;
+    top: 10px;
+    bottom: 10px;
+    left: 10px;
+    width: 190px;
+}
+.ctcontent {
+    position: absolute;
+    top: 10px;
+    bottom: 10px;
+    left: 200px;
+    right: 10px;
+}
+
 #top_buttons {
     top: 3px;
 }
