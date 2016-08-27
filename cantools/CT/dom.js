@@ -698,9 +698,19 @@ CT.dom = {
 		});
 		return n;
 	},
-	"smartField": function(cb, classname, id, value, type, blurs) {
+	"smartField": function(cb, classname, id, value, type, blurs, isTA) {
+		if (arguments.length == 1 && typeof arguments[0] != "function") {
+			var obj = arguments[0];
+			cb = obj.cb;
+			classname = obj.classname;
+			id = obj.id;
+			value = obj.value;
+			type = obj.type;
+			blurs = obj.blurs;
+			isTA = obj.isTA;
+		}
 		id = id || ("sf" + Math.floor((Math.random() * 100000)));
-		var f = CT.dom.inputEnterCallback(CT.dom.field(id,
+		var f = CT.dom.inputEnterCallback(CT.dom[isTA ? "textArea" : "field"](id,
 			value, classname, type), cb, id);
 		if (blurs)
 			CT.dom.blurField(f, blurs);
