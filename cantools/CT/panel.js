@@ -90,9 +90,10 @@ CT.panel = {
 	},
 	"trigger": function(data, cb, activeClass, content, condition, rmbutton, ricon, noactive) {
 		var label = data.label || data.title || data.name || data,
-			n = CT.dom.node(null, "div", null, label && ("tl" + label));
+			n = CT.dom.node(null, "div", null, label && ("tl" + label.replace(/ /g, "")));
 		activeClass = activeClass || "activetab";
 		n.data = data;
+		data.node = n;
 		n.select = function() {
 			!noactive && CT.dom.each(n.parentNode, function(c) {
 				if (c == n)
@@ -111,11 +112,17 @@ CT.panel = {
 			CT.dom.remove(n);
 			n.onRemove && n.onRemove();
 		};
+		n.nameNode = CT.dom.link(content ? content(data) : label, n.trigger);
+		n.rename = function(name) {
+			data.label = name;
+			n.id = "tl" + name.replace(/ /g, "");
+			CT.dom.setContent(n.nameNode, name);
+		};
 		if (ricon)
 			n.appendChild(CT.dom.node(ricon(data), "div", "right rpaddedsmall"));
 		if (rmbutton) 
 			n.appendChild(CT.dom.link("X", n.remove, null, "right"));
-		n.appendChild(CT.dom.link(content ? content(data) : label, n.trigger));
+		n.appendChild(n.nameNode);
 		return n;
 	},
 	"triggerList": function(data, cb, node, activeClass, content, condition, rmbutton, ricon, noactive) {
