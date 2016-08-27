@@ -33,7 +33,7 @@ CT.layout = {
 					"div", "abs top0 bottom0 right0 w1-2"));
 		}
 		if (opts.centerLogo)
-			content.push(CT.dom.node(opts.logo, "center", "biggerester"));
+			content.push(CT.dom.node(CT.dom.link(opts.logo, null, "/"), "center", "biggerester"));
 		else
 			content.push(CT.dom.link(opts.logo, null, "/",
 				"w1-2 biggest bold block nodecoration abs top0 bottom0 left0"));
