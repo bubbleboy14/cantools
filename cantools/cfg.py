@@ -27,6 +27,7 @@ cfg = {
 	},
 	"web": {
 		"server": "dez",
+		"domain": "your.web.domain",
 		"host": "0.0.0.0",
 		"port": 8080,
 		"log": None
