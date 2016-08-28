@@ -688,7 +688,8 @@ CT.dom = {
 			// can prevent annoying repeating alert on enter scenarios
 			if (fid)
 				document.getElementById(fid).focus();
-			cb && cb(n.value);
+			if (cb && (cb(n.value) == "clear"))
+				n.value = "";
 		};
 		n.addEventListener("keyup", function(e) {
 			e = e || window.event;
