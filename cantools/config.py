@@ -79,7 +79,7 @@ for plugin in config.plugin.modules:
 for key, val in [[term.strip() for term in line.split(" = ")] for line in read("ct.cfg", True)]:
 	if key.startswith("#"):
 		continue
-	if key in ["ENCODE", "DB_ECHO", "DB_PUBLIC", "GEO_TEST", "CACHE_REQUEST", "CACHE_DB"]:
+	if key in ["ENCODE", "DB_ECHO", "DB_PUBLIC", "GEO_TEST", "MEMCACHE_REQUEST", "MEMCACHE_DB"]:
 		val = val == "True"
 	if key == "DB":
 		config.db.update(config.web.server, _getpass(val, "db"))
