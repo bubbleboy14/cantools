@@ -173,7 +173,7 @@ CT.db = {
 		});
 	},
 	withSchema: function(cb) {
-		if (CT.db._schema)
+		if (Object.keys(CT.db._schema).length)
 			cb && cb(CT.db._schema);
 		else
 			CT.net.post("/_db", { "action": "schema" }, null, function(schema) {
