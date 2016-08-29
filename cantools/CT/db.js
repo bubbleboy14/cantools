@@ -230,22 +230,23 @@ CT.db.Blob = CT.Class({
 	},
 	_update: function(val) {
 		this.opts.value = val;
+		this.opts.cb && this.opts.cb(val);
 		this._setup();
 	},
 	_setup: function() {
 		if (this.opts.value) {
-			this.index = this.opts.value.slice(5);
+			this.index = this.opts.value.slice(6);
 			CT.dom.setContent(this.node, [
 				CT.dom.link("download", null,
 					"/_db?action=blob&value=" + this.index,
-					"blue", null, null, true),
+					this.opts.className || "blue", null, null, true),
 				CT.dom.pad(),
-				CT.dom.link("upload", this.uploadPrompt, null, "nodecoration blue")
+				CT.dom.link("upload", this.uploadPrompt, null, this.opts.className || "nodecoration blue")
 			]);
 		} else if (this.opts.key)
-			CT.dom.setContent(this.node, CT.dom.link("upload",
-				this.uploadPrompt, null, "nodecoration blue"));
-		else
+			CT.dom.setContent(this.node, CT.dom.link(this.opts.firstUp || "upload",
+				this.uploadPrompt, null, this.opts.className || "nodecoration blue"));
+		else if (!this.opts.noNothing)
 			CT.dom.setContent(this.node, "(nothing yet)");
 	},
 	value: function() {
@@ -364,6 +365,29 @@ CT.db.edit = {
 		valcell.getValue = CT.db.edit._val(valcell, ptype);
 		valcell.rowKey = k;
 		return valcell;
+	},
+	img: function(opts) {
+		opts = CT.merge(opts, {
+			imgClass: "w1",
+			parentClass: "w1",
+			property: "img"
+		});
+		var n = CT.dom.node(null, "div", opts.parentClass),
+			val = opts.data[opts.property],
+			img = CT.dom.img(val, opts.imgClass),
+			blob = new CT.db.Blob({
+				noNothing: true,
+				key: opts.data.key,
+				property: opts.property,
+				value: val,
+				firstUp: "upload image",
+				className: "round hoverglow",
+				cb: function(newVal) {
+					img.src = newVal + "?ts=" + Date.now();
+				}
+			});
+		CT.dom.setContent(n, [img, blob.node]);
+		return n;
 	}
 };
 
