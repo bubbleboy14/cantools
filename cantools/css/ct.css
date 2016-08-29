@@ -678,6 +678,8 @@
     bottom: 10px;
     left: 200px;
     right: 10px;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 #top_buttons {
