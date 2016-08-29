@@ -210,6 +210,24 @@ CT.dom = {
 		}
 		return n;
 	},
+	"panImg": function(opts) {
+		opts = CT.merge(opts, {
+			pan: true,
+			panDuration: 5000,
+			className: "w1 h1 noflow abs"
+		});
+		var img = CT.dom.node(CT.dom.img(opts.img, "abs"), "div", opts.className);
+		if (opts.pan) {
+			img.controller = CT.trans.pan(img.firstChild, {
+				duration: opts.panDuration
+			}, true);
+			if (opts.controllerHook) {
+				opts.controllerHook.hide = img.controller.pause;
+				opts.controllerHook.show = img.controller.resume;
+			}
+		}
+		return img;
+	},
 	"select": function(onames, ovalues, id, curvalue, defaultvalue, onchange, other) {
 		ovalues = ovalues || onames;
 		var s = CT.dom.node("", "select", "", id);
