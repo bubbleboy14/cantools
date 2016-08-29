@@ -90,21 +90,11 @@ CT.layout = {
 	},
 	profile: function(opts) {
 		opts = CT.merge(opts, {
-			pan: true,
-			panDuration: 5000,
+			className: "w2-3 h1 noflow abs",
 			buttons: []
 		});
-		var img = CT.dom.node(CT.dom.img(opts.img, "abs"), "div", "w2-3 h1 noflow abs"),
+		var img = CT.dom.panImg(opts),
 			buttons = CT.dom.node(null, "div", "centered");
-		if (opts.pan) {
-			img.controller = CT.trans.pan(img.firstChild, {
-				duration: opts.panDuration
-			}, true);
-			if (opts.controllerHook) {
-				opts.controllerHook.hide = img.controller.pause;
-				opts.controllerHook.show = img.controller.resume;
-			}
-		}
 		for (var b in opts.buttons)
 			buttons.appendChild(CT.dom.button(b, opts.buttons[b], "round padded margined"));
 		if (!opts.name && opts.firstName && opts.lastName)
