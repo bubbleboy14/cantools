@@ -18,11 +18,13 @@
 .wm1 { max-width: 100%; }
 .hm1-2 { max-height: 50%; }
 .wm1-2 { max-width: 50%; }
+.h50p { height: 50px; }
 .h100p { height: 100px; }
 .h200p { height: 200px; }
 .h300p { height: 300px; }
 .h400p { height: 400px; }
 .h500p { height: 500px; }
+.w50p { width: 50px; }
 .w100p { width: 100px; }
 .w200p { width: 200px; }
 .w300p { width: 300px; }
