@@ -363,6 +363,9 @@ CT.dom = {
 		}
 		n.appendChild(CT.dom.node(lname || cbid, "label", lclass, "",
 			{"for": cbname, "htmlFor": cbname}));
+		n.isChecked = function() {
+			return cb.checked;
+		};
 		return n;
 	},
 	"resizeTextArea": function(cbody) {
