@@ -98,7 +98,7 @@ cfg = {
 		"util": {},
 		"dirs": ["js", "css", "img", "logs", "blob", "html", "html-static", "html-production"],
 		"vcignore": {
-			".": ["*pyc", "*~", ".ctp", "_", "admin.py", "_db.py", "_pay.py", "logs"],
+			".": ["*pyc", "*~", ".ctp", "_", "admin.py", "_db.py", "_pay.py", "logs", "blob"],
 			"css": ["ct.css"],
 			"js": ["CT"],
 			"html-production": ["CT"]
