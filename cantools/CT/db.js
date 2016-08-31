@@ -300,7 +300,7 @@ CT.db.edit = {
 	_val: function(f, ptype) {
 		return function() {
 			if (ptype == "boolean")
-				return f.checked;
+				return f.isChecked ? f.isChecked() : f.checked;
 			if (ptype == "integer")
 				return parseInt(f.value) || null;
 			if (ptype == "float")
@@ -319,12 +319,16 @@ CT.db.edit = {
 			valcell = CT.dom.field(null, val);
 		else if (ptype == "text")
 			valcell = CT.dom.textArea(null, val);
-		else if (ptype == "boolean")
-			valcell = CT.dom.checkbox(null, val, {
-				"display": "inline-block",
-				"width": "160px"
-			});
-		else if (ptype == "float")
+		else if (ptype == "boolean") {
+			if (opts.label)
+				valcell = CT.dom.checkboxAndLabel(k, val);
+			else {
+				valcell = CT.dom.checkbox(null, val, {
+					"display": "inline-block",
+					"width": "160px"
+				});
+			}
+		} else if (ptype == "float")
 			valcell = CT.parse.numOnly(CT.dom.field(null, val), true);
 		else if (ptype == "integer")
 			valcell = CT.parse.numOnly(CT.dom.field(null, val));
@@ -336,12 +340,16 @@ CT.db.edit = {
 			})).node;
 		else if (ptype == "datetime")
 			valcell = CT.dom.dateSelectors(null, null, opts.startYear, null, null, null, val);
-		else if (ptype == "blob")
-			valcell = (new CT.db.Blob({
+		else if (ptype == "blob") {
+			var bopts = {
 				key: opts.key,
 				property: k,
 				value: val
-			})).node;
+			};
+			if (opts.label)
+				bopts.firstUp = "upload " + k;
+			valcell = (new CT.db.Blob(bopts)).node;
+		}
 		else if (ptype == "list") {
 			if (val)
 				valcell = CT.dom.fieldList(val, null, lstyle);
@@ -362,6 +370,8 @@ CT.db.edit = {
 					modelName: modelName
 				})).node;
 		}
+		if (opts.label && ptype == "string" || ptype == "text")
+			CT.dom.blurField(valcell, [k]);
 		valcell.getValue = CT.db.edit._val(valcell, ptype);
 		valcell.rowKey = k;
 		return valcell;
