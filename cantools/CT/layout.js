@@ -104,7 +104,7 @@ CT.layout = {
 				CT.dom.node(opts.name, "div", "biggest"),
 				CT.dom.node(opts.description || opts.blurb),
 				buttons
-			], "div", "right w1-3"),
+			], "div", "right w1-3 ctprofile"),
 			img
 		];
 	}
