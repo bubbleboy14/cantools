@@ -1,7 +1,5 @@
-from datetime import datetime
-from properties import KeyWrapper
-from session import session
 from cantools.util import batch
+from edit import *
 from ..shared import ct_key
 
 def _init_entity(instance, session=session):
@@ -50,20 +48,3 @@ def delete_multi(instances, session=session):
     for instance in instances:
         instance.rm(False)
     session.commit()
-
-def edit(data, session=session):
-    from cantools.db import get, get_model
-    ent = "key" in data and get(data["key"], session) or get_model(data["modelName"])()
-    for propname, val in data.items():
-        if propname in ent._schema:
-            if val:
-                if propname in ent._schema["_kinds"]: # foreignkey
-                    if type(val) is list:
-                        val = [KeyWrapper(v) for v in val]
-                    else:
-                        val = KeyWrapper(val)
-                elif ent._schema[propname] == "datetime" and not isinstance(val, datetime):
-                    val = datetime.strptime(val, "%Y-%m-%d %H:%M:%S")
-            setattr(ent, propname, val)
-    ent.put()
-    return ent
