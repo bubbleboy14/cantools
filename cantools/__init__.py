@@ -1,3 +1,5 @@
+__version__ = "0.8.6.1"
+
 import util
 import config as cfgmod
 config = cfgmod.config
@@ -14,5 +16,3 @@ ctinit = init.parse_and_make
 ctindex = index.go
 ctmigrate = migrate.go
 ctdoc = doc.build
-
-__version__ = "0.8.6.1"
