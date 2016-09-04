@@ -190,6 +190,16 @@ database from an older deployment to CT 0.8 or newer).
 ### gae
 Run this in 'index' mode on a database with lots of missing index values.
 
+## ctdoc
+
+### Usage: ctdoc
+
+Run either from cantools root (contains setup.py, cantools/, README.md, etc) or
+from root of plugin. In cantools, builds docs for all frontend (js) and CLI (py)
+files. In plugin, docs consist of about file (about.txt), initialization config
+(init.py) and default frontend config (js/config.js) (TODO: recursively include
+full contents of js/ folder).
+
 # Front (JS Library)
 
 ## CT.Drop
