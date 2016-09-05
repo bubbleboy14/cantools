@@ -741,17 +741,23 @@ CT.dom = {
 
 	// resizers
 	"_isVerticalOrientation": function(node) {
+		if (node.clientHeight == 0 || node.clientWidth == 0)
+			return undefined;
 		return node.clientWidth / node.parentNode.clientWidth
 			< node.clientHeight / node.parentNode.clientHeight;
 	},
 	"cover": function(node) {
 		var v = CT.dom._isVerticalOrientation(node);
+		if (v == undefined)
+			return v;
 		node.classList.add(v ? "w1" : "h1");
 		node.classList.remove(v ? "h1" : "w1");
 		return v;
 	},
 	"contain": function(node) {
 		var v = CT.dom._isVerticalOrientation(node);
+		if (v == undefined)
+			return v;
 		node.classList.add(v ? "h1" : "w1");
 		node.classList.remove(v ? "w1" : "h1");
 		return v;
