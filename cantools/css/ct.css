@@ -94,6 +94,7 @@
 .right { float: right; }
 .left { float: left; }
 .clearnode { clear: both; }
+.justified { text-align: justify; }
 .centered { text-align: center; }
 .centered > div {
     margin-left: auto;
