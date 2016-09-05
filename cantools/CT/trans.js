@@ -216,20 +216,14 @@ CT.trans = {
 			}
 		});
 	},
-	pan: function(node, opts, wait) {
+	pan: function(node, opts) {
 		opts = CT.merge(opts, CT.trans._.defaults.pan);
-		var setV = function() {
+		var setV = function(cb) {
 			node._vertical = CT.dom.cover(node);
-		};
-		node.onload = function() {
-			setV();
-			if (!wait)
-				CT.trans.translate(node, opts);
-		};
-		CT.onresize(node.onload);
-		var controller = new CT.trans.Controller(function() {
+			cb && setTimeout(cb);
+		}, controllercb = function() {
 			if (node._vertical == undefined)
-				setV();
+				return setV(controllercb);
 			var prop = node._vertical ? "y" : "x",
 				dim = node._vertical ? "clientHeight" : "clientWidth";
 			if (opts[prop])
@@ -237,7 +231,11 @@ CT.trans = {
 			else
 				opts[prop] = node.parentNode[dim] - node[dim];
 			CT.trans.translate(node, opts);
-		});
+		}, controller = new CT.trans.Controller(controllercb);
+		node.onload = function() {
+			setTimeout(controller.resume); // wait a tic!
+		};
+		CT.onresize(node.onload);
 		opts.cb = controller.tick;
 		return controller;
 	},
@@ -302,8 +300,10 @@ CT.trans.Controller = CT.Class({
 		this._paused = true;
 	},
 	resume: function() {
-		this._paused = false;
-		this.cb();
+		if (this._paused != false) {
+			this._paused = false;
+			this.cb();
+		}
 	},
 	active: function() {
 		return !this._paused;

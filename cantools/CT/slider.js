@@ -335,7 +335,7 @@ CT.slider.Frame = CT.Class({
 		if (slider.opts.pan) {
 			imageBack.controller = CT.trans.pan(imageBack.firstChild, {
 				duration: opts.panDuration || slider.opts.panDuration || slider.opts.autoSlideInterval
-			}, true);
+			});
 		} else {
 			CT.onload(function() {
 				CT.dom.cover(imageBack.firstChild);
@@ -363,7 +363,7 @@ CT.slider.Frame = CT.Class({
 		}
 		if (opts.pulse) {
 			pulser = CT.dom.img(opts.pulse, "carousel-pulse pointer");
-			pulser.controller = CT.trans.pulse(pulser, null, true);
+			pulser.controller = CT.trans.pulse(pulser);
 			CT.gesture.listen("tap", pulser, teaserTap); // assume content exists
 			nodes.push(pulser);
 		}
