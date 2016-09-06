@@ -37,10 +37,16 @@ a {
 	bottom: 0px;
 	right: 0px;
 	width: 20%;
+	max-height: 200px;
 	background: darkgray;
 	color: blue;
 	z-index: 1000;
-	overflow: hidden;
+	overflow-x: hidden;
+	overflow-y: auto;
+	-webkit-transition: max-height 1s;
+	-moz-transition: max-height 1s;
+	-o-transition: max-height 1s;
+	transition: max-height 1s;
 }
 
 .dbpanel, .dbpanel>div:last-child>div {
