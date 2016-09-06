@@ -17,6 +17,7 @@ the 'opts' object itself, are all optional.
     - autoSlide (default: true): automatically proceed through frames (else, trigger later with .resume())
     - visible (default: true): maps to visibility css property
     - navButtons (default: true): include nav bubbles and arrows
+    - circular (default: false): allow shifting between 1st and last frames w/ nav buttons (arrows)
     - pan (default: true): slow-pan frame background images
     - translucentTeaser (default: true): translucent box around teaser text (otherwise opaque)
     - startFrame (default: null): label (or index if frames are unlabeled) of frame to slide to initially (disables autoSlide)
@@ -57,6 +58,7 @@ CT.slider.Slider = CT.Class({
 			visible: true,
 			navButtons: true,
 			startFrame: null,
+			circular: false,
 			pan: true,
 			translucentTeaser: true,
 			parent: document.body,
@@ -244,14 +246,15 @@ CT.slider.Slider = CT.Class({
 		CT.dom[this.activeCircle.previousSibling ? "show" : "hide"](this.prevButton);
 	},
 	updatePosition: function(direction, force) {
-		var index = this.index, absdir = CT.drag._.dir2abs[direction];
+		var index = this.index, absdir = CT.drag._.dir2abs[direction],
+			cccnl = this.circlesContainer.childNodes.length;
 		if (CT.drag._.direction2orientation[direction] == this.opts.orientation) {
 			if (absdir == "forward" && (force || this.activeCircle.nextSibling))
 				index += 1;
 			else if (absdir == "backward" && (force || this.activeCircle.previousSibling))
 				index -= 1;
-			if (this.circlesContainer.childNodes.length)
-				this.updateIndicator(index % this.circlesContainer.childNodes.length);
+			if (cccnl)
+				this.updateIndicator((index + cccnl) % cccnl);
 		} else if (this.opts.parent.slider)
 			this.opts.parent.slider.shift(direction, force);
 	},
@@ -262,7 +265,7 @@ CT.slider.Slider = CT.Class({
 		CT.trans.translate(this.container, opts);
 	},
 	shift: function(direction, force) {
-		this.updatePosition(direction, force);
+		this.updatePosition(direction, force || this.opts.circular);
 		this.trans();
 	},
 	autoSlideCallback: function() {
