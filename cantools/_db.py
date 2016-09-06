@@ -5,10 +5,10 @@ from cantools import config
 import model # load up all models (for schema)
 
 def response():
-	action = cgi_get("action", choices=["schema", "get", "blob", "edit", "delete", "put", "index", "bulk"])
+	action = cgi_get("action", choices=["schema", "get", "blob", "edit", "delete", "put", "index", "bulk", "credcheck"])
 
 	# edit/delete/put/index/bulk always require credentials; getters do configurably
-	if not config.db.public or action in ["edit", "delete", "put", "index", "bulk"]:
+	if not config.db.public or action in ["edit", "delete", "put", "index", "bulk", "credcheck"]:
 		if cgi_get("pw") != config.admin.pw:
 			fail("wrong")
 
