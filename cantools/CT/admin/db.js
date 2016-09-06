@@ -1,6 +1,16 @@
 CT.admin.db = {
 	"init": function() {
 		CT.admin.db.starred = CT.dom.id("dbstarred");
+		var stog = CT.dom.id("dbstarredtoggle");
+		stog.onclick = function() {
+			if (stog.innerHTML == "-") {
+				stog.innerHTML = "+";
+				CT.admin.db.starred.classList.add("hm20p");
+			} else {
+				stog.innerHTML = "-";
+				CT.admin.db.starred.classList.remove("hm20p");
+			}
+		};
 		CT.admin.core.init("db", function() {
 			CT.db.init({
 				cb: function(schema) {
