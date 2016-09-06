@@ -14,6 +14,10 @@
 
 /* dimensions */
 .full { width: 100%; height: 100%; }
+.hm0 { max-height: 0px !important; }
+.wm0 { max-width: 0px !important; }
+.hm20p { max-height: 20px !important; }
+.wm20p { max-width: 20px !important; }
 .hm1 { max-height: 100%; }
 .wm1 { max-width: 100%; }
 .hm1-2 { max-height: 50%; }
