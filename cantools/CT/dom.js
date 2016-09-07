@@ -232,12 +232,13 @@ CT.dom = {
 		ovalues = ovalues || onames;
 		var s = CT.dom.node("", "select", "", id);
 		if (other) {
+			defaultvalue = defaultvalue || "other";
 			if (ovalues.indexOf("other") == -1) {
 				ovalues.push("other");
 				if (ovalues != onames)
 					onames.push("other");
 			}
-			s.other = CT.dom.field(null, null, "hidden");
+			s.other = CT.dom.field(null, (ovalues.indexOf(curvalue) == -1) && curvalue, "hidden");
 			s.container = CT.dom.node([s, s.other]);
 			s.container.value = function() {
 				if (s.value == "other")
@@ -260,6 +261,7 @@ CT.dom = {
 			}
 			onchange && onchange();
 		};
+		s.onchange();
 		return s.container || s;
 	},
 	"range": function(onchange, min, max, value, step, classname, id) {
@@ -631,14 +633,14 @@ CT.dom = {
 		CT.dom._blurs[fieldId] = values;
 	},
 	"getFieldValue": function(fieldId, fieldPath, rules) {
-		var field = document.getElementById(fieldId);
+		var field = CT.dom.id(fieldId);
 		if (!field)
 			return null;
 		if (fieldPath) {
 			for (var i = 0; i < fieldPath.length; i++)
 				field = field[fieldPath[i]];
 		}
-		var s = field.value;
+		var s = field.container ? field.container.value() : field.value;
 		if (s == "" || (CT.dom._blurs[fieldId] && CT.dom._blurs[fieldId].indexOf(s) != -1))
 			return "";
 		if (rules) {
