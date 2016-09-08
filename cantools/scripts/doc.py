@@ -1,11 +1,15 @@
 """
-### Usage: ctdoc
+### Usage: ctdoc [-w]
+
+### Options:
+    -h, --help  show this help message and exit
+    -w, --web   build web docs
 
 Run either from cantools root (contains setup.py, cantools/, README.md, etc) or
 from root of plugin. In cantools, builds docs for all frontend (js) and CLI (py)
 files. In plugin, docs consist of about file (about.txt), initialization config
-(init.py) and default frontend config (js/config.js) (TODO: recursively include
-full contents of js/ folder).
+(init.py) and default frontend config (js/config.js) (TODO: application mode,
+which recursively includes any py/js file with a docstring at the top).
 """
 
 import os, json
