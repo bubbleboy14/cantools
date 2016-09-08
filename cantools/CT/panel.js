@@ -101,7 +101,7 @@ CT.panel = {
 	},
 	"trigger": function(data, cb, activeClass, content, condition, rmbutton, ricon, noactive) {
 		var label = data.label || data.title || data.name || data,
-			n = CT.dom.node(null, "div", null, label && ("tl" + label.replace(/ /g, "")));
+			n = CT.dom.node(null, "div", "tlitem", label && ("tl" + label.replace(/ /g, "")));
 		activeClass = activeClass || "activetab";
 		n.data = data;
 		data.node = n;
