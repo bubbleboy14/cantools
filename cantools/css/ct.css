@@ -698,6 +698,22 @@
     overflow-x: hidden;
     overflow-y: auto;
 }
+.ctlist2 {
+    position: absolute;
+    top: 10px;
+    bottom: 10px;
+    left: 10px;
+    width: 240px;
+}
+.ctcontent2 {
+    position: absolute;
+    top: 10px;
+    bottom: 10px;
+    left: 250px;
+    right: 10px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
 
 #top_buttons {
     top: 3px;
