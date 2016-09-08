@@ -58,18 +58,29 @@ CT.panel = {
 				n.appendChild(t);
 			return t;
 		};
+		n._drops = [];
+		n.expand = function() {
+			n._drops.forEach(function(d) {
+				d.expand();
+			});
+		};
+		n.retract = function() {
+			n._drops.forEach(function(d) {
+				d.retract();
+			});
+		};
 		data.forEach(function(d) {
 			if (d.children) {
 				var tick = CT.dom.node(">", "div", "inline-block" + (notick && " hidden" || "")),
 					t = CT.dom.node(),
-					tline = [tick, CT.dom.link(content ? content(d) : d.name, null, null, "inline-block pointer")];
+					tline = [tick, CT.dom.link(content ? content(d) : d.name, null, null, "inline-block pointer acheader")];
 				if (ricon)
 					tline.unshift(CT.dom.node(ricon(d), "div", "right rpaddedsmall"));
 				CT.dom.setContent(t, tline);
 				t.content = CT.panel.accordion(d.children, triggerCb,
 					activeClass, content, condition, notick, rmbutton, ricon, noactive);
 				n.appendChild(t);
-				new CT.Drop({
+				n._drops.push(new CT.Drop({
 					anchor: t,
 					parent: n,
 					relative: true,
@@ -82,7 +93,7 @@ CT.panel = {
 					onHide: function() {
 						CT.trans.rotate(tick, { duration: 100, degrees: 0 });
 					}
-				});
+				}));
 			} else
 				n.add(d);
 		});
