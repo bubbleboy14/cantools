@@ -38,6 +38,23 @@ CT.onload(function() {
 			CT.dom.link("CT.pubsub", null, "/docs#pubsub.js"),
 			CT.dom.node(", to go along with it. Had enough? Well we threw in a framework for building server-side bots, too, so tough tomatoes.", "span")
 		],
+		[
+			CT.dom.node("The modern site requires an assortment of individually complex components interacting in harmony. Therefore, a modern web framework provides generic high-level functionality fragments (for things like a", "span"),
+			CT.dom.pad(),
+			CT.dom.link("user system", null, "/plugins.html#ctuser"),
+			CT.dom.pad(),
+			CT.dom.node("or a", "span"),
+			CT.dom.pad(),
+			CT.dom.link("blog", null, "/plugins.html#ctblog"),
+			CT.dom.node(") that can be layered and combined to form a coherent whole -- your site. We achieve this with our", "span"),
+			CT.dom.pad(),
+			CT.dom.link("plugin system", null, "/plugins.html"),
+			CT.dom.node(", which includes a", "span"),
+			CT.dom.pad(),
+			CT.dom.link("package manager", null, "/docs#init"),
+			CT.dom.pad(),
+			CT.dom.node("to boot.", "span")
+		],
 		CT.dom.node("ok, what makes it portable?", "div", "big bold"),
 		[
 			CT.dom.node("Build one application and run it on any device that tickles your fancy. Mobile Safari? Sure. IE8? Great. Handle input across platforms with", "span"),
