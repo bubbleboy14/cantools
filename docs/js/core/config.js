@@ -5,6 +5,8 @@ core.config = {
 		"right": [
 			CT.dom.link("Docs", null, "/docs"),
 			CT.dom.pad(4),
+			CT.dom.link("Plugins", null, "/plugins.html"),
+			CT.dom.pad(4),
 			CT.dom.link("Code", null, "https://github.com/bubbleboy14/cantools")
 		]
 	},
