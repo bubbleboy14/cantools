@@ -23,6 +23,6 @@ CT.onload(function() {
 		CT.dom.node("ok, what makes it portable?", "div", "big bold"),
 		"Build one application and run it on any device that tickles your fancy. Mobile Safari? Sure. IE8? Great. Handle input across platforms with <b>CT.gesture</b>, utilize our responsive <b>CT.layout</b> page components, and even configure zoom/pan rules and a mobile menu with <b>CT.mobile</b>.",
 		"Think that's great? Well you're gonna love how configurable this puppy is. Hit up the <b>ct.cfg</b> file. Change the WEB_SERVER line to run the whole stack -- request handlers, data-facing code, routing, configuration, and all -- on Google App Engine's cloud (instead of the default <b>dez</b>-based asynchronous server and <b>sqlalchemy</b>-based ORM). If you decide against it, that leaves you with the default SQL Object Relational Mapper, which speaks pretty much every SQL dialect known to man. MySQL? Fine. PostgreSQL? Whatever. Defaults to sqlite, so you can get the ball rolling without installing anything complicated.",
-		"AND on top of all that, cantools comes with a suite of migration tools (check out <b>ctmigrate</b> for throwing data around between backends. Are we portable yet?"
+		"AND on top of all that, cantools comes with a suite of migration tools (check out <b>ctmigrate</b>) for throwing data around between backends. Are we portable yet?"
 	], "div", null, "intro"));
 });
