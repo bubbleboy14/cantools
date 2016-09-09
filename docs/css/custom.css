@@ -18,3 +18,7 @@ a:hover {
 	background-image: url("/img/lines.png");
 	background-size: contain;
 }
+
+#intro > div {
+	padding: 5px;
+}
