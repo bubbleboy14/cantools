@@ -47,7 +47,7 @@ core.util.Chat = CT.Class({
 		});
 		this.outy = CT.dom.node(null, null, "h4-5 w1", "outy");
 		this.node = CT.dom.node([this.outy, inny], "div", "h1 w1");
-		CT.pubsub.connect("localhost", 8888);
+		CT.pubsub.connect(location.hostname, 9999);
 		CT.pubsub.subscribe("chat");
 		CT.pubsub.set_autohistory(true);
 		CT.pubsub.set_cb("message", this.message);
