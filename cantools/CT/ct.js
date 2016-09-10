@@ -340,6 +340,7 @@ var CT = {
 			CT.dom.addStyle(null, css);
 		});
 		CT.layout.header(core.config.header);
+		core.config.footer && CT.layout.footer(core.config.footer);
 	},
 	"onload": function(cb, n) {
 		n = n || window;
