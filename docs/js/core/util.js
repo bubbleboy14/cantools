@@ -10,7 +10,7 @@ core.util = {
 				"div", "w300p h400p"),
 			cnode = CT.dom.node([cimg, cbox], "div", "abs r0 b0 above", "chat");
 		document.body.appendChild(cnode);
-	},
+	}
 };
 
 core.util.Chat = CT.Class({
@@ -27,6 +27,7 @@ core.util.Chat = CT.Class({
 			CT.dom.pad(),
 			CT.dom.node(data.message, "span")
 		]);
+		this.alert.play();
 		if (this.active)
 			this.outy.lastChild.scrollIntoViewIfNeeded();
 	},
@@ -46,7 +47,8 @@ core.util.Chat = CT.Class({
 			}
 		});
 		this.outy = CT.dom.node(null, null, "h4-5 w1", "outy");
-		this.node = CT.dom.node([this.outy, inny], "div", "h1 w1");
+		this.alert = CT.dom.audio("/mp3/alert.mp3");
+		this.node = CT.dom.node([this.outy, inny, this.alert], "div", "h1 w1");
 		CT.pubsub.connect(location.hostname, 9999);
 		CT.pubsub.subscribe("chat");
 		CT.pubsub.set_autohistory(true);
