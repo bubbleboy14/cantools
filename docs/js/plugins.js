@@ -6,7 +6,10 @@ CT.onload(function() {
 	var content = CT.dom.node(null, null, "ctcontent"),
 		clist = CT.dom.node(null, null, "ctlist bigger"),
 		builder = function(data) {
-			CT.dom.setContent(content, data.content);
+			CT.dom.setContent(content, [
+				CT.dom.node(data.name, "div", "biggerest bold bottompadded"),
+				data.content
+			]);
 		};
 	clist.appendChild(CT.panel.triggerList([
 		{
