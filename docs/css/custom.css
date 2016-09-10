@@ -1,5 +1,6 @@
 body {
 	font-family: "Andale Mono", AndaleMono, monospace;
+	overflow: hidden;
 }
 
 a {
@@ -49,4 +50,25 @@ a:hover {
 
 #ctfooter:hover .bline {
 	margin-top: 0px;
+}
+
+#chat {
+	border-top: 2px dashed gray;
+	border-left: 2px dashed gray;
+	margin-bottom: -403px;
+	transition: margin-bottom 1s;
+}
+
+#chat img {
+	height: 120px;
+}
+
+.nobm {
+	background: white;
+	margin-bottom: 0px !important;
+}
+
+#outy img {
+	height: 50px;
+	vertical-align: middle;
 }
