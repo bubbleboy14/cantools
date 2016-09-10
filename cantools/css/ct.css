@@ -707,6 +707,8 @@
     bottom: 10px;
     left: 10px;
     width: 240px;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 .ctcontent2 {
     position: absolute;
