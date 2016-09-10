@@ -68,6 +68,11 @@ a:hover {
 	margin-bottom: 0px !important;
 }
 
+#outy {
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+
 #outy img {
 	height: 50px;
 	vertical-align: middle;
