@@ -141,10 +141,10 @@
     bottom: 10px;
     left: 10px;
 }
-.top0 { top: 0px; }
-.bottom0 { bottom: 0px; }
-.left0 { left: 0px; }
-.right0 { right: 0px; }
+.t0, .top0 { top: 0px; }
+.b0, .bottom0 { bottom: 0px; }
+.l0, .left0 { left: 0px; }
+.r0, .right0 { right: 0px; }
 .top50 { top: 50px; }
 .bottom50 { bottom: 50px; }
 .left50 { left: 50px; }
@@ -681,6 +681,9 @@
     left: 0px;
     height: 120px;
     overflow: hidden;
+}
+.footered #ctmain {
+    bottom: 120px;
 }
 .ctlist {
     position: absolute;
