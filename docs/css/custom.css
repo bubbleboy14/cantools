@@ -12,7 +12,7 @@ a:hover {
 	text-decoration: overline;
 }
 
-#ctheader {
+#ctheader, #ctfooter {
 	border-top: 2px solid black;
 	border-bottom: 1px solid black;
 	background-image: url("/img/lines.png");
@@ -21,4 +21,32 @@ a:hover {
 
 #intro > div {
 	padding: 5px;
+}
+
+.hgrow {
+	margin-left: 300px;
+	margin-bottom: 60px;
+	transition: margin-left 1s, margin-bottom 1s, font-size 1s;
+}
+
+#ctfooter:hover .hgrow {
+	margin-left: 0px;
+	margin-bottom: 0px;
+}
+
+.hgrow:hover {
+	font-size: 320%;
+}
+
+.bline {
+	margin-right: 300px;
+}
+
+#ctfooter .bline {
+	margin-top: -20px;
+	transition: margin-top 1s;
+}
+
+#ctfooter:hover .bline {
+	margin-top: 0px;
 }
