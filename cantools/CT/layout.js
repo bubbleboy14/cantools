@@ -41,12 +41,15 @@ CT.layout = {
 	},
 	footer: function(opts) {
 		opts = CT.merge(opts, {
+			logoClass: "left nodecoration",
+			linksClass: "right p20",
+			bottomClass: "small bline centered",
 			logo: "Placeholder Logo",
 			links: [],
 			contact: {}
 		});
 		var rights = [], content = [
-			CT.dom.link(opts.logo, null, "/", "left nodecoration")
+			CT.dom.link(opts.logo, null, "/", opts.logoClass)
 		];
 		if (opts.links.length)
 			rights.push(opts.links.map(function(link) {
@@ -61,9 +64,9 @@ CT.layout = {
 			rights.push(contacts);
 		}
 		if (rights.length)
-			content.push(CT.dom.node(rights, "div", "right p20"));
+			content.push(CT.dom.node(rights, "div", opts.linksClass));
 		if (opts.bottom)
-			content.push(CT.dom.node(opts.bottom, "div", "small bline centered"));
+			content.push(CT.dom.node(opts.bottom, "div", opts.bottomClass));
 		document.body.classList.add("footered");
 		document.body.appendChild(CT.dom.node(content, "div", null, "ctfooter"));
 	},
