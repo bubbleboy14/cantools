@@ -2,13 +2,16 @@ from datetime import datetime
 from actor import Actor
 
 class PubSubUser(Actor):
+    id = 0
     def __init__(self, conn, server, logger):
+        PubSubUser.id += 1
+        self.id = PubSubUser.id
         self.conn = conn
         self.server = server
         self._log = logger
         self.channels = set()
         self.conn.set_cb(self._register)
-        self._log('NEW CONNECTION', 1, True)
+        self._log('NEW CONNECTION (%s)'%(self.id,), 1, True)
 
     def write(self, data):
         data["data"]["datetime"] = str(datetime.now())
@@ -36,7 +39,10 @@ class PubSubUser(Actor):
         })
 
     def _register(self, obj):
-        name = obj["data"]
+        name = obj.get("data")
+        if not name:
+            self._log("no name provided! assigning index (%s)."%(self.id,))
+            name = str(self.id)
         self._log('REGISTER: "%s"'%(name,), 1, True)
         self.name = name
         self.server.newUser(self)
