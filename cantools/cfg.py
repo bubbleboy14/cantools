@@ -23,7 +23,8 @@ cfg = {
 	},
 	"admin": {
 		"host": "localhost",
-		"port": 8002
+		"port": 8002,
+		"log": None
 	},
 	"web": {
 		"server": "dez",
