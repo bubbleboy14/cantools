@@ -67,6 +67,8 @@ CT.layout = {
 			content.push(CT.dom.node(rights, "div", opts.linksClass));
 		if (opts.bottom)
 			content.push(CT.dom.node(opts.bottom, "div", opts.bottomClass));
+		if (opts.extra)
+			content.push(opts.extra);
 		document.body.classList.add("footered");
 		document.body.appendChild(CT.dom.node(content, "div", null, "ctfooter"));
 	},
