@@ -219,6 +219,15 @@
     padding: 50px !important;
     text-align: justify;
 }
+.code {
+    font-family: monospace;
+    color: green;
+    background: black;
+    border: 2px dashed green;
+    padding: 20px !important;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
 
 /* behavior */
 .border-box { box-sizing: border-box; }
