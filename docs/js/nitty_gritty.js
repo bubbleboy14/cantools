@@ -206,6 +206,7 @@ CT.onload(function() {
 				CT.dom.link("request handler", null,
 					"https://github.com/bubbleboy14/ctblog/blob/master/ctblog/_blog.py",
 					null, null, null, true),
+				CT.dom.node(".", "span")
 			]
 		},
 		{
@@ -303,14 +304,25 @@ CT.onload(function() {
 		{
 			name: "Admin Dashboard",
 			content: [
+				[
+					CT.dom.node("The admin dashboards run on port 8002 by default (see", "span"),
+					CT.dom.pad(),
+					CT.dom.link("ctinit", null, "/docs#init"),
+					CT.dom.pad(),
+					CT.dom.node("options). You can't get in without the admin password, which you set when you", "span"),
+					CT.dom.pad(),
+					CT.dom.link("run the server", null, "/docs#start"),
+					CT.dom.pad(),
+					CT.dom.node("for the first time.", "span")
+				],
 				CT.dom.node("db", "div", "bigger bold pv10"),
-				"blah blah db",
+				"Peruse and mess with your data.",
 				CT.dom.node("memcache", "div", "bigger bold pv10"),
-				"blah blah memcache",
+				"Review an up-to-the-moment snapshot of your server's memcache.",
 				CT.dom.node("pubsub", "div", "bigger bold pv10"),
-				"blah blah pubsub",
+				"Who's saying what where?",
 				CT.dom.node("logs", "div", "bigger bold pv10"),
-				"blah blah logs"
+				"Explore your logs. It's great!"
 			]
 		}
 	], "ctcontent3", "ctlist3 big");
