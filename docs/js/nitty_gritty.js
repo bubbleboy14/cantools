@@ -259,9 +259,45 @@ CT.onload(function() {
 			name: "Plugins",
 			content: [
 				CT.dom.node("Using Plugins", "div", "bigger bold pv10"),
-				"blah blah using",
+				[
+					CT.dom.node("To initialize a fresh project with one or more plugins, use", "span"),
+					CT.dom.pad(),
+					CT.dom.link("ctinit", null, "/docs#init"),
+					CT.dom.node("'s <b>-p (--plugins)</b> flag, like so:", "span")
+				],
+				CT.dom.node("~> ctinit mymusicdotcom -p ctunes", "div", "code"),
+				"Child's play. But what about adding some new functionality fragment mid-project? No problem, just add the name of the plugin to the <b>PLUGIN_MODULES</b> line in your <b>ct.cfg</b> file and refresh:",
+				CT.dom.node("~/myblogorsomething> ctinit -r", "div", "code"),
+				"That's it.",
 				CT.dom.node("Building Plugins", "div", "bigger bold pv10"),
-				"blah blah building"
+				[
+					CT.dom.node("Building a plugin is easy. You mainly just need one file, <b>init.py</b>. It tells",
+						"span"),
+					CT.dom.pad(),
+					CT.dom.link("ctinit", null, "/docs#init"),
+					CT.dom.pad(),
+					CT.dom.node("how the plugin is supposed to relate to the application. A good example is", "span"),
+					CT.dom.pad(),
+					CT.dom.link("ctblog", null, "/plugins.html#ctblog"),
+					CT.dom.node("'s", "span"),
+					CT.dom.pad(),
+					CT.dom.link("init config", null,
+						"https://github.com/bubbleboy14/ctblog/blob/master/ctblog/init.py",
+						null, null, null, true),
+					CT.dom.node(". If your frontend requires configuration, simply include a <b>config.js</b> file (", "span"),
+					CT.dom.link("ctuser", null, "/plugins.html#ctuser"),
+					CT.dom.node("'s", "span"),
+					CT.dom.pad(),
+					CT.dom.link("configuration", null,
+						"https://github.com/bubbleboy14/ctuser/blob/master/ctuser/js/config.js",
+						null, null, null, true),
+					CT.dom.pad(),
+					CT.dom.node("is a great example), which", "span"),
+					CT.dom.pad(),
+					CT.dom.link("ctinit", null, "/docs#init"),
+					CT.dom.pad(),
+					CT.dom.node("compiles, along with objects for other plugins and general items like <b>header</b>{} and <b>css</b>[], into <b>core.config</b>.", "span")
+				]
 			]
 		},
 		{
