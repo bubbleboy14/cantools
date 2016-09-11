@@ -2,16 +2,7 @@ CT.require("CT.all");
 CT.require("core");
 
 CT.onload(function() {
-	CT.initCore();
-	var content = CT.dom.node(null, null, "ctcontent"),
-		clist = CT.dom.node(null, null, "ctlist bigger"),
-		builder = function(data) {
-			CT.dom.setContent(content, [
-				CT.dom.node(data.name, "div", "biggerest bold bottompadded"),
-				data.content
-			]);
-		};
-	clist.appendChild(CT.panel.triggerList([
+	core.util.buildPage([
 		{
 			name: "<i>plugins</i>",
 			content: "We've got some plugins, ladies and gentlemen. Click away."
@@ -58,11 +49,5 @@ CT.onload(function() {
 				CT.dom.link("Code", null, "https://github.com/bubbleboy14/ctdocs", "biggest p30 right")
 			]
 		}
-	], builder));
-	CT.dom.setContent("ctmain", [content, clist]);
-	var hash = location.hash.slice(1);
-	if (hash)
-		CT.dom.id("tl" + hash).trigger();
-	else
-		CT.dom.className("tlitem")[0].trigger();
+	]);
 });

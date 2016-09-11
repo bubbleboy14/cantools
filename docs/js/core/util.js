@@ -14,6 +14,24 @@ core.util = {
 		core.util.chatNode.classList[core.util.chatNode._on ? "add" : "remove"]("nobm");
 		CT.trans.wobble(core.util._winker, { axis: "y", radius: -5, duration: 200 });
 	},
+	buildPage: function(data) {
+		CT.initCore();
+		var content = CT.dom.node(null, null, "ctcontent"),
+			clist = CT.dom.node(null, null, "ctlist bigger"),
+			builder = function(data) {
+				CT.dom.setContent(content, [
+					CT.dom.node(data.name, "div", "biggerest bold bottompadded"),
+					data.content
+				]);
+			};
+		clist.appendChild(CT.panel.triggerList(data, builder));
+		CT.dom.setContent("ctmain", [content, clist]);
+		var hash = location.hash.slice(1);
+		if (hash)
+			CT.dom.id("tl" + hash).trigger();
+		else
+			CT.dom.className("tlitem")[0].trigger();
+	},
 	settle: function() {
 		core.util._winker = CT.dom.id("winker");
 		core.util._winker.classList.add("viswink");
