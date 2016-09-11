@@ -10,6 +10,9 @@ core.util = {
 				"div", "w300p h400p"),
 			cnode = CT.dom.node([cimg, cbox], "div", "abs r0 b0 above", "chat");
 		document.body.appendChild(cnode);
+	},
+	init: function() {
+		core.util.chat();
 	}
 };
 
@@ -56,4 +59,4 @@ core.util.Chat = CT.Class({
 	}
 });
 
-CT.onload(core.util.chat);
+CT.onload(core.util.init);

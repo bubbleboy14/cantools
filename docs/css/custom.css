@@ -77,3 +77,12 @@ a:hover {
 	height: 50px;
 	vertical-align: middle;
 }
+
+#lefteye, #righteye {
+	transform: rotate(90deg);
+}
+
+#ctfooter:hover #righteye {
+	transform: rotate(90deg) scale(-1, 1);
+	transition: transform 1s;
+}

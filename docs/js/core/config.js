@@ -14,6 +14,16 @@ core.config = {
 		"logoClass": "abs b0 l0 hgrow",
 		"linksClass": "abs b0 r0 small mosthigh",
 		"logo": "cantools",
+		"extra": CT.dom.node([
+			CT.dom.node([
+				CT.dom.node("c", "span", "biggest", null, null, { verticalAlign: "sub" }),
+				CT.dom.node("+", "span", "smaller inline-block", null, null, { marginLeft: "-5px" })
+			], "div", "inline-block", "lefteye"),
+			CT.dom.node([
+				CT.dom.node("c", "span", "biggest", null, null, { verticalAlign: "sub" }),
+				CT.dom.node("+", "span", "smaller inline-block", null, null, { marginLeft: "-5px" })
+			], "div", "inline-block", "righteye")
+		], null, "abs b0", null, null, { right: "300px", marginBottom: "-5px" }),
 		"bottom": ["user", "blog", "store", "decide", "coop", "tunes", "docs"].map(function(pname) {
 				var p = "ct" + pname;
 				return CT.dom.link(p, function() {
