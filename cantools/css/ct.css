@@ -719,6 +719,24 @@
     overflow-x: hidden;
     overflow-y: auto;
 }
+.ctlist3 {
+    position: absolute;
+    top: 10px;
+    bottom: 10px;
+    left: 10px;
+    width: 290px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.ctcontent3 {
+    position: absolute;
+    top: 10px;
+    bottom: 10px;
+    left: 300px;
+    right: 10px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
 
 #top_buttons {
     top: 3px;
