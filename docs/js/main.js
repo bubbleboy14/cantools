@@ -27,7 +27,7 @@ CT.onload(function() {
 			CT.dom.pad(),
 			CT.dom.link("CT.video", null, "/docs#video.js"),
 			CT.dom.pad(),
-			CT.dom.node("that make the most of HTML5.", "span")
+			CT.dom.node("that make the most of HTML5. And what about all those old browsers? Well, cantools brings them up to speed with shims for new tech like <b>requestAnimationFrame</b> and <b>sessionStorage</b>.", "span")
 		],
 		[
 			CT.dom.node("Cooler still, cantools comes with a built-in WebSocket pubsub server,", "span"),
