@@ -14,10 +14,10 @@ core.util = {
 		core.util.chatNode.classList[core.util.chatNode._on ? "add" : "remove"]("nobm");
 		CT.trans.wobble(core.util._winker, { axis: "y", radius: -5, duration: 200 });
 	},
-	buildPage: function(data) {
+	buildPage: function(data, ctype, ltype) {
 		CT.initCore();
-		var content = CT.dom.node(null, null, "ctcontent"),
-			clist = CT.dom.node(null, null, "ctlist bigger"),
+		var content = CT.dom.node(null, null, ctype || "ctcontent"),
+			clist = CT.dom.node(null, null, ltype || "ctlist big"),
 			builder = function(data) {
 				CT.dom.setContent(content, [
 					CT.dom.node(data.name, "div", "biggerest bold bottompadded"),
