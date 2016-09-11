@@ -213,9 +213,46 @@ CT.onload(function() {
 			name: "Services",
 			content: [
 				CT.dom.node("Cron", "div", "bigger bold pv10"),
-				"blah blah cron",
+				[
+					CT.dom.node("The", "span"),
+					CT.dom.pad(),
+					CT.dom.link("cron module", null,
+						"https://github.com/bubbleboy14/cantools/blob/master/cantools/web/dez_server/cron.py",
+						null, null, null, true),
+					CT.dom.pad(),
+					CT.dom.node("parses the <b>cron.yaml</b> file and schedules the individual jobs accordingly. The <b>YAML</b>-style rules look very similar to those found in <b>app.yaml</b> (the routing config file). Anyway, it should look something like this:", "span")
+				],
+				CT.dom.node([
+					"- description: basic scan",
+					[
+						CT.dom.pad(2),
+						CT.dom.node("url: /cronscan", "span")
+					],
+					[
+						CT.dom.pad(2),
+						CT.dom.node("schedule: every 24 hours", "span")
+					]
+				], "div", "code"),
 				CT.dom.node("Mail", "div", "bigger bold pv10"),
-				"blah blah mail"
+				[
+					CT.dom.node("The", "span"),
+					CT.dom.pad(),
+					CT.dom.link("mail module", null,
+						"https://github.com/bubbleboy14/cantools/blob/master/cantools/web/dez_server/mail.py",
+						null, null, null, true),
+					CT.dom.pad(),
+					CT.dom.node("is a minimal wrapper around", "span"),
+					CT.dom.pad(),
+					CT.dom.link("yagmail", null, "https://github.com/kootenpv/yagmail", null, null, null, true),
+					CT.dom.node(". To enable mailing, add a sender address to <b>ct.cfg</b>, something like:", "span")
+				],
+				CT.dom.node("MAILER = Robot &lt;robot@yourthing.com&gt;", "div", "code"),
+				"Send emails with <b>send_mail</b>():",
+				CT.dom.node([
+					"from cantools.web import send_mail",
+					CT.dom.br(),
+					"send_mail(to='someone@email.com', subject='hello old friend', body='how are you?')"
+				], "div", "code")
 			]
 		},
 		{
