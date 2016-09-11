@@ -3,11 +3,13 @@ core.config = {
 		"centerLogo": false,
 		"logo": CT.dom.img("/img/logo.png", "h1"),
 		"right": [
-			CT.dom.link("Docs", null, "/docs"),
+			CT.dom.link("code", null, "https://github.com/bubbleboy14/cantools", null, null, null, true),
 			CT.dom.pad(4),
-			CT.dom.link("Plugins", null, "/plugins.html"),
+			CT.dom.link("plugins", null, "/plugins.html"),
 			CT.dom.pad(4),
-			CT.dom.link("Code", null, "https://github.com/bubbleboy14/cantools")
+			CT.dom.link("docs", null, "/docs"),
+			CT.dom.pad(4),
+			CT.dom.link("nitty gritty", null, "/nitty_gritty.html")
 		]
 	},
 	"footer": {
@@ -50,16 +52,17 @@ core.config = {
 	},
 	"css": [],
 	"ctdocs": {
-		"_s": "https://github.com/bubbleboy14/cantools/blob/master/",
+		"base": "https://github.com/bubbleboy14/cantools/blob/master/",
 		"source": function(name) {
+			var base = core.config.ctdocs.base;
 			if (name == "about")
-				return core.config.ctdocs._s + "README.md";
+				return base + "README.md";
 			else if (name == "pubsub")
-				return core.config.ctdocs._s + "cantools/scripts/pubsub/ps.py";
+				return base + "cantools/scripts/pubsub/ps.py";
 			else if (name.endsWith(".js"))
-				return core.config.ctdocs._s + "cantools/CT/" + name;
+				return base + "cantools/CT/" + name;
 			else
-				return core.config.ctdocs._s + "cantools/scripts/" + name + ".py";
+				return base + "cantools/scripts/" + name + ".py";
 		}
 	}
 };
