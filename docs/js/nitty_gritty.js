@@ -5,10 +5,14 @@ CT.onload(function() {
 	core.util.buildPage([
 		{
 			name: "Architecture",
-			content: ""
+			content: CT.dom.img("/img/architecture.png", "w1")
 		},
 		{
 			name: "Object Relational Mapper",
+			content: ""
+		},
+		{
+			name: "Routing",
 			content: ""
 		},
 		{
@@ -17,12 +21,7 @@ CT.onload(function() {
 		},
 		{
 			name: "Configuration",
-			content: [
-				CT.dom.node("General (ct.cfg)", "div", "big bold pv10"),
-				"blah blah general",
-				CT.dom.node("Routing (app.yaml)", "div", "big bold pv10"),
-				"blah blah routing"
-			]
+			content: "blah blah configuration"
 		},
 		{
 			name: "Javascript",
