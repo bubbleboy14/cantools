@@ -155,7 +155,7 @@ CT.onload(function() {
 				[
 					CT.dom.node("The stuff after that is used by", "span"),
 					CT.dom.pad(),
-					CT.dom.link("the compiler", null, "/doc#deploy"),
+					CT.dom.link("the compiler", null, "/docs#deploy"),
 					CT.dom.pad(),
 					CT.dom.node("to switch between compilation modes. Now you know.", "span")
 				]
@@ -265,7 +265,33 @@ CT.onload(function() {
 			name: "Caching",
 			content: [
 				CT.dom.node("Client", "div", "bigger bold pv10"),
-				"blah blah client",
+				"Caching is supported in multiple layers of the cantools frontend stack.",
+				CT.dom.node("CT.data", "div", "big pv10"),
+				[
+					CT.dom.node("The", "span"),
+					CT.dom.pad(),
+					CT.dom.link("data module", null, "/docs#data.js"),
+					CT.dom.pad(),
+					CT.dom.node("provides functions (<b>get</b>(), <b>add</b>(), <b>addSet</b>(), <b>has</b>()) for maintaining a central set of data for use throughout your application.", "span")
+				],
+				CT.dom.node("CT.net", "div", "big pv10"),
+				[
+					CT.dom.node("The", "span"),
+					CT.dom.pad(),
+					CT.dom.link("net module", null, "/docs#ct.js"),
+					CT.dom.pad(),
+					CT.dom.node("supports request caching (default <b>false</b>) via the <b>setCache</b>() function:", "span")
+				],
+				CT.dom.node("CT.net.setCache(true);", "div", "code"),
+				"Under the hood, <b>setCache</b>() uses <b>CT.storage</b>.",
+				CT.dom.node("CT.storage", "div", "big pv10"),
+				[
+					CT.dom.node("The", "span"),
+					CT.dom.pad(),
+					CT.dom.link("storage module", null, "/docs#storage.js"),
+					CT.dom.pad(),
+					CT.dom.node("is intended for session-level data that must persist across pages. It configurably sits atop either <b>localStorage</b> (the default) or <b>sessionStorage</b> (which we shim for old browsers). By default, it treats your data as JSON and insanely compresses it before filing it away.", "span")
+				],
 				CT.dom.node("Server", "div", "bigger bold pv10"),
 				"The server's memcache layer can be accessed through 3 functions found in the <b>web</b> module:",
 				CT.dom.node("from cantools.web import getmem, setmem, clearmem", "div", "code"),
