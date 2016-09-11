@@ -1,18 +1,27 @@
 core.util = {
 	_users: ["snuggler", "cuddler", "mittens", "meowzer", "wowzer", "woozle"],
 	chat: function() {
-		var chat = new core.util.Chat(),
-			cimg = CT.dom.img("/img/cat.png", "pointer hoverglow", function() {
-				cnode._on = !cnode._on;
-				chat.setActive(cnode._on);
-				cnode.classList[cnode._on ? "add" : "remove"]("nobm");
-			}), cbox = CT.dom.node(chat.node,
-				"div", "w300p h400p"),
-			cnode = CT.dom.node([cimg, cbox], "div", "abs r0 b0 above", "chat");
-		document.body.appendChild(cnode);
+		core.util.chat = new core.util.Chat();
+		core.util.chatNode = CT.dom.node([
+			CT.dom.img("/img/cat.png", "pointer hoverglow", core.util.toggleChat),
+			CT.dom.node(core.util.chat.node, "div", "w300p h400p")
+		], "div", "abs r0 b0 above", "chat");
+		document.body.appendChild(core.util.chatNode);
+	},
+	toggleChat: function() {
+		core.util.chatNode._on = !core.util.chatNode._on;
+		core.util.chat.setActive(core.util.chatNode._on);
+		core.util.chatNode.classList[core.util.chatNode._on ? "add" : "remove"]("nobm");
+		CT.trans.wobble(core.util._winker, { axis: "y", radius: -5, duration: 200 });
+	},
+	settle: function() {
+		core.util._winker = CT.dom.id("winker");
+		core.util._winker.classList.add("viswink");
+		core.util._winker.onclick = core.util.toggleChat;
 	},
 	init: function() {
 		core.util.chat();
+		setTimeout(core.util.settle);
 	}
 };
 

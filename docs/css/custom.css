@@ -86,3 +86,13 @@ a:hover {
 	transform: rotate(90deg) scale(-1, 1);
 	transition: transform 1s;
 }
+
+#winker {
+	right: 310px;
+	margin-bottom: -50px;
+	transition: margin-bottom 1s;
+}
+
+.viswink {
+	margin-bottom: 5px !important;
+}
