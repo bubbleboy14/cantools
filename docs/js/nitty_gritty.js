@@ -242,9 +242,23 @@ CT.onload(function() {
 			name: "Logging",
 			content: [
 				CT.dom.node("Client", "div", "bigger bold pv10"),
-				"blah blah client",
+				[
+					CT.dom.node("Client-side logging is handled by the", "span"),
+					CT.dom.pad(),
+					CT.dom.link("CT.log", null, "/docs#ct.js"),
+					CT.dom.pad(),
+					CT.dom.node("module.", "span")
+				],
 				CT.dom.node("Server", "div", "bigger bold pv10"),
-				"blah blah server"
+				"Enable specific logs in your <b>ct.cfg</b> file with the <b>LOG_ALLOW</b> option, something like:",
+				CT.dom.node("LOG_ALLOW = DEGUG|ERROR", "div", "code"),
+				"By default, cantools emits <b>info</b>, <b>log</b>, and <b>error</b> messages. One might also desire to persist logs to files. For this, we have a few more config lines to play around with:",
+				CT.dom.node([
+					"WEB_LOG = web.log",
+					"ADMIN_LOG = admin.log",
+					"PUBSUB_LOG = pubsub.log"
+				], "div", "code")
+
 			]
 		},
 		{
