@@ -121,7 +121,40 @@ CT.onload(function() {
 		},
 		{
 			name: "Routing",
-			content: ""
+			content: [
+				CT.dom.node("The Basics", "div", "bigger bold pv10"),
+				[
+					CT.dom.node("All routing is handled in the <b>app.yaml</b> file,", "span"),
+					CT.dom.pad(),
+					CT.dom.link("YAML", null, "http://yaml.org/", null, null, null, true),
+					CT.dom.node("-style. Each rule consists of a <b>url</b>, which may be a regular expression, followed by either a <b>script</b> line or a <b>static_dir</b> line.", "span")
+				],
+				CT.dom.node("Static Directories", "div", "bigger bold pv10"),
+				"A static rule looks like this:",
+				CT.dom.node([
+					"- url: /css",
+					CT.dom.pad(2),
+					CT.dom.node("static_dir: css", "span"),
+				], "div", "code"),
+				CT.dom.node("Web Handlers", "div", "bigger bold pv10"),
+				"A dynamic rule looks like this:",
+				CT.dom.node([
+					"- url: /_db",
+					CT.dom.pad(2),
+					CT.dom.node("script: _db.py", "span"),
+				], "div", "code"),
+				CT.dom.node("What's That Stuff At The Bottom?", "div", "bigger bold pv10"),
+				"At some point in your <b>app.yaml</b> file, you'll see the following line:",
+				CT.dom.node("## MODE SWITCHING -- DON'T MESS WITH (unless you know what you're doing)!",
+					"div", "code"),
+				[
+					CT.dom.node("The stuff after that is used by", "span"),
+					CT.dom.pad(),
+					CT.dom.link("the compiler", null, "/doc#deploy"),
+					CT.dom.pad(),
+					CT.dom.node("to switch between compilation modes. Now you know.", "span")
+				]
+			]
 		},
 		{
 			name: "Request Handling",
