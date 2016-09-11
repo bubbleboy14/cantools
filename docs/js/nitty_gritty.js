@@ -209,6 +209,15 @@ CT.onload(function() {
 			]
 		},
 		{
+			name: "Services",
+			content: [
+				CT.dom.node("Cron", "div", "bigger bold pv10"),
+				"blah blah cron",
+				CT.dom.node("Mail", "div", "bigger bold pv10"),
+				"blah blah mail"
+			]
+		},
+		{
 			name: "Javascript",
 			content: [
 				CT.dom.node("Modules", "div", "bigger bold pv10"),
