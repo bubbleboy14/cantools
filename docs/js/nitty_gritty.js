@@ -10,7 +10,7 @@ CT.onload(function() {
 		{
 			name: "Initialization",
 			content: [
-				CT.dom.node("Installing cantools", "div", "big pv10"),
+				CT.dom.node("Installing cantools", "div", "bigger bold pv10"),
 				"Pop open a terminal and clone cantools:",
 				CT.dom.node("~> git clone https://github.com/bubbleboy14/cantools.git", "div", "code"),
 				"Install it:",
@@ -19,13 +19,13 @@ CT.onload(function() {
 					"~/cantools> sudo python setup.py install",
 					"~/cantools> sudo python setup.py develop",
 				], "div", "code"),
-				CT.dom.node("Creating A Project", "div", "big pv10"),
+				CT.dom.node("Creating A Project", "div", "bigger bold pv10"),
 				"Then navigate somewhere else and make up a name for your project:",
 				CT.dom.node([
 					"~/cantools> cd ..",
 					"~> ctinit greatprojectname",
 				], "div", "code"),
-				CT.dom.node("Refreshing A Project", "div", "big pv10"),
+				CT.dom.node("Refreshing A Project", "div", "bigger bold pv10"),
 				"Maybe you're jumping into someone else's project. That's fine. First, make sure cantools is installed (see above). If you already have it, it doesn't hurt to make sure it's up to date. In your terminal:",
 				CT.dom.node("~> ctinit -u", "div", "code"),
 				[
@@ -45,7 +45,79 @@ CT.onload(function() {
 		},
 		{
 			name: "Object Relational Mapper",
-			content: ""
+			content: [
+				CT.dom.node("Choosing Your Backend", "div", "bigger bold pv10"),
+				[
+					CT.dom.node("The cantools abstraction layer is like a rodeo performer riding two horses simultaneously:", "span"),
+					CT.dom.pad(),
+					CT.dom.link("the GAE neopythonic cloud datastore", null,
+						"https://cloud.google.com/appengine/docs/python/ndb/", null, null, null, true),
+					CT.dom.node("; and the SQL database of your choice (our recommendation), via", "span"),
+					CT.dom.pad(),
+					CT.dom.link("sqlalchemy", null, "http://www.sqlalchemy.org/", null, null, null, true),
+					CT.dom.node(".", "span")
+				],
+				CT.dom.node("Modeling Data", "div", "bigger bold pv10"),
+				[
+					CT.dom.node("Now that you've got a project to mess around with, check out model.py. It will be mostly empty. For a good example of the sorts of things you can type there, feast your eyes on the", "span"),
+					CT.dom.pad(),
+					CT.dom.link("ctuser", null, "/plugins.html#ctuser"),
+					CT.dom.pad(),
+					CT.dom.node("plugin's", "span"),
+					CT.dom.pad(),
+					CT.dom.link("model injections", null,
+						"https://github.com/bubbleboy14/ctuser/blob/master/ctuser/model.py"),
+					CT.dom.node(". Our sleek api is <b>boilerplateless</b> thanks to the", "span"),
+					CT.dom.pad(),
+					CT.dom.link("metaclass magic of the model module", null,
+						"https://github.com/bubbleboy14/cantools/blob/master/cantools/db/sql/model.py")
+				],
+				CT.dom.node("Queries", "div", "bigger bold pv10"),
+				[
+					CT.dom.node("Access Your Data", "div", "big pv10"),
+					[
+						CT.dom.node("The cantools abstraction layer manages", "span"),
+						CT.dom.pad(),
+						CT.dom.link("database sessions", null,
+							"https://github.com/bubbleboy14/cantools/blob/master/cantools/db/sql/session.py",
+							null, null, null, true),
+						CT.dom.pad(),
+						CT.dom.node("under the hood, allowing numerous incrementally alternating request -bound sessions, as well as any number of simultaneous long-running thread -bound sessions, to coexist, reading and writing data at will. The session manager is utilized by individual", "span"),
+						CT.dom.pad(),
+						CT.dom.link("Query", null,
+							"https://github.com/bubbleboy14/cantools/blob/master/cantools/db/sql/query.py",
+							null, null, null, true),
+						CT.dom.pad(),
+						CT.dom.node("instances, which in turn are used by the", "span"),
+						CT.dom.pad(),
+						CT.dom.link("getters", null,
+							"https://github.com/bubbleboy14/cantools/blob/master/cantools/db/sql/getters.py",
+							null, null, null, true),
+						CT.dom.node(", which themselves instantiate Query objects with the query() function attached to each data model (as do the", "span"),
+						CT.dom.pad(),
+						CT.dom.link("setters", null,
+							"https://github.com/bubbleboy14/cantools/blob/master/cantools/db/sql/setters.py",
+							null, null, null, true),
+						CT.dom.node(").", "span")
+					],
+					CT.dom.node("Even From Javascript(!)", "div", "big pv10"),
+					[
+						CT.dom.node("Check out the", "span"),
+						CT.dom.pad(),
+						CT.dom.link("CT.db", null, "/docs#db.js"),
+						CT.dom.pad(),
+						CT.dom.node("module to learn all about querying and messing with your data from all the way over in the client. Really!", "span")
+					]
+				],
+				CT.dom.node("Migration", "div", "bigger bold pv10"),
+				[
+					CT.dom.node("Wherever you choose to squirrel away your data, you'll eventually have to move it somewhere. Check out", "span"),
+					CT.dom.pad(),
+					CT.dom.link("ctmigrate", null, "/docs#migrate"),
+					CT.dom.pad(),
+					CT.dom.node("to learn more!", "span")
+				]
+			]
 		},
 		{
 			name: "Routing",
@@ -58,9 +130,9 @@ CT.onload(function() {
 		{
 			name: "Javascript",
 			content: [
-				CT.dom.node("Modules", "div", "big bold pv10"),
+				CT.dom.node("Modules", "div", "bigger bold pv10"),
 				"blah blah modules",
-				CT.dom.node("Classes", "div", "big bold pv10"),
+				CT.dom.node("Classes", "div", "bigger bold pv10"),
 				"blah blah classes",
 				CT.dom.node("Compilation Modes", "div", "big bold pv10"),
 				"blah blah compilation modes"
@@ -69,37 +141,50 @@ CT.onload(function() {
 		{
 			name: "Configuration",
 			content: [
-				CT.dom.node("Client", "div", "big bold pv10"),
+				CT.dom.node("Client", "div", "bigger bold pv10"),
 				"blah blah client",
-				CT.dom.node("Server", "div", "big bold pv10"),
+				CT.dom.node("Server", "div", "bigger bold pv10"),
 				"blah blah server"
 			]
 		},
 		{
 			name: "Logging",
 			content: [
-				CT.dom.node("Client", "div", "big bold pv10"),
+				CT.dom.node("Client", "div", "bigger bold pv10"),
 				"blah blah client",
-				CT.dom.node("Server", "div", "big bold pv10"),
+				CT.dom.node("Server", "div", "bigger bold pv10"),
 				"blah blah server"
 			]
 		},
 		{
 			name: "Caching",
 			content: [
-				CT.dom.node("Client", "div", "big bold pv10"),
+				CT.dom.node("Client", "div", "bigger bold pv10"),
 				"blah blah client",
-				CT.dom.node("Server", "div", "big bold pv10"),
+				CT.dom.node("Server", "div", "bigger bold pv10"),
 				"blah blah server"
 			]
 		},
 		{
 			name: "Plugins",
 			content: [
-				CT.dom.node("Using Plugins", "div", "big bold pv10"),
+				CT.dom.node("Using Plugins", "div", "bigger bold pv10"),
 				"blah blah using",
-				CT.dom.node("Building Plugins", "div", "big bold pv10"),
+				CT.dom.node("Building Plugins", "div", "bigger bold pv10"),
 				"blah blah building"
+			]
+		},
+		{
+			name: "Admin Dashboard",
+			content: [
+				CT.dom.node("db", "div", "bigger bold pv10"),
+				"blah blah db",
+				CT.dom.node("memcache", "div", "bigger bold pv10"),
+				"blah blah memcache",
+				CT.dom.node("pubsub", "div", "bigger bold pv10"),
+				"blah blah pubsub",
+				CT.dom.node("logs", "div", "bigger bold pv10"),
+				"blah blah logs"
 			]
 		}
 	], "ctcontent3", "ctlist3 big");
