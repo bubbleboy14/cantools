@@ -267,7 +267,46 @@ CT.onload(function() {
 				CT.dom.node("Client", "div", "bigger bold pv10"),
 				"blah blah client",
 				CT.dom.node("Server", "div", "bigger bold pv10"),
-				"blah blah server"
+				"The server's memcache layer can be accessed through 3 functions found in the <b>web</b> module:",
+				CT.dom.node("from cantools.web import getmem, setmem, clearmem", "div", "code"),
+				"Those functions are enough to use memcache, but if you're too lazy even for that, you're gonna love the predefined memcache behaviors.",
+				CT.dom.node("db", "div", "big pv10"),
+				[
+					CT.dom.node("The db cache is enabled by default. If all your data transactions are handled through the", "span"),
+					CT.dom.pad(),
+					CT.dom.link("/_db handler", null,
+						"https://github.com/bubbleboy14/cantools/blob/master/cantools/_db.py",
+						null, null, null, true),
+					CT.dom.node(", which itself is used by", "span"),
+					CT.dom.pad(),
+					CT.dom.link("CT.db", null, "/docs#db.js"),
+					CT.dom.node(", this is the setting for you. If you're messing with data elsewhere, you might want to turn it off in your <b>ct.cfg</b> file, like so:", "span")
+				],
+				CT.dom.node("MEMCACHE_DB = False", "div", "code"),
+				CT.dom.node("request", "div", "big pv10"),
+				"Requests can also be globally cached, but this behavior is disabled by default because it only makes sense if the requests change nothing and always return the same response. If you really want to, you can enable it in <b>ct.cfg</b>:",
+				CT.dom.node("MEMCACHE_REQUEST = True", "div", "code"),
+				"Alternatively, you can selectively enable caching per-request by passing <b>cache=True</b> when you call <b>succeed()</b> and using <b>trysavedresponse()</b>:",
+				CT.dom.node([
+					"from cantools.web import respond, cgi_get, succeed, trysavedresponse",
+					"from mylogic import get_response",
+					CT.dom.br(),
+					"def response():",
+					[
+						CT.dom.pad(4),
+						CT.dom.node("trysavedresponse()", "span")
+					],
+					[
+						CT.dom.pad(4),
+						CT.dom.node("resp = get_response(cgi_get('whatever_token'))", "span")
+					],
+					[
+						CT.dom.pad(4),
+						CT.dom.node("succeed(resp, cache=True)", "span")
+					],
+					CT.dom.br(),
+					"respond(response)"
+				], "div", "code")
 			]
 		},
 		{
