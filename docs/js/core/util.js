@@ -66,6 +66,8 @@ core.util.Chat = CT.Class({
 			isTA: true,
 			classname: "h1-5 w1",
 			blurs: [
+				"any questions?",
+				"what's on your mind?",
 				"what's the matter?",
 				"are you confused?",
 				"what's up?"
