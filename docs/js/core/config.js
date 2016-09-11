@@ -48,5 +48,18 @@ core.config = {
 			}
 		]
 	},
-	"css": []
+	"css": [],
+	"ctdocs": {
+		"_s": "https://github.com/bubbleboy14/cantools/blob/master/",
+		"source": function(name) {
+			if (name == "about")
+				return core.config.ctdocs._s + "README.md";
+			else if (name == "pubsub")
+				return core.config.ctdocs._s + "cantools/scripts/pubsub/ps.py";
+			else if (name.endsWith(".js"))
+				return core.config.ctdocs._s + "cantools/CT/" + name;
+			else
+				return core.config.ctdocs._s + "cantools/scripts/" + name + ".py";
+		}
+	}
 };
