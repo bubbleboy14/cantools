@@ -26,7 +26,7 @@ CT.onload(function() {
 					"~> ctinit greatprojectname",
 				], "div", "code"),
 				CT.dom.node("Refreshing A Project", "div", "big pv10"),
-				"Maybe you're jumping into someone else's project. That's fine. First, make sure cantools is installed (see above). If you already have it, it doesn't hurt to make sure it's update to date. In your terminal:",
+				"Maybe you're jumping into someone else's project. That's fine. First, make sure cantools is installed (see above). If you already have it, it doesn't hurt to make sure it's up to date. In your terminal:",
 				CT.dom.node("~> ctinit -u", "div", "code"),
 				[
 					CT.dom.node("That command pulls in the latest cantools, and also updates any managed plugins (more about that", "span"),
@@ -34,8 +34,13 @@ CT.onload(function() {
 					CT.dom.link("here", function() {
 						CT.dom.id("tlPlugins").trigger();
 					}),
-					CT.dom.node(")", "span")
-				]
+					CT.dom.node("). Now navigate to your project and refresh:", "span")
+				],
+				CT.dom.node([
+					"~> cd someproject",
+					"~/someproject> ctinit -r"
+				], "div", "code"),
+				"That command installs all necessary plugins and adds in all the symlinks that don't belong in a repository."
 			]
 		},
 		{
