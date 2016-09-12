@@ -297,7 +297,48 @@ CT.onload(function() {
 					"});"
 				], "code"),
 				CT.dom.div("Classes", "bigger bold pv10"),
-				"blah blah classes",
+				"Classes are the crucial ingredient of any object-oriented project, foremost among the grown-up tools today's rich web applications require to make any sense of the data landscape they necessarily must traverse. Use the <b>CT.Class</b>() function to create a class.",
+				CT.dom.div([
+					"Person = CT.Class({",
+					[
+						CT.dom.pad(4),
+						CT.dom.span('CLASSNAME: "MyClass",')
+					],
+					CT.dom.br(),
+					[
+						CT.dom.pad(4),
+						CT.dom.span('init: function(opts) {')
+					],
+					[
+						CT.dom.pad(8),
+						CT.dom.span('this.opts = opts;')
+					],
+					[
+						CT.dom.pad(8),
+						CT.dom.span('this.name = opts.name;')
+					],
+					[
+						CT.dom.pad(4),
+						CT.dom.span('},')
+					],
+					CT.dom.br(),
+					[
+						CT.dom.pad(4),
+						CT.dom.span('doIt: function() {')
+					],
+					[
+						CT.dom.pad(8),
+						CT.dom.span('this.log("we did it! (" + this.name + ")");')
+					],
+					[
+						CT.dom.pad(4),
+						CT.dom.span('}')
+					],
+					"});",
+					CT.dom.br(),
+					'var plorpus = new Person({ name: "plorpus" });',
+					'plorpus.doIt();'
+				], "code"),
 				CT.dom.div("Compilation Modes", "big bold pv10"),
 				"blah blah compilation modes"
 			]
