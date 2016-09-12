@@ -132,6 +132,12 @@ CT.dom = {
 				d.style[rule] = style[rule];
 		return d;
 	},
+	"div": function(content, classname, id, attrs, style) {
+		return CT.dom.node(content, "div", classname, id, attrs, style);
+	},
+	"span": function(content, classname, id, attrs, style) {
+		return CT.dom.node(content, "span", classname, id, attrs, style);
+	},
 	"script": function(src, content, delay) {
 		if (delay)
 			content = "setTimeout(function() { " + content + " }, " + delay + ");";
