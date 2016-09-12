@@ -68,7 +68,7 @@ table. The constructor takes an options object ('opts') with three possible entr
 CT.db = {
 	_schema: {},
 	_limit: 20,
-	_pagerLimit: 40,
+	_pagerLimit: 30,
 	key2model: function(key) {
 		if (key.slice(-3, -1) == "CT") {
 			var i, num = parseInt(key.slice(-1));
