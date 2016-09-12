@@ -258,8 +258,44 @@ CT.onload(function() {
 		{
 			name: "Javascript",
 			content: [
+				"Folks hate Javascript for 2 basic reason: the absence of <b>classes</b> and <b>modules</b>, which constitute the core of most scripting languages; and the auto-open nature of the code, which after all, is directly transmitted by the server. Now don't get me wrong, we're all about open source. We're just not all about vulnerable applications.",
 				CT.dom.node("Modules", "div", "bigger bold pv10"),
-				"blah blah modules",
+				CT.dom.node("CT.require", "div", "big pv10"),
+				"The <b>CT.require</b>() function ties it all together by dynamically acquiring modules, <b>AJAX</b>-style. Here are a few examples:",
+				CT.dom.node([
+					"// require a CT package",
+					'CT.require("CT.map");',
+					CT.dom.br(),
+					"// require some other package",
+					'CT.require("mything.gizmos");',
+					CT.dom.br(),
+					"// require dynamically -- compiler skips this import",
+					'CT.require("mything.modes." + modeVar, true);'
+				], "div", "code"),
+				CT.dom.node("CT.scriptImport", "div", "big pv10"),
+				"But maybe you want to use some third party library that in turn imports other stuff. Such a library generally determines where to find those other things based on its own location, which is typically derived from its script tag. Without a script tag, all is lost. In these cases, we use <b>CT.scriptImport</b>():",
+				CT.dom.node('CT.scriptImport("http://some.third.party.package.com/whatever.js");',
+					"div", "code"),
+				"<b>CT.require</b>() is synchronous, so you can use the module on the the next line. <b>CT.scriptImport</b>() is asynchronous, so either stick it before the page loads (triggering your main code in an onload callback, for instance via <b>CT.onload</b>()) or include your followup logic in a callback:",
+				CT.dom.node([
+					'CT.scriptImport("http://some.third.party.package.com/whatever.js");',
+					CT.dom.br(),
+					'CT.onload(function() {',
+					[
+						CT.dom.pad(4),
+						CT.dom.node('alert("ready to go!");', "span")
+					],
+					"});"
+				], "div", "code"),
+				"or",
+				CT.dom.node([
+					'CT.scriptImport("http://blah.com/bloop.js", function() {',
+					[
+						CT.dom.pad(4),
+						CT.dom.node('alert("ready to go!");', "span")
+					],
+					"});"
+				], "div", "code"),
 				CT.dom.node("Classes", "div", "bigger bold pv10"),
 				"blah blah classes",
 				CT.dom.node("Compilation Modes", "div", "big bold pv10"),
