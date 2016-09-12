@@ -339,8 +339,20 @@ CT.onload(function() {
 					'var plorpus = new Person({ name: "plorpus" });',
 					'plorpus.doIt();'
 				], "code"),
-				CT.dom.div("Compilation Modes", "big bold pv10"),
-				"blah blah compilation modes"
+				CT.dom.div("Compilation Modes", "bigger bold pv10"),
+				[
+					CT.dom.span("We've got 3 compilation modes for ya. Below are the basics (but you'll want to review the"),
+					CT.dom.pad(),
+					CT.dom.link("ctdeploy module", null, "/docs#deploy"),
+					CT.dom.pad(),
+					CT.dom.span("for deets).")
+				],
+				CT.dom.div("dynamic", "big pv10"),
+				"In dynamic, or development mode, your application is loaded in chunks as <b>CT.require</b>() statements are encountered. Your site won't load as quickly as in the other modes, but does not require recompilation to reflect the latest changes.",
+				CT.dom.div("static", "big pv10"),
+				"In static, or debug mode, all non-dynamic imports (<b>CT.require</b>() statements) are precompiled into the head as script tags referencing the files. These imports, unlike dynamic imports, play nice with the Chrome debugger, enabling, for instance, the developer to set break points that persist between refreshes. The downside is that any changes to the markup (html files) are <b>not</b> reflected in the served application without a recompile.",
+				CT.dom.div("production", "big pv10"),
+				"In production, or garbled mode, all referenced Javascript is compressed, obfuscated, and compiled into the head of each page. Additionally, production-mode applications encode all client-server communications, rendering your app hard to debug and harder to hack."
 			]
 		},
 		{
