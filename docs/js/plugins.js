@@ -7,6 +7,12 @@ CT.onload(function() {
 			name: "<i>plugins</i>",
 			content: "We've got some plugins, ladies and gentlemen. Click away."
 		}, {
+			name: "ctmgc",
+			content: [
+				"This is a framework for building multiplayer games played on a main display with mobile phones as controllers.",
+				CT.dom.link("Code", null, "https://github.com/DrMartinLutherXing/ctmgc", "biggest p30 right")
+			]
+		}, {
 			name: "ctuser",
 			content: [
 				"This package includes a model, a request handler, and frontend components, including a profile page and a browsing interface, for handling user accounts.",
