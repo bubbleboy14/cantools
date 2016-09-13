@@ -1,5 +1,5 @@
 """
-### Usage: ctinit [projname] [-r] [--plugins=P1|P2|P3] [--cantools_path=PATH] [--web_backend=BACKEND]
+### Usage: ctinit [projname] [-ru] [--plugins=P1|P2|P3] [--cantools_path=PATH] [--web_backend=BACKEND]
 
 ### Options:
     -h, --help            show this help message and exit
@@ -233,7 +233,7 @@ def update():
 	log("finished updates", 1)
 
 def parse_and_make():
-	parser = OptionParser("ctinit [projname] [-r] [--plugins=P1|P2|P3] [--cantools_path=PATH] [--web_backend=BACKEND]")
+	parser = OptionParser("ctinit [projname] [-ru] [--plugins=P1|P2|P3] [--cantools_path=PATH] [--web_backend=BACKEND]")
 	parser.add_option("-p", "--plugins", dest="plugins", default="",
 		help="which plugins would you like to use in your project?")
 	parser.add_option("-c", "--cantools_path", dest="cantools_path", default=CTP,
