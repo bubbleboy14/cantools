@@ -26,7 +26,10 @@ def rm(pname):
 		os.remove(pname)
 	elif os.path.isdir(pname):
 		log("removing folder: %s"%(pname,), 2)
-		os.rmdir(pname)
+		try:
+			os.rmdir(pname)
+		except: # maybe it's a mac
+			os.remove(pname)
 	elif os.path.exists(pname):
 		log("removing file: %s"%(pname,), 2)
 		os.remove(pname)
