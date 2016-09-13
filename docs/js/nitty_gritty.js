@@ -416,8 +416,9 @@ CT.onload(function() {
 					CT.dom.pad(),
 					CT.dom.link("CT.log", null, "/docs#ct.js"),
 					CT.dom.pad(),
-					CT.dom.span("module.")
+					CT.dom.span("module. As a convenience, a <b>log</b>{} object is added to every application's <b>core.config</b> object. It contains two arrays, <b>include</b>[] and <b>exclude</b>[], which the default <b>core.util</b> passes to <b>CT.log.greg</b>():")
 				],
+				CT.dom.div("CT.log.grep(core.config.log.include, core.config.log.exclude);", "code"),
 				CT.dom.div("Server", "bigger bold pv10"),
 				"Enable specific logs in your <b>ct.cfg</b> file with the <b>LOG_ALLOW</b> option, something like:",
 				CT.dom.div("LOG_ALLOW = DEGUG|ERROR", "code"),
@@ -427,7 +428,6 @@ CT.onload(function() {
 					"ADMIN_LOG = admin.log",
 					"PUBSUB_LOG = pubsub.log"
 				], "code")
-
 			]
 		},
 		{
