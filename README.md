@@ -1,4 +1,4 @@
-# cantools 0.8.8
+# cantools 0.8.8.1
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
 License: MIT (see LICENSE)
@@ -34,7 +34,7 @@ And that's it. Open http://localhost:8080/ in your browser and call it a day.
 # Back (CLI)
 
 ## ctinit
-### Usage: ctinit [projname] [-r] [--plugins=P1|P2|P3] [--cantools_path=PATH] [--web_backend=BACKEND]
+### Usage: ctinit [projname] [-ru] [--plugins=P1|P2|P3] [--cantools_path=PATH] [--web_backend=BACKEND]
 
 ### Options:
     -h, --help            show this help message and exit
