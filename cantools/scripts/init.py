@@ -160,7 +160,7 @@ class Builder(object):
 		log("Building core js files: %s, %s, %s"%(jsc, jscc, jscu), important=True)
 		cp(os.linesep.join(config.init.core), jsc)
 		cp("core.config = %s;"%(config.init.config.json(),), jscc)
-		cp("core.util = %s;"%(config.init.util.json(),), jscu)
+		cp("core.util = %s;\r\n\r\nCT.log.grep(core.config.log.include, core.config.log.exclude);"%(config.init.util.json(),), jscu)
 		for plugin, mod in self.plugins.items():
 			if hasattr(mod.init, "copies"):
 				for dname, fnames in mod.init.copies.items():

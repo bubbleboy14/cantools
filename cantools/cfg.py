@@ -90,6 +90,10 @@ cfg = {
 	"init": {
 		"core": ['CT.require("core.config");', 'CT.require("core.util");'],
 		"config": {
+			"log": {
+				"include": [],
+				"exclude": []
+			},
 			"header": {
 				"logo": "Your Logo",
 				"right": []
