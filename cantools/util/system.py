@@ -13,8 +13,11 @@ def sym(src, dest, safe=False):
 	except Exception, e:
 		log("symlinking failed (%s) - file exists: %s"%(e, dest), 3)
 		if not safe:
-			rm(dest)
-			sym(src, dest, True)
+			try:
+				rm(dest)
+				sym(src, dest, True)
+			except:
+				log("ok, really failed - skipping", 3)
 
 def mkdir(pname):
 	log("new directory: %s"%(pname,), 2)
@@ -26,10 +29,7 @@ def rm(pname):
 		os.remove(pname)
 	elif os.path.isdir(pname):
 		log("removing folder: %s"%(pname,), 2)
-		try:
-			os.rmdir(pname)
-		except: # maybe it's a mac symlink
-			os.unlink(pname)
+		os.rmdir(pname)
 	elif os.path.exists(pname):
 		log("removing file: %s"%(pname,), 2)
 		os.remove(pname)
