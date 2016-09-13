@@ -74,6 +74,8 @@ class Builder(object):
 		os.chdir(config.plugin.path)
 		log("cloning repository", important=True)
 		repo = "/" in plug and plug or "%s/%s"%(config.plugin.base, plug)
+		if plug == repo:
+			plug = repo.split("/")[0]
 		cmd("git clone https://github.com/%s.git"%(repo,))
 		os.chdir(plug)
 		log("installing plugin", important=True)
