@@ -28,8 +28,8 @@ def rm(pname):
 		log("removing folder: %s"%(pname,), 2)
 		try:
 			os.rmdir(pname)
-		except: # maybe it's a mac
-			os.remove(pname)
+		except: # maybe it's a mac symlink
+			os.unlink(pname)
 	elif os.path.exists(pname):
 		log("removing file: %s"%(pname,), 2)
 		os.remove(pname)
