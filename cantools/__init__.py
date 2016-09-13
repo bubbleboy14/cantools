@@ -3,6 +3,7 @@ __version__ = "0.8.8"
 import util
 import config as cfgmod
 config = cfgmod.config
+include_plugin = cfgmod.include_plugin
 
 if config.web.server == "gae":
 	util.init_gae()

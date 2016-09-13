@@ -37,7 +37,7 @@ any need for the developer to know or do anything beyond 'ctinit -r'.
 
 import os, sys
 from optparse import OptionParser
-from cantools import config
+from cantools import config, include_plugin
 from cantools.util import log, error, cp, sym, mkdir, rm, cmd, read
 
 CTP = __file__.rsplit(os.path.sep, 2)[0]
@@ -66,16 +66,14 @@ class Builder(object):
 		self.vcignore()
 		self.generate_symlinks()
 
-	def _install(self, plug):
-		log("Building Package: %s"%(plug,), important=True)
+	def _install(self, repo):
+		log("Building Package: %s"%(repo,), important=True)
 		curdir = os.getcwd()
 		if not os.path.isdir(config.plugin.path):
 			mkdir(config.plugin.path)
 		os.chdir(config.plugin.path)
 		log("cloning repository", important=True)
-		repo = "/" in plug and plug or "%s/%s"%(config.plugin.base, plug)
-		if plug == repo:
-			plug = repo.split("/")[0]
+		plug = repo.split("/")[1]
 		cmd("git clone https://github.com/%s.git"%(repo,))
 		os.chdir(plug)
 		log("installing plugin", important=True)
@@ -115,13 +113,14 @@ class Builder(object):
 			self._getplugs(init.requires)
 
 	def _getplugs(self, plugs):
-		for plugin in plugs:
+		for i in range(len(plugs)):
+			plugin = plugs[i]
 			log("Plugin: %s"%(plugin,), 2)
 			try:
 				self._getplug(plugin)
 			except ImportError:
 				log("plugin '%s' not found! attempting install."%(plugin,), important=True)
-				self._install(plugin)
+				self._install(config.plugin.repos[i])
 
 	def install_plugins(self):
 		pil = len(config.plugin.modules)
@@ -250,7 +249,8 @@ def parse_and_make():
 		update()
 	else:
 		if options.plugins:
-			config.plugin.update("modules", list(set(config.plugin.modules + options.plugins.split("|"))))
+			for p in options.plugins.split("|"):
+				include_plugin(p)
 		Builder(len(args) and args[0], options.cantools_path,
 			options.web_backend, options.refresh_symlinks)
 	log("done! goodbye.")

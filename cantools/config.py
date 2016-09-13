@@ -72,6 +72,7 @@ config = Config(cfg)
 
 # load plugins
 for plugin in config.plugin.modules:
+	plugin = plugin.slice("/")[1]
 	mod = __import__(plugin)
 	if hasattr(mod.init, "cfg"):
 		config.update(plugin, mod.init.cfg)
@@ -103,3 +104,14 @@ for key, val in [[term.strip() for term in line.split(" = ")] for line in read("
 
 config.db.update("main", config.db[config.web.server])
 config.update("cache", pc)
+
+# set repos, update modules
+config.plugin.update("repos", map(lambda p : "/" in p and p or "%s/%s"%(config.plugin.base, p), config.plugin.modules))
+config.plugin.update("modules", map(lambda p : p.split("/")[-1], config.plugin.modules))
+
+def include_plugin(plug):
+	repo = "/" in plug and plug or "%s/%s"%(config.plugin.base, plug)
+	if repo == plug:
+		plug = plug.slice("/")[1]
+	config.plugin.repos.append(repo)
+	config.plugin.modules.append(plug)
