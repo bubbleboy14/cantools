@@ -16,21 +16,12 @@ core.util = {
 	},
 	buildPage: function(data, ctype, ltype) {
 		CT.initCore();
-		var content = CT.dom.node(null, null, ctype || "ctcontent"),
-			clist = CT.dom.node(null, null, ltype || "ctlist big"),
-			builder = function(data) {
-				CT.dom.setContent(content, [
-					CT.dom.node(data.name, "div", "biggerest bold bottompadded"),
-					data.content
-				]);
-			};
-		clist.appendChild(CT.panel.triggerList(data, builder));
-		CT.dom.setContent("ctmain", [content, clist]);
-		var hash = location.hash.slice(1);
-		if (hash)
-			CT.dom.id("tl" + hash).trigger();
-		else
-			CT.dom.className("tlitem")[0].trigger();
+		var opts = { data: data };
+		if (ctype)
+			opts.contentClass = ctype;
+		if (ltype)
+			opts.listClass = ltype;
+		CT.layout.listView(opts);
 	},
 	settle: function() {
 		core.util._winker = CT.dom.id("winker");
