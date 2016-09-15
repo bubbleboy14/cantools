@@ -165,10 +165,15 @@ class Builder(object):
 		for plugin, mod in self.plugins.items():
 			if hasattr(mod.init, "copies"):
 				for dname, fnames in mod.init.copies.items():
-					for fname in fnames:
-						log("%s [%s]"%(fname, plugin), 1)
-						cp(read(os.path.join(mod.__ct_mod_path__, dname, fname)),
-							os.path.join(dname, fname))
+					dp = os.path.join(mod.__ct_mod_path__, dname)
+					if fnames == "*":
+						log("copying contents of %s/%s to %s"%(plugin, dname, dname), 1)
+						cmd("cp -r %s %s"%(os.path.join(dp, "*"), dname))
+					else:
+						for fname in fnames:
+							log("%s [%s]"%(fname, plugin), 1)
+							cp(read(os.path.join(dp, fname)),
+								os.path.join(dname, fname))
 
 	def generate_symlinks(self):
 		log("creating symlinks", 1)
