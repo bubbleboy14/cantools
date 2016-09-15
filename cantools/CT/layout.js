@@ -14,6 +14,16 @@ This module provides functions that generate common UI elements. These include:
 ### grid(data, columns, rows, hardheight) - defaults:
 	columns: 3
 	rows: 4
+
+### profile(opts) - defaults:
+	className: "w2-3 h1 noflow abs"
+	buttons: []
+
+### listView(opts) - defaults:
+	parent: "ctmain",
+	listClass: "ctlist big",
+	contentClass: "ctcontent",
+	titleClass: "biggerest bold bottompadded"
 */
 
 CT.layout = {
@@ -112,5 +122,28 @@ CT.layout = {
 			], "div", "right w1-3 ctprofile"),
 			img
 		];
+	},
+	listView: function(opts) {
+		opts = CT.merge(opts, {
+			parent: "ctmain",
+			listClass: "ctlist big",
+			contentClass: "ctcontent",
+			titleClass: "biggerest bold bottompadded"
+		});
+		var content = CT.dom.div(null, opts.contentClass),
+			clist = CT.dom.div(null, opts.listClass),
+			builder = function(data) {
+				CT.dom.setContent(content, [
+					CT.dom.div(data.name, opts.titleClass),
+					data.content
+				]);
+			};
+		clist.appendChild(CT.panel.triggerList(opts.data, builder));
+		CT.dom.setContent(opts.parent, [content, clist]);
+		var hash = location.hash.slice(1);
+		if (hash)
+			CT.dom.id("tl" + hash).trigger();
+		else
+			CT.dom.className("tlitem")[0].trigger();
 	}
 };
