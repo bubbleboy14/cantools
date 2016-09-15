@@ -54,6 +54,12 @@ CT.onload(function() {
 				"This package parses JSON-defined documentation data and displays it in a web page.",
 				CT.dom.link("Code", null, "https://github.com/bubbleboy14/ctdocs", "biggest p30 right")
 			]
+		}, {
+			name: "ctnet",
+			content: [
+				"This module contains the framework for a content-driven social network.",
+				CT.dom.link("Code", null, "https://github.com/bubbleboy14/ctnet", "biggest p30 right")
+			]
 		}
 	]);
 });
