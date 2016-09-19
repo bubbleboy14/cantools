@@ -4,6 +4,7 @@ This module provides functions that generate common UI elements. These include:
 ### header(opts) - defaults:
 	logo: "Placeholder Logo"
 	right: []
+	rightPadding: "30px" // non-centerLogo only!
 	centerLogo: true
 
 ### footer(opts) - defaults:
@@ -20,10 +21,17 @@ This module provides functions that generate common UI elements. These include:
 	buttons: []
 
 ### listView(opts) - defaults:
-	parent: "ctmain",
-	listClass: "ctlist big",
-	contentClass: "ctcontent",
+	parent: "ctmain"
+	listClass: "ctlist big"
+	contentClass: "ctcontent"
 	titleClass: "biggerest bold bottompadded"
+	content: null
+	listNode: null
+	listContent: null
+	activeClass: null
+	fallback: null
+	hashcheck: null
+
 */
 
 CT.layout = {
@@ -31,6 +39,7 @@ CT.layout = {
 		opts = CT.merge(opts, {
 			logo: "Placeholder Logo",
 			right: [],
+			rightPadding: "30px", // non-centerLogo only!
 			centerLogo: true
 		});
 		var content = [];
@@ -39,7 +48,7 @@ CT.layout = {
 				content.push(CT.dom.node(opts.right, "div", "right padded"));
 			else
 				content.push(CT.dom.node(CT.dom.node(opts.right, "div",
-					"right h1", null, null, { padding: "30px" }),
+					"right h1", null, null, { padding: opts.rightPadding }),
 					"div", "abs top0 bottom0 right0 w1-2"));
 		}
 		if (opts.centerLogo)
@@ -125,6 +134,12 @@ CT.layout = {
 	},
 	listView: function(opts) {
 		opts = CT.merge(opts, {
+			content: null,
+			listNode: null,
+			listContent: null,
+			activeClass: null,
+			fallback: null,
+			hashcheck: null,
 			parent: "ctmain",
 			listClass: "ctlist big",
 			contentClass: "ctcontent",
@@ -133,17 +148,29 @@ CT.layout = {
 		var content = CT.dom.div(null, opts.contentClass),
 			clist = CT.dom.div(null, opts.listClass),
 			builder = function(data) {
-				CT.dom.setContent(content, [
+				CT.dom.setContent(content, opts.content ? opts.content(data) : [
 					CT.dom.div(data.name, opts.titleClass),
 					data.content
 				]);
-			};
-		clist.appendChild(CT.panel.triggerList(opts.data, builder));
+			}, tl = CT.panel.triggerList(opts.data, builder, opts.listNode, opts.activeClass, opts.listContent);
+		clist.appendChild(tl);
 		CT.dom.setContent(opts.parent, [content, clist]);
-		var hash = location.hash.slice(1);
-		if (hash)
-			CT.dom.id("tl" + hash).trigger();
-		else
-			CT.dom.className("tlitem")[0].trigger();
+		var hcnode, tlitem = CT.dom.id("tl" + location.hash.slice(1));
+		if (tlitem)
+			tlitem.trigger();
+		else {
+			if (opts.hashcheck)
+				hcnode = opts.hashcheck();
+			if (hcnode)
+				CT.dom.setContent(content, hcnode);
+			else {
+				var titems = CT.dom.className("tlitem");
+				if (titems.length)
+					titems[0].trigger();
+				else if (opts.fallback)
+					CT.dom.setContent(content, opts.fallback());
+			}
+		}
+		return tl;
 	}
 };
