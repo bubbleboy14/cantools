@@ -23,7 +23,7 @@ class CTMeta(DeclarativeMeta):
             }
             attrs["index"] = sqlForeignKey(bases[0], primary_key=True)
             if "label" not in attrs:
-                for label in ["name", "title"]:
+                for label in ["name", "title", "topic"]:
                     if label in attrs:
                         attrs["label"] = label
                         break
