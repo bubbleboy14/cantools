@@ -639,15 +639,16 @@ CT.dom = {
 		CT.dom._blurs[fieldId] = values;
 	},
 	"getFieldValue": function(fieldId, fieldPath, rules) {
-		var field = CT.dom.id(fieldId);
+		var field = CT.dom.id(fieldId) || fieldId;
 		if (!field)
 			return null;
 		if (fieldPath) {
 			for (var i = 0; i < fieldPath.length; i++)
 				field = field[fieldPath[i]];
 		}
-		var s = field.container ? field.container.value() : field.value;
-		if (s == "" || (CT.dom._blurs[fieldId] && CT.dom._blurs[fieldId].indexOf(s) != -1))
+		var s = field.container ? field.container.value() : field.value,
+			blurs = CT.dom._blurs[fieldId] || field._blurs;
+		if (s == "" || (blurs && blurs.indexOf(s) != -1))
 			return "";
 		if (rules) {
 			if (rules.requires) {
@@ -664,7 +665,8 @@ CT.dom = {
 		return s;
 	},
 	"blurField": function(field, useblurs) {
-		useblurs = CT.dom._blurs[field.id] = useblurs || CT.dom._blurs[field.id];
+		useblurs = CT.dom._blurs[field.id] = field._blurs = useblurs
+			|| CT.dom._blurs[field.id] || field._blurs;
 		var pw = field.type == "password";
 		if (useblurs) {
 			field.onblur = function() {
