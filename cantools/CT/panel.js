@@ -100,8 +100,9 @@ CT.panel = {
 		return n;
 	},
 	"trigger": function(data, cb, activeClass, content, condition, rmbutton, ricon, noactive) {
-		var label = data.label || data.title || data.name || data,
-			n = CT.dom.node(null, "div", "tlitem", label && ("tl" + label.replace(/ /g, "")));
+		var label = data.label || data.title || data.name || data.topic || data,
+			key = data.key || label,
+			n = CT.dom.node(null, "div", "tlitem", key && ("tl" + key.replace(/ /g, "")));
 		activeClass = activeClass || "activetab";
 		n.data = data;
 		data.node = n;
@@ -138,9 +139,20 @@ CT.panel = {
 	},
 	"triggerList": function(data, cb, node, activeClass, content, condition, rmbutton, ricon, noactive) {
 		node = node || CT.dom.node();
-		data.forEach(function(d) {
-			node.appendChild(CT.panel.trigger(d, cb, activeClass, content, condition, rmbutton, ricon, noactive));
-		});
+		node.postAdd = function(d, trigger) {
+			var t = CT.panel.trigger(d, cb, activeClass, content, condition, rmbutton, ricon, noactive);
+			node.appendChild(t);
+			trigger && t.trigger();
+		};
+		node.preAdd = function(d, trigger) {
+			var t = CT.panel.trigger(d, cb, activeClass, content, condition, rmbutton, ricon, noactive);
+			if (node.childNodes.length)
+				node.insertBefore(t, node.firstChild);
+			else
+				node.appendChild(t);
+			trigger && t.trigger();
+		};
+		data.forEach(node.postAdd);
 		return node;
 	},
 	"swap": function(key, trysidepanel, keystring, noitem) {
