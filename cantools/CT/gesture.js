@@ -71,7 +71,7 @@ CT.gesture = {
 		GestureChange: "gesturechange",
 		GestureEnd: "gestureend"
 	},
-	events: (CT.info.mobile || CT.info.android) && {
+	events: (CT.info.mobile || CT.info.android || CT.info.iOs) && {
 		Start: "touchstart",
 		Stop: "touchend",
 		Move: "touchmove",
