@@ -146,6 +146,7 @@ var CT = {
 						break;
 					}
 				}
+				CT.net._path = CT.net._path || "/";
 			}
 			return CT.net._path + p;
 		},
