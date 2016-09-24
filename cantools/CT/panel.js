@@ -142,7 +142,7 @@ CT.panel = {
 		node.postAdd = function(d, trigger) {
 			var t = CT.panel.trigger(d, cb, activeClass, content, condition, rmbutton, ricon, noactive);
 			node.appendChild(t);
-			trigger && t.trigger();
+			(trigger === true) && t.trigger();
 		};
 		node.preAdd = function(d, trigger) {
 			var t = CT.panel.trigger(d, cb, activeClass, content, condition, rmbutton, ricon, noactive);
