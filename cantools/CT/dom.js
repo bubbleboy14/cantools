@@ -648,7 +648,7 @@ CT.dom = {
 		}
 		var s = field.container ? field.container.value() : field.value,
 			blurs = CT.dom._blurs[fieldId] || field._blurs;
-		if (s == "" || (blurs && blurs.indexOf(s) != -1))
+		if (!s || (blurs && blurs.indexOf(s) != -1))
 			return "";
 		if (rules) {
 			if (rules.requires) {
