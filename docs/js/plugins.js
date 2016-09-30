@@ -13,6 +13,12 @@ CT.onload(function() {
 				CT.dom.link("Code", null, "https://github.com/DrMartinLutherXing/ctmgc", "biggest p30 right")
 			]
 		}, {
+			name: "ctai",
+			content: [
+				"This plugin combines aiio models and functionality with the cantools bot system.",
+				CT.dom.link("Code", null, "https://github.com/bubbleboy14/ctai", "biggest p30 right")
+			]
+		}, {
 			name: "ctuser",
 			content: [
 				"This package includes a model, a request handler, and frontend components, including a profile page and a browsing interface, for handling user accounts.",
