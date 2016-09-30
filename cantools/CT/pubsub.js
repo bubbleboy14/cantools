@@ -60,6 +60,13 @@ CT.pubsub = {
 			},
 			"snapshot": function(data) {
 				CT.pubsub._.cb.snapshot(data);
+				data.channels.forEach(function(c) {
+					var cdata = CT.pubsub._.channels[c.name] = {
+						channel: c.name,
+						presence: c.users
+					};
+					CT.pubsub._.cb.subscribe(cdata);
+				});
 			}
 		},
 		"on": { // websocket events

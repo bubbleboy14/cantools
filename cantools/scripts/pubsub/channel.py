@@ -18,7 +18,7 @@ class PubSubChannel(object):
     def _broadcast(self, obj):
         for user in self.users:
             user.write(obj)
-        for user in self.server.admins:
+        for user in self.server.admins.values():
             user.write(obj)
 
     def write(self, subobj):
