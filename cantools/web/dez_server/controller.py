@@ -21,6 +21,7 @@ class DController(SocketController):
 		if resp: # regular request
 			kwargs["response"] = resp
 		else: # cron
+			kwargs["noLoad"] = True
 			kwargs["threaded"] = True
 		do_respond(*args, **kwargs)
 
