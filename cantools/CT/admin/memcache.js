@@ -6,6 +6,9 @@ CT.admin.memcache = {
 			CT.log("acquired memcache object with " + mck.length + " keys");
 			if (mck.length) {
 				CT.panel.simple(mck, "mc");
+				mck.forEach(function(key) {
+					CT.dom.setContent("mcpanel" + key, mc[key]);
+				});
 				CT.dom.id("mcinfo").appendChild(CT.dom.node([
 					CT.dom.node([
 						CT.dom.node("# Entries", "div", "big"),
