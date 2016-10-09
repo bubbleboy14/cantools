@@ -8,23 +8,26 @@ This loader imports almost every CT module.
     - CT.autocomplete
     - CT.canvas
     - CT.data
-    - CT.db
+    - CT.db *
     - CT.drag
     - CT.dom
     - CT.file
     - CT.gesture
     - CT.key
+    - CT.memcache *
     - CT.mobile
     - CT.modal
     - CT.panel
     - CT.parse
-    - CT.pubsub
+    - CT.pubsub *
     - CT.recaptcha
     - CT.slider
     - CT.storage
     - CT.trans
     - CT.upload
     - CT.video
+
+* tightly coupled to backend
 
 ### This excludes:
     - CT.map, CT.pay, and CT.rte, which require large script imports
@@ -44,6 +47,7 @@ CT.require("CT.file");
 CT.require("CT.gesture");
 CT.require("CT.key");
 CT.require("CT.layout");
+CT.require("CT.memcache");
 CT.require("CT.mobile");
 CT.require("CT.modal");
 CT.require("CT.panel");
