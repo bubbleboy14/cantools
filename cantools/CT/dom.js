@@ -310,6 +310,16 @@ CT.dom = {
 		attrs.preload = attrs.preload || preload || "none";
 		return CT.dom.node("", "audio", className, id, attrs);
 	},
+	"video": function(src, className, id, attrs, style) {
+		attrs = attrs || {};
+		attrs.src = src;
+		var n = CT.dom.node(null, "video", className, id, attrs, style);
+		n.stream = function(stream) {
+			n.src = window.URL.createObjectURL(stream);
+			n.play();
+		};
+		return n;
+	},
 	"iframe": function(src, className, id) {
 		var iframe = CT.dom.node("", "iframe", className, id, {
 			"src": src
