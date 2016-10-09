@@ -31,6 +31,10 @@ a {
 	overflow-x: hidden;
 }
 
+#mcpanels {
+	position: absolute;
+}
+
 #dbstarred {
 	border: 1px solid black;
 	position: absolute;
