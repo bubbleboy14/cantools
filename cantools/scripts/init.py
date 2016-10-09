@@ -190,6 +190,7 @@ class Builder(object):
 		sym(os.path.join(self.ctroot, "admin"), "_")
 		sym(os.path.join(self.ctroot, "admin.py"), "admin.py")
 		sym(os.path.join(self.ctroot, "_db.py"), "_db.py")
+		sym(os.path.join(self.ctroot, "_memcache.py"), "_memcache.py")
 		sym(os.path.join(self.ctroot, "_pay.py"), "_pay.py")
 		for mod in self.plugins.values():
 			for dname, fnames in mod.init.syms.items():
