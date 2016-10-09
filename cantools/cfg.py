@@ -103,7 +103,7 @@ cfg = {
 		"util": {},
 		"dirs": ["js", "css", "img", "logs", "blob", "html", "html-static", "html-production"],
 		"vcignore": {
-			".": ["*pyc", "*~", ".ctp", "_", "admin.py", "_db.py", "_pay.py", "logs", "blob"],
+			".": ["*pyc", "*~", ".ctp", "_", "admin.py", "_db.py", "_memcache.py", "_pay.py", "logs", "blob"],
 			"css": ["ct.css"],
 			"js": ["CT"],
 			"html-production": ["CT"]
@@ -131,6 +131,9 @@ handlers:
 
 - url: /_db
   script: _db.py
+
+- url: /_memcache
+  script: _memcache.py
 
 - url: /_pay
   script: _pay.py
