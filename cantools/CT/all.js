@@ -23,7 +23,6 @@ This loader imports almost every CT module.
     - CT.recaptcha
     - CT.slider
     - CT.storage
-    - CT.stream
     - CT.trans
     - CT.upload
     - CT.video
@@ -31,7 +30,7 @@ This loader imports almost every CT module.
 * tightly coupled to backend
 
 ### This excludes:
-    - CT.map, CT.pay, and CT.rte, which require large script imports
+    - CT.map, CT.pay, CT.rte, and CT.stream, which require large script imports
     - CT.admin, which is not for typical use.
 */
 
@@ -57,7 +56,6 @@ CT.require("CT.pubsub");
 CT.require("CT.recaptcha");
 CT.require("CT.slider");
 CT.require("CT.storage");
-CT.require("CT.stream");
 CT.require("CT.trans");
 CT.require("CT.upload");
 CT.require("CT.video");

@@ -1,3 +1,8 @@
+/*
+This module provides functions for streaming video all over town.
+*/
+
+CT.scriptImport("https://cdn.webrtc-experiment.com/MediaStreamRecorder.js");
 CT.stream = {
 	opts: {
 		delay: 2000,
