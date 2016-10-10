@@ -1,7 +1,36 @@
 CT.stream = {
 	opts: {
 		delay: 2000,
-		chunk: 3000
+		chunk: 3000,
+		mode: "memcache"
+	},
+	modes: {
+		memcache: {
+			set: function(signature, data, cb) {
+				CT.memcache.set(signature, data, cb);
+			},
+			get: function(signature, cb) {
+				CT.memcache.get(signature, cb);
+			}
+		}
+	},
+	set: function(signature, data, cb) {
+		CT.stream.modes[CT.stream.opts.mode].set(signature, data, cb);
+	},
+	get: function(signature, cb) {
+		CT.stream.modes[CT.stream.opts.mode].get(signature, cb);
+	},
+	echo: function(video, signature, blob) {
+		CT.stream.read(blob, function(result) {
+			CT.stream.set(signature, result, function() {
+				CT.stream.get(signature, function(dataURL) {
+					if (!video.src)
+						CT.stream.play(video, dataURL);
+					else
+						CT.stream.buffer(video, dataURL);
+				});
+			});
+		});
 	},
 	read: function(blob, cb, buffer) {
 		var fr = new FileReader();
