@@ -23,6 +23,7 @@ This loader imports almost every CT module.
     - CT.recaptcha
     - CT.slider
     - CT.storage
+    - CT.stream
     - CT.trans
     - CT.upload
     - CT.video
@@ -56,6 +57,7 @@ CT.require("CT.pubsub");
 CT.require("CT.recaptcha");
 CT.require("CT.slider");
 CT.require("CT.storage");
+CT.require("CT.stream");
 CT.require("CT.trans");
 CT.require("CT.upload");
 CT.require("CT.video");
