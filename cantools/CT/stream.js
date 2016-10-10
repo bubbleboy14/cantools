@@ -19,6 +19,9 @@ CT.stream = {
 			}
 		}
 	},
+	setMode: function(mode) {
+		CT.stream.opts.mode = mode;
+	},
 	set: function(signature, data, cb) {
 		CT.stream.modes[CT.stream.opts.mode].set(signature, data, cb);
 	},
@@ -28,12 +31,7 @@ CT.stream = {
 	echo: function(video, signature, blob) {
 		CT.stream.read(blob, function(result) {
 			CT.stream.set(signature, result, function() {
-				CT.stream.get(signature, function(dataURL) {
-					if (!video.src)
-						CT.stream.play(video, dataURL);
-					else
-						CT.stream.buffer(video, dataURL);
-				});
+				CT.stream.get(signature, video.process);
 			});
 		});
 	},
@@ -44,28 +42,35 @@ CT.stream = {
 		};
 		buffer ? fr.readAsArrayBuffer(blob) : fr.readAsDataURL(blob);
 	},
-	record: function(video, ondata, onfail) {
+	record: function(ondata, onrecorder, onfail) {
 		navigator.getUserMedia({ video: true }, function(stream) {
-			video.recorder = new MediaStreamRecorder(stream);
-			video.recorder.mimeType = "video/webm";
-			video.recorder.ondataavailable = ondata;
-			video.recorder.start(CT.stream.opts.chunk);
+			var recorder = new MediaStreamRecorder(stream);
+			recorder.mimeType = "video/webm";
+			recorder.ondataavailable = ondata;
+			recorder.start(CT.stream.opts.chunk);
+			onrecorder && onrecorder(recorder);
 		}, onfail || CT.log);
+	}
+};
+
+CT.stream.Video = CT.Class({
+	CLASSNAME: "CT.stream.Video",
+	process: function(dataURL) {
+		this.node.src ? this.buffer(dataURL) : this.play(dataURL);
 	},
-	play: function(video, b64) {
+	play: function(b64) {
+		var video = this.node;
 		video.mediaSource = new MediaSource();
 		video.src = URL.createObjectURL(video.mediaSource);
 		video.mediaSource.onsourceopen = function(e) {
 			video.play();
 			video.sourceBuffer = video.mediaSource.addSourceBuffer('video/webm; codecs="vp8"');
 			video.sourceBuffer.mode = 'sequence';
-			setTimeout(CT.stream.buffer, CT.stream.opts.delay, video, b64);
+			setTimeout(this.buffer, CT.stream.opts.delay, b64);
 		};
 	},
-	pause: function(video) {
-		video.recorder.pause();
-	},
-	buffer: function(video, b64) {
+	buffer: function(b64) {
+		var video = this.node;
 		fetch(b64).then(res => res.blob()).then(function(blob) {
 			CT.stream.read(blob, function(buffer) {
 				video.sourceBuffer.onupdate = function() {
@@ -78,5 +83,8 @@ CT.stream = {
 				video.sourceBuffer.appendBuffer(buffer);
 			}, true);
 		});
+	},
+	init: function(video) {
+		this.node = video;
 	}
-};
+});
