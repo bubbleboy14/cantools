@@ -5,6 +5,7 @@ This module provides functions for streaming video all over town.
 CT.scriptImport("https://cdn.webrtc-experiment.com/MediaStreamRecorder.js");
 CT.stream = {
 	opts: {
+		segments: 10,
 		delay: 2000,
 		chunk: 3000
 	},
@@ -17,14 +18,68 @@ CT.stream = {
 	},
 	record: function(ondata, onrecorder, onfail) {
 		navigator.getUserMedia({ video: true }, function(stream) {
-			var recorder = new MediaStreamRecorder(stream);
+			var segment = 0, recorder = new MediaStreamRecorder(stream);
 			recorder.mimeType = "video/webm";
-			recorder.ondataavailable = ondata;
+			recorder.ondataavailable = function(blob) {
+				segment = (segment + 1) % CT.stream.opts.segments;
+				ondata && ondata(blob, segment);
+			};
 			recorder.start(CT.stream.opts.chunk);
 			onrecorder && onrecorder(recorder);
 		}, onfail || CT.log);
 	}
 };
+
+CT.stream.Multiplexer = CT.Class({
+	CLASSNAME: "CT.stream.Multiplexer",
+	join: function(channel) {
+		if (!(channel in this.channels)) {
+			CT.pubsub.subscribe(channel);
+			this.channels[channel] = {}; // named streams (Video instances)
+		}
+	},
+	leave: function(channel) {
+		if (channel in this.channels) {
+			CT.pubsub.unsubscribe(channel);
+			Object.values(this.channels).forEach(function(streams) {
+				Object.values(streams).forEach(function(video) {
+					CT.dom.remove(video.node);
+				});
+			});
+			delete this.channels[channel];
+		}
+	},
+	push: function(blob, segment, channel) {
+		var signature = channel + this.opts.user + segment;
+		CT.stream.read(blob, function(b64) {
+			CT.memcache.set(signature, b64, function() {
+				CT.pubsub.publish(channel, signature);
+			});
+		});
+	},
+	update: function(data) {
+		var chan = this.channels[data.channel],
+			video = chan[data.user] = chan[data.user];
+		if (!video) {
+			video = chan[data.user] = new CT.stream.Video();
+			CT.dom.addContent(this.opts.node, video.node);
+		}
+		CT.memcache.get(data.message, function(b64) {
+			video.process(b64);
+		});
+	},
+	init: function(opts) {
+		this.opts = opts = CT.merge(opts, {
+			host: "localhost",
+			port: 8888,
+			user: "user" + Math.floor(100 * Math.random()),
+			node: document.body
+		});
+		this.channels = {}; // each channel can carry multiple video streams
+		CT.pubsub.set_cb("message", this.update);
+		CT.pubsub.connect(opts.host, opts.port, opts.user);
+	}
+});
 
 CT.stream.Streamer = CT.Class({ // memcache
 	CLASSNAME: "CT.stream.Streamer",
@@ -42,16 +97,15 @@ CT.stream.Streamer = CT.Class({ // memcache
 			});
 		});
 	},
-	chunk: function(blob) {
-		this.opts.segment = (this.opts.segment + 1) % 10;
-		this.echo("test" + this.opts.segment, blob);
+	chunk: function(blob, segment) {
+		this.echo(this.opts.channel + segment, blob);
 	},
 	getNode: function() {
 		return this.opts.video.node;
 	},
 	init: function(opts) {
-		this.opts = opts = CT.merge(opts, {
-			segment: 0,
+		this.opts = CT.merge(opts, {
+			channel: "test",
 			video: new CT.stream.Video()
 		});
 	}
