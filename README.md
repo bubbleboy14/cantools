@@ -1,4 +1,4 @@
-# cantools 0.8.8.3
+# cantools 0.8.9
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
 License: MIT (see LICENSE)
@@ -247,17 +247,18 @@ This loader imports almost every CT module.
     - CT.autocomplete
     - CT.canvas
     - CT.data
-    - CT.db
+    - CT.db *
     - CT.drag
     - CT.dom
     - CT.file
     - CT.gesture
     - CT.key
+    - CT.memcache *
     - CT.mobile
     - CT.modal
     - CT.panel
     - CT.parse
-    - CT.pubsub
+    - CT.pubsub *
     - CT.recaptcha
     - CT.slider
     - CT.storage
@@ -265,8 +266,10 @@ This loader imports almost every CT module.
     - CT.upload
     - CT.video
 
+* tightly coupled to backend
+
 ### This excludes:
-    - CT.map, CT.pay, and CT.rte, which require large script imports
+    - CT.map, CT.pay, CT.rte, and CT.stream, which require large script imports
     - CT.admin, which is not for typical use.
 
 ## CT.autocomplete
@@ -608,6 +611,17 @@ as well as a utility submodule (CT.map.util) and four classes:
     - CT.map.Marker
     - CT.map.Shape
 
+## CT.memcache
+### Import line: 'CT.require("CT.memcache");'
+This module provides direct integration with the cantools memcache service via
+the _memcache.py request handler. Some key functions are defined below.
+
+### CT.memcache.get(key, cb, json)
+Return the (server-side) value for the specified key.
+
+### CT.memcache.set(key, val, cb, json)
+Instruct the server to remember the specified key and value.
+
 ## CT.mobile
 ### Import line: 'CT.require("CT.mobile");'
 This module takes a website formatted for a regular computer screen
@@ -854,6 +868,27 @@ This module provides an abstraction layer over a storage backend.
 
 Why call init(), you ask? Well, if 'compress' is true, the storage module
 needs to lazily import CT.lib.lz-string. Could be different, but there it is.
+
+## CT.stream
+### Import line: 'CT.require("CT.stream");'
+This module provides functions and classes for streaming video all over town.
+
+Highlights include:
+
+### CT.stream.record(ondata, onrecorder, onfail)
+Starts up a video stream from your webcam. Breaks stream into segments as
+defined by CT.stream.opts.chunk (default 3000) and CT.stream.opts.segments
+(default 10).
+
+### CT.stream.Multiplexer
+Uses WebSocket pubsub server (ctpubsub/CT.pubsub) to manage multiple channels,
+each streaming metadata pertaining to multiple videos, over a single connection.
+The video segments are acquired from the server with the CT.memcache module
+and passed to individual CT.stream.Video instances.
+
+### CT.stream.Video
+Wraps an HTML5 video tag in a class with functions for streaming a video
+that arrives in chunks.
 
 ## CT.trans
 ### Import line: 'CT.require("CT.trans");'
