@@ -37,6 +37,7 @@ CT.stream = {
 		navigator.getUserMedia({ video: true }, function(stream) {
 			var segment = 0, recorder = new MediaStreamRecorder(stream);
 			recorder.mimeType = "video/webm";
+			recorder.recorderType = WhammyRecorder;
 			recorder.ondataavailable = function(blob) {
 				segment = (segment + 1) % CT.stream.opts.segments;
 				ondata && ondata(blob, segment);
@@ -67,55 +68,56 @@ CT.stream.Multiplexer = CT.Class({
 		}
 	},
 	push: function(blob, segment, channel) {
-		var signature = channel + this.opts.user + segment;
+		var that = this, signature = channel + this.opts.user + segment;
 		CT.stream.read(blob, function(b64) {
+			that.log("push", b64.length);
 			CT.memcache.set(signature, b64, function() {
 				CT.pubsub.publish(channel, signature);
 			});
 		});
 	},
 	update: function(data) {
+		this.log("update", data.message);
 		var chan = this.channels[data.channel],
 			video = chan[data.user] = chan[data.user];
 		if (!video) {
 			video = chan[data.user] = new CT.stream.Video();
 			CT.dom.addContent(this.opts.node, video.node);
 		}
-		CT.memcache.get(data.message, function(b64) {
-			video.process(b64);
-		});
+		CT.memcache.get(data.message, video.process);
+	},
+	connect: function() {
+		CT.pubsub.connect(this.opts.host, this.opts.port, this.opts.user);
 	},
 	init: function(opts) {
-		this.opts = opts = CT.merge(opts, {
+		this.opts = CT.merge(opts, {
 			host: "localhost",
 			port: 8888,
 			user: "user" + Math.floor(100 * Math.random()),
-			node: document.body
+			node: document.body,
+			autoconnect: true
 		});
 		this.channels = {}; // each channel can carry multiple video streams
 		CT.pubsub.set_cb("message", this.update);
-		CT.pubsub.connect(opts.host, opts.port, opts.user);
+		this.opts.autoconnect && this.connect();
 	}
 });
 
-CT.stream.Streamer = CT.Class({ // memcache
+CT.stream.Streamer = CT.Class({
 	CLASSNAME: "CT.stream.Streamer",
-	set: function(signature, data, cb) {
-		CT.memcache.set(signature, data, cb);
-	},
-	get: function(signature, cb) {
-		CT.memcache.get(signature, cb);
-	},
-	echo: function(signature, blob) {
-		var streamer = this;
+	bounce: function(signature, blob) {
+		var video = this.opts.video;
 		CT.stream.read(blob, function(result) {
-			streamer.set(signature, result, function() {
-				streamer.get(signature, streamer.opts.video.process);
+			CT.memcache.set(signature, result, function() {
+				CT.memcache.get(signature, video.process);
 			});
 		});
 	},
 	chunk: function(blob, segment) {
-		this.echo(this.opts.channel + segment, blob);
+		this.bounce(this.opts.channel + segment, blob);
+	},
+	echo: function(blob, segment) {
+		CT.stream.read(blob, this.opts.video.process);
 	},
 	getNode: function() {
 		return this.opts.video.node;
@@ -131,29 +133,50 @@ CT.stream.Streamer = CT.Class({ // memcache
 CT.stream.Video = CT.Class({
 	CLASSNAME: "CT.stream.Video",
 	process: function(dataURL) {
+		this.log("process", dataURL.length);
 		this.node.src ? this.buffer(dataURL) : this.play(dataURL);
 	},
+	setSourceBuffer: function() {
+		this.log("setSourceBuffer");
+		this.node.sourceBuffer = this.node.mediaSource.addSourceBuffer('video/webm; codecs="vp8"');
+		this.node.sourceBuffer.mode = 'sequence';
+	},
+	start: function() {
+		this.log("start (attempting) - paused:", this.node.paused);
+		var that = this;
+		this.node.play().then(function() {
+			that.log("started!!! streaming!");
+		}).catch(function(error) {
+			that.log("play failed! awaiting user input (android)", error.message);
+			var butt = CT.dom.button("ATTACH STREAM", function() {
+				that.log("button tapped! playing! paused:", that.node.paused);
+				CT.dom.remove(butt);
+				that.start();
+			}, "gigantic");
+			CT.dom.addContent(that.node.parentNode, butt);
+		});
+	},
 	play: function(b64) {
-		var video = this.node;
-		video.mediaSource = new MediaSource();
-		video.src = URL.createObjectURL(video.mediaSource);
-		video.mediaSource.onsourceopen = function(e) {
-			video.play();
-			video.sourceBuffer = video.mediaSource.addSourceBuffer('video/webm; codecs="vp8"');
-			video.sourceBuffer.mode = 'sequence';
-			setTimeout(this.buffer, CT.stream.opts.delay, b64);
+		this.log("play", b64.length);
+		var that = this;
+		this.node.mediaSource = new MediaSource();
+		this.node.src = window.URL.createObjectURL(this.node.mediaSource);
+		this.node.mediaSource.onsourceopen = function(e) {
+			that.start();
+			that.setSourceBuffer();
+			setTimeout(that.buffer, CT.stream.opts.delay, b64);
 		};
 	},
 	buffer: function(b64) {
-		var video = this.node;
-		fetch(b64).then(res => res.blob()).then(function(blob) {
+		this.log("buffer", b64.length);
+		var video = this.node, that = this;
+		fetch(b64).then(function(res) { return res.blob(); }).then(function(blob) {
+			that.log("buffering", blob.size);
 			CT.stream.read(blob, function(buffer) {
-				video.sourceBuffer.onupdate = function() {
+				video.sourceBuffer.onupdateend = function() {
+					that.log("onupdate. readyState:", video.mediaSource.readyState);
 					video.mediaSource.endOfStream();
-					video.mediaSource.onsourceopen = function(e) {
-						video.play();
-					};
-					video.play();
+					video.mediaSource.onsourceopen = that.start;
 				};
 				video.sourceBuffer.appendBuffer(buffer);
 			}, true);
