@@ -20,6 +20,7 @@ CT.pubsub = {
 		"autohistory": false,
 		"reconnect": true,
 		"reconnect_interval": 250,
+		"protocol": "ws",
 		"log": CT.log.getLogger("CT.pubsub"),
 		"queue": [],
 		"channels": {},
@@ -117,6 +118,9 @@ CT.pubsub = {
 	"isInitialized": function() {
 		return CT.pubsub._.initialized;
 	},
+	"set_protocol": function(protocol) {
+		CT.pubsub._.protocol = protocol;
+	},
 	"set_reconnect": function(bool) {
 		CT.pubsub._.reconnect = bool;
 	},
@@ -160,7 +164,7 @@ CT.pubsub = {
 	"connect": function(host, port, uname) {
 		CT.pubsub._.args = arguments;
 		CT.pubsub._.initialized = true;
-		CT.pubsub._.ws = new WebSocket("ws://" + host + ":" + port);
+		CT.pubsub._.ws = new WebSocket(CT.pubsub._.protocol + "://" + host + ":" + port);
 		for (var action in CT.pubsub._.on)
 			CT.pubsub._.ws["on" + action] = CT.pubsub._.on[action];
 		window.onbeforeunload = function() {
