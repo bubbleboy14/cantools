@@ -2,6 +2,7 @@ import sys
 from dez.memcache import get_memcache
 from dez.http.application import HTTPApplication
 from routes import static, cb
+from cantools import config
 sys.path.insert(0, ".") # for dynamically loading modules
 
 A_STATIC = { "/": "_", "/js/CT/": "js/CT", "/logs/": "logs", "/logs": "logs" }
@@ -9,7 +10,7 @@ A_CB = { "/admin": "admin", "/_db": "_db" }
 
 class CTWebBase(HTTPApplication):
 	def __init__(self, bind_address, port, logger_getter, static=static, cb=cb):
-		HTTPApplication.__init__(self, bind_address, port, logger_getter, "dez/cantools")
+		HTTPApplication.__init__(self, bind_address, port, logger_getter, "dez/cantools", config.ssl.certfile)
 		self.memcache = get_memcache()
 		self.handlers = {}
 		for key, val in static.items():

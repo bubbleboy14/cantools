@@ -33,6 +33,9 @@ cfg = {
 		"port": 8080,
 		"log": None
 	},
+	"ssl": {
+		"certfile": None
+	},
 	"db": { # switch on web backend (override w/ DB)
 		"gae": "data.db",
 		"dez": "sqlite:///data.db",

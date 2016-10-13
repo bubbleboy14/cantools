@@ -14,6 +14,7 @@ class PubSub(WebSocketDaemon):
         kwargs["isJSON"] = True
         kwargs["report_cb"] = self._log
         kwargs["cb"] = self.connect
+        kwargs["certfile"] = config.ssl.certfile
         if "silent" in kwargs:
             self.silent = kwargs["silent"]
             del kwargs["silent"]
