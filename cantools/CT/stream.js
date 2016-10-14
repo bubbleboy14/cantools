@@ -25,16 +25,19 @@ CT.stream = {
 		requiresInput: CT.info.android,
 		requestedInput: false,
 		segments: 10,
-		delay: 2000,
-		chunk: 3000,
+		delay: 1500,
+		chunk: 500,
 		waiting: [],
 		startWaiting: function() {
 			CT.stream.opts.waiting.forEach(function(w) { w.start(); });
 		}
 	},
 	read: function(blob, cb, buffer) {
-		var fr = new FileReader();
+		var signature = "read" + (buffer ? "buffer" : "url"),
+			fr = new FileReader();
+		CT.log.startTimer(signature);
 		fr.onloadend = function() {
+			CT.log.endTimer(signature);
 			cb(fr.result);
 		};
 		buffer ? fr.readAsArrayBuffer(blob) : fr.readAsDataURL(blob);
@@ -44,6 +47,7 @@ CT.stream = {
 			var segment = 0, recorder = new MediaStreamRecorder(stream);
 			recorder.mimeType = "video/webm";
 			recorder.recorderType = WhammyRecorder;
+			recorder.sampleRate = 22050;
 			recorder.ondataavailable = function(blob) {
 				segment = (segment + 1) % CT.stream.opts.segments;
 				ondata && ondata(blob, segment);
@@ -56,6 +60,34 @@ CT.stream = {
 
 CT.stream.Multiplexer = CT.Class({
 	CLASSNAME: "CT.stream.Multiplexer",
+	mode: "memcache", // websocket|memcache
+	modes: {
+		memcache: {
+			push: function(b64, channel, signature) {
+				this.log("memcache push", b64.length);
+				CT.memcache.set(signature, b64, function() {
+					CT.pubsub.publish(channel, signature);
+				});
+			},
+			update: function(message, process) {
+				this.log("memcache update", message);
+				CT.memcache.get(message, process);
+			}
+		},
+		websocket: {
+			push: function(b64, channel, signature) {
+				this.log("websocket push", b64.length);
+				CT.pubsub.publish(channel, encodeURIComponent(b64));
+			},
+			update: function(message, process) {
+				this.log("websocket update", message.length);
+				process(unescape(message));
+			}
+		}
+	},
+	setMode: function(mode) {
+		this.mode = mode;
+	},
 	join: function(channel) {
 		if (!(channel in this.channels)) {
 			CT.pubsub.subscribe(channel);
@@ -76,21 +108,17 @@ CT.stream.Multiplexer = CT.Class({
 	push: function(blob, segment, channel) {
 		var that = this, signature = channel + this.opts.user + segment;
 		CT.stream.read(blob, function(b64) {
-			that.log("push", b64.length);
-			CT.memcache.set(signature, b64, function() {
-				CT.pubsub.publish(channel, signature);
-			});
+			that.modes[that.mode].push(b64, channel, signature);
 		});
 	},
 	update: function(data) {
-		this.log("update", data.message);
 		var chan = this.channels[data.channel],
-			video = chan[data.user] = chan[data.user];
+			video = chan[data.user];
 		if (!video) {
 			video = chan[data.user] = new CT.stream.Video();
 			CT.dom.addContent(this.opts.node, video.node);
 		}
-		CT.memcache.get(data.message, video.process);
+		this.modes[this.mode].update(data.message, video.process);
 	},
 	connect: function() {
 		CT.pubsub.connect(this.opts.host, this.opts.port, this.opts.user);
