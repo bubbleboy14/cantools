@@ -23,6 +23,7 @@
 .hm1-2 { max-height: 50%; }
 .wm1-2 { max-width: 50%; }
 .h50p { height: 50px; }
+.h80p { height: 80px; }
 .h100p { height: 100px; }
 .h200p { height: 200px; }
 .h250p { height: 250px; }
@@ -30,6 +31,7 @@
 .h400p { height: 400px; }
 .h500p { height: 500px; }
 .w50p { width: 50px; }
+.w80p { width: 80px; }
 .w100p { width: 100px; }
 .w200p { width: 200px; }
 .w300p { width: 300px; }
@@ -107,6 +109,10 @@
 .vtop { vertical-align: top; }
 .vmiddle { vertical-align: middle; }
 .vbottom { vertical-align: bottom; }
+.up5 { margin-top: -5px; }
+.down5 { margin-bottom: -5px; }
+.left5 { margin-left: -5px; }
+.right5 { margin-right: -5px; }
 .up10 { margin-top: -10px; }
 .down10 { margin-bottom: -10px; }
 .left10 { margin-left: -10px; }
@@ -740,6 +746,9 @@
     left: 0px;
     height: 120px;
     overflow: hidden;
+}
+#ctfooter img {
+    max-height: 120px;
 }
 .footered #ctmain {
     bottom: 120px;
