@@ -22,9 +22,15 @@ that arrives in chunks.
 CT.scriptImport("https://cdn.webrtc-experiment.com/MediaStreamRecorder.js");
 CT.stream = {
 	opts: {
+		requiresInput: CT.info.android,
+		requestedInput: false,
 		segments: 10,
 		delay: 2000,
-		chunk: 3000
+		chunk: 3000,
+		waiting: [],
+		startWaiting: function() {
+			CT.stream.opts.waiting.forEach(function(w) { w.start(); });
+		}
 	},
 	read: function(blob, cb, buffer) {
 		var fr = new FileReader();
@@ -148,12 +154,17 @@ CT.stream.Video = CT.Class({
 			that.log("started!!! streaming!");
 		}).catch(function(error) {
 			that.log("play failed! awaiting user input (android)", error.message);
-			var butt = CT.dom.button("ATTACH STREAM", function() {
-				that.log("button tapped! playing! paused:", that.node.paused);
-				CT.dom.remove(butt);
-				that.start();
-			}, "gigantic");
-			CT.dom.addContent(that.node.parentNode, butt);
+			if (CT.stream.opts.requiresInput && !CT.stream.opts.requestedInput) {
+				CT.stream.opts.requestedInput = true;
+				(new CT.modal.Prompt({
+					cb: CT.stream.opts.startWaiting,
+					transition: "fade",
+					style: "single-choice",
+					data: [ "Play Stream" ],
+					prompt: "Ready to stream?"
+				})).show();
+			}
+			CT.stream.opts.waiting.push(that);
 		});
 	},
 	play: function(b64) {
