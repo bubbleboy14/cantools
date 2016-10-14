@@ -152,7 +152,7 @@ CT.stream.Video = CT.Class({
 		var that = this;
 		this.node.play().then(function() {
 			that.log("started!!! streaming!");
-		}).catch(function(error) {
+		})["catch"](function(error) {
 			that.log("play failed! awaiting user input (android)", error.message);
 			if (CT.stream.opts.requiresInput && !CT.stream.opts.requestedInput) {
 				CT.stream.opts.requestedInput = true;
