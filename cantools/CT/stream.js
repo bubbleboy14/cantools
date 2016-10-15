@@ -24,7 +24,7 @@ CT.stream = {
 	opts: {
 		requiresInput: CT.info.android,
 		requestedInput: false,
-		segments: 10,
+		segments: 20,
 		delay: 1500,
 		chunk: 500,
 		waiting: [],
@@ -64,24 +64,28 @@ CT.stream.Multiplexer = CT.Class({
 	modes: {
 		memcache: {
 			push: function(b64, channel, signature) {
-				this.log("memcache push", b64.length);
+				CT.log.startTimer("memcache_push", signature);
 				CT.memcache.set(signature, b64, function() {
-					CT.pubsub.publish(channel, signature);
-				});
+					CT.log.endTimer("memcache_push", b64.length);
+					CT.pubsub.publish(channel, signature); // (no echo)
+				}, false, true);
 			},
 			update: function(message, process) {
-				this.log("memcache update", message);
-				CT.memcache.get(message, process);
+				CT.log.startTimer("memcache_update", message.length);
+				CT.memcache.get(message, process, false, true);
+				CT.log.endTimer("memcache_update", message.length);
 			}
 		},
 		websocket: {
-			push: function(b64, channel, signature) {
-				this.log("websocket push", b64.length);
+			push: function(b64, channel, signature) { // no echo!!!
+				CT.log.startTimer("websocket_push", signature);
 				CT.pubsub.publish(channel, encodeURIComponent(b64));
+				CT.log.endTimer("websocket_push", b64.length);
 			},
 			update: function(message, process) {
-				this.log("websocket update", message.length);
+				CT.log.startTimer("websocket_update", message.length);
 				process(unescape(message));
+				CT.log.endTimer("websocket_update", message.length);
 			}
 		}
 	},
@@ -106,12 +110,21 @@ CT.stream.Multiplexer = CT.Class({
 		}
 	},
 	push: function(blob, segment, channel) {
+		CT.log.startTimer("push", channel + segment);
 		var that = this, signature = channel + this.opts.user + segment;
 		CT.stream.read(blob, function(b64) {
+			CT.log.endTimer("push", signature);
 			that.modes[that.mode].push(b64, channel, signature);
+			that.update({
+				user: that.opts.user,
+				channel: channel,
+				message: (that.mode == "memcache") &&
+					signature || encodeURIComponent(b64)
+			});
 		});
 	},
 	update: function(data) {
+		CT.log.startTimer("update", data.channel);
 		var chan = this.channels[data.channel],
 			video = chan[data.user];
 		if (!video) {
@@ -119,6 +132,8 @@ CT.stream.Multiplexer = CT.Class({
 			CT.dom.addContent(this.opts.node, video.node);
 		}
 		this.modes[this.mode].update(data.message, video.process);
+		CT.log.endTimer("update", data.message.length
+			+ " " + data.channel + " " + data.user);
 	},
 	connect: function() {
 		CT.pubsub.connect(this.opts.host, this.opts.port, this.opts.user);
@@ -143,8 +158,8 @@ CT.stream.Streamer = CT.Class({
 		var video = this.opts.video;
 		CT.stream.read(blob, function(result) {
 			CT.memcache.set(signature, result, function() {
-				CT.memcache.get(signature, video.process);
-			});
+				CT.memcache.get(signature, video.process, false, true);
+			}, false, true);
 		});
 	},
 	chunk: function(blob, segment) {
@@ -171,9 +186,11 @@ CT.stream.Video = CT.Class({
 		this.node.src ? this.buffer(dataURL) : this.play(dataURL);
 	},
 	setSourceBuffer: function() {
-		this.log("setSourceBuffer");
-		this.node.sourceBuffer = this.node.mediaSource.addSourceBuffer('video/webm; codecs="vp8"');
-		this.node.sourceBuffer.mode = 'sequence';
+		this.log("setSourceBuffer - exists:", !!this.node.sourceBuffer);
+		if (!this.node.sourceBuffer) {
+			this.node.sourceBuffer = this.node.mediaSource.addSourceBuffer('video/webm; codecs="vp8"');
+			this.node.sourceBuffer.mode = 'sequence';
+		}
 	},
 	start: function() {
 		this.log("start (attempting) - paused:", this.node.paused);
@@ -212,12 +229,20 @@ CT.stream.Video = CT.Class({
 		fetch(b64).then(function(res) { return res.blob(); }).then(function(blob) {
 			that.log("buffering", blob.size);
 			CT.stream.read(blob, function(buffer) {
+				var updated = false;
 				video.sourceBuffer.onupdateend = function() {
+					if (!updated) {
+						updated = true;
+						return video.sourceBuffer.appendBuffer(buffer);
+					}
 					that.log("onupdate. readyState:", video.mediaSource.readyState);
 					video.mediaSource.endOfStream();
 					video.mediaSource.onsourceopen = that.start;
 				};
-				video.sourceBuffer.appendBuffer(buffer);
+				if (!video.sourceBuffer.updating) {
+					updated = true;
+					video.sourceBuffer.appendBuffer(buffer);
+				}
 			}, true);
 		});
 	},
