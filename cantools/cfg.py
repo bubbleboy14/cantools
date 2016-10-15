@@ -34,7 +34,8 @@ cfg = {
 		"log": None
 	},
 	"ssl": {
-		"certfile": None
+		"certfile": None,
+		"keyfile": None
 	},
 	"db": { # switch on web backend (override w/ DB)
 		"gae": "data.db",
@@ -57,6 +58,7 @@ cfg = {
 		"history": 10,
 		"botnames": [],
 		"bots": {},
+		"echo": True,
 		"log": None
 	},
 	"parse_error_segment_length": 100,
