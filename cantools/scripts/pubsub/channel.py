@@ -17,7 +17,8 @@ class PubSubChannel(object):
 
     def _broadcast(self, obj):
         for user in self.users:
-            user.write(obj)
+            if config.pubsub.echo or user.name != obj["data"]["user"]:
+                user.write(obj)
         for user in self.server.admins.values():
             user.write(obj)
 
