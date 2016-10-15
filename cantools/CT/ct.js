@@ -468,8 +468,9 @@ CT.log.getLogger = function(component) {
 };
 CT.log._tcbs = {};
 CT.log._timer = CT.log.getLogger("timer");
-CT.log.startTimer = function(tname) {
+CT.log.startTimer = function(tname, msg) {
 	CT.log._tcbs[tname] = Date.now();
+	msg && CT.log._timer("Initiated", tname, "with", msg);
 };
 CT.log.endTimer = function(tname, msg) {
 	var duration = (Date.now() - CT.log._tcbs[tname]) / 1000;
