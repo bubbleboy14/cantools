@@ -34,6 +34,7 @@ cfg = {
 		"log": None
 	},
 	"ssl": {
+		"verify": True,
 		"certfile": None,
 		"keyfile": None
 	},

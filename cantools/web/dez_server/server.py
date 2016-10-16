@@ -1,4 +1,4 @@
-import os, requests
+import os, requests, ssl
 from dez.http import fetch as dfetch
 from ..util import *
 from ...util import set_log, set_error
@@ -7,6 +7,8 @@ from controller import getController
 from cantools import config
 
 def run_dez_webserver():
+	if not config.ssl.verify:
+		ssl._https_verify_certificates(False)
 	c = getController()
 	setlog(c.web.logger.simple)
 	if config.web.log:
