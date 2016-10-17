@@ -7,7 +7,7 @@ from controller import getController
 from cantools import config
 
 def run_dez_webserver():
-	if not config.ssl.verify:
+	if not config.ssl.verify and hasattr(ssl, "_https_verify_certificates"):
 		ssl._https_verify_certificates(False)
 	c = getController()
 	setlog(c.web.logger.simple)
