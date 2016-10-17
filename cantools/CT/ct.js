@@ -422,6 +422,8 @@ CT.info.isStockAndroid = (CT.info.userAgent.indexOf("Mozilla/5.0") != -1)
 	&& (CT.info.userAgent.indexOf("AppleWebKit") != -1)
 	&& (CT.info.userAgent.indexOf("Chrome") == -1);
 CT.info.isMac = /Macintosh/.test(CT.info.userAgent);
+CT.info.isChrome = CT.info.userAgent.indexOf("Chrome") != -1;
+CT.info.isFirefox = CT.info.userAgent.indexOf("Firefox") != -1;
 
 CT.log = function(msg, level) {
 	if (CT.log._silent)

@@ -49,7 +49,7 @@ CT.stream = {
 			CT.log.endTimer("record", "got data!");
 			var segment = 0, recorder = new MediaStreamRecorder(stream);
 			recorder.mimeType = "video/webm";
-			if (CT.info.userAgent.indexOf("Chrome") != -1) // improve...
+			if (CT.info.isChrome)
 				recorder.recorderType = WhammyRecorder;
 			else
 				recorder.recorderType = MediaRecorderWrapper;
@@ -171,7 +171,7 @@ CT.stream.Multiplexer = CT.Class({
 	}
 });
 
-CT.stream.Streamer = CT.Class({
+CT.stream.Streamer = CT.Class({ // depped
 	CLASSNAME: "CT.stream.Streamer",
 	bounce: function(signature, blob) {
 		var video = this.opts.video;
@@ -212,7 +212,7 @@ CT.stream.Video = CT.Class({
 		if (!this.node.sourceBuffer.updating) {
 			if (this._buffers.length)
 				this.node.sourceBuffer.appendBuffer(this._buffers.shift());
-			else if (this.node.mediaSource.readyState == "open") // firefox!?!?
+			else// if (this.node.mediaSource.readyState == "open") // firefox!?!?
 				this.node.mediaSource.endOfStream();
 		}
 	},
@@ -262,6 +262,7 @@ CT.stream.Video = CT.Class({
 		});
 	},
 	init: function(video) {
+		this.log("init");
 		this.node = video || CT.dom.video();
 	}
 });
