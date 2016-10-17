@@ -212,7 +212,7 @@ CT.stream.Video = CT.Class({
 		if (!this.node.sourceBuffer.updating) {
 			if (this._buffers.length)
 				this.node.sourceBuffer.appendBuffer(this._buffers.shift());
-			else// if (this.node.mediaSource.readyState == "open") // firefox!?!?
+			else if (this.node.mediaSource.readyState == "open") // firefox!?!?
 				this.node.mediaSource.endOfStream();
 		}
 	},
