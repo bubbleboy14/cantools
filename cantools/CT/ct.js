@@ -488,5 +488,7 @@ if (!window.requestAnimationFrame)
 	CT.require("CT.lib.shims.requestAnimationFrame", true);
 if (!Object.values)
 	CT.require("CT.lib.shims.ObjectValues", true);
+if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia)
+	CT.require("CT.lib.shims.getUserMedia", true);
 if (!window.addEventListener)
 	window.addEventListener = window.attachEvent;
