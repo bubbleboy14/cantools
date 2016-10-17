@@ -25,8 +25,8 @@ CT.stream = {
 		requiresInput: CT.info.android,
 		requestedInput: false,
 		segments: 20,
-		delay: 1500,
-		chunk: 500,
+		delay: 500,
+		chunk: 1000,
 		waiting: [],
 		startWaiting: function() {
 			CT.stream.opts.waiting.forEach(function(w) { w.start(); });
@@ -43,7 +43,9 @@ CT.stream = {
 		buffer ? fr.readAsArrayBuffer(blob) : fr.readAsDataURL(blob);
 	},
 	record: function(ondata, onrecorder, onfail) {
+		CT.log.startTimer("record", "attempting record");
 		navigator.getUserMedia({ video: true }, function(stream) {
+			CT.log.endTimer("record", "got data!");
 			var segment = 0, recorder = new MediaStreamRecorder(stream);
 			recorder.mimeType = "video/webm";
 			recorder.recorderType = WhammyRecorder;
