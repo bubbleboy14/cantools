@@ -25,8 +25,9 @@ CT.stream = {
 		requiresInput: CT.info.android,
 		requestedInput: false,
 		segments: 20,
-		delay: 500,
 		chunk: 1000,
+		width: 320,
+		height: 240,
 		waiting: [],
 		startWaiting: function() {
 			CT.stream.opts.waiting.forEach(function(w) { w.start(); });
@@ -37,26 +38,42 @@ CT.stream = {
 			fr = new FileReader();
 		CT.log.startTimer(signature);
 		fr.onloadend = function() {
-			CT.log.endTimer(signature);
+			CT.log.endTimer(signature, fr.result.length || fr.result.byteLength);
 			cb(fr.result);
 		};
 		buffer ? fr.readAsArrayBuffer(blob) : fr.readAsDataURL(blob);
 	},
 	record: function(ondata, onrecorder, onfail) {
 		CT.log.startTimer("record", "attempting record");
-		navigator.getUserMedia({ video: true }, function(stream) {
+		navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
 			CT.log.endTimer("record", "got data!");
 			var segment = 0, recorder = new MediaStreamRecorder(stream);
 			recorder.mimeType = "video/webm";
-			recorder.recorderType = WhammyRecorder;
+			if (CT.info.userAgent.indexOf("Chrome") != -1) // improve...
+				recorder.recorderType = WhammyRecorder;
+			else
+				recorder.recorderType = MediaRecorderWrapper;
 			recorder.sampleRate = 22050;
+
+			// this dimension stuff, as well as css rules,
+			// only necessary for firefox, it seems
+			recorder.videoWidth = CT.stream.opts.width;
+			recorder.videoHeight = CT.stream.opts.height;
+			recorder.canvas = {
+				width: CT.stream.opts.width,
+				height: CT.stream.opts.height
+			};
+
 			recorder.ondataavailable = function(blob) {
+				CT.log("ondataavailable!!");
 				segment = (segment + 1) % CT.stream.opts.segments;
 				ondata && ondata(blob, segment);
 			};
 			recorder.start(CT.stream.opts.chunk);
 			onrecorder && onrecorder(recorder);
-		}, onfail || CT.log);
+		})["catch"](onfail || function(err) {
+			CT.log.endTimer("record", "got error: " + err);
+		});
 	}
 };
 
@@ -183,21 +200,51 @@ CT.stream.Streamer = CT.Class({
 
 CT.stream.Video = CT.Class({
 	CLASSNAME: "CT.stream.Video",
-	process: function(dataURL) {
-		this.log("process", dataURL.length);
-		this.node.src ? this.buffer(dataURL) : this.play(dataURL);
+	_buffers: [],
+	_sourceOpen: function() {
+		this.log("sourceopen");
+		this.start();
+		this.setSourceBuffer();
+	},
+	_sourceUpdate: function() {
+		this.log("_sourceUpdate", this._buffers.length,
+			this.node.sourceBuffer.updating, this.node.mediaSource.readyState);
+		if (!this.node.sourceBuffer.updating) {
+			if (this._buffers.length)
+				this.node.sourceBuffer.appendBuffer(this._buffers.shift());
+			else if (this.node.mediaSource.readyState == "open") // firefox!?!?
+				this.node.mediaSource.endOfStream();
+		}
 	},
 	setSourceBuffer: function() {
 		this.log("setSourceBuffer - exists:", !!this.node.sourceBuffer);
 		if (!this.node.sourceBuffer) {
 			this.node.sourceBuffer = this.node.mediaSource.addSourceBuffer('video/webm; codecs="vp8"');
 			this.node.sourceBuffer.mode = 'sequence';
+			this.node.sourceBuffer.addEventListener("update", this._sourceUpdate);
+			this.node.sourceBuffer.addEventListener("updateend", this._sourceUpdate);
 		}
+	},
+	process: function(dataURL) {
+		this.log("process", dataURL.length);
+		if (!this.node.mediaSource) {
+			this.node.mediaSource = new MediaSource();
+			this.node.src = URL.createObjectURL(this.node.mediaSource);
+			this.node.mediaSource.addEventListener("sourceopen", this._sourceOpen);
+		}
+		var that = this;
+		fetch(dataURL).then(function(res) { return res.blob(); }).then(function(blob) {
+			that.log("buffering", blob.size);
+			CT.stream.read(blob, function(buffer) {
+				that._buffers.push(buffer);
+				that._sourceUpdate();
+			}, true);
+		});
 	},
 	start: function() {
 		this.log("start (attempting) - paused:", this.node.paused);
-		var that = this;
-		this.node.play().then(function() {
+		var that = this, prom = this.node.play();
+		prom && prom.then(function() {
 			that.log("started!!! streaming!");
 		})["catch"](function(error) {
 			that.log("play failed! awaiting user input (android)", error.message);
@@ -212,40 +259,6 @@ CT.stream.Video = CT.Class({
 				})).show();
 			}
 			CT.stream.opts.waiting.push(that);
-		});
-	},
-	play: function(b64) {
-		this.log("play", b64.length);
-		var that = this;
-		this.node.mediaSource = new MediaSource();
-		this.node.src = window.URL.createObjectURL(this.node.mediaSource);
-		this.node.mediaSource.onsourceopen = function(e) {
-			that.start();
-			that.setSourceBuffer();
-			setTimeout(that.buffer, CT.stream.opts.delay, b64);
-		};
-	},
-	buffer: function(b64) {
-		this.log("buffer", b64.length);
-		var video = this.node, that = this;
-		fetch(b64).then(function(res) { return res.blob(); }).then(function(blob) {
-			that.log("buffering", blob.size);
-			CT.stream.read(blob, function(buffer) {
-				var updated = false;
-				video.sourceBuffer.onupdateend = function() {
-					if (!updated) {
-						updated = true;
-						return video.sourceBuffer.appendBuffer(buffer);
-					}
-					that.log("onupdate. readyState:", video.mediaSource.readyState);
-					video.mediaSource.endOfStream();
-					video.mediaSource.onsourceopen = that.start;
-				};
-				if (!video.sourceBuffer.updating) {
-					updated = true;
-					video.sourceBuffer.appendBuffer(buffer);
-				}
-			}, true);
 		});
 	},
 	init: function(video) {
