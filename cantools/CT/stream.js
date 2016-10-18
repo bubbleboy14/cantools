@@ -75,7 +75,7 @@ CT.stream.record = function(ondata, onrecorder, onfail) {
 			ondata && ondata(blob, segment);
 		};
 		recorder.start(CT.stream.opts.chunk);
-		onrecorder && onrecorder(recorder);
+		onrecorder && onrecorder(recorder, stream);
 	})["catch"](onfail || function(err) {
 		CT.log.endTimer("record", "got error: " + err);
 	});
