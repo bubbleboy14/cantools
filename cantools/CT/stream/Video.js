@@ -27,7 +27,7 @@ CT.stream.Video = CT.Class({
 	},
 	process: function(dataURL) {
 		this.log("process", dataURL.length);
-		if (!this.node.mediaSource) {
+		if (!this.node.src) {
 			this.node.mediaSource = new MediaSource();
 			this.node.src = URL.createObjectURL(this.node.mediaSource);
 			this.node.mediaSource.addEventListener("sourceopen", this._sourceOpen);
@@ -61,8 +61,21 @@ CT.stream.Video = CT.Class({
 			CT.stream.opts.waiting.push(that);
 		});
 	},
-	init: function(video) {
+	init: function(opts) {
 		this.log("init");
-		this.node = video || CT.dom.video();
+		this.opts = opts = CT.merge(opts, {
+			video: null,
+			stream: null,
+			className: null,
+			id: null,
+			attrs: {
+				autoplay: true
+			}
+		});
+		if (opts.stream)
+			opts.attrs.mozSrcObject = opts.stream;
+		this.node = opts.video || CT.dom.video(opts.stream
+			&& URL.createObjectURL(opts.stream), opts.className,
+			opts.id, opts.attrs);
 	}
 });

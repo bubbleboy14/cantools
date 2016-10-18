@@ -49,31 +49,30 @@ CT.stream.Multiplexer = CT.Class({
 			delete this.channels[channel];
 		}
 	},
-	push: function(blob, segment, channel) {
+	push: function(blob, segment, channel, stream) {
 		CT.log.startTimer("push", channel + segment);
 		var that = this, signature = channel + this.opts.user + segment;
 		CT.stream.read(blob, function(b64) {
 			CT.log.endTimer("push", signature);
 			that.modes[that.mode].push(b64, channel, signature);
-			that.update({
-				user: that.opts.user,
-				channel: channel,
-				message: (that.mode == "memcache") &&
-					signature || encodeURIComponent(b64)
-			});
 		});
+		return this.getVideo(channel, this.opts.user, stream);
 	},
 	update: function(data) {
 		CT.log.startTimer("update", data.channel);
-		var chan = this.channels[data.channel],
-			video = chan[data.user];
-		if (!video) {
-			video = chan[data.user] = new CT.stream.Video();
-			CT.dom.addContent(this.opts.node, video.node);
-		}
-		this.modes[this.mode].update(data.message, video.process);
+		this.modes[this.mode].update(data.message,
+			this.getVideo(data.channel, data.user).process);
 		CT.log.endTimer("update", data.message.length
 			+ " " + data.channel + " " + data.user);
+	},
+	getVideo: function(channel, user, stream) {
+		var chan = this.channels[channel],
+			video = chan[user];
+		if (!video) {
+			video = chan[user] = new CT.stream.Video({ stream: stream });
+			CT.dom.addContent(this.opts.node, video.node);
+		}
+		return video;
 	},
 	connect: function() {
 		CT.pubsub.connect(this.opts.host, this.opts.port, this.opts.user);
