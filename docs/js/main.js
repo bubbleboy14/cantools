@@ -54,7 +54,7 @@ CT.onload(function() {
 			CT.dom.pad(),
 			CT.dom.link("CT.stream", null, "/docs#stream.js"),
 			CT.dom.pad(),
-			CT.dom.span("that make the most of HTML5. And what about all those old browsers? Well, cantools brings them up to speed with shims for new tech like <b>requestAnimationFrame</b> and <b>sessionStorage</b>.")
+			CT.dom.span("that make the most of HTML5. And what about all those old browsers? Well, cantools brings them up to speed with shims for new tech like <b>requestAnimationFrame</b> and <b>getUserMedia</b>.")
 		],
 		[
 			CT.dom.span("Cooler still, cantools comes with a built-in WebSocket pubsub server,"),
@@ -82,6 +82,7 @@ CT.onload(function() {
 			CT.dom.pad(),
 			CT.dom.span("to boot.")
 		],
+		"Besides all that, the cyberworld is kind of a rough neighborhood, and it doesn't hurt to use protection, like HTTPS/WSS at the push of a button (actually, with a single line of configuration, which takes longer to say). But you're also cheap, because the \"gig economy\" is modern-day slavery, so you probably aren't about to shell out to some slimy certificate authority. This would normally be a problem for encrypted websites that mess with websockets, because these also must be encrypted (WSS), and since websockets are kind of behind the scenes to begin with, your browser typically won't even give the user a chance to \"proceed to the unsafe website\". The point is, we thought of all this and optimized our janky stack around it.",
 		CT.dom.div("what makes it portable?", "big bold"),
 		[
 			CT.dom.span("Build one application and run it on any device that tickles your fancy. Mobile Safari? Sure. IE8? Great. Handle input across platforms with"),
