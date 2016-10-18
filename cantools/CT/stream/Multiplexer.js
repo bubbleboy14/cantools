@@ -83,10 +83,12 @@ CT.stream.Multiplexer = CT.Class({
 			port: 8888,
 			user: "user" + Math.floor(100 * Math.random()),
 			node: document.body,
-			autoconnect: true
+			autoconnect: true,
+			wserror: null
 		});
 		this.channels = {}; // each channel can carry multiple video streams
 		CT.pubsub.set_cb("message", this.update);
+		opts.wserror && CT.pubsub.set_cb("wserror", opts.wserror);
 		this.opts.autoconnect && this.connect();
 	}
 });
