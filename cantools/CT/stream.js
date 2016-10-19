@@ -50,7 +50,10 @@ CT.stream.read = function(blob, cb, buffer) {
 
 CT.stream.record = function(ondata, onrecorder, onfail) {
 	CT.log.startTimer("record", "attempting record");
-	navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
+	navigator.mediaDevices.getUserMedia({ video: {
+		width: CT.stream.opts.width,
+		height: CT.stream.opts.height
+	}}).then(function(stream) {
 		CT.log.endTimer("record", "got data!");
 		var segment = 0, recorder = new MediaStreamRecorder(stream);
 		recorder.mimeType = "video/webm";
@@ -59,16 +62,6 @@ CT.stream.record = function(ondata, onrecorder, onfail) {
 		else
 			recorder.recorderType = MediaRecorderWrapper;
 		recorder.sampleRate = 22050;
-
-		// this dimension stuff, as well as css rules,
-		// only necessary for firefox, it seems
-		recorder.videoWidth = CT.stream.opts.width;
-		recorder.videoHeight = CT.stream.opts.height;
-		recorder.canvas = {
-			width: CT.stream.opts.width,
-			height: CT.stream.opts.height
-		};
-
 		recorder.ondataavailable = function(blob) {
 			CT.log("ondataavailable!!");
 			segment = (segment + 1) % CT.stream.opts.segments;
