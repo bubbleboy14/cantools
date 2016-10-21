@@ -1,18 +1,18 @@
-CT.stream.Streamer = CT.Class({ // depped
+CT.stream.Streamer = CT.Class({ // primarily useful for testing
 	CLASSNAME: "CT.stream.Streamer",
 	bounce: function(signature, blob) {
 		var video = this.opts.video;
-		CT.stream.read(blob, function(result) {
+		CT.stream.util.read(blob, function(result) {
 			CT.memcache.set(signature, result, function() {
-				CT.memcache.get(signature, video.process, false, true);
-			}, false, true);
+				CT.memcache.get(signature, video.process, true);
+			}, true);
 		});
 	},
 	chunk: function(blob, segment) {
 		this.bounce(this.opts.channel + segment, blob);
 	},
 	echo: function(blob, segment) {
-		CT.stream.read(blob, this.opts.video.process);
+		CT.stream.util.read(blob, this.opts.video.process);
 	},
 	getNode: function() {
 		return this.opts.video.node;
