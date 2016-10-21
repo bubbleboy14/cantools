@@ -35,7 +35,7 @@ CT.stream.Video = CT.Class({
 		var that = this;
 		fetch(dataURL).then(function(res) { return res.blob(); }).then(function(blob) {
 			that.log("buffering", blob.size);
-			CT.stream.read(blob, function(buffer) {
+			CT.stream.util.read(blob, function(buffer) {
 				that._buffers.push(buffer);
 				that._sourceUpdate();
 			}, true);

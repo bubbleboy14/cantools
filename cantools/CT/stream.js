@@ -20,6 +20,7 @@ that arrives in chunks.
 */
 
 CT.scriptImport("https://cdn.webrtc-experiment.com/MediaStreamRecorder.js");
+CT.require("CT.stream.util");
 CT.require("CT.stream.Video");
 CT.require("CT.stream.Streamer");
 CT.require("CT.stream.Multiplexer");
@@ -36,40 +37,7 @@ CT.stream.opts = {
 		CT.stream.opts.waiting.forEach(function(w) { w.start(); });
 	}
 };
-
-CT.stream.read = function(blob, cb, buffer) {
-	var signature = "read" + (buffer ? "buffer" : "url"),
-		fr = new FileReader();
-	CT.log.startTimer(signature);
-	fr.onloadend = function() {
-		CT.log.endTimer(signature, fr.result.length || fr.result.byteLength);
-		cb(fr.result);
-	};
-	buffer ? fr.readAsArrayBuffer(blob) : fr.readAsDataURL(blob);
-};
-
-CT.stream.record = function(ondata, onrecorder, onfail) {
-	CT.log.startTimer("record", "attempting record");
-	navigator.mediaDevices.getUserMedia({ video: {
-		width: CT.stream.opts.width,
-		height: CT.stream.opts.height
-	}}).then(function(stream) {
-		CT.log.endTimer("record", "got data!");
-		var segment = 0, recorder = new MediaStreamRecorder(stream);
-		recorder.mimeType = "video/webm";
-		if (CT.info.isChrome)
-			recorder.recorderType = WhammyRecorder;
-		else
-			recorder.recorderType = MediaRecorderWrapper;
-		recorder.sampleRate = 22050;
-		recorder.ondataavailable = function(blob) {
-			CT.log("ondataavailable!!");
-			segment = (segment + 1) % CT.stream.opts.segments;
-			ondata && ondata(blob, segment);
-		};
-		recorder.start(CT.stream.opts.chunk);
-		onrecorder && onrecorder(recorder, stream);
-	})["catch"](onfail || function(err) {
-		CT.log.endTimer("record", "got error: " + err);
-	});
-};
+CT.stream.opts.record = { video: {
+   width: CT.stream.opts.width,
+   height: CT.stream.opts.height
+}};//, audio: true };
