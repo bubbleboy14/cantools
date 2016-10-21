@@ -34,8 +34,8 @@ CT.stream.Video = CT.Class({
 		}
 		var that = this;
 		CT.stream.util.b64_to_buffer(dataURL, function(buffer) {
-				that._buffers.push(buffer);
-				that._sourceUpdate();
+			that._buffers.push(buffer);
+			that._sourceUpdate();
 		});
 	},
 	start: function() {
