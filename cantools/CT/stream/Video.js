@@ -33,12 +33,9 @@ CT.stream.Video = CT.Class({
 			this.node.mediaSource.addEventListener("sourceopen", this._sourceOpen);
 		}
 		var that = this;
-		fetch(dataURL).then(function(res) { return res.blob(); }).then(function(blob) {
-			that.log("buffering", blob.size);
-			CT.stream.util.read(blob, function(buffer) {
+		CT.stream.util.b64_to_buffer(dataURL, function(buffer) {
 				that._buffers.push(buffer);
 				that._sourceUpdate();
-			}, true);
 		});
 	},
 	start: function() {

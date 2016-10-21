@@ -52,7 +52,7 @@ CT.stream.Multiplexer = CT.Class({
 	push: function(blob, segment, channel, stream) {
 		CT.log.startTimer("push", channel + segment);
 		var that = this, signature = channel + this.opts.user + segment;
-		CT.stream.util.read(blob, function(b64) {
+		CT.stream.util.blob_to_b64(blob, function(b64) {
 			CT.log.endTimer("push", signature);
 			that.modes[that.mode].push(b64, channel, signature);
 		});
