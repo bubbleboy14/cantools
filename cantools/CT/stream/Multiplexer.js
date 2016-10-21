@@ -8,11 +8,11 @@ CT.stream.Multiplexer = CT.Class({
 				CT.memcache.set(signature, b64, function() {
 					CT.log.endTimer("memcache_push", b64.length);
 					CT.pubsub.publish(channel, signature); // (no echo)
-				}, false, true);
+				}, true);
 			},
 			update: function(message, process) {
 				CT.log.startTimer("memcache_update", message.length);
-				CT.memcache.get(message, process, false, true);
+				CT.memcache.get(message, process, true);
 				CT.log.endTimer("memcache_update", message.length);
 			}
 		},

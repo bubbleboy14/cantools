@@ -2,33 +2,32 @@
 This module provides direct integration with the cantools memcache service via
 the _memcache.py request handler. Some key functions are defined below.
 
-### CT.memcache.get(key, cb, json, localCache)
+### CT.memcache.get(key, cb, localCache)
 Return the (server-side) value for the specified key.
 
-### CT.memcache.set(key, val, cb, json, localCache)
+### CT.memcache.set(key, val, cb, localCache)
 Instruct the server to remember the specified key and value.
 */
 
 CT.memcache = {
 	_local: {},
-	_rq: function(action, cb, json, key, val) {
+	_rq: function(action, cb, key, val) {
 		CT.net.post("/_memcache", {
 			action: action,
 			key: key,
-			value: val,
-			json: json
+			value: val
 		}, null, cb);
 	},
-	get: function(key, cb, json, localCache) {
+	get: function(key, cb, localCache) {
 		var local = localCache && CT.memcache._local[key];
 		if (local)
 			cb(local);
 		else
-			CT.memcache._rq("get", cb, json, key);
+			CT.memcache._rq("get", cb, key);
 	},
-	set: function(key, val, cb, json, localCache) {
+	set: function(key, val, cb, localCache) {
 		if (localCache)
 			CT.memcache._local[key] = val;
-		CT.memcache._rq("set", cb, json, key, val);
+		CT.memcache._rq("set", cb, key, val);
 	}
 };
