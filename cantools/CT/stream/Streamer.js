@@ -12,7 +12,7 @@ CT.stream.Streamer = CT.Class({ // primarily useful for testing
 		this.bounce(this.opts.channel + segment, blob);
 	},
 	echo: function(blob, segment) {
-		CT.stream.util.read(blob, this.opts.video.process);
+		CT.stream.util.blob_to_b64(blob, this.opts.video.process);
 	},
 	getNode: function() {
 		return this.opts.video.node;
