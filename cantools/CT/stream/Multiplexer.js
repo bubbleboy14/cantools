@@ -3,10 +3,11 @@ CT.stream.Multiplexer = CT.Class({
 	mode: "memcache", // websocket|memcache
 	modes: {
 		memcache: {
-			push: function(b64, channel, signature) {
+			push: function(b64s, channel, signature) {
 				CT.log.startTimer("memcache_push", signature);
-				CT.memcache.set(signature, b64, function() {
-					CT.log.endTimer("memcache_push", b64.length);
+				CT.memcache.set(signature, b64s, function() {
+					CT.log.endTimer("memcache_push",
+						b64s.video.length, b64s.audio.length);
 					CT.pubsub.publish(channel, signature); // (no echo)
 				}, true);
 			},
@@ -16,7 +17,7 @@ CT.stream.Multiplexer = CT.Class({
 				CT.log.endTimer("memcache_update", message.length);
 			}
 		},
-		websocket: {
+		websocket: { // buggy AND needs multistream support!! (don't use)
 			push: function(b64, channel, signature) { // no echo!!!
 				CT.log.startTimer("websocket_push", signature);
 				CT.pubsub.publish(channel, encodeURIComponent(b64));
@@ -49,12 +50,12 @@ CT.stream.Multiplexer = CT.Class({
 			delete this.channels[channel];
 		}
 	},
-	push: function(blob, segment, channel, stream) {
+	push: function(blobs, segment, channel, stream) {
 		CT.log.startTimer("push", channel + segment);
 		var that = this, signature = channel + this.opts.user + segment;
-		CT.stream.util.blob_to_b64(blob, function(b64) {
+		CT.stream.util.blobs_to_b64s(blobs, function(b64s) {
 			CT.log.endTimer("push", signature);
-			that.modes[that.mode].push(b64, channel, signature);
+			that.modes[that.mode].push(b64s, channel, signature);
 		});
 		return this.getVideo(channel, this.opts.user, stream);
 	},
