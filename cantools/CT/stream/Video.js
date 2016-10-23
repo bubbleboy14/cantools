@@ -32,8 +32,8 @@ CT.stream.Video = CT.Class({
 		this.log("process", b64s.video.length, b64s.audio.length);
 		var that = this;
 		CT.stream.util.b64_to_buffer(b64s.video, function(videobuffer) {
-			that._video_buffers.push(videobuffer);
 			that._audio_buffers.push(b64s.audio);
+			that._video_buffers.push(videobuffer);
 			that._sourceUpdate();
 		});
 	},
@@ -53,7 +53,7 @@ CT.stream.Video = CT.Class({
 		})["catch"](function(error) {
 			that.log("play failed! awaiting user input (android)", error.message);
 			if (CT.stream.opts.requiresInput && !CT.stream.opts.requestedInput) {
-				CT.stream.opts.waiting.push(this.audio);
+				that.audio && CT.stream.opts.waiting.push(that.audio);
 				CT.stream.opts.requestedInput = true;
 				(new CT.modal.Prompt({
 					cb: CT.stream.opts.startWaiting,
@@ -63,14 +63,15 @@ CT.stream.Video = CT.Class({
 					prompt: "Ready to stream?"
 				})).show();
 			}
-			CT.stream.opts.waiting.push(that);
+			CT.stream.opts.waiting.push(that.node);
 		});
 	},
 	_nextAudio: function() {
 		this.log("NEXT AUDIO!!!!!", this._audio_buffers.length);
-		if (this._audio_buffers.length) {
+		if (this._audio_buffers.length)
 			this.audio.src = this._audio_buffers.shift();
-		}
+		if (CT.info.isMac && this.audio.paused)
+			this.audio.play();
 	},
 	_initAudio: function() {
 		this.audio = CT.dom.audio(null, null, true,

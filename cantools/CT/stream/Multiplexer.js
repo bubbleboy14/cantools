@@ -63,8 +63,7 @@ CT.stream.Multiplexer = CT.Class({
 		CT.log.startTimer("update", data.channel);
 		this.modes[this.mode].update(data.message,
 			this.getVideo(data.channel, data.user).process);
-		CT.log.endTimer("update", data.message.video.length
-			+ " " + data.message.audio.length
+		CT.log.endTimer("update", data.message.length
 			+ " " + data.channel + " " + data.user);
 	},
 	getVideo: function(channel, user, stream) {
