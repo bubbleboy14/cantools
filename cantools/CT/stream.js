@@ -29,7 +29,7 @@ CT.stream.opts = {
 	requiresInput: CT.info.android,
 	requestedInput: false,
 	segments: 20,
-	chunk: 2000,
+	chunk: 1500,
 	width: 320,
 	height: 240,
 	waiting: [],
