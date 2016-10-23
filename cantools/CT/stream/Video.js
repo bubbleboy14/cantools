@@ -93,7 +93,9 @@ CT.stream.Video = CT.Class({
 		this.node = opts.video || CT.dom.video(opts.stream
 			&& URL.createObjectURL(opts.stream), opts.className,
 			opts.id, opts.attrs);
-		if (!opts.stream) {
+		if (opts.stream)
+			this.node.volume = 0;
+		else {
 			this.mediaSource = new MediaSource();
 			this.node.src = URL.createObjectURL(this.mediaSource);
 			this.mediaSource.addEventListener("sourceopen", this._sourceOpen);
