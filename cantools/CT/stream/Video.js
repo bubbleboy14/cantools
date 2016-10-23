@@ -16,7 +16,7 @@ CT.stream.Video = CT.Class({
 					this._nextAudio();
 				this.sourceBuffer.appendBuffer(this._video_buffers.shift());
 			}
-			else if (this.mediaSource.readyState == "open") // firefox!?!?
+			else if (this.mediaSource.readyState == "open")
 				this.mediaSource.endOfStream();
 		}
 	},
@@ -26,7 +26,6 @@ CT.stream.Video = CT.Class({
 			this.sourceBuffer = this.mediaSource.addSourceBuffer(CT.stream.opts.codecs.video);
 			this.sourceBuffer.mode = 'sequence';
 			this.sourceBuffer.addEventListener("update", this._sourceUpdate);
-//			this.sourceBuffer.addEventListener("updateend", this._sourceUpdate);
 		}
 	},
 	process: function(b64s) {
@@ -36,8 +35,6 @@ CT.stream.Video = CT.Class({
 			that._video_buffers.push(videobuffer);
 			that._audio_buffers.push(b64s.audio);
 			that._sourceUpdate();
-//			if (!that.audio.src) // first frame!
-//				that._nextAudio();
 		});
 	},
 	process_single: function(dataURL) { // video only, or working av feed :-\
@@ -53,7 +50,6 @@ CT.stream.Video = CT.Class({
 		var that = this, prom = this.node.play();
 		prom && prom.then(function() {
 			that.log("started!!! streaming!");
-//			that._nextAudio();
 		})["catch"](function(error) {
 			that.log("play failed! awaiting user input (android)", error.message);
 			if (CT.stream.opts.requiresInput && !CT.stream.opts.requestedInput) {
@@ -74,16 +70,11 @@ CT.stream.Video = CT.Class({
 		this.log("NEXT AUDIO!!!!!", this._audio_buffers.length);
 		if (this._audio_buffers.length) {
 			this.audio.src = this._audio_buffers.shift();
-//			if (this.audio.paused)
-//				this.audio.play();
 		}
 	},
-//	"audio": function(src, controls, autoplay, preload, onplay, onended, className, id, attrs) {
-
 	_initAudio: function() {
 		this.audio = CT.dom.audio(null, null, true,
 			null, null, this._nextAudio, "hidden");
-//		this.node.addEventListener("play", this._nextAudio);
 		document.body.appendChild(this.audio);
 	},
 	init: function(opts) {

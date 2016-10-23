@@ -34,10 +34,8 @@ CT.stream.opts = {
 	height: 240,
 	waiting: [],
 	codecs: {
-//		av: 'video/webm; codecs="vp9,vorbis"',
 		av: 'video/webm; codecs="vp9,opus"',
 		video: 'video/webm; codecs="vp8"',
-//		audio: 'audio/webm; codecs="vorbis"'
 		audio: 'audio/webm; codecs="opus"'
 	},
 	startWaiting: function() {
