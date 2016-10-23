@@ -46,26 +46,15 @@ var _sutil = CT.stream.util = {
 		buffer ? fr.readAsArrayBuffer(blob) : fr.readAsDataURL(blob);
 	},
 	record: function(ondata, onrecorder, onfail) {
-		CT.log.startTimer("record", "attempting record");
+		CT.log.startTimer("record", "(attempt)");
 		navigator.mediaDevices.getUserMedia(CT.stream.opts.record).then(function(stream) {
 			CT.log.endTimer("record", "got data!");
-			var segment = 0, recorder;
-			if (CT.stream.opts.record.audio) {
-				recorder = new MultiStreamRecorder(stream);
-				recorder.audioChannels = 1;
-			} else
-				recorder = new MediaStreamRecorder(stream);
-			recorder.mimeType = "video/webm";
-			if (CT.info.isChrome)
-				recorder.recorderType = WhammyRecorder;
-			else
-				recorder.recorderType = MediaRecorderWrapper;
-			recorder.sampleRate = 22050;
-			recorder.ondataavailable = function(data) {
+			var segment = 0, recorder = new MediaStreamRecorder(stream);
+			recorder.recorderType = WhammyRecorder;
+			recorder.ondataavailable = function(blob) {
 				CT.log("ondataavailable!!");
 				segment = (segment + 1) % CT.stream.opts.segments;
-				ondata && ondata(CT.stream.opts.record.audio
-					? data.video : data, segment);
+				ondata && ondata(blob, segment);
 			};
 			recorder.start(CT.stream.opts.chunk);
 			onrecorder && onrecorder(recorder, stream);

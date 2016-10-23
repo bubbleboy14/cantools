@@ -33,11 +33,12 @@ CT.stream.opts = {
 	width: 320,
 	height: 240,
 	waiting: [],
+	codecs: {
+		video: "video/webm; codecs=vp9",
+		audio: "audio/webm"
+	},
 	startWaiting: function() {
 		CT.stream.opts.waiting.forEach(function(w) { w.start(); });
 	}
 };
-CT.stream.opts.record = { video: {
-   width: CT.stream.opts.width,
-   height: CT.stream.opts.height
-}};//, audio: true };
+CT.stream.opts.record = { video: true};//, audio: true };

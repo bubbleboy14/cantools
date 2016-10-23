@@ -8,29 +8,29 @@ CT.stream.Video = CT.Class({
 	},
 	_sourceUpdate: function() {
 		this.log("_sourceUpdate", this._buffers.length,
-			this.node.sourceBuffer.updating, this.node.mediaSource.readyState);
-		if (!this.node.sourceBuffer.updating) {
+			this.sourceBuffer.updating, this.mediaSource.readyState);
+		if (!this.sourceBuffer.updating) {
 			if (this._buffers.length)
-				this.node.sourceBuffer.appendBuffer(this._buffers.shift());
-			else if (this.node.mediaSource.readyState == "open") // firefox!?!?
-				this.node.mediaSource.endOfStream();
+				this.sourceBuffer.appendBuffer(this._buffers.shift());
+			else if (this.mediaSource.readyState == "open") // firefox!?!?
+				this.mediaSource.endOfStream();
 		}
 	},
 	setSourceBuffer: function() {
-		this.log("setSourceBuffer - exists:", !!this.node.sourceBuffer);
-		if (!this.node.sourceBuffer) {
-			this.node.sourceBuffer = this.node.mediaSource.addSourceBuffer('video/webm; codecs="vp8"');
-			this.node.sourceBuffer.mode = 'sequence';
-			this.node.sourceBuffer.addEventListener("update", this._sourceUpdate);
-			this.node.sourceBuffer.addEventListener("updateend", this._sourceUpdate);
+		this.log("setSourceBuffer - exists:", !!this.sourceBuffer);
+		if (!this.sourceBuffer) {
+			this.sourceBuffer = this.mediaSource.addSourceBuffer(CT.stream.opts.codecs.video);
+			this.sourceBuffer.mode = 'sequence';
+			this.sourceBuffer.addEventListener("update", this._sourceUpdate);
+//			this.sourceBuffer.addEventListener("updateend", this._sourceUpdate);
 		}
 	},
 	process: function(dataURL) {
 		this.log("process", dataURL.length);
 		if (!this.node.src) {
-			this.node.mediaSource = new MediaSource();
-			this.node.src = URL.createObjectURL(this.node.mediaSource);
-			this.node.mediaSource.addEventListener("sourceopen", this._sourceOpen);
+			this.mediaSource = new MediaSource();
+			this.node.src = URL.createObjectURL(this.mediaSource);
+			this.mediaSource.addEventListener("sourceopen", this._sourceOpen);
 		}
 		var that = this;
 		CT.stream.util.b64_to_buffer(dataURL, function(buffer) {
