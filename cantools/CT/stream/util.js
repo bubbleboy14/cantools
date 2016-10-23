@@ -15,19 +15,26 @@ var _sutil = CT.stream.util = {
 		});
 	},
 	// some browsers may require separate audio/video
-	b64s_to_blobs: function(avobj, cb) {
-		_sutil.b64_to_blob(avobj.video, function(b64video) {
-			_sutil.b64_to_blob(avobj.audio, function(b64audio) {
+	blobs_to_b64s: function(blobs, cb) {
+		_sutil.blob_to_b64(blobs.video, function(b64video) {
+			_sutil.blob_to_b64(blobs.audio, function(b64audio) {
 				cb({ video: b64video, audio: b64audio });
 			});
 		});
 	},
-	blobs_to_buffers: function(avobj, cb) {
-		_sutil.read(avobj.video, function(videobuffer) {
-			_sutil.read(avobj.audio, function(audiobuffer) {
+	b64s_to_blobs: function(b64s, cb) {
+		_sutil.b64_to_blob(b64s.video, function(vblob) {
+			_sutil.b64_to_blob(b64s.audio, function(ablob) {
+				cb({ video: vblob, audio: ablob });
+			});
+		});
+	},
+	blobs_to_buffers: function(blobs, cb) {
+		_sutil.blob_to_buffer(blobs.video, function(videobuffer) {
+			_sutil.blob_to_buffer(blobs.audio, function(audiobuffer) {
 				cb({ video: videobuffer, audio: audiobuffer });
-			}, true);
-		}, true);
+			});
+		});
 	},
 	b64s_to_buffers: function(b64s, cb) {
 		_sutil.b64s_to_blobs(b64s, function(blobs) {
@@ -45,20 +52,90 @@ var _sutil = CT.stream.util = {
 		};
 		buffer ? fr.readAsArrayBuffer(blob) : fr.readAsDataURL(blob);
 	},
-	record: function(ondata, onrecorder, onfail) {
-		CT.log.startTimer("record", "(attempt)");
-		navigator.mediaDevices.getUserMedia(CT.stream.opts.record).then(function(stream) {
+	_avRecorder: function(stream) {
+		var r = new MediaStreamRecorder(stream);
+		r.mimeType = CT.stream.opts.codecs.av;
+		return r;
+	},
+	_videoRecorder: function(stream) {
+		var r = new MediaStreamRecorder(stream);
+		r.mimeType = CT.stream.opts.codecs.video;
+		r.recorderType = WhammyRecorder;
+		return r;
+	},
+	_audioRecorder: function(stream) {
+		var r = new MediaStreamRecorder(stream);
+		r.mimeType = CT.stream.opts.codecs.audio;
+		r.recorderType = StereoAudioRecorder;
+		r.audioChannels = 1;
+		return r;
+	},
+	_multi: function(ondata, onrecorder) {
+		return function(stream) {
 			CT.log.endTimer("record", "got data!");
-			var segment = 0, recorder = new MediaStreamRecorder(stream);
-			recorder.recorderType = WhammyRecorder;
+			var vrec = _sutil._videoRecorder(stream),
+				arec = _sutil._audioRecorder(stream),
+				segment = 0, segments = [], addseg = function() {
+					if (segment > segments.length - 1) {
+						segments.push({
+							audio: null,
+							video: null
+						});
+					}
+				}, checkseg = function() {
+					var seg = segments[segment];
+					if (seg && seg.audio && seg.video) {
+						ondata(seg, segment);
+						segment = (segment + 1) % CT.stream.opts.segments;
+						if (!segment)
+							segments.length = 0;
+					}
+				};
+			vrec.onStartedDrawingNonBlankFrames = function() {
+				CT.log("STARTING AUDIO");
+				vrec.clearOldRecordedFrames();
+				arec.start(CT.stream.opts.chunk);
+			};
+			arec.ondataavailable = function(blob) {
+				CT.log("AUDIO");
+				addseg();
+				segments[segment].audio = blob;
+				checkseg();
+			};
+			vrec.ondataavailable = function(blob) {
+				CT.log("VIDEO");
+				addseg();
+				segments[segment].video = blob;
+				checkseg();
+			};
+			vrec.start(CT.stream.opts.chunk);
+			onrecorder && onrecorder({ stop: function() {
+				arec.stop();
+				vrec.stop();
+			} }, stream);
+		};
+	},
+	_single: function(ondata, onrecorder) {
+		return function(stream) {
+			var segment = 0, recorder = _sutil._avRecorder(stream);
 			recorder.ondataavailable = function(blob) {
 				CT.log("ondataavailable!!");
 				segment = (segment + 1) % CT.stream.opts.segments;
+				if (!segment)
+					segments.length = 0;
 				ondata && ondata(blob, segment);
 			};
 			recorder.start(CT.stream.opts.chunk);
 			onrecorder && onrecorder(recorder, stream);
-		})["catch"](onfail || function(err) {
+		};
+	},
+	record: function(ondata, onrecorder, onfail) {
+//		recorder = _sutil._single;
+		recorder = _sutil._multi;
+		CT.log.startTimer("record", "(attempt)");
+		navigator.mediaDevices.getUserMedia({
+			video: true, audio: true
+		}).then(recorder(ondata, onrecorder))["catch"](onfail || function(err) {
 			CT.log.endTimer("record", "got error: " + err);
 		});
 	}

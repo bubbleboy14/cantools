@@ -29,16 +29,18 @@ CT.stream.opts = {
 	requiresInput: CT.info.android,
 	requestedInput: false,
 	segments: 20,
-	chunk: 1000,
+	chunk: 2000,
 	width: 320,
 	height: 240,
 	waiting: [],
 	codecs: {
-		video: "video/webm; codecs=vp9",
-		audio: "audio/webm"
+//		av: 'video/webm; codecs="vp9,vorbis"',
+		av: 'video/webm; codecs="vp9,opus"',
+		video: 'video/webm; codecs="vp8"',
+//		audio: 'audio/webm; codecs="vorbis"'
+		audio: 'audio/webm; codecs="opus"'
 	},
 	startWaiting: function() {
-		CT.stream.opts.waiting.forEach(function(w) { w.start(); });
+		CT.stream.opts.waiting.forEach(function(w) { w.play(); });
 	}
 };
-CT.stream.opts.record = { video: true};//, audio: true };
