@@ -1,4 +1,4 @@
-# cantools 0.8.12
+# cantools 0.8.13
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
 License: MIT (see LICENSE)
@@ -616,10 +616,10 @@ as well as a utility submodule (CT.map.util) and four classes:
 This module provides direct integration with the cantools memcache service via
 the _memcache.py request handler. Some key functions are defined below.
 
-### CT.memcache.get(key, cb, json, localCache)
+### CT.memcache.get(key, cb, localCache)
 Return the (server-side) value for the specified key.
 
-### CT.memcache.set(key, val, cb, json, localCache)
+### CT.memcache.set(key, val, cb, localCache)
 Instruct the server to remember the specified key and value.
 
 ## CT.mobile
