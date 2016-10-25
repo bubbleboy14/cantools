@@ -106,6 +106,9 @@ class ModelBase(sa_dbase):
     def id(self):
         return self.key.urlsafe()
 
+    def _has_complete_key(self):
+        return bool(self.id())
+
     def mydata(self, isexport=False):
         cols = {}
         for key, prop in self._schema.items():
