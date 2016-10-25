@@ -13,7 +13,8 @@ class Response(object):
 
     def _read(self):
         b = self.request.body or json.dumps(rb64(self.request.qs_params))
-        if self.request.headers.get("content-type") == "multipart/form-data":
+        ctype = self.request.headers.get("content-type")
+        if ctype and ctype.startswith("multipart/form-data"):
             obj = {}
             splitter, body = b.rsplit("\r\n", 1)[0].split("\r\n", 1)
             for chunk in body.split("\r\n%s\r\n"%(splitter,)):
