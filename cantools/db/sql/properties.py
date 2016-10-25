@@ -175,7 +175,8 @@ class KeyWrapper(object):
 		return get(self.value, session)
 
 	def delete(self):
-		self.get().rm() # should be more efficient way...
+		ent = self.get()
+		ent and ent.rm() # should be more efficient way...
 
 	def urlsafe(self):
 		return self.value
