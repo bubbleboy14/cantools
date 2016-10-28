@@ -234,8 +234,8 @@ CT.panel = {
 		panel.id = keystring + "panel" + nsnew;
 		if (content) content.id = keystring + "content" + nsnew;
 		item.firstChild.innerHTML = panel.firstChild.innerHTML = newkey;
-		if (item2keystring) {
-			var item2 = CT.dom.id(item2keystring + "item" + nsold);
+		var item2 = item2keystring && CT.dom.id(item2keystring + "item" + nsold);
+		if (item2) {
 			item2.id = nsnew;
 			item2.firstChild.innerHTML = newkey;
 		}
