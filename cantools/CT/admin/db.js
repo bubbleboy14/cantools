@@ -128,8 +128,7 @@ CT.admin.db.Editor = CT.Class({
 				});
 			}
 			if (data.label != resp.label) {
-				CT.panel.rename(data.label, resp.label, changes.modelName, "starred");
-				CT.dom.id()
+				CT.panel.rename(data.label, resp.label, data.modelName, "starred");
 				data.label = resp.label;
 			}
 			alert("you did it");
