@@ -8,6 +8,7 @@ on- and off- screen to/from a configurable position.
 defaults:
 	{
 		className: "basicpopup",
+		innerClass: "h1 w1 scroller",
 		transition: "none", // none|fade|slide
 		center: true,
 		noClose: false, // turns off 'x' in corner
@@ -48,6 +49,7 @@ defaults:
 CT.modal._defaults = {
 	Modal: {
 		className: "basicpopup",
+		innerClass: "h1 w1 scroller",
 		transition: "none",
 		center: true,
 		noClose: false, // turns off 'x' in corner
@@ -206,12 +208,12 @@ CT.modal.Modal = CT.Class({
 	show: function(n) {
 		setTimeout(this._show, 0, n); // wait a tick for initialization
 	},
-	showHide: function() {
-		this.visible ? this.hide() : this.show();
+	showHide: function(n) {
+		this.visible ? this.hide() : this.show(n);
 	},
 	addClose: function() {
-		this.node.insertBefore(CT.dom.node(CT.dom.link("X", this.hide),
-			"div", "abs ctr above"), this.node.firstChild);
+		this.node.insertBefore(CT.dom.div(CT.dom.link("X", this.hide),
+			"abs ctr above"), this.node.firstChild);
 	},
 	build: function() {}, // override w/ add() calls
 	clear: function() {
@@ -230,7 +232,7 @@ CT.modal.Modal = CT.Class({
 			if (side in opts.slide)
 				nodeStyle[side] = opts.slide[side];
 		});
-		this.node = CT.dom.node(CT.dom.node(null, null, "h1 w1 scroller"),
+		this.node = CT.dom.node(CT.dom.node(null, null, opts.innerClass),
 			"div", opts.className, null, null, nodeStyle);
 		if (!opts.noClose)
 			this.addClose();
@@ -249,9 +251,9 @@ CT.modal.Modal = CT.Class({
 CT.modal.LightBox = CT.Class({
 	init: function(opts) {
 		this.opts = CT.merge(opts, CT.modal._defaults.LightBox, CT.modal._defaults.Modal, {
-			content: CT.dom.node(CT.dom.node(this.opts.caption, "div",
+			content: CT.dom.div(CT.dom.div(this.opts.caption,
 				"biggest bold padded round translucent full-center white grayback pointer hoverglow"),
-				"div", "backdrop-img filler", "", {
+				"backdrop-img filler", "", {
 					onclick: this.hide
 				}, {
 					backgroundImage: "url(" + this.opts.img + ")"
