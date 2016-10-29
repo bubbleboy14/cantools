@@ -11,13 +11,12 @@ CT.stream.Video = CT.Class({
 		this.log("_sourceUpdate", this._video_buffers.length,
 			this.sourceBuffer.updating, this.mediaSource.readyState);
 		if (!this.sourceBuffer.updating) {
-			if (this._video_buffers.length) {
-				if (!this.audio.src) // first frame!
-					this._nextAudio();
+			if (this._video_buffers.length)
 				this.sourceBuffer.appendBuffer(this._video_buffers.shift());
-			}
-			else if (this.mediaSource.readyState == "open")
+			else if (this.mediaSource.readyState == "open") {
+				this._nextAudio();
 				this.mediaSource.endOfStream();
+			}
 		}
 	},
 	setSourceBuffer: function() {
@@ -29,7 +28,8 @@ CT.stream.Video = CT.Class({
 		}
 	},
 	process: function(b64s) {
-		this.log("process", b64s.video.length, b64s.audio.length);
+		this.log("process", b64s.video.length,
+			b64s.audio && b64s.audio.length);
 		var that = this;
 		CT.stream.util.b64_to_buffer(b64s.video, function(videobuffer) {
 			that._audio_buffers.push(b64s.audio);
@@ -46,8 +46,8 @@ CT.stream.Video = CT.Class({
 		});
 	},
 	start: function() {
-		this.log("start (attempting) - paused:", this.node.paused);
-		var that = this, prom = this.node.play();
+		this.log("start (attempting) - paused:", this.video.paused);
+		var that = this, prom = this.video.play();
 		prom && prom.then(function() {
 			that.log("started!!! streaming!");
 		})["catch"](function(error) {
@@ -63,20 +63,28 @@ CT.stream.Video = CT.Class({
 					prompt: "Ready to stream?"
 				})).show();
 			}
-			CT.stream.opts.waiting.push(that.node);
+			CT.stream.opts.waiting.push(that.video);
 		});
 	},
 	_nextAudio: function() {
-		this.log("NEXT AUDIO!!!!!", this._audio_buffers.length);
-		if (this._audio_buffers.length)
-			this.audio.src = this._audio_buffers.shift();
-		if (CT.info.isMac && this.audio.paused)
-			this.audio.play();
+		this.log("NEXT AUDIO!!!!!", this._audio_buffers.length, this.activeAudio);
+		if (this._audio_buffers.length > this._video_buffers.length) {
+			var buff = this._audio_buffers.shift();
+			this.audio.src = this.activeAudio ? buff : "";
+			if (this.audio.src && this.audio.paused)
+				this.audio.play();
+		}
 	},
 	_initAudio: function() {
+		this.activeAudio = this.opts.activeAudio;
 		this.audio = CT.dom.audio(null, null, true,
-			null, null, this._nextAudio, "hidden");
+			null, null, null, "hidden");
+//			null, null, this._nextAudio, "hidden");
 		document.body.appendChild(this.audio);
+	},
+	_flipAudio: function() {
+		this.activeAudio = !this.activeAudio;
+		this._audioButton.firstChild.classList[this.activeAudio ? "add" : "remove"]("buttonActive");
 	},
 	init: function(opts) {
 		this.log("init");
@@ -85,20 +93,34 @@ CT.stream.Video = CT.Class({
 			stream: null,
 			className: null,
 			id: null,
+			videoClass: null,
+			videoId: null,
+			activeAudio: true,
 			attrs: {
 				autoplay: true
 			}
 		});
 		if (opts.stream)
 			opts.attrs.mozSrcObject = opts.stream;
-		this.node = opts.video || CT.dom.video(opts.stream
-			&& URL.createObjectURL(opts.stream), opts.className,
-			opts.id, opts.attrs);
+		this.video = opts.video || CT.dom.video(opts.stream
+			&& URL.createObjectURL(opts.stream), opts.videoClass,
+			opts.videoId, opts.attrs);
+		this._audioButton = CT.dom.img("/img/audio.png",
+			opts.activeAudio && "buttonActive", this._flipAudio);
+		this.node = CT.dom.div([
+			this.video,
+			CT.dom.div([
+				this._audioButton,
+				CT.dom.pad(2),
+				CT.dom.img("/img/save.png")
+			], "centered")
+		], opts.className, opts.id);
+		this.node.video = this.video;
 		if (opts.stream)
-			this.node.volume = 0;
+			this.video.volume = 0;
 		else {
 			this.mediaSource = new MediaSource();
-			this.node.src = URL.createObjectURL(this.mediaSource);
+			this.video.src = URL.createObjectURL(this.mediaSource);
 			this.mediaSource.addEventListener("sourceopen", this._sourceOpen);
 			this._initAudio();
 		}

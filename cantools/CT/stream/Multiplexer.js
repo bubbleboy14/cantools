@@ -6,8 +6,8 @@ CT.stream.Multiplexer = CT.Class({
 			push: function(b64s, channel, signature) {
 				CT.log.startTimer("memcache_push", signature);
 				CT.memcache.set(signature, b64s, function() {
-					CT.log.endTimer("memcache_push",
-						b64s.video.length, b64s.audio.length);
+					CT.log.endTimer("memcache_push", b64s.video.length,
+						b64s.audio && b64s.audio.length);
 					CT.pubsub.publish(channel, signature); // (no echo)
 				}, true);
 			},
@@ -52,12 +52,23 @@ CT.stream.Multiplexer = CT.Class({
 	},
 	push: function(blobs, segment, channel, stream) {
 		CT.log.startTimer("push", channel + segment);
-		var that = this, signature = channel + this.opts.user + segment;
-		CT.stream.util.blobs_to_b64s(blobs, function(b64s) {
-			CT.log.endTimer("push", signature);
-			that.modes[that.mode].push(b64s, channel, signature);
-		});
-		return this.getVideo(channel, this.opts.user, stream);
+		var that = this, signature = channel + this.opts.user + segment,
+			video = this.getVideo(channel, this.opts.user, stream);
+		if (video.activeAudio) {
+			CT.stream.util.blobs_to_b64s(blobs, function(b64s) {
+				CT.log.endTimer("push", signature);
+				that.modes[that.mode].push(b64s, channel, signature);
+			});
+		} else {
+			CT.stream.util.blob_to_b64(blobs.video, function(b64) {
+				CT.log.endTimer("push", signature);
+				that.modes[that.mode].push({
+					audio: null,
+					video: b64
+				}, channel, signature);
+			});
+		}
+		return video;
 	},
 	update: function(data) {
 		CT.log.startTimer("update", data.channel);
