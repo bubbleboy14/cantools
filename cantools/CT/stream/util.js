@@ -52,18 +52,18 @@ var _sutil = CT.stream.util = {
 		};
 		buffer ? fr.readAsArrayBuffer(blob) : fr.readAsDataURL(blob);
 	},
-	_avRecorder: function(stream) {
+	avRecorder: function(stream) {
 		var r = new MediaStreamRecorder(stream);
 		r.mimeType = CT.stream.opts.codecs.av;
 		return r;
 	},
-	_videoRecorder: function(stream) {
+	videoRecorder: function(stream) {
 		var r = new MediaStreamRecorder(stream);
 		r.mimeType = CT.stream.opts.codecs.video;
 		r.recorderType = WhammyRecorder;
 		return r;
 	},
-	_audioRecorder: function(stream) {
+	audioRecorder: function(stream) {
 		var r = new MediaStreamRecorder(stream);
 		r.mimeType = CT.stream.opts.codecs.audio;
 		r.recorderType = StereoAudioRecorder;
@@ -73,8 +73,8 @@ var _sutil = CT.stream.util = {
 	_multi: function(ondata, onrecorder) {
 		return function(stream) {
 			CT.log.endTimer("record", "got data!");
-			var vrec = _sutil._videoRecorder(stream),
-				arec = _sutil._audioRecorder(stream),
+			var vrec = _sutil.videoRecorder(stream),
+				arec = _sutil.audioRecorder(stream),
 				segment = 0, segments = [], addseg = function() {
 					if (segment > segments.length - 1) {
 						segments.push({
@@ -109,15 +109,18 @@ var _sutil = CT.stream.util = {
 				checkseg();
 			};
 			vrec.start(CT.stream.opts.chunk);
-			onrecorder && onrecorder({ stop: function() {
-				arec.stop();
-				vrec.stop();
-			} }, stream);
+			onrecorder && onrecorder({
+				stop: function() {
+					arec.stop();
+					vrec.stop();
+				},
+				save: vrec.save
+			}, stream);
 		};
 	},
 	_single: function(ondata, onrecorder) {
 		return function(stream) {
-			var segment = 0, recorder = _sutil._avRecorder(stream);
+			var segment = 0, recorder = _sutil.avRecorder(stream);
 			recorder.ondataavailable = function(blob) {
 				CT.log("ondataavailable!!");
 				segment = (segment + 1) % CT.stream.opts.segments;
@@ -130,8 +133,8 @@ var _sutil = CT.stream.util = {
 		};
 	},
 	record: function(ondata, onrecorder, onfail) {
-//		recorder = _sutil._single;
-		recorder = _sutil._multi;
+//		var recorder = _sutil._single;
+		var recorder = _sutil._multi;
 		CT.log.startTimer("record", "(attempt)");
 		navigator.mediaDevices.getUserMedia({
 			video: true, audio: true

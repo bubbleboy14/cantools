@@ -31,10 +31,14 @@ CT.stream.Video = CT.Class({
 		this.log("process", b64s.video.length,
 			b64s.audio && b64s.audio.length);
 		var that = this;
-		CT.stream.util.b64_to_buffer(b64s.video, function(videobuffer) {
-			that._audio_buffers.push(b64s.audio);
-			that._video_buffers.push(videobuffer);
-			that._sourceUpdate();
+		CT.stream.util.b64_to_blob(b64s.video, function(videoblob) {
+			that.recorder && that.recorder.remember
+				&& that.recorder.remember(videoblob);
+			CT.stream.util.blob_to_buffer(videoblob, function(videobuffer) {
+				that._audio_buffers.push(b64s.audio);
+				that._video_buffers.push(videobuffer);
+				that._sourceUpdate();
+			});
 		});
 	},
 	process_single: function(dataURL) { // video only, or working av feed :-\
@@ -86,6 +90,44 @@ CT.stream.Video = CT.Class({
 		this.activeAudio = !this.activeAudio;
 		this._audioButton.firstChild.classList[this.activeAudio ? "add" : "remove"]("buttonActive");
 	},
+	_miniRecorder: function() {
+		var rec = {
+			blobs: [],
+			remember: function(blob) {
+				if (rec.recording)
+					rec.blobs.push(blob);
+			},
+			start: function() {
+				rec.recording = true;
+			},
+			stop: function() {
+				rec.recording = false;
+			},
+			save: function() {
+				ConcatenateBlobs(rec.blobs, rec.blobs[0].type,
+					invokeSaveAsDialog);
+				rec.blobs = [];
+			}
+		};
+		return rec;
+	},
+	save: function() {
+		if (this.recorder) { // stop recording
+			this._saveButton.firstChild.classList.remove("buttonActive");
+			this.recorder.stop();
+			this.recorder.save();
+			clearTimeout(this._saveTimer);
+			delete this._saveTimer;
+			delete this.recorder;
+		} else {             // start recording
+			this._saveButton.firstChild.classList.add("buttonActive");
+			this.recorder = this.opts.stream
+				? CT.stream.util.videoRecorder(this.opts.stream)
+				: this._miniRecorder();
+			this.recorder.start();
+			this._saveTimer = setTimeout(this.save, CT.stream.opts.cutoff);
+		}
+	},
 	init: function(opts) {
 		this.log("init");
 		this.opts = opts = CT.merge(opts, {
@@ -95,7 +137,7 @@ CT.stream.Video = CT.Class({
 			id: null,
 			videoClass: null,
 			videoId: null,
-			activeAudio: true,
+			activeAudio: false,
 			attrs: {
 				autoplay: true
 			}
@@ -107,12 +149,13 @@ CT.stream.Video = CT.Class({
 			opts.videoId, opts.attrs);
 		this._audioButton = CT.dom.img("/img/audio.png",
 			opts.activeAudio && "buttonActive", this._flipAudio);
+		this._saveButton = CT.dom.img("/img/save.png", null, this.save);
 		this.node = CT.dom.div([
 			this.video,
 			CT.dom.div([
 				this._audioButton,
 				CT.dom.pad(2),
-				CT.dom.img("/img/save.png")
+				this._saveButton
 			], "centered")
 		], opts.className, opts.id);
 		this.node.video = this.video;
