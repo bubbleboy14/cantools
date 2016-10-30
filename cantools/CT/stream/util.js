@@ -1,13 +1,15 @@
 var _sutil = CT.stream.util = {
 	// for single channel av
 	blob_to_b64: function(blob, cb) {
-		_sutil.read(blob, cb);
+		blob ? _sutil.read(blob, cb) : cb();
 	},
 	b64_to_blob: function(b64, cb) {
-		fetch(b64).then(function(res) { return res.blob(); }).then(cb);
+		b64 ? fetch(b64).then(function(res) {
+			return res.blob();
+		}).then(cb) : cb();
 	},
 	blob_to_buffer: function(blob, cb) {
-		_sutil.read(blob, cb, true);
+		blob ? _sutil.read(blob, cb, true) : cb();
 	},
 	b64_to_buffer: function(b64, cb) {
 		_sutil.b64_to_blob(b64, function(blob) {
@@ -126,15 +128,15 @@ var _sutil = CT.stream.util = {
 				segment = (segment + 1) % CT.stream.opts.segments;
 				if (!segment)
 					segments.length = 0;
-				ondata && ondata(blob, segment);
+				ondata && ondata({ video: blob }, segment);
 			};
 			recorder.start(CT.stream.opts.chunk);
 			onrecorder && onrecorder(recorder, stream);
 		};
 	},
 	record: function(ondata, onrecorder, onfail) {
-//		var recorder = _sutil._single;
-		var recorder = _sutil._multi;
+		var recorder = CT.stream.opts.merged
+			? _sutil._single : _sutil._multi;
 		CT.log.startTimer("record", "(attempt)");
 		navigator.mediaDevices.getUserMedia({
 			video: true, audio: true
