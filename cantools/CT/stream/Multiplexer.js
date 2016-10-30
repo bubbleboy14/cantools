@@ -34,6 +34,11 @@ CT.stream.Multiplexer = CT.Class({
 		this.mode = mode;
 	},
 	join: function(channel) {
+		if (this.opts.singlechannel) {
+			var ckeys = Object.keys(this.channels);
+			if (ckeys.length)
+				this.leave(ckeys[0]);
+		}
 		if (!(channel in this.channels)) {
 			CT.pubsub.subscribe(channel);
 			this.channels[channel] = {}; // named streams (Video instances)
@@ -96,6 +101,7 @@ CT.stream.Multiplexer = CT.Class({
 			user: "user" + Math.floor(100 * Math.random()),
 			node: document.body,
 			autoconnect: true,
+			singlechannel: false,
 			wserror: null
 		});
 		this.channels = {}; // each channel can carry multiple video streams
