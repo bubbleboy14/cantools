@@ -29,14 +29,15 @@ CT.stream.opts = {
 	requiresInput: CT.info.android,
 	requestedInput: false,
 	segments: 20,
-	chunk: 1000,
+	chunk: 2000,
 	cutoff: 30000,
+	audioDelay: CT.info.isMac && 2 || 1,
 	width: 320,
 	height: 240,
 	waiting: [],
 	merged: false,
 	codecs: {
-		av: 'video/webm; codecs="vp9,opus"',
+		av: 'video/webm; codecs="vp8,opus"',
 		video: 'video/webm; codecs="vp8"',
 		audio: 'audio/webm; codecs="opus"'
 	},

@@ -14,8 +14,8 @@ CT.stream.Video = CT.Class({
 			if (this._video_buffers.length)
 				this.sourceBuffer.appendBuffer(this._video_buffers.shift());
 			else if (this.mediaSource.readyState == "open") {
-				this._nextAudio();
 				this.mediaSource.endOfStream();
+				this._nextAudio();
 			}
 		}
 	},
@@ -24,7 +24,7 @@ CT.stream.Video = CT.Class({
 		if (!this.sourceBuffer) {
 			this.sourceBuffer = this.mediaSource.addSourceBuffer(CT.stream.opts.codecs.video);
 			this.sourceBuffer.mode = 'sequence';
-			this.sourceBuffer.addEventListener("update", this._sourceUpdate);
+			this.sourceBuffer.addEventListener("updateend", this._sourceUpdate);
 		}
 	},
 	process: function(b64s) {
@@ -72,18 +72,19 @@ CT.stream.Video = CT.Class({
 	},
 	_nextAudio: function() {
 		this.log("NEXT AUDIO!!!!!", this._audio_buffers.length, this.activeAudio);
-		if (this._audio_buffers.length > this._video_buffers.length) {
+		if (this._audio_buffers.length > this._video_buffers.length + CT.stream.opts.audioDelay) {
 			var buff = this._audio_buffers.shift();
 			this.audio.src = this.activeAudio ? buff : "";
-			if (this.audio.src && this.audio.paused)
+			if (this.activeAudio && this.audio.src && this.audio.paused)
 				this.audio.play();
 		}
 	},
 	_initAudio: function() {
 		this.activeAudio = this.opts.activeAudio;
-		this.audio = CT.dom.audio(null, null, true,
-			null, null, null, "hidden");
+//		this.audio = CT.dom.audio(null, null, true,
 //			null, null, this._nextAudio, "hidden");
+		this.audio = CT.dom.audio(null, null,
+			null, null, null, null, "hidden");
 		document.body.appendChild(this.audio);
 	},
 	_flipAudio: function() {
