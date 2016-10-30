@@ -34,6 +34,7 @@ CT.stream.opts = {
 	width: 320,
 	height: 240,
 	waiting: [],
+	merged: false,
 	codecs: {
 		av: 'video/webm; codecs="vp9,opus"',
 		video: 'video/webm; codecs="vp8"',
