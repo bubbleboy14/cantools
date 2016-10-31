@@ -15,6 +15,14 @@ class Geo(object):
 			"property": "results",
 			"index": 0
 		},
+		"where": {
+			"user": "google",
+			"host": "maps.googleapis.com",
+			"path": "/maps/api/geocode/json?sensor=false&address={0}",
+			"sig": "key",
+			"property": "results",
+			"index": 0
+		},
 		"zip": {
 			"geonames": {
 				"user": "geonames",
@@ -71,6 +79,13 @@ class Geo(object):
 		self.apis[api]["index"] = num
 		return result
 
+	def where(self, place):
+		results = self._fetch("where", place)
+		if not results:
+			return "space"
+		places = results[0]["address_components"]
+		return len(places) > 1 and places[1]["long_name"] or "earth"
+
 	def address2latlng(self, address):
 		if self._no_cache(address):
 			log("finding lat/lng for %s"%(address,), 3)
@@ -126,6 +141,7 @@ class Geo(object):
 			write(self.cache, "%s.json"%(zcpath,), True)
 
 geo = Geo()
+where = geo.where
 address2latlng = geo.address2latlng
 latlng2zip = geo.latlng2zip
 addr2zip = geo.addr2zip
