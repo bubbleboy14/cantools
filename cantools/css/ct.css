@@ -117,6 +117,14 @@
 .down10 { margin-bottom: -10px; }
 .left10 { margin-left: -10px; }
 .right10 { margin-right: -10px; }
+.up20 { margin-top: -20px; }
+.down20 { margin-bottom: -20px; }
+.left20 { margin-left: -20px; }
+.right20 { margin-right: -20px; }
+.up30 { margin-top: -30px; }
+.down30 { margin-bottom: -30px; }
+.left30 { margin-left: -30px; }
+.right30 { margin-right: -30px; }
 
 /* absolute / fixed */
 .all0 {
@@ -151,6 +159,14 @@
 .b0, .bottom0 { bottom: 0px; }
 .l0, .left0 { left: 0px; }
 .r0, .right0 { right: 0px; }
+.t10, .top10 { top: 10px; }
+.b10, .bottom10 { bottom: 10px; }
+.l10, .left10 { left: 10px; }
+.r10, .right10 { right: 10px; }
+.t20, .top20 { top: 20px; }
+.b20, .bottom20 { bottom: 20px; }
+.l20, .left20 { left: 20px; }
+.r20, .right20 { right: 20px; }
 .top50 { top: 50px; }
 .bottom50 { bottom: 50px; }
 .left50 { left: 50px; }
@@ -160,6 +176,7 @@
 .big { font-size: 120%; }
 .bigger { font-size: 140%; }
 .biggest { font-size: 180%; }
+.biggerer { font-size: 200%; }
 .biggerest { font-size: 230%; }
 .biggerester { font-size: 300%; }
 .gigantic { font-size: 400%; }
