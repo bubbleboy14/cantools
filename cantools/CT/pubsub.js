@@ -20,7 +20,7 @@ CT.pubsub = {
 		"autohistory": false,
 		"reconnect": true,
 		"reconnect_interval": 250,
-		"protocol": "ws",
+		"protocol": location == "http:" && "ws" || "wss",
 		"log": CT.log.getLogger("CT.pubsub"),
 		"queue": [],
 		"channels": {},
