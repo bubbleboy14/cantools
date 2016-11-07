@@ -65,6 +65,11 @@ around with DOM elements via CSS transitions. Have at it.
 	},
 	pulse: {
 		wait: 1000
+	},
+	invert: {
+		direction: "horizontal", // or vertical
+		property: "transform",
+		prefix: true
 	}
 
 TODO: let's add some more, like scale.
@@ -132,6 +137,11 @@ CT.trans = {
 			},
 			pulse: {
 				wait: 1000
+			},
+			invert: {
+				direction: "horizontal", // or vertical
+				property: "transform",
+				prefix: true
 			}
 		}
 	},
@@ -170,6 +180,14 @@ CT.trans = {
 	        else
 	            opts.node.style[opts.property] = opts.value;
 	    }
+	},
+	invert: function(node, opts) {
+		opts = CT.merge(opts, CT.trans._.defaults.invert);
+		opts.node = node;
+		opts.value = "scale" + (opts.direction == "horizontal"
+			? "X" : "Y") + "(-1)";
+		CT.trans.trans(opts);
+		return node;
 	},
 	rotate: function(node, opts) {
 		// opts may include: duration, degrees, cb, ease, forever
