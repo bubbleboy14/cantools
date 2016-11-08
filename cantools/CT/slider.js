@@ -12,6 +12,7 @@ the 'opts' object itself, are all optional.
     - subMode (default: 'peekaboo'): which mode to use for chunk-mode frames ('peekaboo', 'menu', 'profile', 'track')
     - defaultImg (default: undefined): fallback img for any frame mode
     - img (default: undefined): panning background image for whole slider. also works per-chunk.
+    - arrow (default: null): image for pointer arrow (falls back to pointy brackets)
     - autoSlideInterval (default: 5000): how many milliseconds to wait before auto-sliding frames
     - panDuration (default: autoSlideInterval): pan duration for background images
     - autoSlide (default: true): automatically proceed through frames (else, trigger later with .resume())
@@ -61,6 +62,7 @@ CT.slider.Slider = CT.Class({
 			circular: false,
 			pan: true,
 			translucentTeaser: true,
+			arrow: null,
 			parent: document.body,
 			mode: "peekaboo", // or 'menu' or 'profile' or 'chunk' or 'track'
 			subMode: "peekaboo", // or 'menu' or 'profile' or 'track'
@@ -81,12 +83,19 @@ CT.slider.Slider = CT.Class({
 			bclass += " hider";
 			this.circlesContainer.classList.add("hider");
 		}
-		this.prevButton = CT.dom.node(CT.dom.node(CT.dom.node("<", "span")), "div",
+		var pointerNode = function(forward) {
+			if (opts.arrow) {
+				var img = CT.dom.img(opts.arrow);
+				return forward ? img : CT.trans.invert(img);
+			}
+			return CT.dom.span(forward ? ">" : "<");
+		};
+		this.prevButton = CT.dom.div(CT.dom.div(pointerNode()),
 			bclass + " prv hidden");
-		this.nextButton = CT.dom.node(CT.dom.node(CT.dom.node(">", "span")), "div",
+		this.nextButton = CT.dom.div(CT.dom.div(pointerNode(true)),
 			bclass + " nxt" + (opts.frames.length < 2 ? " hidden" : ""));
 		this.index = this.pos = 0;
-		this.container = CT.dom.node("", "div",
+		this.container = CT.dom.div("",
 			"carousel-container full" + CT.slider.other_dim[this.dimension]);
 		var content = [
 			this.container,
@@ -95,7 +104,7 @@ CT.slider.Slider = CT.Class({
 			this.nextButton
 		];
 		if (opts.img) {
-			var imgBack = CT.dom.node(CT.dom.img(opts.img, "abs"), "div", "abs all0 noflow");
+			var imgBack = CT.dom.div(CT.dom.img(opts.img, "abs"), "abs all0 noflow");
 			if (opts.pan) {
 				this.imgBackController = CT.trans.pan(imgBack.firstChild, {
 					duration: opts.panDuration || opts.autoSlideInterval
@@ -107,7 +116,7 @@ CT.slider.Slider = CT.Class({
 			}
 			content.unshift(imgBack);
 		}
-		this.node = CT.dom.node(content, "div",
+		this.node = CT.dom.div(content,
 			"carousel fullwidth fullheight" + (opts.visible ? "" : " hider"));
 		this.opts.parent.appendChild(this.node);
 		this.opts.frames.forEach(this.addFrame);
@@ -408,6 +417,7 @@ CT.slider.Frame = CT.Class({
 			autoSlide: false,
 			img: this.opts.img,
 			pan: this.slider.opts.pan,
+			arrow: this.slider.opts.arrow,
 			defaultImg: this.slider.opts.defaultImg,
 			translucentTeaser: this.slider.opts.translucentTeaser,
 			orientation: CT.slider.other_orientation[this.slider.opts.orientation],
