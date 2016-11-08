@@ -311,6 +311,7 @@
 .wrap { word-wrap: break-word; }
 .nowrap { white-space: nowrap; }
 .nonowrap { white-space: normal; }
+.notouch { pointer-events: none; }
 .pointer { cursor: pointer; }
 .scroller { overflow: auto; }
 .noflow { overflow: hidden; }
