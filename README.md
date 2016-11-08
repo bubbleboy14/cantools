@@ -835,6 +835,7 @@ the 'opts' object itself, are all optional.
     - subMode (default: 'peekaboo'): which mode to use for chunk-mode frames ('peekaboo', 'menu', 'profile', 'track')
     - defaultImg (default: undefined): fallback img for any frame mode
     - img (default: undefined): panning background image for whole slider. also works per-chunk.
+    - arrow (default: null): image for pointer arrow (falls back to pointy brackets)
     - autoSlideInterval (default: 5000): how many milliseconds to wait before auto-sliding frames
     - panDuration (default: autoSlideInterval): pan duration for background images
     - autoSlide (default: true): automatically proceed through frames (else, trigger later with .resume())
@@ -959,6 +960,11 @@ around with DOM elements via CSS transitions. Have at it.
 	},
 	pulse: {
 		wait: 1000
+	},
+	invert: {
+		direction: "horizontal", // or vertical
+		property: "transform",
+		prefix: true
 	}
 
 TODO: let's add some more, like scale.
