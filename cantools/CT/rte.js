@@ -18,7 +18,8 @@ after first waiting for the nodeid-indicated node to appear in the DOM.
 CT.rte requires the open-source TinyMCE library, pulled in via CT.scriptImport().
 */
 
-CT.scriptImport("CT.lib.tiny_mce.tiny_mce");
+//CT.scriptImport("CT.lib.tiny_mce.tiny_mce");
+CT.scriptImport("https://cdnjs.cloudflare.com/ajax/libs/tinymce/3.5.8/tiny_mce.js");
 CT.rte = {
 	// wysiwyg editor widget
 	"wysiwygize": function(nodeid, isrestricted, val, cb, mismatchcb) {
