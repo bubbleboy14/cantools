@@ -267,7 +267,7 @@ CT.dom = {
 			}
 			onchange && onchange();
 		};
-		s.onchange();
+		setTimeout(s.onchange);
 		return s.container || s;
 	},
 	"range": function(onchange, min, max, value, step, classname, id) {
