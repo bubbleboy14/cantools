@@ -1,4 +1,4 @@
-import sys, json, threading
+import re, sys, json, threading
 from urllib import quote, unquote
 from base64 import b64encode, b64decode
 from cantools import config
@@ -351,7 +351,11 @@ def verify_recaptcha(cchallenge, cresponse, pkey):
 def strip_punctuation(s):
     return "".join([c for c in s if c.isalnum() or c.isspace()])
 
-def strip_html(s, keep_breaks=False):
+def strip_html(s):
+    p = re.compile(r'<.*?>')
+    return p.sub("", s)
+
+def strip_html_old(s, keep_breaks=False):
     i = s.find('<');
     while i != -1:
         j = s.find('>', i)
