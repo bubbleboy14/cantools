@@ -248,6 +248,13 @@ var CT = {
 					eb("request to " + path + " failed! (" + xhr.status + " - " + xhr.responseText + ")", ebarg);
 			};
 		},
+		"formData": function(data, params, dname) {
+			var fd = new FormData();
+			if (params) for (var param in params)
+				fd.append(param, params[param]);
+			fd.append(dname || "data", data);
+			return fd;
+		},
 		"post": function(path, params, errMsg, cb, eb, headers, cbarg, ebarg, sync, passthrough, noct) {
 			var signature;
 			if (CT.net._cache) {
