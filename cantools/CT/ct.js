@@ -256,6 +256,20 @@ var CT = {
 			return fd;
 		},
 		"post": function(path, params, errMsg, cb, eb, headers, cbarg, ebarg, sync, passthrough, noct) {
+			if (arguments.length == 1 && typeof arguments[0] != "string") {
+				var obj = arguments[0];
+				path = obj.path;
+				params = obj.params;
+				errMsg = obj.errMsg;
+				cb = obj.cb;
+				eb = obj.eb;
+				headers = obj.headers;
+				cbarg = obj.cbarg;
+				ebarg = obj.ebarg;
+				sync = obj.sync;
+				passthrough = obj.passthrough;
+				noct = obj.noct;
+			}
 			var signature;
 			if (CT.net._cache) {
 				signature = path + JSON.stringify(params);
