@@ -222,7 +222,7 @@ var CT = {
 				result.data = data;
 			return result;
 		},
-		"_xhrcb": function(path, cb, eb, cbarg, ebarg, errMsg, signature, _500as200) {
+		"_xhrcb": function(path, cb, eb, cbarg, ebarg, errMsg, signature, _500as200, noct) {
 			if (CT.net._spinner) {
 				CT.net._spinner_node = CT.net._spinner_node || CT.dom.spinner();
 				document.body.appendChild(CT.net._spinner_node);
@@ -236,7 +236,7 @@ var CT = {
 					if (CT.net._spinner)
 						CT.dom.remove(CT.net._spinner_node);
 					var data = xhr.responseText.trim();
-					if (CT.net._mode == "ct") {
+					if (!noct && CT.net._mode == "ct") {
 						var result = CT.net._ctresponse(data, signature);
 						if (result.success)
 							cb(result.data, cbarg);
@@ -248,7 +248,7 @@ var CT = {
 					eb("request to " + path + " failed! (" + xhr.status + " - " + xhr.responseText + ")", ebarg);
 			};
 		},
-		"post": function(path, params, errMsg, cb, eb, headers, cbarg, ebarg, sync, passthrough) {
+		"post": function(path, params, errMsg, cb, eb, headers, cbarg, ebarg, sync, passthrough, noct) {
 			var signature;
 			if (CT.net._cache) {
 				signature = path + JSON.stringify(params);
@@ -257,7 +257,7 @@ var CT = {
 					return cb(cachedVersion, cbarg);
 			}
 			return CT.net.xhr(path, "POST", params, !sync, CT.net._xhrcb(path,
-				cb, eb, cbarg, ebarg, errMsg, signature), headers, passthrough);
+				cb, eb, cbarg, ebarg, errMsg, signature, null, noct), headers, passthrough);
 		},
 		"put": function(path, params, cb, headers, passthrough, _500as200) {
 			CT.net.xhr(path, "PUT", params, true, CT.net._xhrcb(path, cb,
