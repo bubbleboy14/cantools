@@ -150,7 +150,7 @@ var CT = {
 			}
 			return CT.net._path + p;
 		},
-		"xhr": function(path, method, params, async, cb, headers, passthrough) {
+		"xhr": function(path, method, params, async, cb, headers, passthrough, noct) {
 			var xhr = window.XMLHttpRequest
 				? new XMLHttpRequest()
 				: new ActiveXObject("Microsoft.XMLHTTP");
@@ -164,7 +164,7 @@ var CT = {
 			};
 			if (params) {
 				if (!passthrough && CT.net._mode != "passthrough") {
-					if (CT.net._mode == "ct")
+					if (!noct && CT.net._mode == "ct")
 						params = CT.net._rd(params, true);
 					params = JSON.stringify(params);
 				}
@@ -256,8 +256,8 @@ var CT = {
 				if (cachedVersion)
 					return cb(cachedVersion, cbarg);
 			}
-			return CT.net.xhr(path, "POST", params, !sync, CT.net._xhrcb(path,
-				cb, eb, cbarg, ebarg, errMsg, signature, null, noct), headers, passthrough);
+			return CT.net.xhr(path, "POST", params, !sync, CT.net._xhrcb(path, cb, eb,
+				cbarg, ebarg, errMsg, signature, null, noct), headers, passthrough, noct);
 		},
 		"put": function(path, params, cb, headers, passthrough, _500as200) {
 			CT.net.xhr(path, "PUT", params, true, CT.net._xhrcb(path, cb,
