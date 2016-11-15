@@ -882,11 +882,11 @@ CT.dom = {
 	"clear": function(n) {
 		(n || document.body).innerHTML = "";
 	},
-	"addContent": function(targetNode, content) {
+	"addContent": function(targetNode, content, withClass) {
 		if (typeof content == "function")
 			content = content();
 		if (Array.isArray(content))
-			content = CT.dom.node(content);
+			content = CT.dom.node(content, "div", withClass);
 		if (typeof targetNode == "string")
 			targetNode = CT.dom.id(targetNode);
 		if (typeof content == "string" || typeof content == "number")
@@ -894,9 +894,9 @@ CT.dom = {
 		else if (content)
 			targetNode.appendChild(content);
 	},
-	"setContent": function(targetNode, content) {
+	"setContent": function(targetNode, content, withClass) {
 		CT.dom.clear(targetNode);
-		CT.dom.addContent(targetNode, content);
+		CT.dom.addContent(targetNode, content, withClass);
 	},
 	"addEach": function(parent, subs) {
 		subs.forEach(function(node) { // must wrap
