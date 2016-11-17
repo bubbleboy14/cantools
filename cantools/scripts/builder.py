@@ -128,7 +128,7 @@ def build(nothing, dirname, fnames):
                         js = "<script>%s</script>"%(minify(jsblock.replace('"_encode": false,', '"_encode": true,').replace("CT.log._silent = false;", "CT.log._silent = true;"), mangle=True),)
                     else:
                         error("invalid mode: %s"%(mode,))
-                    data = txt.format(jsspot=js)
+                    data = txt.format(jsspot=js).replace("&#123", "{").replace("&#125", "}")
                 else:
                     data = txt
             write(data, topath)
