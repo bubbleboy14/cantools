@@ -25,17 +25,30 @@ CT.key = {
 		null, null, null, null, null, null, null, null, null, null, "OPEN_BRACKET",
 		"BACK_SLASH", "CLOSE_BRACKET", "QUOTE"],
 	_cbs: {},
+	_downs: [],
 	_init: function() {
 		if (!CT.key._initialized) {
 			CT.key._initialized = true;
 			window.onkeyup = CT.key._onUp;
+			window.onkeydown = CT.key._onDown;
 		}
+	},
+	_onDown: function(e) {
+		e = e || window.event;
+		var code = e.keyCode || e.which,
+			character = CT.key._codes[code];
+		CT.data.append(CT.key._downs, character);
 	},
 	_onUp: function(e) {
 		e = e || window.event;
 		var code = e.keyCode || e.which,
 			character = CT.key._codes[code];
+		CT.data.remove(CT.key._downs, character);
 		CT.key._cbs[character] && CT.key._cbs[character]();
+	},
+	down: function(character) {
+		CT.key._init();
+		return CT.key._downs.indexOf(character) != -1;
 	},
 	on: function(character, cb) {
 		CT.key._init();
