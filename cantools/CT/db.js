@@ -382,30 +382,36 @@ CT.db.edit = {
 		valcell.rowKey = k;
 		return valcell;
 	},
-	img: function(opts) {
+	media: function(opts) {
 		opts = CT.merge(opts, {
-			imgClass: "w1",
+			className: "w1",
 			parentClass: "w1",
-			property: "img"
+			mediaType: "img" // or video
 		});
+		opts.property = opts.property || opts.mediaType;
 		var n = CT.dom.node(null, "div", opts.parentClass),
 			val = opts.data[opts.property],
-			img = CT.dom.img(val, opts.imgClass),
+			uptype = opts.mediaType == "img" ? "image" : "video",
+			media = CT.dom[opts.mediaType](val, opts.className),
 			blob = new CT.db.Blob({
 				noNothing: true,
 				key: opts.data.key,
 				property: opts.property,
 				value: val,
-				firstUp: "upload image",
+				firstUp: "upload " + uptype,
 				className: "round hoverglow",
 				cb: function(newVal) {
-					img.src = newVal + "?ts=" + Date.now();
+					media.src = newVal + "?ts=" + Date.now();
 					opts.data[opts.property] = newVal;
 					opts.cb && opts.cb();
 				}
 			});
-		CT.dom.setContent(n, [img, blob.node]);
+		CT.dom.setContent(n, [media, blob.node]);
 		return n;
+	},
+	img: function(opts) {
+		CT.log("[DEPRECATION WARNING] CT.db.edit.img() is deprecated. Use CT.db.edit.media() instead.");
+		return CT.db.edit.media(opts);
 	}
 };
 
