@@ -39,6 +39,8 @@
 .w500p { width: 500px; }
 .hm200p { max-height: 200px; }
 .wm200p { max-width: 200px; }
+.hm400p { max-height: 400px; }
+.wm400p { max-width: 400px; }
 .h1 { height: 100%; }
 .h1-2 { height: 50%; }
 .h1-3 { height: 33%; }
