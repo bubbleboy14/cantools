@@ -880,6 +880,8 @@ CT.dom = {
 		}
 	},
 	"clear": function(n) {
+		if (typeof n == "string")
+			n = CT.dom.id(n);
 		(n || document.body).innerHTML = "";
 	},
 	"addContent": function(targetNode, content, withClass) {
@@ -991,8 +993,15 @@ CT.dom = {
 			: (opts.id ? [CT.dom.id(opts.id)] : []))),
 			property = opts.property || "display",
 			value = opts.value ||
-				(opts.show ? "block" : opts.hide ? "none" : "");
-		for (var i = 0; i < targets.length; i++)
-			targets[i].style[property] = value;
+				(opts.show ? "block" : opts.hide ? "none" : ""),
+			modz = opts.modz;
+		if (!modz) {
+			modz = {};
+			modz[property] = value;
+		}
+		Object.keys(modz).forEach(function(property) {
+			for (var i = 0; i < targets.length; i++)
+				targets[i].style[property] = modz[property];
+		});
 	}
 };
