@@ -222,8 +222,8 @@ var CT = {
 				result.data = data;
 			return result;
 		},
-		"_xhrcb": function(path, cb, eb, cbarg, ebarg, errMsg, signature, _500as200, noct) {
-			if (CT.net._spinner) {
+		"_xhrcb": function(path, cb, eb, cbarg, ebarg, errMsg, signature, _500as200, noct, spinner) {
+			if (CT.net._spinner || spinner) {
 				CT.net._spinner_node = CT.net._spinner_node || CT.dom.spinner();
 				document.body.appendChild(CT.net._spinner_node);
 			}
@@ -233,7 +233,7 @@ var CT = {
 			};
 			return function(xhr) {
 				if (xhr.status == 200 || (_500as200 && xhr.status == 500)) {
-					if (CT.net._spinner)
+					if (CT.net._spinner || spinner)
 						CT.dom.remove(CT.net._spinner_node);
 					var data = xhr.responseText.trim();
 					if (!noct && CT.net._mode == "ct") {
@@ -255,7 +255,7 @@ var CT = {
 			fd.append(dname || "data", data);
 			return fd;
 		},
-		"post": function(path, params, errMsg, cb, eb, headers, cbarg, ebarg, sync, passthrough, noct) {
+		"post": function(path, params, errMsg, cb, eb, headers, cbarg, ebarg, sync, passthrough, noct, spinner) {
 			if (arguments.length == 1 && typeof arguments[0] != "string") {
 				var obj = arguments[0];
 				path = obj.path;
@@ -269,6 +269,7 @@ var CT = {
 				sync = obj.sync;
 				passthrough = obj.passthrough;
 				noct = obj.noct;
+				spinner = obj.spinner;
 			}
 			var signature;
 			if (CT.net._cache) {
@@ -278,11 +279,11 @@ var CT = {
 					return cb(cachedVersion, cbarg);
 			}
 			return CT.net.xhr(path, "POST", params, !sync, CT.net._xhrcb(path, cb, eb,
-				cbarg, ebarg, errMsg, signature, null, noct), headers, passthrough, noct);
+				cbarg, ebarg, errMsg, signature, null, noct, spinner), headers, passthrough, noct);
 		},
-		"put": function(path, params, cb, headers, passthrough, _500as200) {
-			CT.net.xhr(path, "PUT", params, true, CT.net._xhrcb(path, cb,
-				null, null, null, null, null, _500as200), headers, passthrough);
+		"put": function(path, params, cb, headers, passthrough, _500as200, noct, spinner) {
+			CT.net.xhr(path, "PUT", params, true, CT.net._xhrcb(path, cb, null, null,
+				null, null, null, _500as200, noct, spinner), headers, passthrough);
 		},
 		"del": function(path, params, cb, headers) {
 			CT.net.xhr(path, "DELETE", params, true, CT.net._xhrcb(path, cb), headers);
