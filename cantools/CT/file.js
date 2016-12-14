@@ -50,7 +50,7 @@ CT.file.File = CT.Class({
 			headers["Content-Type"] = "multipart/form-data";
 			data = CT.net.formData(this.opts.file, params);
 		}
-		CT.net.put(path, data, cb, headers, true);
+		CT.net.put(path, data, cb, headers, true, null, null, true);
 	},
 	init: function(opts) {
 		this.opts = opts;
