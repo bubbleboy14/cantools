@@ -30,7 +30,7 @@ class PubSubChannel(object):
         }
         self._broadcast(obj)
         self.history.append(subobj)
-        self.history = self.history[:config.pubsub.history]
+        self.history = self.history[-config.pubsub.history:]
 
     def leave(self, user):
         if user in self.users:
