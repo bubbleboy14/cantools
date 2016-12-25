@@ -23,17 +23,19 @@ class Query(object):
         self.filter(*args, **kwargs)
 
     def order(self, prop):
+        asc = True
+        if prop.startswith("-"):
+            asc = False
+            prop = prop[1:]
         if isinstance(prop, basestring) and "." in prop: # it's a foreignkey reference from another table
             from lookup import refcount_subq
-            asc = True
-            if prop.startswith("-"):
-                asc = False
-                prop = prop[1:]
             sub = refcount_subq(prop, self.session)
             order = sub.c.count
             if not asc:
                 order = -sub.c.count
             return self.join(sub, self.mod.key == sub.c.target).order(order)
+        if not asc:
+            prop = "%s desc"%(prop,)
         return self._order(prop)
 
     def _qpass(self, fname):
