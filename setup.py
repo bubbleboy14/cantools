@@ -22,13 +22,12 @@ setup(
     zip_safe = False,
     install_requires = [
         "rel >= 0.3.5",
-        "dez >= 0.7.4.2",
+        "dez >= 0.7.4.3",
         "yagmail >= 0.4.116",
         "requests >= 2.3.0",
         "slimit",
         "ply >= 3.7",
         "sqlalchemy >= 1.0.12",
-        "python-magic >= 0.4.11",
         "braintree >= 3.27.0"
     ],
     entry_points = '''
