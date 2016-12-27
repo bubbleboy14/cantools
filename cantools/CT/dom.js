@@ -947,7 +947,7 @@ CT.dom = {
 		}
 		var node = href ? CT.dom.node(null, "link", null, null,
 			{ "href": href, "rel": "stylesheet" }) : CT.dom.node(text, "style");
-		CT.dom.tag("head")[0].appendChild(node);
+		CT.dom.head(node);
 	},
 
 	// defer function until node exists in dom
@@ -975,6 +975,18 @@ CT.dom = {
 	},
 	"Q": function(q, n) {
 		return CT.dom._narr2arr((n || document.body).querySelectorAll(q));
+	},
+	"head": function(node) {
+		var head = CT.dom.tag("head")[0];
+		if (node)
+			head.appendChild(node);
+		return head;
+	},
+	"meta": function(name, content) {
+		var meta = CT.dom.node(null, "meta");
+		meta.name = name;
+		meta.content = content;
+		CT.dom.head(meta);
 	},
 	"each": function(p, f) {
 		for (var i = 0; i < p.childNodes.length; i++)
