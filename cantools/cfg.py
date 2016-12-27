@@ -104,7 +104,10 @@ cfg = {
 				"logo": "Your Logo",
 				"right": []
 			},
-			"css": []
+			"css": [],
+			"mobile": {
+				"scale": False
+			}
 		},
 		"util": {},
 		"dirs": ["js", "css", "img", "logs", "blob", "html", "html-static", "html-production"],
