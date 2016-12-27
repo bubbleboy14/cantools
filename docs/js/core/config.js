@@ -51,6 +51,9 @@ core.config = {
 		]
 	},
 	"css": [],
+	"mobile": {
+		"scale": false
+	},
 	"ctdocs": {
 		"base": "https://github.com/bubbleboy14/cantools/blob/master/",
 		"source": function(name) {
