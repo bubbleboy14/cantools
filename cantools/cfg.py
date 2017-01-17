@@ -24,7 +24,10 @@ cfg = {
 	"admin": {
 		"host": "localhost",
 		"port": 8002,
-		"log": None
+		"log": None,
+		"monitor": {
+			"interval": 5
+		}
 	},
 	"web": {
 		"server": "dez",
