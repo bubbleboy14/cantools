@@ -24,10 +24,10 @@ class Query(object):
 
     def order(self, prop):
         asc = False
-        if type(prop) is elements.UnaryExpression:
-            prop = -prop
-        elif prop.startswith("-"):
+        if isinstance(prop, basestring) and prop.startswith("-"):
             prop = prop[1:]
+        elif type(prop) is elements.UnaryExpression:
+            prop = -prop
         else:
             asc = True
         if isinstance(prop, basestring) and "." in prop: # it's a foreignkey reference from another table
