@@ -47,11 +47,13 @@ CT.pubsub = {
 			},
 			"subscribe": function(data) {
 				CT.pubsub._.cb.join(data.channel, data.user);
-				CT.data.append(CT.pubsub._.channels[data.channel].presence, data.user);
+				var chan = CT.pubsub._.channels[data.channel];
+				chan && CT.data.append(chan.presence, data.user);
 			},
 			"unsubscribe": function(data) {
 				CT.pubsub._.cb.leave(data.channel, data.user);
-				CT.data.remove(CT.pubsub._.channels[data.channel].presence, data.user);
+				var chan = CT.pubsub._.channels[data.channel];
+				chan && CT.data.remove(chan.presence, data.user);
 			},
 			"pm": function(data) {
 				CT.pubsub._.cb.pm(data.message, data.user);

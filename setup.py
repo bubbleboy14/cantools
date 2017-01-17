@@ -28,6 +28,7 @@ setup(
         "slimit",
         "ply >= 3.7",
         "sqlalchemy >= 1.0.12",
+        "psutil >= 5.0.1",
         "braintree >= 3.27.0"
     ],
     entry_points = '''

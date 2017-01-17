@@ -11,12 +11,13 @@ CT.admin.core = {
 	_init: function(pw) {
 		var c = CT.admin.core;
 		c._pw = pw;
-		c._skipinit ? c._initcb() : c.q(c._mode,
-			c._initcb, "failed to initialize " + c._mode);
-		CT.admin.core.credcheck(function(msg) {
-			alert(msg);
-			location = "/";
-		});
+		if (c._skipinit) {
+			CT.admin.core.credcheck(function(msg) {
+				alert(msg);
+				location = "/";
+			}, c._initcb);
+		} else
+			c.q(c._mode, c._initcb, "failed to initialize " + c._mode);
 	},
 	init: function(mode, cb, skipinit) {
 		CT.admin.core._mode = mode;

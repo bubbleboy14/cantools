@@ -23,12 +23,12 @@ class PubSubUser(Actor):
         getattr(self.server, obj["action"])(obj["data"], self)
 
     def _close(self):
-        for channel in list(self.channels):
-            channel.leave(self)
         if self.name in self.server.users:
             del self.server.users[self.name]
         elif self.name in self.server.admins:
             del self.server.admins[self.name]
+        for channel in list(self.channels):
+            channel.leave(self)
 
     def _error(self, message):
         self.write({

@@ -7,7 +7,7 @@ CT.admin.memcache = {
 			if (mck.length) {
 				CT.panel.simple(mck, "mc");
 				mck.forEach(function(key) {
-					CT.dom.setContent("mcpanel" + key, mc[key]);
+					CT.dom.setContent("mcpanel" + key, JSON.stringify(mc[key]));
 				});
 				CT.dom.id("mcinfo").appendChild(CT.dom.node([
 					CT.dom.node([
