@@ -1,4 +1,4 @@
-from sqlalchemy.sql import func
+from sqlalchemy.sql import func, elements
 from cantools.util import start_timer, end_timer
 from properties import *
 from getters import *
@@ -23,10 +23,13 @@ class Query(object):
         self.filter(*args, **kwargs)
 
     def order(self, prop):
-        asc = True
-        if prop.startswith("-"):
-            asc = False
+        asc = False
+        if type(prop) is elements.UnaryExpression:
+            prop = -prop
+        elif prop.startswith("-"):
             prop = prop[1:]
+        else:
+            asc = True
         if isinstance(prop, basestring) and "." in prop: # it's a foreignkey reference from another table
             from lookup import refcount_subq
             sub = refcount_subq(prop, self.session)
