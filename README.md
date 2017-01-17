@@ -1,4 +1,4 @@
-# cantools 0.8.14.5
+# cantools 0.8.15
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
 License: MIT (see LICENSE)
@@ -229,6 +229,7 @@ This module includes submodules for interacting with the admin backend:
     - CT.admin.core
     - CT.admin.db
     - CT.admin.memcache
+    - CT.admin.monitor
     - CT.admin.pubsub
 
 ## CT.align
