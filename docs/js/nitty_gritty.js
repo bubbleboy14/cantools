@@ -566,6 +566,8 @@ CT.onload(function() {
 				"Peruse and mess with your data.",
 				CT.dom.div("memcache", "bigger bold pv10"),
 				"Review an up-to-the-moment snapshot of your server's memcache.",
+				CT.dom.div("monitor", "bigger bold pv10"),
+				"What's your system doing right now? Graphs.",
 				CT.dom.div("pubsub", "bigger bold pv10"),
 				"Who's saying what where?",
 				CT.dom.div("logs", "bigger bold pv10"),
