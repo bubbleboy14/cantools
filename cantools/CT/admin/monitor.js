@@ -3,6 +3,7 @@ CT.admin.monitor = {
 		CT.admin.core.init("monitor", function(loc) {
 			CT.admin.monitor._graph = new CT.admin.monitor.Graph();
 			document.body.appendChild(CT.admin.monitor._graph.content);
+			CT.pubsub.set_autohistory(true);
 			CT.pubsub.set_cb("message", CT.admin.monitor._graph.update);
 			CT.pubsub.subscribe("monitor");
 			CT.pubsub.connect(loc.host, loc.port,
