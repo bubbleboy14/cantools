@@ -6,7 +6,7 @@ from actor import Actor
 class BotMeta(type):
 	def __new__(cls, name, bases, attrs):
 		bc = type.__new__(cls, name, bases, attrs)
-		if name is not "Bot":
+		if name not in ["Bot", "Monitor"]:
 			log("Initializing Bot Class: %s"%(name,), important=True)
 			config.pubsub.bots.update(name.lower(), bc)
 		return bc
@@ -63,6 +63,5 @@ class Monitor(Bot):
 			"virtual_memory": psutil.virtual_memory().percent,
 			"swap_memory": psutil.swap_memory().percent
 		}
-		log(obj)
 		self.pub(obj)
 		return True
