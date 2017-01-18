@@ -111,6 +111,10 @@ config.update("cache", pc)
 config.plugin.update("repos", map(lambda p : "/" in p and p or "%s/%s"%(config.plugin.base, p), config.plugin.modules))
 config.plugin.update("modules", map(lambda p : p.split("/")[-1], config.plugin.modules))
 
+# set protocol based on certs
+if config.ssl.certfile:
+	config.web.update("protocol", "https")
+
 def include_plugin(plug):
 	repo = "/" in plug and plug or "%s/%s"%(config.plugin.base, plug)
 	if repo == plug:
