@@ -24,6 +24,7 @@ cfg = {
 	"admin": {
 		"host": "localhost",
 		"port": 8002,
+		"protocol": "http",
 		"log": None,
 		"monitor": {
 			"interval": 5

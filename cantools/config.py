@@ -114,6 +114,7 @@ config.plugin.update("modules", map(lambda p : p.split("/")[-1], config.plugin.m
 # set protocol based on certs
 if config.ssl.certfile:
 	config.web.update("protocol", "https")
+	config.admin.update("protocol", "https")
 
 def include_plugin(plug):
 	repo = "/" in plug and plug or "%s/%s"%(config.plugin.base, plug)
