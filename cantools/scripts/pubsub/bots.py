@@ -1,6 +1,7 @@
 import event, json, psutil
 from cantools import config
 from cantools.util import log
+from cantools.web import fetch
 from actor import Actor
 
 class BotMeta(type):
@@ -53,15 +54,30 @@ class Monitor(Bot):
 	def _tick(self):
 		dioc = psutil.disk_io_counters()
 		nioc = psutil.net_io_counters()
-		obj = {
+		dmon = fetch(config.admin.host, "/_report",
+			config.admin.port, True, protocol=config.admin.protocol)
+		self.pub({
 			"cpu": psutil.cpu_percent(),
 			"read": dioc.read_time,
 			"write": dioc.write_time,
 			"sent": nioc.bytes_sent,
 			"recv": nioc.bytes_recv,
-			"connections": len(psutil.net_connections()),
 			"virtual_memory": psutil.virtual_memory().percent,
-			"swap_memory": psutil.swap_memory().percent
-		}
-		self.pub(obj)
+			"swap_memory": psutil.swap_memory().percent,
+			"connections": len(psutil.net_connections()),
+			"web_connections": dmon["web"]["connections"],
+			"admin_connections": dmon["admin"]["connections"],
+			"web_requests": dmon["web"]["requests"],
+			"admin_requests": dmon["admin"]["requests"],
+			"totals": {
+				"web": {
+					"connections": dmon["web"]["total_connections"],
+					"requests": dmon["web"]["total_requests"],
+				},
+				"admin": {
+					"connections": dmon["admin"]["total_connections"],
+					"requests": dmon["admin"]["total_requests"]
+				}
+			}
+		})
 		return True
