@@ -42,9 +42,9 @@ CT.admin.monitor.Graph = CT.Class({
 		if (fresh) {
 			var lines = Object.keys(this.data).map(function(k) {
 				if (["read", "write"].indexOf(k) != -1)
-					k += " (times 10,000)";
+					k += " (X 10,000)";
 				else if (["sent", "recv"].indexOf(k) != -1)
-					k += " (times 100,000,000)";
+					k += " (X 100,000,000)";
 				return CT.dom.div(k, "big m5 padded inline-block")
 			});
 			CT.dom.addContent("legend", lines);
