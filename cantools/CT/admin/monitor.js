@@ -19,11 +19,19 @@ CT.admin.monitor.Graph = CT.Class({
 		}, { low: 0, high: 100 });
 	},
 	update: function(data) {
-		var key, d, fresh = !Object.keys(this.data).length;
+		var key, d, tcat, fresh = !Object.keys(this.data).length;
 		for (key in data.message) {
+			d = data.message[key];
+			if (key == "totals") {
+				for (tcat in d) {
+					CT.dom.setContent(tcat + "_totals", Object.keys(d[tcat]).map(function(cname) {
+						return d[tcat][cname] + " total " + tcat + " " + cname;
+					}));
+				}
+				continue;
+			}
 			if (!(key in this.data))
 				this.data[key] = [];
-			d = data.message[key];
 			if (["read", "write"].indexOf(key) != -1)
 				d /= 10000;
 			else if (["sent", "recv"].indexOf(key) != -1)
