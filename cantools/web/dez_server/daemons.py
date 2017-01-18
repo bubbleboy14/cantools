@@ -30,17 +30,17 @@ class Web(CTWebBase):
     def __init__(self, bind_address, port, logger_getter):
         self.logger = logger_getter("Web")
         CTWebBase.__init__(self, bind_address, port, logger_getter)
-        self.add_cb_rule("/_report", self.report)
-
-    def report(self, req):
-        report = json.dumps({
-            "web": self.daemon.counter.report(),
-            "admin": self.controller.admin.daemon.counter.report()
-        })
-        req.write("HTTP/1.0 200 OK\r\n\r\n%s"%(report,))
-        req.close()
 
 class Admin(CTWebBase):
     def __init__(self, bind_address, port, logger_getter):
         self.logger = logger_getter("Admin")
         CTWebBase.__init__(self, bind_address, port, logger_getter, A_STATIC, A_CB)
+        self.add_cb_rule("/_report", self.report)
+
+    def report(self, req):
+        report = json.dumps({
+            "web": self.controller.web.daemon.counter.report(),
+            "admin": self.daemon.counter.report()
+        })
+        req.write("HTTP/1.0 200 OK\r\n\r\n%s"%(report,))
+        req.close()
