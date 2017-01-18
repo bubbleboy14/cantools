@@ -34,6 +34,7 @@ cfg = {
 		"domain": "your.web.domain",
 		"host": "0.0.0.0",
 		"port": 8080,
+		"protocol": "http",
 		"log": None
 	},
 	"ssl": {
