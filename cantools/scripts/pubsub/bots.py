@@ -1,6 +1,6 @@
-import event, json, psutil
+import datetime, event, json, os, psutil
 from cantools import config
-from cantools.util import log
+from cantools.util import log, write
 from cantools.web import fetch
 from actor import Actor
 
@@ -51,12 +51,33 @@ class Monitor(Bot):
 		Bot.__init__(self, server, channel, name)
 		event.timeout(config.admin.monitor.interval, self._tick)
 
+	def _datedir(self):
+		n = datetime.datetime.now()
+		lp = os.path.join("logs", "monitor")
+		yp = os.path.join(lp, str(n.year))
+		mp = os.path.join(yp, str(n.month))
+		dp = os.path.join(mp, str(n.day))
+		if not os.path.isdir(lp):
+			os.mkdir(lp)
+		if not os.path.isdir(yp):
+			os.mkdir(yp)
+		if not os.path.isdir(mp):
+			os.mkdir(mp)
+		if not os.path.isdir(dp):
+			os.mkdir(dp)
+		return os.path.join(dp, str(n.hour))
+
+	def log(self, data):
+		self.pub(data)
+		if config.admin.monitor.log:
+			write(data, self._datedir(), True, append=True, newline=True)
+
 	def _tick(self):
 		dioc = psutil.disk_io_counters()
 		nioc = psutil.net_io_counters()
 		dmon = fetch(config.admin.host, "/_report",
 			config.admin.port, True, protocol=config.admin.protocol)
-		self.pub({
+		self.log({
 			"cpu": psutil.cpu_percent(),
 			"read": dioc.read_time,
 			"write": dioc.write_time,
