@@ -888,9 +888,9 @@ CT.dom = {
 		if (typeof content == "function")
 			content = content();
 		if (Array.isArray(content))
-			content = CT.dom.node(content, "div", withClass);
+			content = CT.dom.div(content, withClass);
 		if (typeof targetNode == "string")
-			targetNode = CT.dom.id(targetNode);
+			targetNode = CT.dom.id(targetNode, true);
 		if (typeof content == "string" || typeof content == "number")
 			targetNode.innerHTML += content;
 		else if (content)
