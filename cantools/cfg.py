@@ -27,7 +27,8 @@ cfg = {
 		"protocol": "http",
 		"log": None,
 		"monitor": {
-			"interval": 5
+			"interval": 5,
+			"log": False
 		}
 	},
 	"web": {
