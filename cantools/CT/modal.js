@@ -205,8 +205,9 @@ CT.modal.Modal = CT.Class({
 		this.visible = true;
 		this.on.show();
 	},
-	show: function(n) {
+	show: function(n, cb) {
 		setTimeout(this._show, 0, n); // wait a tick for initialization
+		cb && setTimeout(cb, 200);
 	},
 	showHide: function(n) {
 		this.visible ? this.hide() : this.show(n);
