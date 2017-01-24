@@ -59,6 +59,9 @@ CT.map.Map = CT.Class({
 		// following two lines for firefox, basically
 		this.refresh();
 		this.map.setCenter(this.opts.center);
+		for (k in this.opts.listeners)
+			this.listen(k, this.opts.listeners[k]);
+		this.opts.onload && this.opts.onload();
 	},
 	refresh: function() {
 		google.maps.event.trigger(this.map, 'resize');
@@ -71,12 +74,16 @@ CT.map.Map = CT.Class({
 		this.opts.center = CT.map.util.getGeoFallback();
 		this._build();
 	},
+	listen: function(evt, cb) {
+		google.maps.event.addListener(this.map, evt, cb);
+	},
 	init: function(opts) { // required: node
 		this.opts = opts = CT.merge(opts, {
 			zoom: 12,
 			disableDefaultUI: true,
 			zoomControl: true,
-			markers: {}
+			markers: {},
+			listeners: {}
 		});
 		if (opts.center)
 			this._build();
