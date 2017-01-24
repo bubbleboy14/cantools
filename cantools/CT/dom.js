@@ -843,6 +843,8 @@ CT.dom = {
 	},
 	"showHide": function(n, juston, justoff, dstyle) {
 		n = n || document.body;
+		if (typeof n == "string")
+			n = CT.dom.id(n);
 		dstyle = dstyle || "block";
 		if (juston || justoff)
 			n.style.display = juston && dstyle || "none";
