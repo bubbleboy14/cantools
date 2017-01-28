@@ -34,6 +34,12 @@ CT.map.Map = CT.Class({
 			m.remove();
 		});
 	},
+	getMarker: function(key) {
+		return this.markers[key];
+	},
+	removeMarker: function(key) {
+		this.getMarker(key).remove();
+	},
 	geoJson: function(gj) { // path or json obj (right?)
 		this.map.data.loadGeoJSON(gj);
 	},
@@ -62,6 +68,12 @@ CT.map.Map = CT.Class({
 		for (k in this.opts.listeners)
 			this.listen(k, this.opts.listeners[k]);
 		this.opts.onload && this.opts.onload();
+	},
+	setCenter: function(latlng) {
+		this.map.setCenter(latlng);
+	},
+	panTo: function(latlng) {
+		this.map.panTo(latlng);
 	},
 	refresh: function() {
 		google.maps.event.trigger(this.map, 'resize');
