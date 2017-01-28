@@ -882,7 +882,7 @@
     -o-transition: opacity 500ms;
     transition: opacity 500ms;
 }
-.overlay:hover {
+.overlay:hover, .active_overlay {
     opacity: 1;
 }
 .margined {
