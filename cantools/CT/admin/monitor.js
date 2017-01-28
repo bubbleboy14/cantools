@@ -56,6 +56,9 @@ CT.admin.monitor = {
 			CT.pubsub.connect(data.host, data.port,
 				"__admin__" + Math.floor(Math.random() * 1000) + btoa(CT.admin.core._pw));
 			data.logs.sort(function(a, b) { return a[0] < b[0] ? -1 : 1; });
+			data.logs.forEach(function(day) {
+				day[1].sort(function(a, b) { return parseInt(a) < parseInt(b) ? -1 : 1; });
+			});
 			CT.admin.monitor._logs = data.logs;
 			CT.admin.monitor._cache = {};
 			if (data.logs) {
