@@ -91,6 +91,7 @@ code, and they're only imported as needed (when missing from browser).
 
 var CT = {
 	"_": {
+		"vals": {},
 		"extReqs": {},
 		"scriptImportCb": {},
 		"onImport": function(fullpath) {
@@ -365,6 +366,12 @@ var CT = {
 		CT.layout.header(core.config.header);
 		core.config.footer && CT.layout.footer(core.config.footer);
 		core.config.mobile.scale && CT.dom.meta("viewport", "width=device-width, initial-scale=1");
+	},
+	"setVal": function(k, v) {
+		CT._.vals[k] = v;
+	},
+	"getVal": function(k) {
+		return CT._.vals[k];
 	},
 	"onload": function(cb, n) {
 		n = n || window;
