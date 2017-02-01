@@ -38,8 +38,7 @@ def processhtml(html, admin_ct_path=None):
             if url.startswith(flag):
                 url = url.replace(flag, admin_ct_path)
             else:
-#                url = os.path.join(os.path.abspath(os.curdir), "dynamic", url) # doesn't work???
-                url = os.path.abspath(os.curdir) + "/dynamic" + url # fix this!!! os.path.join() being weird...
+                url = os.path.join(os.path.abspath(os.curdir), "dynamic", url[1:])
         elif url.startswith(flag):
             url = url[1:]
         js.append(url)
