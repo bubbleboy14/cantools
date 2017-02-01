@@ -39,6 +39,7 @@ import os, sys
 from optparse import OptionParser
 from cantools import config, include_plugin
 from cantools.util import log, error, cp, sym, mkdir, rm, cmd, read
+from builder import build
 
 CTP = __file__.rsplit(os.path.sep, 2)[0]
 
@@ -238,6 +239,12 @@ def update():
 			cmd("git pull")
 	log("finished updates", 1)
 
+def admin():
+	log("compiling admin pages -- thanks for developing!!", important=True)
+	os.chdir(os.path.join(CTP, "admin"))
+	os.path.walk("dynamic", build, CTP)
+	log("finished compilation")
+
 def parse_and_make():
 	parser = OptionParser("ctinit [projname] [-ru] [--plugins=P1|P2|P3] [--cantools_path=PATH] [--web_backend=BACKEND]")
 	parser.add_option("-p", "--plugins", dest="plugins", default="",
@@ -250,9 +257,13 @@ def parse_and_make():
 		dest="refresh_symlinks", default=False, help="add symlinks to project and configure version control path exclusion (if desired)")
 	parser.add_option("-u", "--update", action="store_true",
 		dest="update", default=False, help="update cantools and all managed plugins")
+	parser.add_option("-a", "--admin", action="store_true",
+		dest="admin", default=False, help="compile admin pages[ctdev only]")
 	options, args = parser.parse_args()
 	if options.update:
 		update()
+	elif options.admin:
+		admin()
 	else:
 		if options.plugins:
 			for p in options.plugins.split("|"):
