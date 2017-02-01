@@ -34,16 +34,31 @@ def set_clearmem(f):
     global clearmem
     clearmem = f
 
-# logging, encoding, decoding -- overwrite with setlog, setenc, setdec
+# logging -- overwrite with setlog if ya want
 def log(*args, **kwargs):
     print args, kwargs
 
+# encoding, decoding -- may overwrite with setenc/setdec, but not _that_ necessary
+_c = config.scrambler
+_cl = len(_c)
+_chl = _cl / 2
+
+def flip(c):
+    i = _c.find(c)
+    if i == -1:
+        return c
+    return _c[(i + _chl) % _cl]
+
+def scramble(s):
+    return "".join([flip(c) for c in s])
+
 def enc(data):
-    return b64encode(data)
+    return scramble(b64encode(data))
 
 def dec(data):
-    return b64decode(data)
+    return b64decode(scramble(data))
 
+# setters (see above)
 def setlog(f):
     global log
     log = f

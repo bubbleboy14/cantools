@@ -124,8 +124,11 @@ def build(nothing, dirname, fnames):
                     elif mode is "production":
                         log("production mode", 1)
                         txt = compress(txt)
+                        jsb = jsblock.replace('"_encode": false,', '"_encode": true,').replace("CT.log._silent = false;", "CT.log._silent = true;")
+                        if config.customscrambler:
+                            jsb += '; CT.net.setScrambler("%s");'%(config.scrambler,)
                         from slimit import minify
-                        js = "<script>%s</script>"%(minify(jsblock.replace('"_encode": false,', '"_encode": true,').replace("CT.log._silent = false;", "CT.log._silent = true;"), mangle=True),)
+                        js = "<script>%s</script>"%(minify(jsb, mangle=True),)
                     else:
                         error("invalid mode: %s"%(mode,))
                     data = txt.format(jsspot=js).replace("&#123", "{").replace("&#125", "}")

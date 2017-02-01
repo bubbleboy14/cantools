@@ -59,6 +59,7 @@ cfg = {
 		"public": None,
 		"private": None
 	},
+	"scrambler": "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/=_",
 	"encode": False,
 	"mailer": None, # (override w/ MAILER)
 	"pubsub": {
