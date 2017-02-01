@@ -35,15 +35,10 @@ def processhtml(html, admin_ct_path=None):
         url = html[start:end]
         flag = "/%s"%(config.js.path,)
         if admin_ct_path:
-            log("url (orig) %s"%(url,), important=True)
             if url.startswith(flag):
-                log("config %s"%(config.js.path,))
-                log("ctp %s"%(admin_ct_path,))
                 url = url.replace(flag, admin_ct_path)
             else:
-                log("dynamic!")
                 url = os.path.abspath(os.curdir) + "/dynamic" + url # fix this!!! os.path.join() weird...
-            log("url (modded) %s"%(url,))
         elif url.startswith(flag):
             url = url[1:]
         js.append(url)
