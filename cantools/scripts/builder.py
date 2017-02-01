@@ -73,7 +73,6 @@ def require(line, jspaths, block, inits, admin_ct_path=None):
     jspath = os.path.join(admin_ct_path or config.js.path, *rsplit) + ".js"
     log("path %s"%(jspath,))
     if jspath not in jspaths:
-        log(jspath)
         prefixes = []
         fullp = "window"
         for rword in rsplit:
