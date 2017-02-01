@@ -112,8 +112,8 @@ var CT = {
 		"_cache": false,
 		"_encode": false,
 		"_spinner": false,
-		"_encoder": function (d) { return d; },
-		"_decoder": function (d) { return d; },
+		"_encoder": function (d) { return btoa(d); },
+		"_decoder": function (d) { return atob(d); },
 		"_silentFail": true,
 		// functions
 		"setMode": function(mode) {

@@ -39,10 +39,10 @@ def log(*args, **kwargs):
     print args, kwargs
 
 def enc(data):
-    return data
+    return b64encode(data)
 
 def dec(data):
-    return data
+    return b64decode(data)
 
 def setlog(f):
     global log
