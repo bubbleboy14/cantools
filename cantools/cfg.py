@@ -73,10 +73,19 @@ cfg = {
 	},
 	"parse_error_segment_length": 100,
 	"build": {
-		"dynamic_dir": "html",
-		"compiled_dirs": {
-			"static": "html-static",
-			"production": "html-production"
+		"web": {
+			"dynamic": "html",
+			"compiled": {
+				"static": "html-static",
+				"production": "html-production"
+			}
+		},
+		"admin": {
+			"dynamic": "dynamic",
+			"compiled": {
+				"static": "static",
+				"production": "production"
+			}
 		}
 	},
 	"js": {
