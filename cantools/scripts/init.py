@@ -258,7 +258,7 @@ def parse_and_make():
 	parser.add_option("-u", "--update", action="store_true",
 		dest="update", default=False, help="update cantools and all managed plugins")
 	parser.add_option("-a", "--admin", action="store_true",
-		dest="admin", default=False, help="compile admin pages[ctdev only]")
+		dest="admin", default=False, help="compile admin pages [ctdev only]")
 	options, args = parser.parse_args()
 	if options.update:
 		update()
