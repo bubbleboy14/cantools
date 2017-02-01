@@ -1,4 +1,4 @@
-# cantools 0.8.16.1
+# cantools 0.9.0
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
 License: MIT (see LICENSE)
@@ -48,6 +48,7 @@ And that's it. Open http://localhost:8080/ in your browser and call it a day.
                           add symlinks to project and configure version control
                           path exclusion (if desired)
     -u, --update          update cantools and all managed plugins
+    -a, --admin           compile admin pages [ctdev only]
 
 NB: it may be necessary to specify --cantools_path. Normally, this is derived from
 the __file__ property (the location of the ctinit script, init.py). However, if the
