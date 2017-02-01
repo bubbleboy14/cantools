@@ -23,7 +23,7 @@ def encodestrings(text):
         start = nextQuote(text, start + len(word) + 1) + 1
     return text
 
-def processhtml(html):
+def processhtml(html, admin_ct_path=None):
     html = html.replace("{", "&#123").replace("}", "&#125").replace("</body>", "%s</body>"%(config.noscript,))
     firststart = start = end = html.find(config.js.flag)
     js = []
@@ -32,7 +32,19 @@ def processhtml(html):
         end = html.find('"', start)
         if end == -1:
             error("no closing quote in this file: %s"%(html,))
-        js.append(html[start:end].strip("/"))
+        url = html[start:end]
+        if admin_ct_path:
+            log("url (orig) %s"%(url,), important=True)
+            flag = "/%s"%(config.js.path,)
+            if url.startswith(flag):
+                log("config %s"%(config.js.path,))
+                log("ctp %s"%(admin_ct_path,))
+                url = url.replace(flag, admin_ct_path)
+            else:
+                log("dynamic!")
+                url = os.path.abspath(os.curdir) + "/dynamic" + url # fix this!!! os.path.join() weird...
+            log("url (modded) %s"%(url,))
+        js.append(url)
         start = html.find(config.js.flag, end)
     log("js: %s"%(js,), 1)
     if start == end:
@@ -56,11 +68,14 @@ def tryinit(iline, inits, prefixes):
         inits.add(iline)
         prefixes.append(iline)
 
-def require(line, jspaths, block, inits):
+def require(line, jspaths, block, inits, admin_ct_path=None):
     rline = line[12:-3]
     rsplit = rline.split(".")
-    jspath = os.path.join(config.js.path, *rsplit) + ".js"
+    log("module %s"%(rline,), important=True)
+    jspath = os.path.join(admin_ct_path or config.js.path, *rsplit) + ".js"
+    log("path %s"%(jspath,))
     if jspath not in jspaths:
+        log(jspath)
         prefixes = []
         fullp = "window"
         for rword in rsplit:
@@ -73,23 +88,23 @@ def require(line, jspaths, block, inits):
         if pblock:
             jspaths.append(pblock)
         block = block.replace(line, "%s;%s"%(pblock,
-            processjs(jspath, jspaths, inits)), 1)
+            processjs(jspath, jspaths, inits, admin_ct_path)), 1)
     return block
 
-def processjs(path, jspaths, inits):
+def processjs(path, jspaths, inits, admin_ct_path=None):
     block = read(path)
     for line in block.split("\n"):
         if line.startswith("CT.require(") and not line.endswith(", true);"):
-            block = require(line, jspaths, block, inits)
+            block = require(line, jspaths, block, inits, admin_ct_path)
     jspaths.append(path)
     return "%s;\n"%(block,)
 
-def compilejs(js):
+def compilejs(js, admin_ct_path=None):
     jsblock = ""
     jspaths = []
     inits = set(["window.CT = window.CT || {}"]) # already initialized
     for p in js:
-        jsblock += processjs(p, jspaths, inits)
+        jsblock += processjs(p, jspaths, inits, admin_ct_path)
     return jspaths, jsblock
 
 def checkdir(p):
@@ -97,14 +112,15 @@ def checkdir(p):
         log('making directory "%s"'%(p,), 1)
         os.mkdir(p)
 
-def build(nothing, dirname, fnames):
+def build(admin_ct_path, dirname, fnames):
     """
     This parses an html file, squishes together the javascript, scans
     through for dynamic imports (CT.require statements), injects modules
     wherever necessary, and sticks the result in a big <script> tag.
     """
-    for mode, compdir in config.build.compiled_dirs.items():
-        todir = dirname.replace(config.build.dynamic_dir, compdir)
+    conf = admin_ct_path and config.build.admin or config.build.web
+    for mode, compdir in conf.compiled.items():
+        todir = dirname.replace(conf.dynamic, compdir)
         log("Target Directory: %s"%(todir,), important=True)
         checkdir(todir)
         for fname in bfiles(dirname, fnames):
@@ -115,9 +131,9 @@ def build(nothing, dirname, fnames):
             if "fonts" in dirname or not fname.endswith(".html"):
                 log('copying non-html file', 1)
             else:
-                txt, js = processhtml(data)
+                txt, js = processhtml(data, admin_ct_path)
                 if js:
-                    jspaths, jsblock = compilejs(js)
+                    jspaths, jsblock = compilejs(js, admin_ct_path)
                     if mode is "static":
                         log("static mode", 1)
                         js = '\n'.join([p.endswith("js") and '<script src="/%s"></script>'%(p,) or '<script>%s</script>'%(p,) for p in jspaths])
@@ -136,7 +152,7 @@ def build(nothing, dirname, fnames):
                     data = txt
             write(data, topath)
     for fname in [f for f in fnames if os.path.isdir(os.path.join(dirname, f))]:
-        os.path.walk(os.path.join(dirname, fname), build, None)
+        os.path.walk(os.path.join(dirname, fname), build, admin_ct_path)
 
 if __name__ == "__main__":
-    os.path.walk(config.build.dynamic_dir, build, None)
+    os.path.walk(config.build.dynamic, build, None)
