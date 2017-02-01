@@ -155,4 +155,4 @@ def build(admin_ct_path, dirname, fnames):
         os.path.walk(os.path.join(dirname, fname), build, admin_ct_path)
 
 if __name__ == "__main__":
-    os.path.walk(config.build.dynamic, build, None)
+    os.path.walk(config.build.web.dynamic, build, None)
