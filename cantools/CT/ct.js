@@ -112,8 +112,23 @@ var CT = {
 		"_cache": false,
 		"_encode": false,
 		"_spinner": false,
-		"_encoder": function (d) { return d; },
-		"_decoder": function (d) { return d; },
+		"_scrambler": "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/=_",
+		"_scramble": function(s) {
+		    var s2 = "", sl = s.length, i, z,
+		    	c = CT.net._scrambler,
+		    	cl = c.length,
+		    	chl = cl / 2;
+		    for (i = 0; i < sl; i++) {
+		        z = c.indexOf(s[i]);
+		        if (z == -1)
+		            s2 += s[i];
+		        else
+		            s2 += c[(z + chl) % cl];
+		    }
+		    return s2;
+		},
+		"_encoder": function (d) { return CT.net._scramble(btoa(d)); },
+		"_decoder": function (d) { return atob(CT.net._scramble(d)); },
 		"_silentFail": true,
 		// functions
 		"setMode": function(mode) {
@@ -125,6 +140,9 @@ var CT = {
 		},
 		"setSilentFail": function(bool) {
 			CT.net._silentFail = bool;
+		},
+		"setScrambler": function(s) {
+			CT.net._scrambler = s;
 		},
 		"setSpinner": function(bool) {
 			CT.net._spinner = bool;

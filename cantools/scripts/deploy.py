@@ -105,7 +105,7 @@ def run():
 
     # 1) build static/production files
     if not options.no_build:
-        os.path.walk(config.build.dynamic_dir, build, None)
+        os.path.walk(config.build.web.dynamic, build, None)
 
     # 2) switch to specified mode
     setmode(mode)

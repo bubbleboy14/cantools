@@ -94,6 +94,8 @@ for key, val in [[term.strip() for term in line.split(" = ")] for line in read("
 		# a repository. use with care!
 		config.admin.update("pw", val)
 	else:
+		if key == "SCRAMBLER":
+			config.update("customscrambler", True)
 		target = key.lower()
 		c = config
 		if target in ["pubsub_botnames", "log_allow", "geo_user_geonames", "geo_user_google", "plugin_modules"]:
