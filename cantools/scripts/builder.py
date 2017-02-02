@@ -108,6 +108,9 @@ def checkdir(p):
         log('making directory "%s"'%(p,), 1)
         os.mkdir(p)
 
+def remerge(txt, js):
+    return txt.format(jsspot=js).replace("&#123", "{").replace("&#125", "}")
+
 def build(admin_ct_path, dirname, fnames):
     """
     This parses an html file, squishes together the javascript, scans
@@ -115,38 +118,35 @@ def build(admin_ct_path, dirname, fnames):
     wherever necessary, and sticks the result in a big <script> tag.
     """
     conf = admin_ct_path and config.build.admin or config.build.web
-    for mode, compdir in conf.compiled.items():
-        todir = dirname.replace(conf.dynamic, compdir)
-        log("Target Directory: %s"%(todir,), important=True)
-        checkdir(todir)
-        for fname in bfiles(dirname, fnames):
-            frompath = os.path.join(dirname, fname)
-            topath = os.path.join(todir, fname)
-            data = read(frompath)
-            log('building: %s -> %s'%(frompath, topath), important=True)
-            if "fonts" in dirname or not fname.endswith(".html"):
-                log('copying non-html file', 1)
+    todir_stat = dirname.replace(conf.dynamic, conf.compiled.static)
+    todir_prod = dirname.replace(conf.dynamic, conf.compiled.production)
+    log("Target Static Directory: %s"%(todir_stat,), important=True)
+    log("Target Production Directory: %s"%(todir_prod,))
+    checkdir(todir_stat)
+    checkdir(todir_prod)
+    for fname in bfiles(dirname, fnames):
+        frompath = os.path.join(dirname, fname)
+        topath_stat = os.path.join(todir_stat, fname)
+        topath_prod = os.path.join(todir_prod, fname)
+        data = read(frompath)
+        if "fonts" in dirname or not fname.endswith(".html"):
+            log('copying non-html file', 1)
+        else:
+            txt, js = processhtml(data, admin_ct_path)
+            if js:
+                jspaths, jsblock = compilejs(js, admin_ct_path)
+                log('writing static: %s -> %s'%(frompath, topath_stat), important=True)
+                write(remerge(txt, '\n'.join([p.endswith("js") and '<script src="/%s"></script>'%(p,) or '<script>%s</script>'%(p,) for p in jspaths])), topath_stat)
+                log('writing production: %s -> %s'%(frompath, topath_prod))
+                jsb = jsblock.replace('"_encode": false,', '"_encode": true,').replace("CT.log._silent = false;", "CT.log._silent = true;")
+                if config.customscrambler:
+                    jsb += '; CT.net.setScrambler("%s");'%(config.scrambler,)
+                from slimit import minify
+                write(remerge(compress(txt), "<script>%s</script>"%(minify(jsb, mangle=True),)), topath_prod)
             else:
-                txt, js = processhtml(data, admin_ct_path)
-                if js:
-                    jspaths, jsblock = compilejs(js, admin_ct_path)
-                    if mode is "static":
-                        log("static mode", 1)
-                        js = '\n'.join([p.endswith("js") and '<script src="/%s"></script>'%(p,) or '<script>%s</script>'%(p,) for p in jspaths])
-                    elif mode is "production":
-                        log("production mode", 1)
-                        txt = compress(txt)
-                        jsb = jsblock.replace('"_encode": false,', '"_encode": true,').replace("CT.log._silent = false;", "CT.log._silent = true;")
-                        if config.customscrambler:
-                            jsb += '; CT.net.setScrambler("%s");'%(config.scrambler,)
-                        from slimit import minify
-                        js = "<script>%s</script>"%(minify(jsb, mangle=True),)
-                    else:
-                        error("invalid mode: %s"%(mode,))
-                    data = txt.format(jsspot=js).replace("&#123", "{").replace("&#125", "}")
-                else:
-                    data = txt
-            write(data, topath)
+                log('copying to prod/stat unmodified', important=True)
+                write(txt, topath_stat)
+                write(txt, topath_prod)
     for fname in [f for f in fnames if os.path.isdir(os.path.join(dirname, f))]:
         os.path.walk(os.path.join(dirname, fname), build, admin_ct_path)
 
