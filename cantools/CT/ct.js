@@ -187,7 +187,7 @@ var CT = {
 						params = CT.net._rd(params, true);
 					params = JSON.stringify(params);
 				}
-				if (CT.net._encode)
+				if (CT.net._encode && !(params instanceof FormData))
 					params = CT.net._encoder(params);
 			}
 			xhr.send(params);
