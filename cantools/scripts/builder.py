@@ -23,7 +23,7 @@ def encodestrings(text):
         start = nextQuote(text, start + len(word) + 1) + 1
     return text
 
-def processhtml(html, admin_ct_path=None):
+def processhtml(html):
     html = html.replace("{", "&#123").replace("}", "&#125").replace("</body>", "%s</body>"%(config.noscript,))
     firststart = start = end = html.find(config.js.flag)
     js = []
@@ -32,16 +32,7 @@ def processhtml(html, admin_ct_path=None):
         end = html.find('"', start)
         if end == -1:
             error("no closing quote in this file: %s"%(html,))
-        url = html[start:end]
-        flag = "/%s"%(config.js.path,)
-        if admin_ct_path:
-            if url.startswith(flag):
-                url = url.replace(flag, admin_ct_path)
-            else:
-                url = os.path.join(os.path.abspath(os.curdir), "dynamic", url[1:])
-        elif url.startswith(flag):
-            url = url[1:]
-        js.append(url)
+        js.append(html[start:end].strip("/"))
         start = html.find(config.js.flag, end)
     log("js: %s"%(js,), 1)
     if start == end:
@@ -69,7 +60,7 @@ def require(line, jspaths, block, inits, admin_ct_path=None):
     rline = line[12:-3]
     rsplit = rline.split(".")
     log("module %s"%(rline,), important=True)
-    jspath = os.path.join(admin_ct_path or config.js.path, *rsplit) + ".js"
+    jspath = os.path.join(config.js.path, *rsplit) + ".js"
     log("path %s"%(jspath,))
     if jspath not in jspaths:
         prefixes = []
@@ -88,7 +79,13 @@ def require(line, jspaths, block, inits, admin_ct_path=None):
     return block
 
 def processjs(path, jspaths, inits, admin_ct_path=None):
-    block = read(path)
+    p = path # potentially modded to locate file for prod (path remains the same for static)
+    if admin_ct_path: # admin pages
+        if path.startswith(config.js.path): # such as /js/CT/ct.js
+            p = admin_ct_path + path[len(config.js.path):]
+        else: # regular admin pages (/memcache/mc.js)
+            p = os.path.join(os.path.abspath(os.curdir), "dynamic", path)
+    block = read(p)
     for line in block.split("\n"):
         if line.startswith("CT.require(") and not line.endswith(", true);"):
             block = require(line, jspaths, block, inits, admin_ct_path)
@@ -108,6 +105,9 @@ def checkdir(p):
         log('making directory "%s"'%(p,), 1)
         os.mkdir(p)
 
+def remerge(txt, js):
+    return txt.format(jsspot=js).replace("&#123", "{").replace("&#125", "}")
+
 def build(admin_ct_path, dirname, fnames):
     """
     This parses an html file, squishes together the javascript, scans
@@ -115,38 +115,36 @@ def build(admin_ct_path, dirname, fnames):
     wherever necessary, and sticks the result in a big <script> tag.
     """
     conf = admin_ct_path and config.build.admin or config.build.web
-    for mode, compdir in conf.compiled.items():
-        todir = dirname.replace(conf.dynamic, compdir)
-        log("Target Directory: %s"%(todir,), important=True)
-        checkdir(todir)
-        for fname in bfiles(dirname, fnames):
-            frompath = os.path.join(dirname, fname)
-            topath = os.path.join(todir, fname)
-            data = read(frompath)
-            log('building: %s -> %s'%(frompath, topath), important=True)
-            if "fonts" in dirname or not fname.endswith(".html"):
-                log('copying non-html file', 1)
+    todir_stat = dirname.replace(conf.dynamic, conf.compiled.static)
+    todir_prod = dirname.replace(conf.dynamic, conf.compiled.production)
+    log("Target Static Directory: %s"%(todir_stat,), important=True)
+    log("Target Production Directory: %s"%(todir_prod,))
+    checkdir(todir_stat)
+    checkdir(todir_prod)
+    for fname in bfiles(dirname, fnames):
+        frompath = os.path.join(dirname, fname)
+        topath_stat = os.path.join(todir_stat, fname)
+        topath_prod = os.path.join(todir_prod, fname)
+        data = read(frompath)
+        if "fonts" in dirname or not fname.endswith(".html"):
+            log('copying non-html file (%s)'%(fname,), 1)
+        else:
+            txt, js = processhtml(data)
+            if js:
+                jspaths, jsblock = compilejs(js, admin_ct_path)
+                log('writing static: %s -> %s'%(frompath, topath_stat), important=True)
+                write(remerge(txt, '\n'.join([p.endswith("js") and '<script src="/%s"></script>'%(p,) or '<script>%s</script>'%(p,) for p in jspaths])), topath_stat)
+                log('writing production: %s -> %s'%(frompath, topath_prod))
+                jsb = jsblock.replace('"_encode": false,', '"_encode": true,').replace("CT.log._silent = false;", "CT.log._silent = true;")
+                if config.customscrambler:
+                    jsb += '; CT.net.setScrambler("%s");'%(config.scrambler,)
+                from slimit import minify
+                write(remerge(compress(txt), "<script>%s</script>"%(minify(jsb, mangle=True),)), topath_prod)
+                continue
             else:
-                txt, js = processhtml(data, admin_ct_path)
-                if js:
-                    jspaths, jsblock = compilejs(js, admin_ct_path)
-                    if mode is "static":
-                        log("static mode", 1)
-                        js = '\n'.join([p.endswith("js") and '<script src="/%s"></script>'%(p,) or '<script>%s</script>'%(p,) for p in jspaths])
-                    elif mode is "production":
-                        log("production mode", 1)
-                        txt = compress(txt)
-                        jsb = jsblock.replace('"_encode": false,', '"_encode": true,').replace("CT.log._silent = false;", "CT.log._silent = true;")
-                        if config.customscrambler:
-                            jsb += '; CT.net.setScrambler("%s");'%(config.scrambler,)
-                        from slimit import minify
-                        js = "<script>%s</script>"%(minify(jsb, mangle=True),)
-                    else:
-                        error("invalid mode: %s"%(mode,))
-                    data = txt.format(jsspot=js).replace("&#123", "{").replace("&#125", "}")
-                else:
-                    data = txt
-            write(data, topath)
+                log('copying to prod/stat unmodified (%s)'%(fname,), important=True)
+        write(data, topath_stat)
+        write(data, topath_prod)
     for fname in [f for f in fnames if os.path.isdir(os.path.join(dirname, f))]:
         os.path.walk(os.path.join(dirname, fname), build, admin_ct_path)
 
