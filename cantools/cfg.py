@@ -51,6 +51,7 @@ cfg = {
 		"dez": "sqlite:///data.db",
 		"test": "sqlite:///data_test.db",
 		"blob": "blob",
+		"alter": False, # add new columns to tables - sqlite only!
 		"echo": False,
 		"public": True # read from db without credentials via _db.py web handler
 	},

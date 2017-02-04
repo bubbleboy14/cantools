@@ -1,5 +1,5 @@
 from sqlalchemy.sql import func, elements
-from cantools.util import start_timer, end_timer
+from cantools.util import start_timer, end_timer, log
 from properties import *
 from getters import *
 from setters import *
@@ -47,7 +47,28 @@ class Query(object):
             qkey = "Query.%s: %s %s (%s)"%(fname, args, kwargs, self.query)
             if "query" in config.log.allow:
                 start_timer(qkey)
-            res = getattr(self.query, fname)(*args, **kwargs)
+            try:
+                res = getattr(self.query, fname)(*args, **kwargs)
+            except Exception, e:
+                log("Query operation failed: %s"%(e,), important=True)
+                raise_anyway = True
+                flag = " no such column: "
+                stre = str(e)
+                if flag in stre:
+                    target = stre.split(flag)[1].split(" ", 1)[0]
+                    log("Missing column: %s"%(target,), important=True)
+                    if config.db.alter:
+                        tmod, tcol = target.split(".")
+                        if not raw_input("Add missing column '%s' to table '%s' (sqlite-only!)? [Y/n] "%(tcol, tmod)).lower().startswith("n"):
+                            raise_anyway = False
+                            log("adding '%s' to '%s'"%(tcol, tmod))
+                            self.session.engine.execute("ALTER TABLE %s ADD COLUMN %s"%(tmod, tcol))
+                            log("retrying query operation")
+                            res = getattr(self.query, fname)(*args, **kwargs)
+                    else:
+                        log("To auto-update columns, add 'DB_ALTER = True' to your ct.cfg (sqlite only!)")
+                if raise_anyway:
+                    raise Exception, e
             if "query" in config.log.allow:
                 end_timer(qkey)
             return res
