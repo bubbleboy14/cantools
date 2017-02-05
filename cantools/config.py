@@ -40,8 +40,13 @@ class Config(object):
 	def keys(self):
 		return self._cfg.keys()
 
-	def update(self, key, val):
+	def update(self, key, val={}):
 		self._cfg[key] = isinstance(val, dict) and Config(val) or val
+
+	def sub(self, key):
+		if key not in self._cfg:
+			self.update(key)
+		return self._cfg.get(key)
 
 class PCache(object):
 	def __init__(self, cfg):
@@ -103,7 +108,7 @@ for key, val in [[term.strip() for term in line.split(" = ")] for line in read("
 		if "_" in target:
 			path, target = target.rsplit("_", 1)
 			for part in path.split("_"):
-				c = getattr(c, part)
+				c = c.sub(part)
 		c.update(target, val)
 
 config.db.update("main", config.db[config.web.server])
