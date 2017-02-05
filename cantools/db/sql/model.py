@@ -36,6 +36,7 @@ class CTMeta(DeclarativeMeta):
                 if getattr(val, "choices", None):
                     attrs["%s_validator"%(key,)] = sqlalchemy.orm.validates(key)(choice_validator(val.choices))
         modelsubs[lname] = super(CTMeta, cls).__new__(cls, name, bases, attrs)
+        modelsubs[lname].__name__ = lname
         return modelsubs[lname]
 
 sa_dbase = declarative_base(metadata=metadata)

@@ -24,19 +24,22 @@ class Query(object):
 
     def order(self, prop):
         asc = False
-        if isinstance(prop, basestring) and prop.startswith("-"):
-            prop = prop[1:]
+        if isinstance(prop, basestring):
+            if prop.startswith("-"):
+                prop = prop[1:]
+            else:
+                asc = True
+            if "." in prop: # foreignkey reference from another table
+                from lookup import refcount_subq
+                sub = refcount_subq(prop, self.session)
+                order = sub.c.count
+                if not asc:
+                    order = -sub.c.count
+                return self.join(sub, self.mod.key == sub.c.target).order(order)
         elif type(prop) is elements.UnaryExpression:
-            prop = -prop
+            prop = prop.element.name
         else:
             asc = True
-        if isinstance(prop, basestring) and "." in prop: # it's a foreignkey reference from another table
-            from lookup import refcount_subq
-            sub = refcount_subq(prop, self.session)
-            order = sub.c.count
-            if not asc:
-                order = -sub.c.count
-            return self.join(sub, self.mod.key == sub.c.target).order(order)
         if not asc:
             prop = "%s desc"%(prop,)
         return self._order(prop)
