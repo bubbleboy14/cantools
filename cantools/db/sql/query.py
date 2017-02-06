@@ -1,5 +1,5 @@
 from sqlalchemy.sql import func, elements
-from cantools.util import start_timer, end_timer, log
+from cantools.util import start_timer, end_timer, log, error
 from properties import *
 from getters import *
 from setters import *
@@ -69,9 +69,9 @@ class Query(object):
                             log("retrying query operation")
                             res = getattr(self.query, fname)(*args, **kwargs)
                     else:
-                        log("To auto-update columns, add 'DB_ALTER = True' to your ct.cfg (sqlite only!)")
+                        log("To auto-update columns, add 'DB_ALTER = True' to your ct.cfg (sqlite only!)", important=True)
                 if raise_anyway:
-                    raise Exception, e
+                    error(e)
             if "query" in config.log.allow:
                 end_timer(qkey)
             return res
