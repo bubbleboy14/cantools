@@ -15,6 +15,7 @@ CT.admin.db = {
 			CT.db.init({
 				cb: function(schema) {
 					var skeys = Object.keys(schema);
+					skeys.sort();
 					CT.panel.simple({
 						pnames: skeys,
 						keystring: "db",
