@@ -1,10 +1,20 @@
-import os, requests, ssl
+import os, resource, requests, ssl
 from dez.http import fetch as dfetch
 from ..util import *
 from ...util import set_log, set_error
 from mail import send_mail
 from controller import getController
 from cantools import config
+
+def fdup():
+	from cantools.util import log # gives us logger set in run_dez_webserver()
+	log("checking the number of file descriptors allowed on your system", important=True)
+	soft, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
+	log("soft: %s. hard: %s"%(soft, hard))
+	if soft != hard:
+		log("increasing soft limit to hard limit")
+		resource.setrlimit(resource.RLIMIT_NOFILE, (hard, hard))
+		log("new limits! soft: %s. hard: %s"%resource.getrlimit(resource.RLIMIT_NOFILE))
 
 def run_dez_webserver():
 	if not config.ssl.verify and hasattr(ssl, "_https_verify_certificates"):
@@ -14,6 +24,8 @@ def run_dez_webserver():
 	if config.web.log:
 		set_log(config.web.log and os.path.join("logs", config.web.log))
 	set_error(fail)
+	if config.fdup:
+		fdup()
 	c.start()
 
 def dweb():
