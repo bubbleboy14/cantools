@@ -236,7 +236,7 @@ def do_respond(responseFunc, failMsg="failed", failHtml=False, failNoEnc=False, 
         succeed()
 
     def failure(e):
-        fail(data=failMsg, html=failHtml, err=e, noenc=failNoEnc, exit=False)
+        fail(data=failMsg, html=failHtml, err=e, noenc=failNoEnc)
 
     wrapped_response = resp_wrap[config.web.server](resp, failure)
     if threaded: # dez only!!!
