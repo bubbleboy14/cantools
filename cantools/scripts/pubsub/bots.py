@@ -1,4 +1,4 @@
-import datetime, event, json, os, psutil
+import datetime, json, os
 from cantools import config
 from cantools.util import log, write
 from cantools.web import fetch
@@ -48,6 +48,7 @@ class Bot(Actor):
 
 class Monitor(Bot):
 	def __init__(self, server, channel, name="monitor"): # only one monitor
+		import event # here for google crap engine
 		Bot.__init__(self, server, channel, name)
 		event.timeout(config.admin.monitor.interval, self._tick)
 
@@ -73,6 +74,7 @@ class Monitor(Bot):
 			write(data, self._datedir(), True, append=True, newline=True)
 
 	def _tick(self):
+		import psutil # here for google crap engine
 		dioc = psutil.disk_io_counters()
 		nioc = psutil.net_io_counters()
 		dmon = fetch(config.admin.host, "/_report",
