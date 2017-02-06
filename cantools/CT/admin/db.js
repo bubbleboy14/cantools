@@ -15,9 +15,12 @@ CT.admin.db = {
 			CT.db.init({
 				cb: function(schema) {
 					var skeys = Object.keys(schema);
-					CT.panel.simple(skeys, "db");
-					skeys.forEach(function(modelName) {
-						CT.db.pager(modelName);
+					CT.panel.simple({
+						pnames: skeys,
+						keystring: "db",
+						view1: function(modelName) {
+							CT.db.pager(modelName);
+						}
 					});
 				},
 				builder: CT.admin.db._build,
