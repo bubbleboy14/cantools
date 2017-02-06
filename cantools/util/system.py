@@ -1,4 +1,4 @@
-import os, subprocess
+import commands, os, subprocess
 from reporting import log
 from io import write
 
@@ -39,3 +39,7 @@ def rm(pname):
 def cmd(cline):
 	log('issuing command: "%s"'%(cline,), 2)
 	subprocess.call(cline, shell=True)
+
+def output(cline):
+	log('getting output for: "%s"'%(cline,), 2)
+	return commands.getoutput(cline)
