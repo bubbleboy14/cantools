@@ -234,7 +234,7 @@ var CT = {
 			};
 			data = data.slice(1);
 			if (code == "2" || code == "3")
-				result.data = atob(data); // is a string
+				result.data = CT.net._rd(data); // is a string
 			else if (result.success)
 				result.data = CT.net._ctsuccess(data, signature, code == "3");
 			else
