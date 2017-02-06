@@ -19,7 +19,7 @@ Wraps an HTML5 video tag in a class with functions for streaming a video
 that arrives in chunks.
 */
 
-CT.scriptImport("https://cdn.webrtc-experiment.com/MediaStreamRecorder.js");
+CT.scriptImport("CT.lib.MediaStreamRecorder");
 CT.require("CT.stream.util");
 CT.require("CT.stream.Video");
 CT.require("CT.stream.Streamer");
