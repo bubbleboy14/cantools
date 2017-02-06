@@ -36,6 +36,7 @@ which triggers cb(d), where d is the corresponding object in the 'data' array.
 */
 
 CT.panel = {
+	"view1": {}, // [keystring + key]
 	"lastClicked": {},
 	"accordion": function(data, triggerCb, activeClass, content, condition, notick, rmbutton, ricon, noactive) {
 		var n = CT.dom.node(null, null, "tabbed", "ac" + data.name);
@@ -170,6 +171,11 @@ CT.panel = {
 	    }
 	    if (!noitem)
 	        CT.panel.select(key, keystring);
+	    var ksk = keystring + key;
+	    if (CT.panel.view1[ksk]) {
+	    	CT.panel.view1[ksk](key);
+	    	delete CT.panel.view1[ksk];
+	    }
 	},
 	"drill": function(keymap) { // keystring: key
 		for (var k in keymap)
@@ -195,7 +201,7 @@ CT.panel = {
 	        newnode.firstChild.innerHTML = newhtml;
 	    CT.mobile && CT.mobile.mobileSnap();
 	},
-	"add": function(key, trysidepanel, keystring, itemnode, panelnode, nospace, icon, cb, condition) {
+	"add": function(key, trysidepanel, keystring, itemnode, panelnode, nospace, icon, cb, condition, view1) {
 	    nospace = nospace || key.replace(/ /g, "");
 	    keystring = keystring || "sb";
 	    if (!CT.dom.id(keystring + "panel" + nospace)) {
@@ -222,6 +228,8 @@ CT.panel = {
 	        if (icon)
 	            itemnode.appendChild(CT.dom.node("", "div", "clearnode"));
 	    }
+	    if (view1)
+	    	CT.panel.view1[keystring + key] = view1;
 	},
 	"rename": function(oldkey, newkey, keystring, item2keystring) {
 		keystring = keystring || "sb";
@@ -247,19 +255,35 @@ CT.panel = {
 	    var l = CT.dom.id(keystring+"item"+nospace);
 	    if (l) l.style.display = "none";
 	},
-	"load": function(pnames, trysidepanel, keystring, itemnode, panelnode, nospaces, icons, noclear, stillswap, cbs, condition) {
+	"load": function(pnames, trysidepanel, keystring, itemnode, panelnode, nospaces, icons, noclear, stillswap, cbs, condition, view1) {
 	    keystring = keystring || "sb";
 	    if (!noclear)
 	        (itemnode || CT.dom.id(keystring+"items")).innerHTML = "";
 	    for (var i = 0; i < pnames.length; i++)
 	        CT.panel.add(pnames[i], trysidepanel, keystring, itemnode,
 	            panelnode, nospaces && nospaces[i] || null,
-	            icons && icons[i] || null, cbs && cbs[i] || null, condition);
+	            icons && icons[i] || null, cbs && cbs[i] || null, condition, view1);
 	    if (pnames.length && (stillswap || (!itemnode && !noclear)))
 	        CT.panel.swap(pnames[0], trysidepanel, keystring);
 	},
-	"simple": function(pnames, keystring, itemnode, panelnode, cbs, condition) {
-		CT.panel.load(pnames, null, keystring, itemnode, panelnode, null, null, null, true, cbs, condition);
+	"simple": function(pnames, keystring, itemnode, panelnode, cbs, condition, trysidepanel, nospaces, icons, noclear, stillswap, view1) {
+		if (arguments.length == 1 && typeof arguments[0] != "string") {
+			var obj = arguments[0];
+			pnames = obj.pnames;
+			keystring = obj.keystring;
+			itemnode = obj.itemnode;
+			panelnode = obj.panelnode;
+			cbs = obj.cbs;
+			condition = obj.condition;
+			trysidepanel = obj.trysidepanel;
+			nospaces = obj.nospaces;
+			icons = obj.icons;
+			noclear = obj.noclear;
+			stillswap = obj.stillswap;
+			view1 = obj.view1;
+		}
+		CT.panel.load(pnames, trysidepanel, keystring, itemnode, panelnode,
+			nospaces, icons, noclear, stillswap != false, cbs, condition, view1);
 	},
 	"pager": function(getContent, request, limit, colClass, dataClass, ks) {
 		var keystring = ks || ("p" + CT.Pager._id),
