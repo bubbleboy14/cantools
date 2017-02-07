@@ -294,6 +294,11 @@
     -moz-border-radius: 15px;
     -webkit-border-radius: 15px;
 }
+.roundest {
+    border-radius: 25px 25px 25px 25px;
+    -moz-border-radius: 25px;
+    -webkit-border-radius: 25px;
+}
 .blockquote {
     padding: 50px !important;
     text-align: justify;
@@ -583,6 +588,9 @@
 }
 .whitebacktrans {
     background: rgba(255, 255, 255, 0.9);
+}
+.backtrans {
+    background: rgba(255, 255, 255, 0.0);
 }
 .whitelink a {
     color: white;
