@@ -25,7 +25,7 @@ CT.Drop = CT.Class({
 			n.className = this.className + " drop-open";
 		else {
 			n.className = this.className;
-			n.style.maxHeight = opts.content.scrollHeight + "px";
+			n.style.maxHeight = (opts.content.scrollHeight || 1000) + "px";
 		}
 		CT.trans.trans({
 			node: n,
@@ -69,11 +69,12 @@ CT.Drop = CT.Class({
 			setWidth: true,
 			constrained: true,
 			translucent: false,
+			transparent: false,
 			round: false,
 			border: null
 		});
 		this.className = opts.relative ? "relative drop" :
-			((opts.translucent ? "whitebacktrans" : "whiteback") + " drop mosthigh");
+			((opts.transparent ? "backtrans" : opts.translucent ? "whitebacktrans" : "whiteback") + " drop mosthigh");
 		if (opts.round)
 			this.className += " round";
 		if (opts.rows)
