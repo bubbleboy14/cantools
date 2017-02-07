@@ -15,7 +15,7 @@ CT.map.Map = CT.Class({
 		}, mlist);
 	},
 	setMarker: function(data) {
-		this.addMarker(data).setPosition(data.position);
+		this.addMarker(data).update(data);
 	},
 	addMarker: function(data) {
 		var m = this.markers[data.key] = this.markers[data.key] || new CT.map.Marker(data);
