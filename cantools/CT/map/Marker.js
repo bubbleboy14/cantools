@@ -51,6 +51,7 @@ CT.map.useSingleInfoWindow = function() {
 
 CT.map.Marker = CT.Class({
 	CLASSNAME: "CT.map.Marker",
+	_wrappers: ["title", "icon", "map", "content", "position", "visible"],
 	_converters: {
 		position: CT.map.util.latlng
 	},
@@ -64,7 +65,12 @@ CT.map.Marker = CT.Class({
 		this.hideInfo();
 	},
 	update: function(opts) {
+		var thiz = this;
 		this.opts = CT.merge(opts, this.opts);
+		this._wrappers.forEach(function(w) {
+			if (w in thiz.opts)
+				thiz["set" + CT.parse.capitalize(w)](thiz.opts[w]);
+		});
 	},
 	showInfo: function() {
 		var iw = this._infoWindow = this._infoWindow || CT.map.infoWindow();
@@ -86,7 +92,7 @@ CT.map.Marker = CT.Class({
 		};
 	},
 	_buildWrappers: function() {
-		["title", "icon", "map", "content", "position", "visible"].forEach(this._wrap);
+		this._wrappers.forEach(this._wrap);
 	},
 	_addMarkerListener:  function(evt, cb) { // gmMarker only
 		google.maps.event.addListener(this.marker, evt, cb);
