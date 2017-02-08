@@ -41,7 +41,11 @@ CT.map.Map = CT.Class({
 		return this.markers[key];
 	},
 	removeMarker: function(key) {
-		this.getMarker(key).remove();
+		var marker = this.getMarker(key);
+		if (marker)
+			marker.remove();
+		else
+			this.log("removeMarker(): can't find key '" + key + "'");
 	},
 	geoJson: function(gj) { // path or json obj (right?)
 		this.map.data.loadGeoJSON(gj);
