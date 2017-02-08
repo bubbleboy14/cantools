@@ -18,6 +18,7 @@ CT.pubsub = {
 		"open": false,
 		"initialized": false,
 		"autohistory": false,
+		"autohistory_exemptions": [],
 		"reconnect": true,
 		"reconnect_interval": 250,
 		"protocol": location.protocol == "http:" && "ws" || "wss",
@@ -38,9 +39,11 @@ CT.pubsub = {
 		},
 		"process": { // pubsub events
 			"channel": function(data) {
-				CT.pubsub._.channels[data.channel] = data;
-				CT.pubsub._.cb.subscribe(data);
-				CT.pubsub._.autohistory && data.history.forEach(CT.pubsub._.process.publish);
+				var _ = CT.pubsub._;
+				_.channels[data.channel] = data;
+				_.cb.subscribe(data);
+				if (_.autohistory && (_.autohistory_exemptions.indexOf(data.channel) == -1))
+					data.history.forEach(CT.pubsub._.process.publish);
 			},
 			"publish": function(data) {
 				CT.pubsub._.cb.message(data);
@@ -126,8 +129,10 @@ CT.pubsub = {
 	"set_reconnect": function(bool) {
 		CT.pubsub._.reconnect = bool;
 	},
-	"set_autohistory": function(bool) {
+	"set_autohistory": function(bool, exemptions) {
 		CT.pubsub._.autohistory = bool;
+		if (exemptions)
+			CT.pubsub._.autohistory_exemptions = exemptions;
 	},
 	"set_cb": function(action, cb) {
 		// action: message|subscribe|join|leave|open|close|error|pm
@@ -163,14 +168,15 @@ CT.pubsub = {
 			"data": channel
 		});
 	},
-	"connect": function(host, port, uname) {
+	"connect": function(host, port, uname, onbeforeunload) {
 		CT.pubsub._.args = arguments;
 		CT.pubsub._.initialized = true;
 		CT.pubsub._.ws = new WebSocket(CT.pubsub._.protocol + "://" + host + ":" + port);
 		for (var action in CT.pubsub._.on)
 			CT.pubsub._.ws["on" + action] = CT.pubsub._.on[action];
-		window.onbeforeunload = function() {
+		window.addEventListener("beforeunload", function() {
+			onbeforeunload && onbeforeunload();
 			CT.pubsub._.write({ "action": "close" });
-		};
+		});
 	}
 };
