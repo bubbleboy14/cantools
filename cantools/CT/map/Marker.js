@@ -72,11 +72,24 @@ CT.map.Marker = CT.Class({
 				thiz["set" + CT.parse.capitalize(w)](thiz.opts[w]);
 		});
 	},
-	showInfo: function() {
+	_showInfo: function() {
+		this.cancelInfo();
 		var iw = this._infoWindow = this._infoWindow || CT.map.infoWindow();
 		iw.setContent(this.opts.info);
 		iw.setPosition(this.getPosition());
 		iw.open(this.opts.map);
+	},
+	showInfo: function() {
+		if (this.opts.infoDelay)
+			this._infoTimeout = setTimeout(this._showInfo, this.opts.infoDelay);
+		else
+			this._showInfo();
+	},
+	cancelInfo: function() {
+		if (this._infoTimeout) {
+			clearTimeout(this._infoTimeout);
+			delete this._infoTimeout;
+		}
 	},
 	hideInfo: function() {
 		this._infoWindow && this._infoWindow.close();
@@ -110,9 +123,10 @@ CT.map.Marker = CT.Class({
 		// suggested: title"", info"" || info(node), map
 		// if content, build custom dom marker
 		this.opts = opts = CT.merge(opts, {
-			icon: "http://maps.google.com/mapfiles/ms/icons/purple-dot.png",
-			listeners: opts.info && { click: this.showInfo } || {}
+			icon: "http://maps.google.com/mapfiles/ms/icons/purple-dot.png"
 		});
+		if (opts.info)
+			opts.listeners = CT.merge(opts.listeners, { click: this.showInfo });
 		opts.position = CT.map.util.latlng((opts.position && opts.position.lat && opts.position.lng)
 			? opts.position : CT.map.util.addr2latlng(opts.address));
 		opts.content ? this._buildCustomMarker() : this._buildMarker();
