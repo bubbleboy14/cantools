@@ -156,6 +156,28 @@ CT.panel = {
 		data.forEach(node.postAdd);
 		return node;
 	},
+	"slider": function(data, triggerNode, parentNode) {
+		var node = CT.dom.div(null, "abs w1 hmin1 t0 l0 r0");
+		(parentNode || document.body).appendChild(node);
+		node._subs = [];
+		node.slide = function(d) {
+			CT.trans.translate(node, {
+				y: -node.clientHeight * node._subs.indexOf(d)
+			});
+		};
+		node.add = function(d, trigger) {
+			var n = CT.dom.div(null, "abs full l0 r0"),
+				t = CT.panel.trigger(d, node.slide);
+			n.style.top = (node.clientHeight * node._subs.length) + "px";
+			node._subs.push(d);
+			node.appendChild(n);
+			triggerNode.appendChild(t);
+			(trigger === true) && t.trigger();
+			return n;
+		};
+		data.forEach(node.add);
+		return node;
+	},
 	"swap": function(key, trysidepanel, keystring, noitem) {
 	    keystring = keystring || "sb";
 	    key = key.replace(/ /g, "");
