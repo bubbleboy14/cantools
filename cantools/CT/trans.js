@@ -152,6 +152,8 @@ CT.trans = {
 	trans: function(opts) {
 		// opts: node, property, value, cb, duration, ease, prefix
 		opts = CT.merge(opts, CT.trans._.defaults.trans);
+		if (typeof opts.node == "string")
+			opts.node = CT.dom.id(opts.node);
 		if (opts.node) {
 			var prevTrans = opts.node.style.transition || "",
 				transComponent = opts.property + " " + opts.duration + "ms " + opts.ease,
