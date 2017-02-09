@@ -129,10 +129,16 @@ CT.pubsub = {
 	"set_reconnect": function(bool) {
 		CT.pubsub._.reconnect = bool;
 	},
-	"set_autohistory": function(bool, exemptions) {
+	"set_autohistory": function(bool, exemptions, mergeExemptions) {
 		CT.pubsub._.autohistory = bool;
-		if (exemptions)
-			CT.pubsub._.autohistory_exemptions = exemptions;
+		if (exemptions) {
+			if (mergeExemptions) {
+				exemptions.forEach(function(e) {
+					CT.pubsub._.autohistory_exemptions.push(e);
+				});
+			} else
+				CT.pubsub._.autohistory_exemptions = exemptions;
+		}
 	},
 	"set_cb": function(action, cb) {
 		// action: message|subscribe|join|leave|open|close|error|pm
