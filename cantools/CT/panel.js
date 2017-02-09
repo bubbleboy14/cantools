@@ -158,12 +158,12 @@ CT.panel = {
 	},
 	"slider": function(data, triggerNode, parentNode, ricon) {
 		var node = CT.dom.div(null, "abs w1 hmin1 t0 l0 r0");
-		(parentNode || document.body).appendChild(node);
-		node._subs = [];
 		if (typeof triggerNode == "string")
 			triggerNode = CT.dom.id(triggerNode);
 		if (typeof parentNode == "string")
 			parentNode = CT.dom.id(parentNode);
+		(parentNode || document.body).appendChild(node);
+		node._subs = [];
 		node.slide = function(d) {
 			CT.trans.translate(node, {
 				y: -node.clientHeight * node._subs.indexOf(d)
