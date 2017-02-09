@@ -20,6 +20,8 @@
 .wm20p { max-width: 20px !important; }
 .hm1 { max-height: 100%; }
 .wm1 { max-width: 100%; }
+.hmin1 { min-height: 100%; }
+.wmin1 { min-width: 100%; }
 .hm1-2 { max-height: 50%; }
 .wm1-2 { max-width: 50%; }
 .h50p { height: 50px; }
@@ -169,10 +171,14 @@
 .b20, .bottom20 { bottom: 20px; }
 .l20, .left20 { left: 20px; }
 .r20, .right20 { right: 20px; }
-.top50 { top: 50px; }
-.bottom50 { bottom: 50px; }
-.left50 { left: 50px; }
-.right50 { right: 50px; }
+.t50, .top50 { top: 50px; }
+.b50, .bottom50 { bottom: 50px; }
+.l50, .left50 { left: 50px; }
+.r50, .right50 { right: 50px; }
+.t100, .top100 { top: 100px; }
+.b100, .bottom100 { bottom: 100px; }
+.l100, .left100 { left: 100px; }
+.r100, .right100 { right: 100px; }
 
 /* size */
 .big { font-size: 120%; }
@@ -587,7 +593,7 @@
     background: white;
 }
 .whitebacktrans {
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.5);
 }
 .backtrans {
     background: rgba(255, 255, 255, 0.0);
