@@ -174,7 +174,7 @@ CT.trans = {
         	});
 	        transTimeout = setTimeout(wrapper, opts.duration);
 	    }
-	    if (opts.property && opts.property != "*") {
+	    if (opts.node && opts.property && opts.property != "*") {
 	        if (opts.prefix)
 	            CT.trans.setVenderPrefixed(opts.node, opts.property, opts.value);
 	        else
