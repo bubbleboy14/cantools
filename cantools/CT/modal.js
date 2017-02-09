@@ -42,6 +42,7 @@ defaults:
 	{
 		style: "string", // string|password|single-choice|multiple-choice|file
 		prompt: "",
+		clear: false, // string/password only
 		data: [] // only applies to choice styles
 	}
 */
@@ -66,6 +67,7 @@ CT.modal._defaults = {
 	Prompt: {
 		style: "string",
 		prompt: "",
+		clear: false, // string/password only
 		data: []
 	}
 };
@@ -299,6 +301,8 @@ CT.modal.Prompt = CT.Class({
 	on: {
 		show: function() {
 			this.input && this.input.focus();
+			if (this.opts.clear)
+				this.input.value = "";
 		},
 		hide: function() {}
 	},
