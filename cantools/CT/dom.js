@@ -199,18 +199,33 @@ CT.dom = {
 		return CT.dom.node("", "textarea", classname,
 			id, value && {"value": value} || null);
 	},
-	"img": function(imgsrc, imgclass, onclick, _href, _target, _title, _linkid, wclass) {
-		var n = CT.dom.node("", "img", imgclass, "", {"src": imgsrc});
-		if (onclick || _href) {
-			var l = CT.dom.link("", onclick, _href);
-			if (_target)
-				l.target = _target;
-			if (_title)
-				l.title = l.alt = _title;
-			if (_linkid)
-				l.id = _linkid;
-			if (wclass)
-				n = CT.dom.node(n, "div", wclass);
+	"img": function(src, imgclass, onclick, href, target, title, linkid, wrapperclass, imgid, noanchor) {
+		if (arguments.length == 1 && typeof arguments[0] != "string") {
+			var obj = arguments[0];
+			src = obj.src;
+			imgclass = obj.imgclass;
+			onclick = obj.onclick;
+			href = obj.href;
+			target = obj.target;
+			title = obj.title;
+			linkid = obj.linkid;
+			wrapperclass = obj.wrapperclass;
+			imgid = obj.imgid;
+			noanchor = obj.noanchor;
+		}
+		var n = CT.dom.node("", "img", imgclass, imgid, { "src": src });
+		if (noanchor) // implies onclick -- otherwise, no (compatible) need to specify
+			n.onclick = onclick;
+		else if (onclick || href) {
+			var l = CT.dom.link("", onclick, href);
+			if (target)
+				l.target = target;
+			if (title)
+				l.title = l.alt = title;
+			if (linkid)
+				l.id = linkid;
+			if (wrapperclass)
+				n = CT.dom.div(n, wrapperclass);
 			l.appendChild(n);
 			return l;
 		}
