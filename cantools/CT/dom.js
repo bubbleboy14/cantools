@@ -975,6 +975,10 @@ CT.dom = {
 	"tag": function(tag, n) {
 		return CT.dom._narr2arr((n || document).getElementsByTagName(tag));
 	},
+	"attr": function(key, val, first) {
+		var r = CT.dom.Q("[" + (val ? (key + '="' + val + '"') : key) + "]");
+		return first ? r[0] : r;
+	},
 	"Q": function(q, n) {
 		return CT.dom._narr2arr((n || document.body).querySelectorAll(q));
 	},
