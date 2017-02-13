@@ -129,10 +129,12 @@ CT.stream.Multiplexer = CT.Class({
 		});
 		if (opts.chat) { // auto-sets singlechannel to true --> multi later!!
 			opts.singlechannel = true;
-			this.chatOut = CT.dom.div(null, "abs l0 t0 r0 b15 scrolly green pointer");
+			this.chatOut = CT.dom.div(null, "abs l0 t50 r0 b15 scrolly green pointer");
 			var ci = this.chatIn = CT.dom.smartField(this.say, "abs l0 b0 r0 h15p w1 p0 m0 noborder");
 			this.chatOut.onclick = function() { ci.focus(); };
-			CT.dom.setContent(opts.chat, [this.chatOut, this.chatIn]);
+			core.util.tNode.classList.remove("biggest");
+			core.util.tNode.classList.add("bigger");
+			CT.dom.setContent(opts.chat, [core.util.tNode, this.chatOut, this.chatIn]);
 		}
 		this.channels = {}; // each channel can carry multiple video streams
 		CT.pubsub.set_cb("message", this.update);
