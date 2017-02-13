@@ -8,12 +8,15 @@ CT.stream.Multiplexer = CT.Class({
 				CT.memcache.set(signature, b64s, function() {
 					CT.log.endTimer("memcache_push", b64s.video.length,
 						b64s.audio && b64s.audio.length);
-					CT.pubsub.publish(channel, signature); // (no echo)
+					CT.pubsub.publish(channel, {
+						action: "clip",
+						data: signature
+					}); // (no echo)
 				}, true);
 			},
 			update: function(message, process) {
 				CT.log.startTimer("memcache_update", message.length);
-				CT.memcache.get(message, process, true);
+				CT.memcache.get(message.data, process, true);
 				CT.log.endTimer("memcache_update", message.length);
 			}
 		},
@@ -38,6 +41,7 @@ CT.stream.Multiplexer = CT.Class({
 			var ckeys = Object.keys(this.channels);
 			if (ckeys.length)
 				this.leave(ckeys[0]);
+			this.channel = channel;
 		}
 		if (!(channel in this.channels)) {
 			CT.pubsub.subscribe(channel);
@@ -75,10 +79,28 @@ CT.stream.Multiplexer = CT.Class({
 		}
 		return video;
 	},
+	chat: function(message) {
+		if (this.opts.chat) {
+			var msg = CT.dom.div(message.data)
+			this.chatOut.appendChild(msg);
+			msg.scrollIntoViewIfNeeded();
+		}
+	},
+	say: function(msg) { // single only for now!!!
+		this.chatIn.value = "";
+		CT.pubsub.publish(this.channel, {
+			action: "chat",
+			data: msg
+		});
+		this.chat({ data: msg }); // no bounce back!!!
+	},
 	update: function(data) {
 		CT.log.startTimer("update", data.channel);
-		this.modes[this.mode].update(data.message,
-			this.getVideo(data.channel, data.user).process);
+		if (data.message.action == "clip") {
+			this.modes[this.mode].update(data.message,
+				this.getVideo(data.channel, data.user).process);
+		} else // chat
+			this.chat(data.message);
 		CT.log.endTimer("update", data.message.length
 			+ " " + data.channel + " " + data.user);
 	},
@@ -95,18 +117,26 @@ CT.stream.Multiplexer = CT.Class({
 		CT.pubsub.connect(this.opts.host, this.opts.port, this.opts.user);
 	},
 	init: function(opts) {
-		this.opts = CT.merge(opts, {
+		this.opts = opts = CT.merge(opts, {
 			host: "localhost",
 			port: 8888,
 			user: "user" + Math.floor(100 * Math.random()),
 			node: document.body,
 			autoconnect: true,
 			singlechannel: false,
-			wserror: null
+			wserror: null,
+			chat: true
 		});
+		if (opts.chat) { // auto-sets singlechannel to true --> multi later!!
+			opts.singlechannel = true;
+			this.chatOut = CT.dom.div(null, "abs l0 t0 r0 b15 scrolly green pointer");
+			var ci = this.chatIn = CT.dom.smartField(this.say, "abs l0 b0 r0 h15p w1 p0 m0 noborder");
+			this.chatOut.onclick = function() { ci.focus(); };
+			CT.dom.setContent(opts.chat, [this.chatOut, this.chatIn]);
+		}
 		this.channels = {}; // each channel can carry multiple video streams
 		CT.pubsub.set_cb("message", this.update);
 		opts.wserror && CT.pubsub.set_cb("wserror", opts.wserror);
-		this.opts.autoconnect && this.connect();
+		opts.autoconnect && this.connect();
 	}
 });
