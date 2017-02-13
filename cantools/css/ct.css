@@ -20,10 +20,12 @@
 .wm20p { max-width: 20px !important; }
 .hm1 { max-height: 100%; }
 .wm1 { max-width: 100%; }
-.hmin1 { min-height: 100%; }
-.wmin1 { min-width: 100%; }
 .hm1-2 { max-height: 50%; }
 .wm1-2 { max-width: 50%; }
+.hmin1 { min-height: 100%; }
+.wmin1 { min-width: 100%; }
+.hmin1-2 { min-height: 50%; }
+.wmin1-2 { min-width: 50%; }
 .h50p { height: 50px; }
 .h80p { height: 80px; }
 .h100p { height: 100px; }
@@ -252,6 +254,7 @@
 .italic { font-style: italic; }
 .bordered { border: 1px solid black; }
 .noborder { border: 0px; }
+.bw0 { border-width: 0px ;}
 .shadowed { text-shadow: 1px 1px 1px #fff, 2px 2px 2px #111; }
 .outlined {
     text-shadow:
