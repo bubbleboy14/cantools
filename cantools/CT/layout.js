@@ -6,11 +6,15 @@ This module provides functions that generate common UI elements. These include:
 	right: []
 	rightPadding: "30px" // non-centerLogo only!
 	centerLogo: true
+	img: null
+	panDuration: null (falls back to CT.dom.panImg() default of 5000)
 
 ### footer(opts) - defaults:
 	logo: "Placeholder Logo"
 	links: []
 	contact: {}
+	img: null
+	panDuration: null (falls back to CT.dom.panImg() default of 5000)
 
 ### grid(data, columns, rows, hardheight) - defaults:
 	columns: 3
@@ -69,9 +73,10 @@ CT.layout = {
 			links: [],
 			contact: {}
 		});
-		var rights = [], content = [
-			CT.dom.link(opts.logo, null, "/", opts.logoClass)
-		];
+		var rights = [], content = [];
+		if (opts.img) // opts also may include: panDuration
+			content.push(CT.dom.panImg(opts));
+		content.push(CT.dom.link(opts.logo, null, "/", opts.logoClass));
 		if (opts.links.length)
 			rights.push(opts.links.map(function(link) {
 				return CT.dom.link(link.content, link.cb, link.href, "padded");
