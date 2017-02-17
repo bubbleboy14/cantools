@@ -43,6 +43,8 @@ CT.layout = {
 			centerLogo: true
 		});
 		var content = [];
+		if (opts.img) // opts also may include: panDuration
+			content.push(CT.dom.panImg(opts));
 		if (opts.right instanceof Node || opts.right.length) {
 			if (opts.centerLogo)
 				content.push(CT.dom.node(opts.right, "div", "right padded"));

@@ -235,9 +235,9 @@ CT.dom = {
 		opts = CT.merge(opts, {
 			pan: true,
 			panDuration: 5000,
-			className: "w1 h1 noflow abs"
+			className: "abs all0 noflow below"
 		});
-		var img = CT.dom.node(CT.dom.img(opts.img, "abs"), "div", opts.className);
+		var img = CT.dom.div(CT.dom.img(opts.img, "abs"), opts.className);
 		if (opts.pan) {
 			img.controller = CT.trans.pan(img.firstChild, {
 				duration: opts.panDuration
