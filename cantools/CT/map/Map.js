@@ -32,6 +32,10 @@ CT.map.Map = CT.Class({
 		});
 		return ms;
 	},
+	resizeMarkers: function(w, h) {
+		for (var m in this.markers)
+			this.markers[m].resize(w, h);
+	},
 	clearMarkers: function(markers) {
 		(Array.isArray(markers) ? markers : Object.values(this.markers)).forEach(function(m) {
 			m.remove();

@@ -73,6 +73,11 @@ CT.map.Marker = CT.Class({
 				thiz["set" + CT.parse.capitalize(w)](thiz.opts[w]);
 		});
 	},
+	resize: function(w, h) {
+		h = h || w;
+		this.setIcon(CT.merge({ size: new google.maps.Size(w, h) },
+			this.getIcon())); // assumes size already specified...
+	},
 	_showInfo: function() {
 		this.cancelInfo();
 		var iw = this._infoWindow = this._infoWindow || CT.map.infoWindow();
