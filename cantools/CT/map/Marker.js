@@ -53,7 +53,8 @@ CT.map.Marker = CT.Class({
 	CLASSNAME: "CT.map.Marker",
 	_wrappers: ["title", "icon", "map", "content", "position", "visible"],
 	_converters: {
-		position: CT.map.util.latlng
+		position: CT.map.util.latlng,
+		icon: CT.map.util.icon
 	},
 	add: function(map) {
 		this.opts.map = map;
@@ -101,7 +102,7 @@ CT.map.Marker = CT.Class({
 			return m.opts[k];
 		};
 		this["set" + kup] = function(val) {
-			m.opts[k] = m._converters[k] ? m._converters[k](val) : val;
+			m.opts[k] = m._converters[k] ? m._converters[k](val, m) : val;
 			m.marker["set" + kup](m.opts[k]);
 		};
 	},

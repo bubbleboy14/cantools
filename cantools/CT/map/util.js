@@ -32,6 +32,14 @@ CT.map.util = {
 	getGeoFallback: function() {
 		return CT.map.util._geo_fallback;
 	},
+	icon: function(icon, marker) { // preserve image opts, if any
+		if (icon && typeof icon == "string") {
+			var orig = marker.getIcon();
+			if (orig && orig.url) // is obj -- retain all but url
+				return CT.merge({ url: icon }, orig);
+		}
+		return icon;
+	},
 	latlng: function(position) { // {lat,lng}
 		return position instanceof google.maps.LatLng
 			? position : new google.maps.LatLng(position);
