@@ -80,9 +80,10 @@ CT.map.Marker = CT.Class({
 		iw.open(this.opts.map);
 	},
 	showInfo: function() {
-		if (this.opts.infoDelay)
-			this._infoTimeout = setTimeout(this._showInfo, this.opts.infoDelay);
-		else
+		if (this.opts.infoDelay) {
+			if (!this._infoTimeout)
+				this._infoTimeout = setTimeout(this._showInfo, this.opts.infoDelay);
+		} else
 			this._showInfo();
 	},
 	cancelInfo: function() {
