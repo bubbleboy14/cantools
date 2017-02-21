@@ -61,6 +61,12 @@ CT.onload(function() {
 				CT.dom.link("Code", null, "https://github.com/bubbleboy14/ctdocs", "biggest p30 right")
 			]
 		}, {
+			name: "ctstream",
+			content: [
+				"This package includes all the machinery for building sites that feature streaming video.",
+				CT.dom.link("Code", null, "https://github.com/bubbleboy14/ctstream", "biggest p30 right")
+			]
+		}, {
 			name: "ctnet",
 			content: [
 				"This module contains the framework for a content-driven social network.",
