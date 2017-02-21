@@ -374,6 +374,13 @@
     background-position: center;
     background-repeat: no-repeat;
 }
+.backtilt {
+    display: inline-block;
+    -webkit-transform: skewX(9deg);
+    -moz-transform: skewX(9deg);
+    -ms-transform: skewX(9deg);
+    -o-transform: skewX(9deg);
+}
 .bare {
     padding: 0px !important;
     margin: 0px !important;
@@ -490,6 +497,9 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+}
+.green {
+    color: green;
 }
 .gray {
     color: gray;
