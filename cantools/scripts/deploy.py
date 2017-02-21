@@ -43,8 +43,8 @@ Generates fresh 'static' and 'production' files (from 'development' source files
 """
 
 import subprocess, commands, os
-from cantools import config
-from cantools.util import log, error, read, write
+from cantools import config, __version__
+from cantools.util import log, error, read, write, cmd
 from builder import build
 
 def doyaml(mode):
@@ -77,6 +77,41 @@ def setmode(mode):
             ctpy = ctpy.replace(config.py.mode%(m,), config.py.mode%(mode,))
     write(ctpy, config.py.path)
 
+def vpush():
+    log("vpushin!", important=True)
+    log("current version: %s"%(__version__,))
+    vnumz = [int(n) for n in __version__.split(".")]
+    while len(vnumz) < 4:
+        vnumz.append(0)
+    vnumz[-1] += 1
+    minor = ".".join([str(n) for n in vnumz])
+    vnumz[-2] += 1
+    major = ".".join([str(n) for n in vnumz[:-1]])
+    log("How should we increment? You have three options:", important=True)
+    log("Major ('M' - %s)"%(major,), 1)
+    log("Minor ('m' - %s)"%(minor,), 1)
+    log("Custom ('c')", 1)
+    selection = raw_input("So? (M/m/c - default: m): ")
+    if selection == "c":
+        version = raw_input("ok, then. what's the new version #? ")
+    elif selection == "M":
+        version = major
+    else: # default (minor)
+        version = minor
+    log("going with: %s"%(version,), important=True)
+    for fname in ["setup.py", os.path.join("cantools", "__init__.py")]:
+        log("updating: %s"%(fname,), 1)
+        write(read(fname).replace(__version__, version), fname)
+    cmd("ctinit -a")
+    cmd("ctdoc -w")
+    cmd("cd docs")
+    cmd("ctdeploy -p")
+    cmd("cd ..")
+    cmd("git add -u")
+    cmd('git commit -m "vpush %s"'%(version,))
+    cmd("git push")
+    log("we did it (%s -> %s)!"%(__version__, version))
+
 def run():
     from optparse import OptionParser
     parser = OptionParser("ctdeploy [-d|s|p] [-un] [--js_path=PATH]")
@@ -92,29 +127,34 @@ def run():
         dest="no_build", default=False, help="skip compilation step")
     parser.add_option("-j", "--js_path", dest="js_path", default=config.js.path,
         help="set javascript path (default=%s)"%(config.js.path,))
+    parser.add_option("-v", "--vpush", action="store_true", dest="vpush",
+        default=False, help="push a new version of cantools [ct dev only]")
     options, args = parser.parse_args()
 
-    mode = options.dynamic and "dynamic" or options.static and "static" or options.production and "production"
-    if not mode:
-        error("no mode specified")
+    if options.vpush:
+        vpush()
+    else:
+        mode = options.dynamic and "dynamic" or options.static and "static" or options.production and "production"
+        if not mode:
+            error("no mode specified")
 
-    # 0) set js path
-    if options.js_path != config.js.path:
-        log("setting js path to: %s"%(options.js_path,))
-        config.js.update("path", options.js_path)
+        # 0) set js path
+        if options.js_path != config.js.path:
+            log("setting js path to: %s"%(options.js_path,))
+            config.js.update("path", options.js_path)
 
-    # 1) build static/production files
-    if not options.no_build:
-        os.path.walk(config.build.web.dynamic, build, None)
+        # 1) build static/production files
+        if not options.no_build:
+            os.path.walk(config.build.web.dynamic, build, None)
 
-    # 2) switch to specified mode
-    setmode(mode)
+        # 2) switch to specified mode
+        setmode(mode)
 
-    # 3) if -u, upload project and switch back to -d mode
-    if options.upload:
-        log("uploading files")
-        subprocess.call('appcfg.py update . --no_precompilation --noauth_local_webserver', shell=True)
-        setmode("dynamic")
+        # 3) if -u, upload project and switch back to -d mode
+        if options.upload:
+            log("uploading files")
+            subprocess.call('appcfg.py update . --no_precompilation --noauth_local_webserver', shell=True)
+            setmode("dynamic")
 
     log("goodbye")
 
