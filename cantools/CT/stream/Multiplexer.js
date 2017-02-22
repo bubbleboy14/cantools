@@ -108,7 +108,7 @@ CT.stream.Multiplexer = CT.Class({
 		var chan = this.channels[channel],
 			video = chan[user];
 		if (!video) {
-			video = chan[user] = new CT.stream.Video({ stream: stream });
+			video = chan[user] = new CT.stream.Video(CT.merge(this.opts.vidopts, { stream: stream }));
 			CT.dom.addContent(this.opts.node, video.node);
 		}
 		return video;
@@ -125,16 +125,23 @@ CT.stream.Multiplexer = CT.Class({
 			autoconnect: true,
 			singlechannel: false,
 			wserror: null,
-			chat: true
+			chat: true,
+			title: null,
+			vidopts: {},
+			chatblurs: ["say what?", "any questions?", "what's up?"]
 		});
 		if (opts.chat) { // auto-sets singlechannel to true --> multi later!!
 			opts.singlechannel = true;
 			this.chatOut = CT.dom.div(null, "abs l0 t50 r0 b15 scrolly green pointer");
-			var ci = this.chatIn = CT.dom.smartField(this.say, "abs l0 b0 r0 h15p w1 p0 m0 noborder");
+			var ci = this.chatIn = CT.dom.smartField({
+				cb: this.say,
+				blurs: opts.chatblurs,
+				classname: "abs l0 b0 r0 h15p w1 p0 m0 noborder"
+			});
 			this.chatOut.onclick = function() { ci.focus(); };
-			core.util.tNode.classList.remove("biggest");
-			core.util.tNode.classList.add("bigger");
-			CT.dom.setContent(opts.chat, [core.util.tNode, this.chatOut, this.chatIn]);
+			opts.title.classList.remove("biggest");
+			opts.title.classList.add("bigger");
+			CT.dom.setContent(opts.chat, [opts.title, this.chatOut, this.chatIn]);
 		}
 		this.channels = {}; // each channel can carry multiple video streams
 		CT.pubsub.set_cb("message", this.update);
