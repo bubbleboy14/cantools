@@ -187,6 +187,10 @@
 .b100, .bottom100 { bottom: 100px; }
 .l100, .left100 { left: 100px; }
 .r100, .right100 { right: 100px; }
+.t200, .top200 { top: 200px; }
+.b200, .bottom200 { bottom: 200px; }
+.l200, .left200 { left: 200px; }
+.r200, .right200 { right: 200px; }
 
 /* size */
 .big { font-size: 120%; }
