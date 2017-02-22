@@ -572,6 +572,16 @@ CT.dom = {
 		"September", "October", "November", "December"],
 	"currentyear": Math.max((new Date()).getFullYear(), 2014),
 	"dateSelectors": function(node, d, startdate, enddate, withtime, noday, val) {
+		if (arguments.length == 1 && ! (arguments[0] instanceof Node)) {
+			var obj = arguments[0];
+			node = obj.node;
+			d = obj.d;
+			startdate = obj.startdate;
+			enddate = obj.enddate;
+			withtime = obj.withtime;
+			noday = obj.noday;
+			val = obj.val;
+		}
 		var eyears = ["Year"];
 		startdate = startdate || CT.dom.currentyear;
 		enddate = enddate || CT.dom.currentyear;
