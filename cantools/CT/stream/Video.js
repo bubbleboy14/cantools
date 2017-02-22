@@ -136,6 +136,7 @@ CT.stream.Video = CT.Class({
 			stream: null,
 			className: null,
 			id: null,
+			frame: true,
 			videoClass: null,
 			videoId: null,
 			activeAudio: false,
@@ -151,14 +152,14 @@ CT.stream.Video = CT.Class({
 		this._audioButton = CT.dom.img("/img/audio.png",
 			opts.activeAudio && "buttonActive", this._flipAudio);
 		this._saveButton = CT.dom.img("/img/save.png", null, this.save);
-		this.node = CT.dom.div([
+		this.node = opts.frame ? CT.dom.div([
 			this.video,
 			CT.dom.div([
 				this._audioButton,
 				CT.dom.pad(2),
 				this._saveButton
 			], "centered")
-		], opts.className, opts.id);
+		], opts.className, opts.id) : this.video;
 		this.node.video = this.video;
 		if (opts.stream)
 			this.video.volume = 0;
