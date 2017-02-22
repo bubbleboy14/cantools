@@ -215,6 +215,32 @@ CT.parse = {
 	},
 
 	// timestamps
+	"_countdown": function(secs) {
+		var mins, hours, days, parts = [];
+		mins = ~~(secs / 60);
+		secs -= mins * 60;
+		hours = ~~(mins / 60);
+		mins -= hours * 60;
+		days = ~~(hours / 24);
+		hours -= days * 24;
+		if (days)
+			parts.push(days + " days");
+		if (hours)
+			parts.push(hours + " hours");
+		if (mins)
+			parts.push(mins + " minutes");
+		if (secs)
+			parts.push(~~secs + " seconds");
+		return parts.join(", ");
+	},
+	"countdown": function(secs) {
+		var n = CT.dom.span(CT.parse._countdown(secs));
+		setInterval(function() {
+			secs -= 1;
+			CT.dom.setContent(n, CT.parse._countdown(secs));
+		}, 1000);
+		return n;
+	},
 	"date2string": function(d, noletters) {
 		var month = d.getMonth() + 1, date = d.getDate();
 		if (month < 10)
