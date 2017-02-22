@@ -1,4 +1,4 @@
-# cantools 0.9.3.2
+# cantools 0.9.3.3
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
  - Docs: http://ct.mkult.co
@@ -628,6 +628,16 @@ Return the (server-side) value for the specified key.
 
 ### CT.memcache.set(key, val, cb, localCache)
 Instruct the server to remember the specified key and value.
+
+### CT.memcache.forget(key, cb, localCache)
+Instruct the server to forget the specified key and any associated value.
+
+### CT.memcache.countdown.get(key, cb)
+Return the (server-side) TTL and token for the specified key.
+
+### CT.memcache.countdown.set(key, seconds, cb)
+Instruct the server to associate a countdown (seconds in the future) and token
+(randomly-generated) with the specified key.
 
 ## CT.mobile
 ### Import line: 'CT.require("CT.mobile");'
