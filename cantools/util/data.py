@@ -62,3 +62,7 @@ def batch(dlist, f, *args, **kwargs):
 	while i < len(dlist):
 		f(dlist[i:i+1000], *args, **kwargs)
 		i += chunk
+
+def token(n=10):
+	import random, string
+	return "".join(random.sample(string.ascii_uppercase + string.digits, n))
