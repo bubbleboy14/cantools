@@ -161,9 +161,10 @@ CT.stream.Video = CT.Class({
 			], "centered")
 		], opts.className, opts.id) : this.video;
 		this.node.video = this.video;
-		if (opts.stream)
+		if (opts.stream) {
 			this.video.volume = 0;
-		else {
+			this.activeAudio = this.opts.activeAudio;
+		} else {
 			this.mediaSource = new MediaSource();
 			this.video.src = URL.createObjectURL(this.mediaSource);
 			this.mediaSource.addEventListener("sourceopen", this._sourceOpen);
