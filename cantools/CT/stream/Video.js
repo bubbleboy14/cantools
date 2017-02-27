@@ -3,7 +3,6 @@ CT.stream.Video = CT.Class({
 	_buffers: [],
 	_sourceOpen: function() {
 		this.log("sourceopen");
-//		this.start();
 		this.setSourceBuffer();
 	},
 	_sourceUpdate: function() {
@@ -15,7 +14,6 @@ CT.stream.Video = CT.Class({
 			else if (this.mediaSource.readyState == "open") {
 				this.mediaSource.endOfStream();
 				!this.audio.canplay && this.audio.next();
-//				this.audio.start();
 			}
 		}
 	},
