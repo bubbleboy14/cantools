@@ -22,12 +22,16 @@ CT.stream.Video = CT.Class({
 	setSourceBuffer: function() {
 		this.log("setSourceBuffer - exists:", !!this.sourceBuffer);
 		if (!this.sourceBuffer) {
-			this.sourceBuffer = this.mediaSource.addSourceBuffer(CT.stream.opts.codecs.video);
+			var opts = CT.stream.opts;
+			this.sourceBuffer = this.mediaSource.addSourceBuffer(opts.merged
+				? opts.codecs.av : opts.codecs.video);
 			this.sourceBuffer.mode = 'sequence';
 			this.sourceBuffer.addEventListener("updateend", this._sourceUpdate);
 		}
 	},
 	process: function(b64s) {
+		if (CT.stream.opts.merged)
+			return this.process_single(b64s);
 		this.log("process", b64s.video.length,
 			b64s.audio && b64s.audio.length);
 		var that = this;
@@ -74,9 +78,11 @@ CT.stream.Video = CT.Class({
 		this.log("NEXT AUDIO!!!!!", this._audio_buffers.length, this.activeAudio);
 		if (this._audio_buffers.length > this._video_buffers.length + CT.stream.opts.audioDelay) {
 			var buff = this._audio_buffers.shift();
-			this.audio.src = this.activeAudio ? buff : "";
-			if (this.activeAudio && this.audio.src && this.audio.paused)
+			if (this.activeAudio && !CT.stream.opts.merged) {
+				this.audio.pause();
+				this.audio.src = buff;
 				this.audio.play();
+			}
 		}
 	},
 	_initAudio: function() {
@@ -161,9 +167,10 @@ CT.stream.Video = CT.Class({
 			], "centered")
 		], opts.className, opts.id) : this.video;
 		this.node.video = this.video;
-		if (opts.stream)
+		if (opts.stream) {
 			this.video.volume = 0;
-		else {
+			this.activeAudio = this.opts.activeAudio;
+		} else {
 			this.mediaSource = new MediaSource();
 			this.video.src = URL.createObjectURL(this.mediaSource);
 			this.mediaSource.addEventListener("sourceopen", this._sourceOpen);

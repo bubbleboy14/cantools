@@ -4,7 +4,7 @@ var _sutil = CT.stream.util = {
 		blob ? _sutil.read(blob, cb) : cb();
 	},
 	b64_to_blob: function(b64, cb) {
-		b64 ? fetch(b64).then(function(res) {
+		b64 ? fetch(b64.video || b64).then(function(res) {
 			return res.blob();
 		}).then(cb) : cb();
 	},
@@ -55,7 +55,8 @@ var _sutil = CT.stream.util = {
 		buffer ? fr.readAsArrayBuffer(blob) : fr.readAsDataURL(blob);
 	},
 	avRecorder: function(stream) {
-		var r = new MediaStreamRecorder(stream);
+//		var r = new MediaStreamRecorder(stream);
+		var r = new MediaRecorder(stream);
 		r.mimeType = CT.stream.opts.codecs.av;
 		return r;
 	},
@@ -122,13 +123,13 @@ var _sutil = CT.stream.util = {
 	},
 	_single: function(ondata, onrecorder) {
 		return function(stream) {
-			var segment = 0, recorder = _sutil.avRecorder(stream);
-			recorder.ondataavailable = function(blob) {
+			var segment = 0, segments = [], recorder = _sutil.avRecorder(stream);
+			recorder.ondataavailable = function(blobevent) {
 				CT.log("ondataavailable!!");
 				segment = (segment + 1) % CT.stream.opts.segments;
 				if (!segment)
 					segments.length = 0;
-				ondata && ondata({ video: blob }, segment);
+				ondata && ondata({ video: blobevent.data }, segment);
 			};
 			recorder.start(CT.stream.opts.chunk);
 			onrecorder && onrecorder(recorder, stream);
