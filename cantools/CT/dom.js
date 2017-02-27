@@ -340,9 +340,26 @@ CT.dom = {
 		attrs.preload = attrs.preload || preload || "none";
 		return CT.dom.node("", "audio", className, id, attrs);
 	},
-	"video": function(src, className, id, attrs, style) {
+	"video": function(src, className, id, attrs, style, oncanplay, onended, onplay) {
+		if (arguments.length == 1 && typeof arguments[0] != "string") {
+			var obj = arguments[0];
+			src = obj.src;
+			className = obj.className;
+			id = obj.id;
+			attrs = obj.attrs;
+			style = obj.style;
+			oncanplay = obj.oncanplay;
+			onended = obj.onended;
+			onplay = obj.onplay;
+		}
 		attrs = attrs || {};
 		attrs.src = src;
+		if (onplay)
+			attrs.onplay = onplay;
+		if (onended)
+			attrs.onended = onended;
+		if (oncanplay)
+			attrs.oncanplay = oncanplay;
 		var n = CT.dom.node(null, "video", className, id, attrs, style);
 		n.stream = function(stream) {
 			n.src = window.URL.createObjectURL(stream);
