@@ -311,7 +311,7 @@ CT.dom = {
 			wrapper.appendChild(nodes[i]);
 		return wrapper;
 	},
-	"audio": function(src, controls, autoplay, preload, onplay, onended, className, id, attrs, oncanplay) {
+	"audio": function(src, controls, autoplay, preload, onplay, onended, className, id, attrs, oncanplay, onpause) {
 		if (arguments.length == 1 && typeof arguments[0] != "string") {
 			var obj = arguments[0];
 			src = obj.src;
@@ -324,6 +324,7 @@ CT.dom = {
 			id = obj.id;
 			attrs = obj.atts;
 			oncanplay = obj.oncanplay;
+			onpause = obj.onpause;
 		}
 		attrs = attrs || {};
 		attrs.src = src;
@@ -333,6 +334,8 @@ CT.dom = {
 			attrs.autoplay = "true";
 		if (onplay)
 			attrs.onplay = onplay;
+		if (onpause)
+			attrs.onpause = onpause;
 		if (onended)
 			attrs.onended = onended;
 		if (oncanplay)
@@ -340,7 +343,7 @@ CT.dom = {
 		attrs.preload = attrs.preload || preload || "none";
 		return CT.dom.node("", "audio", className, id, attrs);
 	},
-	"video": function(src, className, id, attrs, style, oncanplay, onended, onplay) {
+	"video": function(src, className, id, attrs, style, oncanplay, onended, onplay, onpause) {
 		if (arguments.length == 1 && typeof arguments[0] != "string") {
 			var obj = arguments[0];
 			src = obj.src;
@@ -351,11 +354,14 @@ CT.dom = {
 			oncanplay = obj.oncanplay;
 			onended = obj.onended;
 			onplay = obj.onplay;
+			onpause = obj.onpause;
 		}
 		attrs = attrs || {};
 		attrs.src = src;
 		if (onplay)
 			attrs.onplay = onplay;
+		if (onpause)
+			attrs.onpause = onpause;
 		if (onended)
 			attrs.onended = onended;
 		if (oncanplay)

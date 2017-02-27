@@ -32,7 +32,6 @@ CT.stream.opts = {
 	segments: 20,
 	chunk: 2000,
 	cutoff: 30000,
-	audioDelay: CT.info.isMac && 2 || 1,
 	width: 320,
 	height: 240,
 	waiting: [],
