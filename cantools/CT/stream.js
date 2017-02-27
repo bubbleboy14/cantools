@@ -21,6 +21,7 @@ that arrives in chunks.
 
 CT.scriptImport("CT.lib.MediaStreamRecorder");
 CT.require("CT.stream.util");
+CT.require("CT.stream.Audio");
 CT.require("CT.stream.Video");
 CT.require("CT.stream.Streamer");
 CT.require("CT.stream.Multiplexer");
@@ -35,7 +36,7 @@ CT.stream.opts = {
 	width: 320,
 	height: 240,
 	waiting: [],
-	merged: true,
+	merged: false,
 	codecs: {
 		av: 'video/webm; codecs="vp8,opus"',
 		video: 'video/webm; codecs="vp8"',
