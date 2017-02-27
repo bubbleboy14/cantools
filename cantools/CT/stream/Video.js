@@ -3,7 +3,7 @@ CT.stream.Video = CT.Class({
 	_buffers: [],
 	_sourceOpen: function() {
 		this.log("sourceopen");
-		this.start();
+//		this.start();
 		this.setSourceBuffer();
 	},
 	_sourceUpdate: function() {
@@ -14,7 +14,8 @@ CT.stream.Video = CT.Class({
 				this.sourceBuffer.appendBuffer(this._buffers.shift());
 			else if (this.mediaSource.readyState == "open") {
 				this.mediaSource.endOfStream();
-				this.audio.start();
+				!this.audio.canplay && this.audio.next();
+//				this.audio.start();
 			}
 		}
 	},
@@ -53,11 +54,16 @@ CT.stream.Video = CT.Class({
 		});
 	},
 	start: function() {
+		this.canplay = true;
+		if (CT.stream.opts.merged || !this.audio.active || this.audio.canplay)
+			this._start();
+	},
+	_start: function() {
 		this.log("start (attempting) - paused:", this.video.paused);
 		var that = this, prom = this.video.play();
 		prom && prom.then(function() {
 			that.log("started!!! streaming!");
-//			that.audio.start();
+			that.audio.node.play();
 		})["catch"](function(error) {
 			that.log("play failed! awaiting user input (android)", error.message);
 			if (CT.stream.opts.requiresInput && !CT.stream.opts.requestedInput) {
@@ -132,6 +138,8 @@ CT.stream.Video = CT.Class({
 		this.video = opts.video || CT.dom.video(opts.stream
 			&& URL.createObjectURL(opts.stream), opts.videoClass,
 			opts.videoId, opts.attrs);
+		this.video.on("canplay", this.start);
+		this.video.on("pause", this._start);
 		this.audio = new CT.stream.Audio(opts.activeAudio, this);
 		this._saveButton = CT.dom.img("/img/save.png", null, this.save);
 		this.node = opts.frame ? CT.dom.div([

@@ -10,20 +10,24 @@ CT.stream.Audio = CT.Class({
 	},
 	next: function() {
 		this.log("NEXT AUDIO!!!!!", this._buffers.length, this.video._buffers.length, this.active);
-		if (this._buffers.length > this.video._buffers.length) {
-			var buff = this._buffers.shift();
-			if (this.active && !CT.stream.opts.merged)
-				this.node.src = buff;
+		var buff = this._buffers.shift();
+		if (buff && this.active && !CT.stream.opts.merged) {
+			this.node.src = buff;
+			this.canplay && this.node.play();
 		}
 	},
 	start: function() {
-		if (!this.started)
-			setTimeout(this.next, CT.stream.opts.audioDelay);
-		this.started = true;
+		this.canplay = true;
+		if (this.video.canplay)
+			this.video.start();
 	},
 	build: function() {
-		this.node = CT.dom.audio(null, null,
-			true, null, null, this.next, "hidden");
+		var n = this.node = CT.dom.audio({
+			className: "hidden",
+			onended: this.next,
+			oncanplay: this.start,
+			onpause: function() { n.play(); }
+		});
 		document.body.appendChild(this.node);
 	},
 	init: function(active, video) {
