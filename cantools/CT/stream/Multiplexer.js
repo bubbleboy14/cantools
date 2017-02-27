@@ -63,7 +63,7 @@ CT.stream.Multiplexer = CT.Class({
 		CT.log.startTimer("push", channel + segment);
 		var that = this, signature = channel + this.opts.user + segment,
 			video = this.getVideo(channel, this.opts.user, stream);
-		if (video.activeAudio) {
+		if (video.audio.active) {
 			CT.stream.util.blobs_to_b64s(blobs, function(b64s) {
 				CT.log.endTimer("push", signature);
 				that.modes[that.mode].push(b64s, channel, signature);
