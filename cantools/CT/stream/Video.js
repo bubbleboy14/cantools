@@ -1,21 +1,20 @@
 CT.stream.Video = CT.Class({
 	CLASSNAME: "CT.stream.Video",
-	_video_buffers: [],
-	_audio_buffers: [],
+	_buffers: [],
 	_sourceOpen: function() {
 		this.log("sourceopen");
 		this.start();
 		this.setSourceBuffer();
 	},
 	_sourceUpdate: function() {
-		this.log("_sourceUpdate", this._video_buffers.length,
+		this.log("_sourceUpdate", this._buffers.length,
 			this.sourceBuffer.updating, this.mediaSource.readyState);
 		if (!this.sourceBuffer.updating) {
-			if (this._video_buffers.length)
-				this.sourceBuffer.appendBuffer(this._video_buffers.shift());
+			if (this._buffers.length)
+				this.sourceBuffer.appendBuffer(this._buffers.shift());
 			else if (this.mediaSource.readyState == "open") {
 				this.mediaSource.endOfStream();
-				this._nextAudio();
+				this.audio.next();
 			}
 		}
 	},
@@ -39,8 +38,8 @@ CT.stream.Video = CT.Class({
 			that.recorder && that.recorder.remember
 				&& that.recorder.remember(videoblob);
 			CT.stream.util.blob_to_buffer(videoblob, function(videobuffer) {
-				that._audio_buffers.push(b64s.audio);
-				that._video_buffers.push(videobuffer);
+				that.audio.push(b64s.audio);
+				that._buffers.push(videobuffer);
 				that._sourceUpdate();
 			});
 		});
@@ -49,7 +48,7 @@ CT.stream.Video = CT.Class({
 		this.log("process", dataURL.length);
 		var that = this;
 		CT.stream.util.b64_to_buffer(dataURL, function(buffer) {
-			that._video_buffers.push(buffer);
+			that._buffers.push(buffer);
 			that._sourceUpdate();
 		});
 	},
@@ -61,7 +60,7 @@ CT.stream.Video = CT.Class({
 		})["catch"](function(error) {
 			that.log("play failed! awaiting user input (android)", error.message);
 			if (CT.stream.opts.requiresInput && !CT.stream.opts.requestedInput) {
-				that.audio && CT.stream.opts.waiting.push(that.audio);
+				that.audio.node && CT.stream.opts.waiting.push(that.audio.node);
 				CT.stream.opts.requestedInput = true;
 				(new CT.modal.Prompt({
 					cb: CT.stream.opts.startWaiting,
@@ -73,29 +72,6 @@ CT.stream.Video = CT.Class({
 			}
 			CT.stream.opts.waiting.push(that.video);
 		});
-	},
-	_nextAudio: function() {
-		this.log("NEXT AUDIO!!!!!", this._audio_buffers.length, this.activeAudio);
-		if (this._audio_buffers.length > this._video_buffers.length + CT.stream.opts.audioDelay) {
-			var buff = this._audio_buffers.shift();
-			if (this.activeAudio && !CT.stream.opts.merged) {
-				this.audio.pause();
-				this.audio.src = buff;
-				this.audio.play();
-			}
-		}
-	},
-	_initAudio: function() {
-		this.activeAudio = this.opts.activeAudio;
-//		this.audio = CT.dom.audio(null, null, true,
-//			null, null, this._nextAudio, "hidden");
-		this.audio = CT.dom.audio(null, null,
-			null, null, null, null, "hidden");
-		document.body.appendChild(this.audio);
-	},
-	_flipAudio: function() {
-		this.activeAudio = !this.activeAudio;
-		this._audioButton.firstChild.classList[this.activeAudio ? "add" : "remove"]("buttonActive");
 	},
 	_miniRecorder: function() {
 		var rec = {
@@ -155,26 +131,24 @@ CT.stream.Video = CT.Class({
 		this.video = opts.video || CT.dom.video(opts.stream
 			&& URL.createObjectURL(opts.stream), opts.videoClass,
 			opts.videoId, opts.attrs);
-		this._audioButton = CT.dom.img("/img/audio.png",
-			opts.activeAudio && "buttonActive", this._flipAudio);
+		this.audio = new CT.stream.Audio(opts.activeAudio, this);
 		this._saveButton = CT.dom.img("/img/save.png", null, this.save);
 		this.node = opts.frame ? CT.dom.div([
 			this.video,
 			CT.dom.div([
-				this._audioButton,
+				this.audio.button,
 				CT.dom.pad(2),
 				this._saveButton
 			], "centered")
 		], opts.className, opts.id) : this.video;
 		this.node.video = this.video;
-		if (opts.stream) {
+		if (opts.stream)
 			this.video.volume = 0;
-			this.activeAudio = this.opts.activeAudio;
-		} else {
+		else {
 			this.mediaSource = new MediaSource();
 			this.video.src = URL.createObjectURL(this.mediaSource);
 			this.mediaSource.addEventListener("sourceopen", this._sourceOpen);
-			this._initAudio();
+			this.audio.build();
 		}
 	}
 });
