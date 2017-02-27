@@ -311,7 +311,20 @@ CT.dom = {
 			wrapper.appendChild(nodes[i]);
 		return wrapper;
 	},
-	"audio": function(src, controls, autoplay, preload, onplay, onended, className, id, attrs) {
+	"audio": function(src, controls, autoplay, preload, onplay, onended, className, id, attrs, oncanplay) {
+		if (arguments.length == 1 && typeof arguments[0] != "string") {
+			var obj = arguments[0];
+			src = obj.src;
+			controls = obj.controls;
+			autoplay = obj.autoplay;
+			preload = obj.preload;
+			onplay = obj.onplay;
+			onended = obj.onended;
+			className = obj.className;
+			id = obj.id;
+			attrs = obj.atts;
+			oncanplay = obj.oncanplay;
+		}
 		attrs = attrs || {};
 		attrs.src = src;
 		if (controls)
@@ -322,6 +335,8 @@ CT.dom = {
 			attrs.onplay = onplay;
 		if (onended)
 			attrs.onended = onended;
+		if (oncanplay)
+			attrs.oncanplay = oncanplay;
 		attrs.preload = attrs.preload || preload || "none";
 		return CT.dom.node("", "audio", className, id, attrs);
 	},
