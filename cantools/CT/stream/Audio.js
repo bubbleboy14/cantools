@@ -9,19 +9,21 @@ CT.stream.Audio = CT.Class({
 		this._buffers.push(buff);
 	},
 	next: function() {
-		this.log("NEXT AUDIO!!!!!", this._buffers.length, this.active);
-		if (this._buffers.length > this.video._buffers.length + CT.stream.opts.audioDelay) {
+		this.log("NEXT AUDIO!!!!!", this._buffers.length, this.video._buffers.length, this.active);
+		if (this._buffers.length > this.video._buffers.length) {
 			var buff = this._buffers.shift();
-			if (this.active && !CT.stream.opts.merged) {
-				this.node.pause();
+			if (this.active && !CT.stream.opts.merged)
 				this.node.src = buff;
-				this.node.play();
-			}
 		}
+	},
+	start: function() {
+		if (!this.started)
+			setTimeout(this.next, CT.stream.opts.audioDelay);
+		this.started = true;
 	},
 	build: function() {
 		this.node = CT.dom.audio(null, null,
-			null, null, null, null, "hidden");
+			true, null, null, this.next, "hidden");
 		document.body.appendChild(this.node);
 	},
 	init: function(active, video) {

@@ -14,7 +14,7 @@ CT.stream.Video = CT.Class({
 				this.sourceBuffer.appendBuffer(this._buffers.shift());
 			else if (this.mediaSource.readyState == "open") {
 				this.mediaSource.endOfStream();
-				this.audio.next();
+				this.audio.start();
 			}
 		}
 	},
@@ -57,6 +57,7 @@ CT.stream.Video = CT.Class({
 		var that = this, prom = this.video.play();
 		prom && prom.then(function() {
 			that.log("started!!! streaming!");
+//			that.audio.start();
 		})["catch"](function(error) {
 			that.log("play failed! awaiting user input (android)", error.message);
 			if (CT.stream.opts.requiresInput && !CT.stream.opts.requestedInput) {
