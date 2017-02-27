@@ -79,9 +79,11 @@ CT.stream.Multiplexer = CT.Class({
 		}
 		return video;
 	},
-	chat: function(message) {
+	chat: function(message, user) {
 		if (this.opts.chat) {
-			var msg = CT.dom.div(message.data)
+			var id = parseInt((user || this.opts.user).slice(4)),
+				msg = CT.dom.div(message.data);
+			msg.style.color = this.opts.chatcolors[id % this.opts.chatcolors.length];
 			this.chatOut.appendChild(msg);
 			msg.scrollIntoViewIfNeeded();
 		}
@@ -100,7 +102,7 @@ CT.stream.Multiplexer = CT.Class({
 			this.modes[this.mode].update(data.message,
 				this.getVideo(data.channel, data.user).process);
 		} else // chat
-			this.chat(data.message);
+			this.chat(data.message, data.user);
 		CT.log.endTimer("update", data.message.length
 			+ " " + data.channel + " " + data.user);
 	},
@@ -128,6 +130,7 @@ CT.stream.Multiplexer = CT.Class({
 			chat: true,
 			title: null,
 			vidopts: {},
+			chatcolors: ["pink", "purple", "blue", "green", "red", "orange", "yellow"],
 			chatblurs: ["say what?", "any questions?", "what's up?"]
 		});
 		if (opts.chat) { // auto-sets singlechannel to true --> multi later!!
