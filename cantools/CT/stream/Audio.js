@@ -13,7 +13,7 @@ CT.stream.Audio = CT.Class({
 		var buff = this._buffers.shift();
 		if (buff && this.active && !CT.stream.opts.merged) {
 			this.node.src = buff;
-			this.canplay && this.node.play();
+			this.canplay && this.play();
 		}
 	},
 	start: function() {
@@ -26,12 +26,18 @@ CT.stream.Audio = CT.Class({
 			className: "hidden",
 			onended: this.next,
 			oncanplay: this.start,
-			onpause: function() { n.play(); }
+			onpause: this.play
 		});
 		document.body.appendChild(this.node);
 	},
 	remove: function() {
 		CT.dom.remove(this.node);
+	},
+	play: function() {
+		var that = this;
+		this.node.play()["catch"](function(err) {
+			that.log("play error (but we don't carerror!)", err.msg);
+		});
 	},
 	init: function(active, video) {
 		this.active = active;
