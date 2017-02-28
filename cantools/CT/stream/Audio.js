@@ -30,6 +30,9 @@ CT.stream.Audio = CT.Class({
 		});
 		document.body.appendChild(this.node);
 	},
+	remove: function() {
+		CT.dom.remove(this.node);
+	},
 	init: function(active, video) {
 		this.active = active;
 		this.video = video;

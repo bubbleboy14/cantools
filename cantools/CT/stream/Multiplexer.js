@@ -53,10 +53,17 @@ CT.stream.Multiplexer = CT.Class({
 			CT.pubsub.unsubscribe(channel);
 			Object.values(this.channels).forEach(function(streams) {
 				Object.values(streams).forEach(function(video) {
-					CT.dom.remove(video.node);
+					video.remove();
 				});
 			});
 			delete this.channels[channel];
+		}
+	},
+	unsub: function(channel, user) {
+		var chan = this.channels[channel];
+		if (chan && chan[user]) {
+			chan[user].remove();
+			delete chan[user];
 		}
 	},
 	push: function(blobs, segment, channel, stream) {
@@ -130,6 +137,7 @@ CT.stream.Multiplexer = CT.Class({
 			chat: true,
 			title: null,
 			vidopts: {},
+			closeunsubs: true,
 			chatcolors: ["pink", "purple", "blue", "green", "red", "orange", "yellow"],
 			chatblurs: ["say what?", "any questions?", "what's up?"]
 		});
@@ -148,6 +156,8 @@ CT.stream.Multiplexer = CT.Class({
 		}
 		this.channels = {}; // each channel can carry multiple video streams
 		CT.pubsub.set_cb("message", this.update);
+		if (opts.closeunsubs)
+			CT.pubsub.set_cb("leave", this.unsub);
 		opts.wserror && CT.pubsub.set_cb("wserror", opts.wserror);
 		opts.autoconnect && this.connect();
 	}

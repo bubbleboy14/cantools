@@ -116,6 +116,10 @@ CT.stream.Video = CT.Class({
 			this._saveTimer = setTimeout(this.save, CT.stream.opts.cutoff);
 		}
 	},
+	remove: function() {
+		CT.dom.remove(this.node);
+		this.audio.remove();
+	},
 	init: function(opts) {
 		this.log("init");
 		this.opts = opts = CT.merge(opts, {
