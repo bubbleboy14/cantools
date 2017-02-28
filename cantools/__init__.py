@@ -1,4 +1,4 @@
-__version__ = "0.9.3.3"
+__version__ = "0.9.3.4"
 
 import util
 import config as cfgmod
