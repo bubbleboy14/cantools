@@ -314,7 +314,7 @@ CT.db.edit = {
 			if (ptype == "key")
 				return f.data.key;
 			if (["datetime", "list", "keylist"].indexOf(ptype) != -1)
-				return f.value();
+				return typeof f.value == "string" ? f.value : f.value();
 			return f.value; // string/text/list/keylist
 		};
 	},
