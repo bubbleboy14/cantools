@@ -28,20 +28,27 @@ def init_gae():
         dev_appserver.fix_sys_path()
         sys.path.insert(0, ".")
 
-# these are essentially not recommended. google's
-# rules for operating outside of their native environment
-# are crappy and generally get worse with time. these
-# _sort of_ work, but easily get messed up. if you want
-# to do something remote, just write a web handler that
-# does it for you.
-def init_remote_ndb():
+# accesses ct gae app running locally or elsewhere (other than app engine production, aka gcloud)
+def init_ndb():
     from cantools import config
     from google.appengine.ext.remote_api import remote_api_stub
     remote_api_stub.ConfigureRemoteDatastore("", "/remote_api",
         lambda : ("user@email.com", "password"),
         servername="%s:%s"%(config.web.host, config.web.port))
 
-def init_ndb(datastore_file="/dev/null"):
+# these are essentially not recommended. google's
+# rules for operating outside of their native environment
+# are crappy and generally get worse with time. these
+# _sort of_ work, but easily get messed up. it's whatever.
+def init_ndb_cloud():
+    from cantools import config
+    from google.appengine.ext.remote_api import remote_api_stub
+    app_id = read("app.yaml", True)[0].split(": ")[1].strip()
+    remote_api_stub.ConfigureRemoteApiForOAuth(
+        "%s.appspot.com"%(app_id,),
+        "/_ah/remote_api")
+
+def init_ndb_depped(datastore_file="/dev/null"):
     import os
     from google.appengine.api import apiproxy_stub_map, datastore_file_stub
     app_id = read("app.yaml", True)[0].split(": ")[1].strip()
