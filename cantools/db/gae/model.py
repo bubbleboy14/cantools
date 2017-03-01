@@ -1,6 +1,5 @@
 from datetime import datetime
 from properties import *
-import interactive
 
 class CTMeta(ndb.MetaModel):
     def __new__(cls, name, bases, attrs):
