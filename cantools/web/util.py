@@ -112,14 +112,18 @@ def renc(data):
             pass
     return data
 
-def rb64(data, de=False):
+def rb64(data, de=False): # depped
+    log("[DEPRECATION WARNING] Something just called rb64(), which is depped -- use rec_conv()")
+    return rec_conv(data, de)
+
+def rec_conv(data, de=False):
     if isinstance(data, basestring):
         return (de and rdec or renc)(data)
     elif isinstance(data, dict):
         for k, v in data.items():
-            data[str(k)] = rb64(v, de)
+            data[str(k)] = rec_conv(v, de)
     elif isinstance(data, list):
-        return [rb64(d, de) for d in data]
+        return [rec_conv(d, de) for d in data]
     return data
 
 def qs_get(x, y):
@@ -132,7 +136,7 @@ def cgi_load(force=False):
     localvars.request_string = cgi_read()
     data = config.encode and dec(localvars.request_string) or localvars.request_string
     try:
-        localvars.request = rb64(json.loads(data), True)
+        localvars.request = rec_conv(json.loads(data), True)
     except:
         import cgi
         localvars.request = cgi.FieldStorage()
@@ -271,13 +275,13 @@ def processResponse(data, code):
         try:
             data = json.dumps(data)
         except:
-            data = json.dumps(rb64(data))
+            data = json.dumps(rec_conv(data))
             code = "3"
     elif code == "0":
         try:
             json.dumps(data)
         except:
-            data = rb64(data)
+            data = rec_conv(data)
             code = "2"
     return "%s%s"%(code, data)
 

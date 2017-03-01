@@ -36,7 +36,7 @@ def respond(*args, **kwargs):
 
 def _ctjson(result):
 	if result[0] == "3":
-		return rb64(json.loads(result[1:]), True)
+		return rec_conv(json.loads(result[1:]), True)
 	else:
 		return json.loads(result[1:])
 
@@ -52,7 +52,7 @@ def fetch(host, path="/", port=80, asjson=False, cb=None, timeout=1, async=False
 
 def post(host, path="/", port=80, data=None, protocol="http", asjson=False, ctjson=False):
 	if ctjson:
-		data = rb64(data)
+		data = rec_conv(data)
 	result = requests.post("%s://%s:%s%s"%(protocol, host, port, path), json=data).content
 	if ctjson:
 		return _ctjson(result)

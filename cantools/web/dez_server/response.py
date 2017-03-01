@@ -12,7 +12,7 @@ class Response(object):
         self.response = HTTPResponse(request)
 
     def _read(self):
-        b = self.request.body or json.dumps(rb64(self.request.qs_params))
+        b = self.request.body or json.dumps(rec_conv(self.request.qs_params))
         ctype = self.request.headers.get("content-type")
         if ctype and ctype.startswith("multipart/form-data"):
             obj = {}
