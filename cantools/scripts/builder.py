@@ -57,7 +57,7 @@ def tryinit(iline, inits, prefixes):
         prefixes.append(iline)
 
 def require(line, jspaths, block, inits, admin_ct_path=None):
-    rline = line[12:-3]
+    rline = line[12:].split(");")[0][:-1]
     rsplit = rline.split(".")
     log("module %s"%(rline,), important=True)
     jspath = os.path.join(config.js.path, *rsplit) + ".js"
