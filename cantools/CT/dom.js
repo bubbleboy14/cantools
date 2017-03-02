@@ -396,12 +396,12 @@ CT.dom = {
 			bs.push(CT.dom.node(null, "br"));
 		return CT.dom.node(bs);
 	},
-	"marquee": function(content, className, direction) {
+	"marquee": function(content, className, direction, noresize) {
 		var n = CT.dom.node(content, "marquee", className, null, {
 			direction: direction || "left",
 			behavior: "alternate"
 		});
-		setTimeout(function() {
+		!noresize && setTimeout(function() {
 			CT.dom.each(n, function(sub) {
 				sub.style.height = n.clientHeight + "px";
 			});

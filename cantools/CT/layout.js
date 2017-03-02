@@ -65,7 +65,7 @@ CT.layout = {
 		if (opts.marquee) { // lol
 			var m = opts.marquee;
 			content.push(CT.dom.marquee(m.content,
-				m.className || "abs ctl mosthigh", m.direction));
+				m.className || "abs ctl mosthigh", m.direction, m.noresize));
 		}
 		CT.dom.setContent(CT.dom.id("ctheader"), CT.dom.node(content, "div", "h1 w1"));
 	},
