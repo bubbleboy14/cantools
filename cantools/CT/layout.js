@@ -62,6 +62,11 @@ CT.layout = {
 		else
 			content.push(CT.dom.link(opts.logo, null, "/",
 				"w1-2 biggest bold block nodecoration abs top0 bottom0 left0"));
+		if (opts.marquee) { // lol
+			var m = opts.marquee;
+			content.push(CT.dom.marquee(m.content,
+				m.className || "abs ctl mosthigh", m.direction));
+		}
 		CT.dom.setContent(CT.dom.id("ctheader"), CT.dom.node(content, "div", "h1 w1"));
 	},
 	footer: function(opts) {
