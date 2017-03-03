@@ -1,6 +1,7 @@
 import subprocess, os
+from slimit import minify
 from cantools import config
-from cantools.util import log, error, read, write
+from cantools.util import log, error, read, write, mkdir
 
 def nextQuote(text, lastIndex=0):
     z = i = text.find('"', lastIndex)
@@ -56,29 +57,39 @@ def tryinit(iline, inits, prefixes):
         inits.add(iline)
         prefixes.append(iline)
 
+fragz = set()
 def require(line, jspaths, block, inits, admin_ct_path=None):
-    rline = line[12:].split(");")[0][:-1]
+    dynamic = False
+    rline = line[12:].split(");")[0]
+    if rline.endswith(", true"):
+        dynamic = True
+        rline = rline.split(", ")[0]
+    rline = rline[:-1]
     rsplit = rline.split(".")
     log("module %s"%(rline,), important=True)
     jspath = os.path.join(config.js.path, *rsplit) + ".js"
     log("path %s"%(jspath,))
+    log("dynamic %s"%(dynamic,))
     if jspath not in jspaths:
-        prefixes = []
-        fullp = "window"
-        for rword in rsplit:
-            if rword[0].isalpha():
-                fullp = ".".join([fullp, rword])
-            else:
-                fullp = "%s[%s]"%(fullp, rword)
-            tryinit("%s = %s || {}"%(fullp, fullp), inits, prefixes)
-        pblock = ";".join(prefixes)
-        if pblock:
-            jspaths.append(pblock)
-        block = block.replace(line, "%s;%s"%(pblock,
-            processjs(jspath, jspaths, inits, admin_ct_path)), 1)
+        if dynamic:
+            fragz.add(jspath)
+        else:
+            prefixes = []
+            fullp = "window"
+            for rword in rsplit:
+                if rword[0].isalpha():
+                    fullp = ".".join([fullp, rword])
+                else:
+                    fullp = "%s[%s]"%(fullp, rword)
+                tryinit("%s = %s || {}"%(fullp, fullp), inits, prefixes)
+            pblock = ";".join(prefixes)
+            if pblock:
+                jspaths.append(pblock)
+            block = block.replace(line, "%s;%s"%(pblock,
+                processjs(jspath, jspaths, inits, admin_ct_path)), 1)
     return block
 
-def processjs(path, jspaths, inits, admin_ct_path=None):
+def processjs(path, jspaths=[], inits=set(), admin_ct_path=None):
     p = path # potentially modded to locate file for prod (path remains the same for static)
     if admin_ct_path: # admin pages
         if path.startswith(config.js.path): # such as /js/CT/ct.js
@@ -87,8 +98,9 @@ def processjs(path, jspaths, inits, admin_ct_path=None):
             p = os.path.join(os.path.abspath(os.curdir), "dynamic", path)
     block = read(p)
     for line in block.split("\n"):
-        if line.startswith("CT.require(") and not line.endswith(", true);"):
-            block = require(line, jspaths, block, inits, admin_ct_path)
+        sline = line.strip()
+        if sline.startswith("CT.require("):
+            block = require(sline, jspaths, block, inits, admin_ct_path)
     jspaths.append(path)
     return "%s;\n"%(block,)
 
@@ -100,13 +112,21 @@ def compilejs(js, admin_ct_path=None):
         jsblock += processjs(p, jspaths, inits, admin_ct_path)
     return jspaths, jsblock
 
-def checkdir(p):
+def checkdir(p, recursive=False):
     if not os.path.isdir(p):
-        log('making directory "%s"'%(p,), 1)
-        os.mkdir(p)
+        mkdir(p, recursive)
 
 def remerge(txt, js):
     return txt.format(jsspot=js).replace("&#123", "{").replace("&#125", "}")
+
+def build_frags():
+    log("Compiling Dynamically-Referenced Fragments", important=True)
+    base = config.build.web.compiled.production
+    for frag in fragz:
+        block = processjs(frag)
+        path = os.path.join(base, frag[len(config.js.path)+1:])
+        checkdir(path.rsplit("/", 1)[0], True)
+        write(minify(block, mangle=True), path)
 
 def build(admin_ct_path, dirname, fnames):
     """
@@ -138,7 +158,6 @@ def build(admin_ct_path, dirname, fnames):
                 jsb = jsblock.replace('"_encode": false,', '"_encode": true,').replace("CT.log._silent = false;", "CT.log._silent = true;")
                 if config.customscrambler:
                     jsb += '; CT.net.setScrambler("%s");'%(config.scrambler,)
-                from slimit import minify
                 write(remerge(compress(txt), "<script>%s</script>"%(minify(jsb, mangle=True),)), topath_prod)
                 continue
             else:
@@ -148,5 +167,9 @@ def build(admin_ct_path, dirname, fnames):
     for fname in [f for f in fnames if os.path.isdir(os.path.join(dirname, f))]:
         os.path.walk(os.path.join(dirname, fname), build, admin_ct_path)
 
-if __name__ == "__main__":
+def build_all():
     os.path.walk(config.build.web.dynamic, build, None)
+    build_frags()
+
+if __name__ == "__main__":
+    build_all()

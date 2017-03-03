@@ -45,7 +45,7 @@ Generates fresh 'static' and 'production' files (from 'development' source files
 import subprocess, commands, os
 from cantools import config, __version__
 from cantools.util import log, error, read, write, cmd
-from builder import build
+from builder import build_all
 
 def doyaml(mode):
     log("switching to %s mode"%(mode,))
@@ -145,7 +145,7 @@ def run():
 
         # 1) build static/production files
         if not options.no_build:
-            os.path.walk(config.build.web.dynamic, build, None)
+            build_all()
 
         # 2) switch to specified mode
         setmode(mode)
