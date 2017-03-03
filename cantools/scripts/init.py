@@ -187,7 +187,6 @@ class Builder(object):
 			sym(self.ctroot, "cantools")
 		ctp = os.path.join(self.ctroot, "CT")
 		sym(ctp, os.path.join(config.js.path, "CT"))
-		sym(ctp, os.path.join("html-production", "CT"))
 		sym(os.path.join(self.ctroot, "css", "ct.css"), os.path.join("css", "ct.css"))
 		sym(os.path.join(self.ctroot, "admin"), "_")
 		sym(os.path.join(self.ctroot, "admin.py"), "admin.py")
