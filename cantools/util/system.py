@@ -19,9 +19,12 @@ def sym(src, dest, safe=False):
 			except:
 				log("ok, really failed - skipping", 3)
 
-def mkdir(pname):
+def mkdir(pname, recursive=False):
 	log("new directory: %s"%(pname,), 2)
-	os.mkdir(pname)
+	if recursive:
+		os.makedirs(pname)
+	else:
+		os.mkdir(pname)
 
 def rm(pname):
 	if os.path.islink(pname):
