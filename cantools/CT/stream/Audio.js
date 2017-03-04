@@ -3,6 +3,8 @@ CT.stream.Audio = CT.Class({
 	_buffers: [],
 	_flip: function() {
 		this.active = !this.active;
+		if (!this.active && this.node)
+			this.node.src = null;
 		this.button.firstChild.classList[this.active ? "add" : "remove"]("buttonActive");
 	},
 	push: function(buff) {
@@ -16,7 +18,7 @@ CT.stream.Audio = CT.Class({
 		}
 	},
 	build: function() {
-		var n = this.node = CT.dom.audio({
+		this.node = CT.dom.audio({
 			className: "hidden",
 			onpause: this.play
 		});
