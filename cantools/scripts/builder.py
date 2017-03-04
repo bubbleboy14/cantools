@@ -58,6 +58,15 @@ def tryinit(iline, inits, prefixes):
         prefixes.append(iline)
 
 fragz = set()
+def frag(path):
+    if '"' in path:
+        path = path.split('"')[0]
+        for sub in os.listdir(path):
+            if sub.endswith(".js"):
+                fragz.add(os.path.join(path, sub))
+    else:
+        fragz.add(path)
+
 def require(line, jspaths, block, inits, admin_ct_path=None):
     dynamic = False
     rline = line[12:].split(");")[0]
@@ -72,7 +81,7 @@ def require(line, jspaths, block, inits, admin_ct_path=None):
     log("dynamic %s"%(dynamic,))
     if jspath not in jspaths:
         if dynamic:
-            fragz.add(jspath)
+            frag(jspath)
         else:
             prefixes = []
             fullp = "window"
