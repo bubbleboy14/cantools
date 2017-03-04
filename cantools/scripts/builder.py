@@ -133,6 +133,7 @@ def build_frags():
     log("Compiling Dynamically-Referenced Fragments", important=True)
     base = config.build.web.compiled.production
     for frag in fragz:
+        log("processing: %s"%(frag,), 1)
         block = processjs(frag)
         path = os.path.join(base, frag[len(config.js.path)+1:])
         checkdir(path.rsplit("/", 1)[0], True)
