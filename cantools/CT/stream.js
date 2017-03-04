@@ -31,6 +31,7 @@ CT.stream.opts = {
 	requestedInput: false,
 	segments: 20,
 	chunk: 2000,
+	sync: 200,
 	cutoff: 30000,
 	width: 320,
 	height: 240,

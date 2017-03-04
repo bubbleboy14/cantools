@@ -1,6 +1,7 @@
 CT.stream.Video = CT.Class({
 	CLASSNAME: "CT.stream.Video",
 	_buffers: [],
+	_nextChunk: 0,
 	_sourceOpen: function() {
 		this.log("sourceopen");
 		this.setSourceBuffer();
@@ -77,6 +78,14 @@ CT.stream.Video = CT.Class({
 			}
 			CT.stream.opts.waiting.push(that.video);
 		});
+	},
+	_sync: function(e) {
+		this.log("carerror", this.video.currentTime);
+		var ms = this.video.currentTime * 1000;
+		if (this._nextChunk <= ms + CT.stream.opts.sync) {
+			this._nextChunk += CT.stream.opts.chunk;
+			this.audio.next();
+		}
 	},
 	_miniRecorder: function() {
 		var rec = {
@@ -160,6 +169,8 @@ CT.stream.Video = CT.Class({
 			this.video.src = URL.createObjectURL(this.mediaSource);
 			this.mediaSource.addEventListener("sourceopen", this._sourceOpen);
 			this.audio.build();
+			if (!CT.stream.opts.merged)
+				this.video.on("timeupdate", this._sync);
 		}
 	}
 });

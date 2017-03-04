@@ -24,7 +24,7 @@ CT.stream.Audio = CT.Class({
 	build: function() {
 		var n = this.node = CT.dom.audio({
 			className: "hidden",
-			onended: this.next,
+//			onended: this.next,
 			oncanplay: this.start,
 			onpause: this.play
 		});
