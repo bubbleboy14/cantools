@@ -1,4 +1,5 @@
 import subprocess, os
+from ply import yacc, lex
 from slimit import minify
 from cantools import config
 from cantools.util import log, error, read, write, mkdir
@@ -176,7 +177,14 @@ def build(admin_ct_path, dirname, fnames):
     for fname in [f for f in fnames if os.path.isdir(os.path.join(dirname, f))]:
         os.path.walk(os.path.join(dirname, fname), build, admin_ct_path)
 
+def silence_warnings():
+    def quiet(*args, **kwargs):
+        pass
+    yacc.PlyLogger.warning = quiet
+    lex.PlyLogger.warning = quiet
+
 def build_all():
+    silence_warnings()
     os.path.walk(config.build.web.dynamic, build, None)
     build_frags()
 
