@@ -9,23 +9,15 @@ CT.stream.Audio = CT.Class({
 		this._buffers.push(buff);
 	},
 	next: function() {
-		this.log("NEXT AUDIO!!!!!", this._buffers.length, this.video._buffers.length, this.active);
 		var buff = this._buffers.shift();
 		if (buff && this.active && !CT.stream.opts.merged) {
 			this.node.src = buff;
-			this.canplay && this.play();
+			this.play();
 		}
-	},
-	start: function() {
-		this.canplay = true;
-		if (this.video.canplay)
-			this.video.start();
 	},
 	build: function() {
 		var n = this.node = CT.dom.audio({
 			className: "hidden",
-//			onended: this.next,
-			oncanplay: this.start,
 			onpause: this.play
 		});
 		document.body.appendChild(this.node);
