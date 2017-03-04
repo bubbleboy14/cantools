@@ -80,7 +80,6 @@ CT.stream.Video = CT.Class({
 		});
 	},
 	_sync: function(e) {
-		this.log("carerror", this.video.currentTime);
 		var ms = this.video.currentTime * 1000;
 		if (this._nextChunk <= ms + CT.stream.opts.sync) {
 			this._nextChunk += CT.stream.opts.chunk;
