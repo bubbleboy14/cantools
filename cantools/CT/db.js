@@ -345,7 +345,7 @@ CT.db.edit = {
 				modelName: modelName
 			})).node;
 		else if (ptype == "datetime")
-			valcell = CT.dom.dateSelectors(null, null, opts.startYear, null, null, null, val);
+			valcell = CT.dom.dateSelectors(null, null, opts.startYear, null, true, null, val);
 		else if (ptype == "blob") {
 			var bopts = {
 				key: opts.key,
