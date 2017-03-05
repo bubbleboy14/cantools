@@ -8,11 +8,8 @@ as well as a utility submodule (CT.map.util) and four classes:
     - CT.map.Shape
 */
 
-var maplib = "https://maps.googleapis.com/maps/api/js",
-	key = CT.getVal("mapkey");
-if (key)
-	maplib += "?key=" + key;
-CT.scriptImport(maplib);
+var key = CT.getVal("mapkey");
+CT.scriptImport("https://maps.googleapis.com/maps/api/js" + (key ? "?key=" + key : ""));
 CT.require("CT.map.util");
 CT.require("CT.map.Map");
 CT.require("CT.map.Node");
