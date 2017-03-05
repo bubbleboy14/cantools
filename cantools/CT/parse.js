@@ -252,9 +252,14 @@ CT.parse = {
 			+ ':' + d.getMinutes() + ':' + d.getSeconds() + (noletters ? '' : 'Z');
 	},
 	"string2date": function(s) {
-		var year, month, rest;
+		var year, month, rest, day, hour, minute, second;
 		[year, month, rest] = s.split("-");
-		return new Date(year, parseInt(month) - 1, rest.slice(0, 2));
+		day = rest.slice(0, 2);
+		if (rest.indexOf(":") != -1) {
+			[hour, minute, second] = rest.slice(3).split(":");
+			second = parseInt(second); // potential trailing Z
+		}
+		return new Date(year, parseInt(month) - 1, day, hour, minute, second);
 	},
 	"_stampString": function(diff, name) {
 	    if (!diff) return false;
