@@ -242,6 +242,7 @@ CT.parse = {
 		return n;
 	},
 	"date2string": function(d, noletters) {
+		d = d || new Date();
 		var month = d.getMonth() + 1, date = d.getDate();
 		if (month < 10)
 			month = '0' + month;
