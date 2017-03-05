@@ -72,10 +72,12 @@ CT.stream.Video = CT.Class({
 		});
 	},
 	_sync: function(e) {
-		var ms = this.video.currentTime * 1000;
-		if (this._nextChunk <= ms + CT.stream.opts.sync) {
+		var s = CT.stream.opts.sync, ms = this.video.currentTime * 1000;
+		if (this._nextChunk <= ms + s.range) {
+			var target = this._nextChunk - ms - s.lead;
+			this.log("carerror", this._nextChunk, ms, s.lead, target);
+			setTimeout(this.audio.next, target);
 			this._nextChunk += CT.stream.opts.chunk;
-			this.audio.next();
 		}
 	},
 	_miniRecorder: function() {

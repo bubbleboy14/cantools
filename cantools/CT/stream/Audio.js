@@ -11,7 +11,9 @@ CT.stream.Audio = CT.Class({
 		this._buffers.push(buff);
 	},
 	next: function() {
-		var buff = this._buffers.shift();
+		var buff;
+		while (this._buffers.length > this.video._buffers.length)
+			buff = this._buffers.shift();
 		if (buff && this.active && !CT.stream.opts.merged) {
 			this.node.src = buff;
 			this.play();
