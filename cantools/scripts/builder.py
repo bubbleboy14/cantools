@@ -70,11 +70,17 @@ def frag(path):
 
 def require(line, jspaths, block, inits, admin_ct_path=None):
     dynamic = False
-    rline = line[12:].split(");")[0]
-    if rline.endswith(", true"):
+    if line.startswith("CT.scriptImport("):
+        rline = line[17:].split(line[16])[0]
+        if rline.startswith("http"):
+            return block
         dynamic = True
-        rline = rline.split(", ")[0]
-    rline = rline[:-1]
+    else:
+        rline = line[12:].split(");")[0]
+        if rline.endswith(", true"):
+            dynamic = True
+            rline = rline.split(", ")[0]
+        rline = rline[:-1]
     rsplit = rline.split(".")
     log("module %s"%(rline,), important=True)
     jspath = os.path.join(config.js.path, *rsplit) + ".js"
@@ -109,7 +115,7 @@ def processjs(path, jspaths=[], inits=set(), admin_ct_path=None):
     block = read(p)
     for line in block.split("\n"):
         sline = line.strip()
-        if sline.startswith("CT.require("):
+        if sline.startswith("CT.require(") or sline.startswith("CT.scriptImport("):
             block = require(sline, jspaths, block, inits, admin_ct_path)
     jspaths.append(path)
     return "%s;\n"%(block,)
