@@ -22,6 +22,8 @@
 .wm1 { max-width: 100%; }
 .hm1-2 { max-height: 50%; }
 .wm1-2 { max-width: 50%; }
+.hm1-3 { max-height: 33%; }
+.wm1-3 { max-width: 33%; }
 .hmin1 { min-height: 100%; }
 .wmin1 { min-width: 100%; }
 .hmin1-2 { min-height: 50%; }
