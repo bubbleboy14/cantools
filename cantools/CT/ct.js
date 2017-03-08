@@ -381,6 +381,8 @@ var CT = {
 		core.config.css.forEach(function(css) {
 			CT.dom.addStyle(null, css);
 		});
+		if (core.config.autoparse)
+			CT.dom.setAutoparse(core.config.autoparse);
 		CT.layout.header(core.config.header);
 		core.config.footer && CT.layout.footer(core.config.footer);
 		core.config.mobile.scale && CT.dom.meta("viewport", "width=device-width, initial-scale=1");
