@@ -12,7 +12,6 @@ integration with the Braintree payment platform, which supports:
 */
 
 CT.pay = {
-	_btpath: "https://js.braintreegateway.com/js/braintree-2.24.1.min.js",
 	_setToken: function() {
 		CT.pay._token = CT.net.get("/_pay", null, null, true);
 	}
@@ -42,4 +41,4 @@ CT.pay.Form = CT.Class({
 });
 CT.pay.Form._id = 0;
 
-CT.scriptImport(CT.pay._btpath, CT.pay._setToken);
+CT.scriptImport("https://js.braintreegateway.com/js/braintree-2.24.1.min.js", CT.pay._setToken);
