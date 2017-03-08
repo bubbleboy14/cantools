@@ -44,16 +44,15 @@ def refresh_counter(target, reference, session=session):
     rc.refresh()
     return rc
 
-def j3(reference, asc, session=session):
-    rp = reference.split(".")
-    t1 = get_model(rp[1])
-    t2 = get_model(rp[2])
-    tlink = getattr(t1, rp[2])
-    fs = func.sum(CTRefCount.count)
-    return session.query(CTRefCount.target, CTRefCount.count,
-        tlink).filter(CTRefCount.reference == ".".join(rp[:2])).join(t1,
-        CTRefCount.target == t1.key).join(t2,
-        t2.key == tlink).group_by(tlink).order_by(asc and fs or fs.desc()).with_entities(t2)
-
 def refcount_subq(reference, session=session):
+    if reference.count(".") == 2:
+        rp = reference.split(".")
+        t1 = get_model(rp[1])
+        t2 = get_model(rp[2])
+        tlink = getattr(t1, rp[2])
+        return session.query(CTRefCount.target, CTRefCount.count,
+            tlink).filter(CTRefCount.reference == ".".join(rp[:2])).join(t1,
+            CTRefCount.target == t1.key).join(t2,
+            t2.key == tlink).group_by(tlink).with_entities(t2.key.label("target"),
+            func.sum(CTRefCount.count).label("count")).with_labels().subquery()
     return session.query(CTRefCount.target, CTRefCount.count).filter(CTRefCount.reference == reference).subquery()
