@@ -1,3 +1,4 @@
+from sqlalchemy import func
 from model import session, get_model, put_multi, ForeignKey, String, Integer, ModelBase
 
 class CTRefCount(ModelBase):
@@ -44,4 +45,14 @@ def refresh_counter(target, reference, session=session):
     return rc
 
 def refcount_subq(reference, session=session):
+    if reference.count(".") == 2:
+        rp = reference.split(".")
+        t1 = get_model(rp[1])
+        t2 = get_model(rp[2])
+        tlink = getattr(t1, rp[2])
+        return session.query(CTRefCount.target, CTRefCount.count,
+            tlink).filter(CTRefCount.reference == ".".join(rp[:2])).join(t1,
+            CTRefCount.target == t1.key).join(t2,
+            t2.key == tlink).group_by(tlink).with_entities(t2.key.label("target"),
+            func.sum(CTRefCount.count).label("count")).subquery()
     return session.query(CTRefCount.target, CTRefCount.count).filter(CTRefCount.reference == reference).subquery()

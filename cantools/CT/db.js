@@ -496,8 +496,18 @@ CT.db.Query = CT.Class({
 		selectcell.onchange();
 		this.filters.appendChild(CT.dom.node([selectcell, compcell, valcell, rmcell]));
 	},
+	_suborders: function() {
+		var mod = this.modelName, subs = [];
+		CT.db._rmap[mod].forEach(function(sub) {
+			subs.push(sub);
+			CT.db._rmap[sub.split(".")[0]].forEach(function(subsub) {
+				subs.push(subsub + "." + mod);
+			});
+		});
+		return subs;
+	},
 	_order: function() {
-		var selectcell = CT.dom.select(["None"].concat(this.filterables).concat(CT.db._rmap[this.modelName] || [])),
+		var selectcell = CT.dom.select(["None"].concat(this.filterables).concat(this._suborders())),
 			dircell = CT.dom.select(["ascending", "descending"]);
 		dircell.className = "hidden";
 		selectcell.onchange = function() {
