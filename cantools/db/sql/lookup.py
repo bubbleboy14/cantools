@@ -54,5 +54,5 @@ def refcount_subq(reference, session=session):
             tlink).filter(CTRefCount.reference == ".".join(rp[:2])).join(t1,
             CTRefCount.target == t1.key).join(t2,
             t2.key == tlink).group_by(tlink).with_entities(t2.key.label("target"),
-            func.sum(CTRefCount.count).label("count")).with_labels().subquery()
+            func.sum(CTRefCount.count).label("count")).subquery()
     return session.query(CTRefCount.target, CTRefCount.count).filter(CTRefCount.reference == reference).subquery()
