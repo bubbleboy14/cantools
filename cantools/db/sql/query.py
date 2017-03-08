@@ -30,12 +30,17 @@ class Query(object):
             else:
                 asc = True
             if "." in prop: # foreignkey reference from another table
-                from lookup import refcount_subq
-                sub = refcount_subq(prop, self.session)
-                order = sub.c.count
-                if not asc:
-                    order = -sub.c.count
-                return self.join(sub, self.mod.key == sub.c.target).order(order)
+                if prop.count(".") == 2:
+                    from lookup import j3
+                    self.query = j3(prop, asc)
+                    return self
+                else:
+                    from lookup import refcount_subq
+                    sub = refcount_subq(prop, self.session)
+                    order = sub.c.count
+                    if not asc:
+                        order = -sub.c.count
+                    return self.join(sub, self.mod.key == sub.c.target).order(order)
         elif type(prop) is elements.UnaryExpression:
             prop = prop.element.name
         else:
