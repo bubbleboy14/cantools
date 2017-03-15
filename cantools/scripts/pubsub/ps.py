@@ -16,6 +16,7 @@ class PubSub(WebSocketDaemon):
         kwargs["cb"] = self.connect
         kwargs["certfile"] = config.ssl.pubsubcert or config.ssl.certfile
         kwargs["keyfile"] = config.ssl.pubsubkey or config.ssl.keyfile
+        kwargs["cacerts"] = config.ssl.pubsubcacerts or config.ssl.cacerts
         if "silent" in kwargs:
             self.silent = kwargs["silent"]
             del kwargs["silent"]

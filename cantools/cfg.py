@@ -43,7 +43,9 @@ cfg = {
 		"verify": True,
 		"certfile": None,
 		"keyfile": None,
+		"cacerts": None,
 		"pubsubcert": None, # pubsub-only cert!!
+		"pubsubcacerts": None, # pubsub-only cacert!!
 		"pubsubkey": None # pubsub-only key!! (use pubsubs when running web/admin behind ssl drp)
 	},
 	"db": { # switch on web backend (override w/ DB)
