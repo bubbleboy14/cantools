@@ -358,7 +358,11 @@ CT.dom = {
 			poster = obj.poster;
 		}
 		attrs = attrs || {};
-		attrs.src = src;
+		var multisrc = false;
+		if (typeof src != "string" && src.length) // must be array
+			multisrc = true;
+		else
+			attrs.src = src;
 		if (onplay)
 			attrs.onplay = onplay;
 		if (onpause)
@@ -369,7 +373,11 @@ CT.dom = {
 			attrs.oncanplay = oncanplay;
 		if (poster)
 			attrs.poster = poster;
-		var n = CT.dom.node(null, "video", className, id, attrs, style);
+		var n = CT.dom.node(multisrc && src.map(function(s) {
+			return CT.dom.node(null, "source", null, null, {
+				src: s
+			});
+		}), "video", className, id, attrs, style);
 		n.stream = function(stream) {
 			n.src = window.URL.createObjectURL(stream);
 			n.play();
