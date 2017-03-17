@@ -359,7 +359,7 @@ CT.dom = {
 		}
 		attrs = attrs || {};
 		var multisrc = false;
-		if (typeof src != "string" && src.length) // must be array
+		if (src && src.length && typeof src != "string") // must be array
 			multisrc = true;
 		else
 			attrs.src = src;
