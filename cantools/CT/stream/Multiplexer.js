@@ -110,7 +110,7 @@ CT.stream.Multiplexer = CT.Class({
 				this.getVideo(data.channel, data.user).process);
 		} else // chat
 			this.chat(data.message, data.user);
-		CT.log.endTimer("update", data.message.length
+		CT.log.endTimer("update", data.message.data.length
 			+ " " + data.channel + " " + data.user);
 	},
 	getVideo: function(channel, user, stream) {
