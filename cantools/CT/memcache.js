@@ -21,13 +21,12 @@ Instruct the server to associate a countdown (seconds in the future) and token
 
 CT.memcache = {
 	_local: {},
-	_rq: function(action, cb, key, val, countdown) {
-		CT.net.post("/_memcache", {
+	_rq: function(action, cb, key, val, opts) {
+		CT.net.post("/_memcache", CT.merge(opts, {
 			action: action,
 			key: key,
-			value: val,
-			countdown: countdown
-		}, null, cb);
+			value: val
+		}), null, cb);
 	},
 	get: function(key, cb, localCache) {
 		var local = localCache && CT.memcache._local[key];
@@ -48,11 +47,20 @@ CT.memcache = {
 	}
 };
 
+CT.memcache.blob = {
+	get: function(key, cb) {
+		CT.memcache._rq("get", cb, key, null, { mode: "blob" });
+	},
+	set: function(key, blob, cb, transcode) {
+		CT.memcache._rq("set", cb, key, blob, false, { mode: "blob", transcode: transcode });
+	}
+};
+
 CT.memcache.countdown = {
 	get: function(key, cb) {
-		CT.memcache._rq("get", cb, key, null, true);
+		CT.memcache._rq("get", cb, key, null, { countdown: true });
 	},
 	set: function(key, seconds, cb) {
-		CT.memcache._rq("set", cb, key, seconds, true);
+		CT.memcache._rq("set", cb, key, seconds, { countdown: true });
 	}
-}
+};
