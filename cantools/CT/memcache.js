@@ -21,12 +21,22 @@ Instruct the server to associate a countdown (seconds in the future) and token
 
 CT.memcache = {
 	_local: {},
-	_rq: function(action, cb, key, val, opts) {
-		CT.net.post("/_memcache", CT.merge(opts, {
+	_rq: function(action, cb, key, val, params) {
+		params = CT.merge(params, {
 			action: action,
-			key: key,
-			value: val
-		}), null, cb);
+			key: key
+		});
+		if (val) {
+			if (opts.mode == "blob")
+				CT.net.formUp(val, {
+					cb: cb,
+					params: params,
+					path: "/_memcache"
+				}, "value");
+			else
+				params.value = val;
+		}
+		CT.net.post("/_memcache", params, null, cb);
 	},
 	get: function(key, cb, localCache) {
 		var local = localCache && CT.memcache._local[key];
