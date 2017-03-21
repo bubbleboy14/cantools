@@ -1,23 +1,25 @@
 CT.stream.Multiplexer = CT.Class({
 	CLASSNAME: "CT.stream.Multiplexer",
 	mode: "memcache", // websocket|memcache
+	initChunk: false,
 	modes: {
 		memcache: {
 			push: function(b64s, channel, signature) {
-				CT.log.startTimer("memcache_push", signature);
 				CT.memcache.set(signature, b64s, function() {
-					CT.log.endTimer("memcache_push", b64s.video.length,
-						b64s.audio && b64s.audio.length);
 					CT.pubsub.publish(channel, {
 						action: "clip",
 						data: signature
 					}); // (no echo)
 				}, true);
 			},
-			update: function(message, process) {
-				CT.log.startTimer("memcache_update", message.length);
-				CT.memcache.get(message.data, process, true);
-				CT.log.endTimer("memcache_update", message.length);
+			update: function(message, process, requiredInitChunk) {
+				if (requiredInitChunk && !message.data.endsWith("init")) {
+					CT.memcache.get(requiredInitChunk, function(d) {
+						process(d);
+						CT.memcache.get(message.data, process, true);
+					}, true);
+				} else
+					CT.memcache.get(message.data, process, true);
 			}
 		},
 		websocket: { // buggy AND needs multistream support!! (don't use)
@@ -68,8 +70,13 @@ CT.stream.Multiplexer = CT.Class({
 	},
 	push: function(blobs, segment, channel, stream) {
 		CT.log.startTimer("push", channel + segment);
-		var that = this, signature = channel + this.opts.user + segment,
+		var that = this, signature = channel + this.opts.user,
 			video = this.getVideo(channel, this.opts.user, stream);
+		if (CT.stream.opts.merged && !this.initChunk) {// requires init chunk
+			this.initChunk = true;
+			signature += "init";
+		} else
+			signature += segment;
 		if (video.audio.active) {
 			CT.stream.util.blobs_to_b64s(blobs, function(b64s) {
 				CT.log.endTimer("push", signature);
@@ -106,8 +113,10 @@ CT.stream.Multiplexer = CT.Class({
 	update: function(data) {
 		CT.log.startTimer("update", data.channel);
 		if (data.message.action == "clip") {
-			this.modes[this.mode].update(data.message,
-				this.getVideo(data.channel, data.user).process);
+			var v = this.getVideo(data.channel, data.user);
+			this.modes[this.mode].update(data.message, v.process, v.requiredInitChunk);
+			if (v.requiredInitChunk)
+				delete v.requiredInitChunk;
 		} else // chat
 			this.chat(data.message, data.user);
 		CT.log.endTimer("update", data.message.data.length
@@ -119,6 +128,7 @@ CT.stream.Multiplexer = CT.Class({
 		if (!video) {
 			video = chan[user] = new CT.stream.Video(CT.merge(this.opts.vidopts, { stream: stream }));
 			CT.dom.addContent(this.opts.node, video.node);
+			video.requiredInitChunk = CT.stream.opts.merged && !stream && (channel + user + "init");
 		}
 		return video;
 	},

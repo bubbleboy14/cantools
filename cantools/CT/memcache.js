@@ -63,7 +63,7 @@ CT.memcache.blob = {
 	},
 	set: function(key, blob, cb, transcode) {
 		var opts = { mode: "blob" };
-		if (transcode)
+		if (transcode) // transcoding doesn't work well for chrome-generated webm chunks
 			opts.transcode = true;
 		CT.memcache._rq("set", cb, key, blob, opts);
 	}
