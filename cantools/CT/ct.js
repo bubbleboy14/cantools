@@ -276,6 +276,7 @@ var CT = {
 		},
 		"formUp": function(data, opts, dname) {
 			opts.params = CT.net.formData(data, opts.params, dname);
+			opts.passthrough = true;
 			opts.headers = opts.headers || {};
 			opts.headers["Content-Type"] = "multipart/form-data";
 			return CT.net.post(opts);
