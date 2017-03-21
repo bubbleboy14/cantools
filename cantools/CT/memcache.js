@@ -27,7 +27,7 @@ CT.memcache = {
 			key: key
 		});
 		if (val) {
-			if (opts.mode == "blob")
+			if (params.mode == "blob")
 				CT.net.formUp(val, {
 					cb: cb,
 					params: params,
@@ -62,7 +62,10 @@ CT.memcache.blob = {
 		CT.memcache._rq("get", cb, key, null, { mode: "blob" });
 	},
 	set: function(key, blob, cb, transcode) {
-		CT.memcache._rq("set", cb, key, blob, false, { mode: "blob", transcode: transcode });
+		var opts = { mode: "blob" };
+		if (transcode)
+			opts.transcode = true;
+		CT.memcache._rq("set", cb, key, blob, opts);
 	}
 };
 
