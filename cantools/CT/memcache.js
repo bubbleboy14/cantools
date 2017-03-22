@@ -28,13 +28,12 @@ CT.memcache = {
 		});
 		if (val) {
 			if (params.mode == "blob")
-				CT.net.formUp(val, {
+				return CT.net.formUp(val, {
 					cb: cb,
 					params: params,
 					path: "/_memcache"
 				}, "value");
-			else
-				params.value = val;
+			params.value = val;
 		}
 		CT.net.post("/_memcache", params, null, cb);
 	},
