@@ -21,13 +21,21 @@ Instruct the server to associate a countdown (seconds in the future) and token
 
 CT.memcache = {
 	_local: {},
-	_rq: function(action, cb, key, val, countdown) {
-		CT.net.post("/_memcache", {
+	_rq: function(action, cb, key, val, params) {
+		params = CT.merge(params, {
 			action: action,
-			key: key,
-			value: val,
-			countdown: countdown
-		}, null, cb);
+			key: key
+		});
+		if (val) {
+			if (params.mode == "blob")
+				return CT.net.formUp(val, {
+					cb: cb,
+					params: params,
+					path: "/_memcache"
+				}, "value");
+			params.value = val;
+		}
+		CT.net.post("/_memcache", params, null, cb);
 	},
 	get: function(key, cb, localCache) {
 		var local = localCache && CT.memcache._local[key];
@@ -48,11 +56,23 @@ CT.memcache = {
 	}
 };
 
+CT.memcache.blob = {
+	get: function(key, cb) {
+		CT.memcache._rq("get", cb, key, null, { mode: "blob" });
+	},
+	set: function(key, blob, cb, transcode) {
+		var opts = { mode: "blob" };
+		if (transcode) // transcoding doesn't work well for chrome-generated webm chunks
+			opts.transcode = true;
+		CT.memcache._rq("set", cb, key, blob, opts);
+	}
+};
+
 CT.memcache.countdown = {
 	get: function(key, cb) {
-		CT.memcache._rq("get", cb, key, null, true);
+		CT.memcache._rq("get", cb, key, null, { countdown: true });
 	},
 	set: function(key, seconds, cb) {
-		CT.memcache._rq("set", cb, key, seconds, true);
+		CT.memcache._rq("set", cb, key, seconds, { countdown: true });
 	}
-}
+};

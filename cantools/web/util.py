@@ -331,7 +331,10 @@ def send_image(data):
 
 FILETYPES = {"pdf": "application/pdf", "img": "image/png"}
 
-def send_file(data, file_type=None):
+def send_file(data, file_type=None, detect=False):
+    if detect:
+        import magic
+        file_type = data and magic.from_buffer(data, True)
     if file_type:
         _headers({"Content-Type": FILETYPES.get(file_type, file_type)})
     _send(data)

@@ -274,6 +274,13 @@ var CT = {
 			fd.append(dname || "data", data);
 			return fd;
 		},
+		"formUp": function(data, opts, dname) {
+			opts.params = CT.net.formData(data, opts.params, dname);
+			opts.passthrough = true;
+			opts.headers = opts.headers || {};
+			opts.headers["Content-Type"] = "multipart/form-data";
+			return CT.net.post(opts);
+		},
 		"post": function(path, params, errMsg, cb, eb, headers, cbarg, ebarg, sync, passthrough, noct, spinner) {
 			if (arguments.length == 1 && typeof arguments[0] != "string") {
 				var obj = arguments[0];
