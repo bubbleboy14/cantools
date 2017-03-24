@@ -1,6 +1,6 @@
 from ..util import config, log
 import yagmail
-yag = config.mailer and yagmail.SMTP(config.mailer) # will ask for password
+yag = config.mailer and yagmail.SMTP(config.mailer, config.cache("email password? "))
 
 def send_mail(to=None, sender=None, subject=None, body=None, html=None):
 	if not yag:
