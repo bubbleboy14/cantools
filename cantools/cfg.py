@@ -26,6 +26,7 @@ cfg = {
 		"port": 8002,
 		"protocol": "http",
 		"log": None,
+		"contacts": [],
 		"monitor": {
 			"interval": 5,
 			"log": False

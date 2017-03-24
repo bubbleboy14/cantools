@@ -103,7 +103,7 @@ for key, val in [[term.strip() for term in line.split(" = ")] for line in read("
 			config.update("customscrambler", True)
 		target = key.lower()
 		c = config
-		if target in ["pubsub_botnames", "log_allow", "geo_user_geonames", "geo_user_google", "plugin_modules"]:
+		if target in ["pubsub_botnames", "log_allow", "geo_user_geonames", "geo_user_google", "plugin_modules", "admin_contacts"]:
 			val = val.split("|")
 		if "_" in target:
 			path, target = target.rsplit("_", 1)
