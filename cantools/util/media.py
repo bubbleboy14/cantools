@@ -2,8 +2,8 @@ from system import cmd, rm
 from reporting import log
 from io import read, write
 
-#TRANS = "ffmpeg -y -i %s -loglevel error -stats -c:a copy -profile:v baseline -level 3.0 -movflags +faststart -f mp4 _tmp"
-TRANS = "ffmpeg -y -i %s -loglevel error -stats -c:a aac -profile:v baseline -level 3.0 -movflags +faststart -f mp4 _tmp"
+TRANS = "ffmpeg -y -i %s -loglevel error -stats -c:a copy -profile:v baseline -level 3.0 -movflags +faststart -f mp4 _tmp"
+#TRANS = "ffmpeg -y -i %s -loglevel error -stats -c:a aac -profile:v baseline -level 3.0 -movflags +faststart -f mp4 _tmp"
 SEG = "ffmpeg -i %s -loglevel error -stats -map 0 -codec:v libx264 -codec:a aac -f ssegment -segment_list %s/list.m3u8 -segment_list_flags +live -segment_time 10 %s/%%03d.ts"
 
 def transcode(orig, tmp=False):
