@@ -126,6 +126,11 @@ CT.stream.Video = CT.Class({
 		CT.dom.remove(this.node);
 		this.audio.remove();
 	},
+	_wakeup: function() {
+		if (this.video._lastct == this.video.currentTime)
+			this.video.currentTime += 1; // help video along....
+		this.video._lastct = this.video.currentTime;
+	},
 	init: function(opts) {
 		this.log("init");
 		this.opts = opts = CT.merge(opts, {
@@ -167,7 +172,9 @@ CT.stream.Video = CT.Class({
 			this.mediaSource.addEventListener("sourceopen", this._sourceOpen);
 			this.mediaSource.addEventListener("error", this._error);
 			this.audio.build();
-			if (!CT.stream.opts.merged)
+			if (CT.stream.opts.merged)
+				setInterval(this._wakeup, 1000);
+			else
 				this.video.on("timeupdate", this._sync);
 		}
 	}
