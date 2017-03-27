@@ -16,6 +16,9 @@ CT.stream.Video = CT.Class({
 				this.mediaSource.endOfStream();
 		}
 	},
+	_error: function(e) {
+		this.log("ERROR", e.message);
+	},
 	setSourceBuffer: function() {
 		this.log("setSourceBuffer - exists:", !!this.sourceBuffer);
 		if (!this.sourceBuffer) {
@@ -24,6 +27,7 @@ CT.stream.Video = CT.Class({
 				? opts.codecs.av : opts.codecs.video);
 			this.sourceBuffer.mode = 'sequence';
 			this.sourceBuffer.addEventListener("updateend", this._sourceUpdate);
+			this.sourceBuffer.addEventListener("error", this._error);
 		}
 	},
 	process: function(b64s) {
@@ -161,6 +165,7 @@ CT.stream.Video = CT.Class({
 			this.mediaSource = new MediaSource();
 			this.video.src = URL.createObjectURL(this.mediaSource);
 			this.mediaSource.addEventListener("sourceopen", this._sourceOpen);
+			this.mediaSource.addEventListener("error", this._error);
 			this.audio.build();
 			if (!CT.stream.opts.merged)
 				this.video.on("timeupdate", this._sync);
