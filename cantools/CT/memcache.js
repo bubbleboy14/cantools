@@ -21,21 +21,25 @@ Instruct the server to associate a countdown (seconds in the future) and token
 
 CT.memcache = {
 	_local: {},
-	_rq: function(action, cb, key, val, params) {
+	_rq: function(action, cb, key, val, params, netargs) {
 		params = CT.merge(params, {
 			action: action,
 			key: key
 		});
 		if (val) {
 			if (params.mode == "blob")
-				return CT.net.formUp(val, {
+				return CT.net.formUp(val, CT.merge(netargs, {
 					cb: cb,
 					params: params,
 					path: "/_memcache"
-				}, "value");
+				}), "value");
 			params.value = val;
 		}
-		CT.net.post("/_memcache", params, null, cb);
+		CT.net.post(CT.merge(netargs, {
+			cb: cb,
+			params: params,
+			path: "/_memcache"
+		}));
 	},
 	get: function(key, cb, localCache) {
 		var local = localCache && CT.memcache._local[key];
@@ -57,8 +61,10 @@ CT.memcache = {
 };
 
 CT.memcache.blob = {
-	get: function(key, cb) {
-		CT.memcache._rq("get", cb, key, null, { mode: "blob" });
+	get: function(key, cb, btype) {
+		CT.memcache._rq("get", function(data) {
+			cb(new Blob([data], { type : btype }));
+		}, key, null, { mode: "blob" }, { basic: true });
 	},
 	set: function(key, blob, cb, transcode) {
 		var opts = { mode: "blob" };
@@ -70,9 +76,9 @@ CT.memcache.blob = {
 
 CT.memcache.countdown = {
 	get: function(key, cb) {
-		CT.memcache._rq("get", cb, key, null, { countdown: true });
+		CT.memcache._rq("get", cb, key, null, { mode: "countdown" });
 	},
 	set: function(key, seconds, cb) {
-		CT.memcache._rq("set", cb, key, seconds, { countdown: true });
+		CT.memcache._rq("set", cb, key, seconds, { mode: "countdown" });
 	}
 };

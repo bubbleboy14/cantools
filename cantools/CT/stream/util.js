@@ -55,10 +55,10 @@ var _sutil = CT.stream.util = {
 		buffer ? fr.readAsArrayBuffer(blob) : fr.readAsDataURL(blob);
 	},
 	avRecorder: function(stream) {
-//		var r = new MediaStreamRecorder(stream);
-		var r = new MediaRecorder(stream);
-		r.mimeType = CT.stream.opts.codecs.av;
-		return r;
+		return new MediaRecorder(stream, {
+			mimeType: CT.stream.opts.codecs.video, // for OSX
+			videoBitsPerSecond: 500000
+		});
 	},
 	videoRecorder: function(stream) {
 		var r = new MediaStreamRecorder(stream);

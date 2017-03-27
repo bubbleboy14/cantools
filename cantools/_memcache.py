@@ -6,13 +6,12 @@ def response():
 	action = cgi_get("action", choices=["get", "set", "forget"])
 	key = cgi_get("key")
 	json = cgi_get("json", default=False)
-	countdown = cgi_get("countdown", default=False)
 	mode = cgi_get("mode", default="normal")
 	if action == "forget":
 		delmem(key)
 	elif action == "get":
 		data = getmem(key, json)
-		if countdown and data:
+		if data and mode == "countdown":
 			succeed({
 				"ttl": (data["ttl"] - datetime.datetime.now()).total_seconds(),
 				"token": data["token"]
@@ -22,7 +21,7 @@ def response():
 		succeed(data)
 	elif action == "set":
 		value = cgi_get("value")
-		if countdown:
+		if mode == "countdown":
 			setmem(key, {
 				"ttl": datetime.datetime.now() + datetime.timedelta(0, value),
 				"token": token()
