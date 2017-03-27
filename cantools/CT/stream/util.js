@@ -57,7 +57,8 @@ var _sutil = CT.stream.util = {
 	avRecorder: function(stream) {
 		return new MediaRecorder(stream, {
 			mimeType: CT.stream.opts.codecs.video, // for OSX
-			videoBitsPerSecond: 500000
+			videoBitsPerSecond: 256000,
+			audioBitsPerSecond: 64000,
 		});
 	},
 	videoRecorder: function(stream) {
