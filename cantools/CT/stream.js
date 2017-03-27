@@ -41,8 +41,8 @@ CT.stream.opts = {
 	waiting: [],
 	merged: true,
 	codecs: {
-		av: 'video/webm; codecs="vp8,opus"',
-		video: 'video/webm; codecs="vp8"',
+		av: 'video/webm; codecs="vp9,opus"',
+		video: 'video/webm; codecs="vp9"',
 		audio: 'audio/webm; codecs="opus"'
 	},
 	startWaiting: function() {
