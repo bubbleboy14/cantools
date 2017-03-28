@@ -153,6 +153,7 @@ CT.stream.Video = CT.Class({
 			opts.videoId, opts.attrs);
 		this.video.on("canplay", this.start);
 		this.video.on("pause", this.start);
+		this.video.on("error", this._error);
 		this.audio = new CT.stream.Audio(opts.activeAudio, this);
 		this._saveButton = CT.dom.img("/img/save.png", null, this.save);
 		this.node = opts.frame ? CT.dom.div([

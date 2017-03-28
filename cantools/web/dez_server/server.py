@@ -77,7 +77,13 @@ def clearmem():
 	dweb().memcache.clear()
 
 def getcache():
-	return dweb().memcache.cache
+	c = {}
+	orig = dweb().memcache.cache
+	for k, v in orig.items():
+		if v.__class__ == dict and "ttl" in v: # countdown
+			v = str(v)
+		c[k] = v
+	return c
 
 set_getmem(getmem)
 set_setmem(setmem)
