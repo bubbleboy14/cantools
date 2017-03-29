@@ -123,6 +123,7 @@ CT.stream.Video = CT.Class({
 		}
 	},
 	remove: function() {
+		this.video.src = "";
 		CT.dom.remove(this.node);
 		this.audio.remove();
 	},
