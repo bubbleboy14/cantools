@@ -48,10 +48,13 @@ CT.stream.Video = CT.Class({
 	},
 	process_single: function(dataURL) { // video only, or working av feed :-\
 		this.log("process", dataURL.length);
-		var that = this;
+		var that = this, v = this.video;
 		CT.stream.util.b64_to_buffer(dataURL, function(buffer) {
 			that._buffers.push(buffer);
 			that._sourceUpdate();
+			var target = v.duration - (CT.stream.opts.chunk / 1000);
+			if (!v.paused && v.currentTime < target)
+				v.currentTime = target;
 		});
 	},
 	start: function() {
