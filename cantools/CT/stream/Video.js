@@ -9,7 +9,10 @@ CT.stream.Video = CT.Class({
 	_sourceUpdate: function() {
 		this.log("_sourceUpdate", this._buffers.length,
 			this.sourceBuffer.updating, this.mediaSource.readyState);
-		if (!this.sourceBuffer.updating) {
+		if (this.video.error) {
+			this.log("ERROR - resetting video");
+			this.reset();
+		} else if (!this.sourceBuffer.updating) {
 			if (this._buffers.length)
 				this.sourceBuffer.appendBuffer(this._buffers.shift());
 			else if (this.mediaSource.readyState == "open")
@@ -42,7 +45,7 @@ CT.stream.Video = CT.Class({
 			CT.stream.util.blob_to_buffer(videoblob, function(videobuffer) {
 				that.audio.push(b64s.audio);
 				that._buffers.push(videobuffer);
-				that._sourceUpdate();
+				that.sourceBuffer && that._sourceUpdate();
 			});
 		});
 	},
@@ -135,8 +138,39 @@ CT.stream.Video = CT.Class({
 			this.video.currentTime += 1; // help video along....
 		this.video._lastct = this.video.currentTime;
 	},
+	setVideo: function() {
+		this.video = this.opts.video || CT.dom.video(this.opts.stream
+			&& URL.createObjectURL(this.opts.stream), this.opts.videoClass,
+			this.opts.videoId, this.opts.attrs);
+		this.video.on("canplay", this.start);
+		this.video.on("pause", this.start);
+		this.video.on("error", this._error);
+	},
+	setMediaSource: function() {
+		this.mediaSource = new MediaSource();
+		this.video.src = URL.createObjectURL(this.mediaSource);
+		this.mediaSource.addEventListener("sourceopen", this._sourceOpen);
+		this.mediaSource.addEventListener("error", this._error);
+	},
+	reset: function() {
+		this.video.removeEventListener("canplay", this.start);
+		this.video.removeEventListener("pause", this.start);
+		this.video.removeEventListener("error", this._error);
+		this.setVideo();
+		this.video.muted = !this.audio.active;
+		this.node.insertBefore(this.video, this.node.video);
+		CT.dom.remove(this.node.video);
+		this.node.video = this.video;
+		this.sourceBuffer.removeEventListener("updateend", this._sourceUpdate);
+		this.sourceBuffer.removeEventListener("error", this._error);
+		delete this.sourceBuffer;
+		this.mediaSource.removeEventListener("sourceopen", this._sourceOpen);
+		this.mediaSource.removeEventListener("error", this._error);
+		this.setMediaSource();
+		this._buffers.shift();
+		this.requiredInitChunk = this.receivedInitChunk;
+	},
 	init: function(opts) {
-		this.log("init");
 		this.opts = opts = CT.merge(opts, {
 			video: null,
 			stream: null,
@@ -152,12 +186,7 @@ CT.stream.Video = CT.Class({
 		});
 		if (opts.stream)
 			opts.attrs.mozSrcObject = opts.stream;
-		this.video = opts.video || CT.dom.video(opts.stream
-			&& URL.createObjectURL(opts.stream), opts.videoClass,
-			opts.videoId, opts.attrs);
-		this.video.on("canplay", this.start);
-		this.video.on("pause", this.start);
-		this.video.on("error", this._error);
+		this.setVideo();
 		this.audio = new CT.stream.Audio(opts.activeAudio, this);
 		this._saveButton = CT.dom.img("/img/save.png", null, this.save);
 		this.node = opts.frame ? CT.dom.div([
@@ -172,10 +201,7 @@ CT.stream.Video = CT.Class({
 		if (opts.stream)
 			this.audio.disable();
 		else {
-			this.mediaSource = new MediaSource();
-			this.video.src = URL.createObjectURL(this.mediaSource);
-			this.mediaSource.addEventListener("sourceopen", this._sourceOpen);
-			this.mediaSource.addEventListener("error", this._error);
+			this.setMediaSource();
 			this.audio.build();
 			if (CT.stream.opts.merged)
 				setInterval(this._wakeup, 1000);

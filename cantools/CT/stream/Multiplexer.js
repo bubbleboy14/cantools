@@ -115,8 +115,10 @@ CT.stream.Multiplexer = CT.Class({
 		if (data.message.action == "clip") {
 			var v = this.getVideo(data.channel, data.user);
 			this.modes[this.mode].update(data.message, v.process, v.requiredInitChunk);
-			if (v.requiredInitChunk)
+			if (v.requiredInitChunk) {
+				v.receivedInitChunk = v.requiredInitChunk;
 				delete v.requiredInitChunk;
+			}
 		} else // chat
 			this.chat(data.message, data.user);
 		CT.log.endTimer("update", data.message.data.length

@@ -33,6 +33,7 @@ CT.stream.Audio = CT.Class({
 		CT.dom.remove(this.node);
 	},
 	disable: function() {
+		this.active = false;
 		this.disabled = true;
 		this.video.video.muted = true;
 	},
