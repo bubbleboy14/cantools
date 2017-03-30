@@ -17,7 +17,7 @@ CT.stream.Video = CT.Class({
 		}
 	},
 	_error: function(e) {
-		this.log("ERROR", e.message);
+		this.log("ERROR", e.message, e.target.error);
 	},
 	setSourceBuffer: function() {
 		this.log("setSourceBuffer - exists:", !!this.sourceBuffer);
