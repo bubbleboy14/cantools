@@ -170,7 +170,7 @@ CT.stream.Video = CT.Class({
 		], opts.className, opts.id) : this.video;
 		this.node.video = this.video;
 		if (opts.stream)
-			this.video.volume = 0;
+			this.audio.disable();
 		else {
 			this.mediaSource = new MediaSource();
 			this.video.src = URL.createObjectURL(this.mediaSource);
