@@ -14,7 +14,7 @@ def end_timer(tname, msg=""):
 
 def set_log(fname):
 	global LOG_FILE
-	LOG_FILE = open(fname, "w")
+	LOG_FILE = open(fname, "a")
 
 def close_log():
 	global LOG_FILE
