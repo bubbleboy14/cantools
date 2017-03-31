@@ -179,6 +179,7 @@ CT.stream.Video = CT.Class({
 			frame: true,
 			videoClass: null,
 			videoId: null,
+			watermark: null,
 			activeAudio: false,
 			attrs: {
 				autoplay: true
@@ -196,8 +197,10 @@ CT.stream.Video = CT.Class({
 				CT.dom.pad(2),
 				this._saveButton
 			], "centered")
-		], opts.className, opts.id) : this.video;
+		], opts.className, opts.id) : CT.dom.div(this.video, opts.className || "fulldef", opts.id);
 		this.node.video = this.video;
+		if (opts.watermark)
+			this.node.appendChild(CT.dom.img(opts.watermark, "abs ctr w1-4 mosthigh"));
 		if (opts.stream)
 			this.audio.disable();
 		else {
