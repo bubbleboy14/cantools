@@ -38,7 +38,7 @@ any need for the developer to know or do anything beyond 'ctinit -r'.
 
 import os, sys
 from optparse import OptionParser
-from cantools import config, include_plugin
+from cantools import config, include_plugin, mods_and_repos
 from cantools.util import log, error, cp, sym, mkdir, rm, cmd, read
 from builder import build
 
@@ -112,9 +112,9 @@ class Builder(object):
 						s) in init.routes.items()])))
 		if hasattr(init, "requires"):
 			log("installing %s ct dependencies"%(len(init.requires),), 3)
-			self._getplugs(init.requires)
+			self._getplugs(*mods_and_repos(init.requires))
 
-	def _getplugs(self, plugs):
+	def _getplugs(self, plugs, repos=None):
 		for i in range(len(plugs)):
 			plugin = plugs[i]
 			log("Plugin: %s"%(plugin,), 2)
@@ -122,7 +122,7 @@ class Builder(object):
 				self._getplug(plugin)
 			except ImportError:
 				log("plugin '%s' not found! attempting install."%(plugin,), important=True)
-				self._install(config.plugin.repos[i])
+				self._install((repos or config.plugin.repos)[i])
 
 	def install_plugins(self):
 		pil = len(config.plugin.modules)

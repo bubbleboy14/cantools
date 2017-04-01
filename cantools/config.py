@@ -123,9 +123,21 @@ if config.ssl.certfile:
 	config.web.update("protocol", "https")
 	config.admin.update("protocol", "https")
 
-def include_plugin(plug):
+def mod_and_repo(plug):
 	repo = "/" in plug and plug or "%s/%s"%(config.plugin.base, plug)
 	if repo == plug:
 		plug = plug.slice("/")[1]
+	return plug, repo
+
+def mods_and_repos(plugs):
+	mz, rz = [], [] # slicker way to do this?
+	for plug in plugs:
+		m, r = mod_and_repo(plug)
+		mz.append(m)
+		rz.append(r)
+	return mz, rz
+
+def include_plugin(plug):
+	mod, repo = mod_and_repo(plug)
 	config.plugin.repos.append(repo)
-	config.plugin.modules.append(plug)
+	config.plugin.modules.append(mod)

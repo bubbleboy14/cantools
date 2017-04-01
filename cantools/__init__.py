@@ -4,6 +4,7 @@ import util
 import config as cfgmod
 config = cfgmod.config
 include_plugin = cfgmod.include_plugin
+mods_and_repos = cfgmod.mods_and_repos
 
 if config.web.server == "gae":
 	util.init_gae()
