@@ -66,6 +66,8 @@ CT.stream.Multiplexer = CT.Class({
 		if (chan && chan[user]) {
 			chan[user].remove();
 			delete chan[user];
+			if (!Object.keys(chan).length && this.opts.onstop)
+				this.opts.onstop();
 		}
 	},
 	push: function(blobs, segment, channel, stream) {
@@ -128,6 +130,8 @@ CT.stream.Multiplexer = CT.Class({
 		var chan = this.channels[channel],
 			video = chan[user];
 		if (!video) {
+			if (!Object.keys(chan).length && this.opts.onstart)
+				this.opts.onstart();
 			video = chan[user] = new CT.stream.Video(CT.merge(this.opts.vidopts, { stream: stream }));
 			CT.dom.addContent(this.opts.node, video.node);
 			video.requiredInitChunk = CT.stream.opts.merged && !stream && (channel + user + "init");
@@ -145,6 +149,8 @@ CT.stream.Multiplexer = CT.Class({
 			node: document.body,
 			autoconnect: true,
 			singlechannel: false,
+			onstart: null,
+			onstop: null,
 			wserror: null,
 			chat: true,
 			title: null,
