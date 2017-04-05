@@ -97,8 +97,15 @@ CT.stream.Multiplexer = CT.Class({
 	},
 	chat: function(message, user) {
 		if (this.opts.chat) {
-			var id = parseInt((user || this.opts.user).slice(4)),
-				msg = CT.dom.div(message.data);
+			user = user || this.opts.user;
+			var id = parseInt(user.slice(4)),
+				msg = CT.dom.div(this.opts.chatnames ? [
+					CT.dom.span(user, "bold"),
+					CT.dom.pad(),
+					CT.dom.span(message.data)
+				] : message.data);
+			if (isNaN(id))
+				id = user.length;
 			msg.style.color = this.opts.chatcolors[id % this.opts.chatcolors.length];
 			this.chatOut.appendChild(msg);
 			msg.scrollIntoViewIfNeeded();
@@ -156,6 +163,7 @@ CT.stream.Multiplexer = CT.Class({
 			title: null,
 			vidopts: {},
 			closeunsubs: true,
+			chatnames: false,
 			chatcolors: ["pink", "purple", "blue", "green", "red", "orange", "yellow"],
 			chatblurs: ["say what?", "any questions?", "what's up?"]
 		});
