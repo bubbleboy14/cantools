@@ -84,7 +84,8 @@ CT.layout = {
 		content.push(CT.dom.link(opts.logo, null, "/", opts.logoClass));
 		if (opts.links.length)
 			rights.push(opts.links.map(function(link) {
-				return CT.dom.link(link.content, link.cb, link.href, "padded");
+				return CT.dom.link(link.content, link.cb,
+					link.href, link.className || "padded");
 			}));
 		if (opts.contact.email || opts.contact.phone) {
 			var contacts = [];

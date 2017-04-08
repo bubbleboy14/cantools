@@ -558,6 +558,10 @@
 .lfloat {
     float: left;
 }
+.underline,
+.underline a {
+    text-decoration: underline;
+}
 .nodecoration,
 .nodecoration a {
     text-decoration: none;
