@@ -270,6 +270,18 @@
     padding-top: 20px;
     padding-bottom: 20px;
 }
+.pt5 {
+    padding-top: 5px;
+}
+.pb5 {
+    padding-bottom: 5px;
+}
+.pl5 {
+    padding-left: 5px;
+}
+.pr5 {
+    padding-right: 5px;
+}
 .pt10 {
     padding-top: 10px;
 }
