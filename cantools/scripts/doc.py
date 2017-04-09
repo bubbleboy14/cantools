@@ -89,8 +89,9 @@ def front():
     elif os.path.isfile(os.path.join(JSPATH, "config.js")):
         wobj["name"] = "Front (JS Config)"
         fdata = [dsFront("config.js", "core.config.%s"%(ISPLUGIN,), 'CT.require("core.config");')]
-    f.append("# %s"%(wobj["name"],))
-    f += fdata
+    if "name" in wobj:
+        f.append("# %s"%(wobj["name"],))
+        f += fdata
     return f
 
 def build():
