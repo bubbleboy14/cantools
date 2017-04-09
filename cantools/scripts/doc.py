@@ -31,11 +31,14 @@ else:
     JSPATH = os.path.join(HERE, "CT")
     BPATH = os.path.join(HERE, "scripts")
 
+def space(data):
+    return "    " + data.replace("\n", "\n    ")
+
 def dsBack(cmd):
     cpath = os.path.join(BPATH, "%s.py"%(ALTS.get(cmd, cmd),))
     log(cpath, 2)
     bdata = read(cpath)
-    fdata = ISPLUGIN and bdata or "## ct%s\n%s"%(cmd, bdata[4:].split('\n"""')[0])
+    fdata = ISPLUGIN and space(bdata) or "## ct%s\n%s"%(cmd, bdata[4:].split('\n"""')[0])
     WEB[-1]["children"].append({
         "name": cmd,
         "content": fdata
@@ -50,7 +53,7 @@ def dsFront(mod, modname=None, iline=None):
     rdata = "\n".join([
         "## %s"%(modname,),
         "### Import line: '%s'"%(iline,),
-        (ISPLUGIN and mod == "config.js") and mdata or mdata[3:].split("\n*/")[0]
+        (ISPLUGIN and mod == "config.js") and space(mdata) or mdata[3:].split("\n*/")[0]
     ])
     WEB[-1]["children"].append({
         "name": mod,
