@@ -106,8 +106,10 @@ CT.stream.Video = CT.Class({
 				rec.recording = false;
 			},
 			save: function() {
-				ConcatenateBlobs(rec.blobs, rec.blobs[0].type,
-					invokeSaveAsDialog);
+				ConcatenateBlobs(rec.blobs, rec.blobs[0].type, function(file) {
+					invokeSaveAsDialog(file,
+						(new Date()).toString().split("-")[0].replace(/\W/g, "") + ".webm");
+				});
 				rec.blobs = [];
 			}
 		};
