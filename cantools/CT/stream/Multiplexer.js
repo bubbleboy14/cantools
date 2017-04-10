@@ -79,6 +79,7 @@ CT.stream.Multiplexer = CT.Class({
 			signature += "init";
 		} else
 			signature += segment;
+		video.recorder && video.recorder.remember(blobs.video);
 		if (video.audio.active) {
 			CT.stream.util.blobs_to_b64s(blobs, function(b64s) {
 				CT.log.endTimer("push", signature);

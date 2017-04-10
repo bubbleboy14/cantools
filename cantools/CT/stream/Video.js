@@ -40,8 +40,7 @@ CT.stream.Video = CT.Class({
 			b64s.audio && b64s.audio.length);
 		var that = this;
 		CT.stream.util.b64_to_blob(b64s.video, function(videoblob) {
-			that.recorder && that.recorder.remember
-				&& that.recorder.remember(videoblob);
+			that.recorder && that.recorder.remember(videoblob);
 			CT.stream.util.blob_to_buffer(videoblob, function(videobuffer) {
 				that.audio.push(b64s.audio);
 				that._buffers.push(videobuffer);
@@ -52,12 +51,15 @@ CT.stream.Video = CT.Class({
 	process_single: function(dataURL) { // video only, or working av feed :-\
 		this.log("process", dataURL.length);
 		var that = this, v = this.video;
-		CT.stream.util.b64_to_buffer(dataURL, function(buffer) {
-			that._buffers.push(buffer);
-			that._sourceUpdate();
-			var target = v.duration - (CT.stream.opts.chunk / 1000);
-			if (!v.paused && v.currentTime < target)
-				v.currentTime = target;
+		CT.stream.util.b64_to_blob(dataURL, function(blob) {
+			that.recorder && that.recorder.remember(blob);
+			CT.stream.util.blob_to_buffer(blob, function(buffer) {
+				that._buffers.push(buffer);
+				that._sourceUpdate();
+				var target = v.duration - (CT.stream.opts.chunk / 1000);
+				if (!v.paused && v.currentTime < target)
+					v.currentTime = target;
+			});
 		});
 	},
 	start: function() {
@@ -121,9 +123,7 @@ CT.stream.Video = CT.Class({
 			delete this.recorder;
 		} else {             // start recording
 			this._saveButton.firstChild.classList.add("buttonActive");
-			this.recorder = this.opts.stream
-				? CT.stream.util.videoRecorder(this.opts.stream)
-				: this._miniRecorder();
+			this.recorder = this._miniRecorder();
 			this.recorder.start();
 			this._saveTimer = setTimeout(this.save, CT.stream.opts.cutoff);
 		}
@@ -181,6 +181,11 @@ CT.stream.Video = CT.Class({
 			videoId: null,
 			watermark: null,
 			activeAudio: false,
+			record: { // recorder always shows when frame is true
+				streamer: false,
+				lurker: false,
+				auto: false
+			},
 			attrs: {
 				autoplay: true
 			}
@@ -189,7 +194,7 @@ CT.stream.Video = CT.Class({
 			opts.attrs.mozSrcObject = opts.stream;
 		this.setVideo();
 		this.audio = new CT.stream.Audio(opts.activeAudio, this);
-		this._saveButton = CT.dom.img("/img/save.png", null, this.save);
+		this._saveButton = CT.dom.img("/img/save.png", "defpointer hoverglow", this.save);
 		this.node = opts.frame ? CT.dom.div([
 			this.video,
 			CT.dom.div([
@@ -199,8 +204,12 @@ CT.stream.Video = CT.Class({
 			], "centered")
 		], opts.className, opts.id) : CT.dom.div(this.video, opts.className || "fulldef", opts.id);
 		this.node.video = this.video;
+		var hasRecorder = opts.record[opts.stream ? "streamer" : "lurker"];
+		if (!opts.frame && hasRecorder)
+			this.node.appendChild(CT.dom.div(this._saveButton, "abs cbl"));
+		hasRecorder && opts.record.auto && this.save();
 		if (opts.watermark)
-			this.node.appendChild(CT.dom.img(opts.watermark, "abs ctr w1-4 mosthigh"));
+			this.node.appendChild(CT.dom.img(opts.watermark, "abs ctr w1-4 mosthigh nofilt"));
 		if (opts.stream)
 			this.audio.disable();
 		else {
