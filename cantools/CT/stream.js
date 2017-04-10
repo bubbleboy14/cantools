@@ -30,7 +30,7 @@ CT.stream.opts = {
 	requiresInput: CT.info.android,
 	requestedInput: false,
 	segments: 10,
-	chunk: 2000,
+	chunk: 1000,
 	sync: {
 		range: 800,
 		lead: 200
