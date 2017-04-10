@@ -971,6 +971,10 @@ button, a, .pointer {
     cursor: pointer;
 }
 
+.defpointer {
+    cursor: pointer !important;
+}
+
 .lister {
     border: 1px solid darkgray;
     margin: 2px;
