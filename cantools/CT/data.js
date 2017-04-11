@@ -118,6 +118,9 @@ CT.data = {
 	},
 
 	// random stuff
+	"numstr": function(len) {
+		return Math.floor(Math.random() * Math.pow(10, len)).toString();
+	},
 	"random": function(max) {
 		return Math.floor(Math.random() * max);
 	},
