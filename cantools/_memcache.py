@@ -11,17 +11,23 @@ def response():
 		delmem(key)
 	elif action == "get":
 		data = getmem(key, json)
-		if data and mode == "countdown":
-			succeed({
-				"ttl": (data["ttl"] - datetime.datetime.now()).total_seconds(),
-				"token": data["token"]
-			})
+		if mode == "countdown":
+			if key == "_countdown_list":
+				succeed(list(getmem("_countdown_list", False) or set()))
+			elif data:
+				succeed({
+					"ttl": (data["ttl"] - datetime.datetime.now()).total_seconds(),
+					"token": data["token"]
+				})
 		elif mode == "blob":
 			send_file(data, detect=True)
 		succeed(data)
 	elif action == "set":
 		value = cgi_get("value")
 		if mode == "countdown":
+			cdl = getmem("_countdown_list", False) or set()
+			cdl.add(key);
+			setmem("_countdown_list", cdl, False)
 			setmem(key, {
 				"ttl": datetime.datetime.now() + datetime.timedelta(0, value),
 				"token": token()

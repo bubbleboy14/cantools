@@ -80,5 +80,8 @@ CT.memcache.countdown = {
 	},
 	set: function(key, seconds, cb) {
 		CT.memcache._rq("set", cb, key, seconds, { mode: "countdown" });
+	},
+	list: function(cb) {
+		CT.memcache._rq("get", cb, "_countdown_list", null, { mode: "countdown" });
 	}
 };
