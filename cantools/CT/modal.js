@@ -280,6 +280,12 @@ CT.modal.Prompt = CT.Class({
 			else
 				return CT.dom.smartField(this.submit);
 		},
+		"multiple-string": function() {
+			var fl = CT.dom.fieldList();
+			this.node.appendChild(fl.empty);
+			this.node.appendChild(fl.addButton);
+			return fl;
+		},
 		password: function() {
 			return CT.dom.smartField(this.submit,
 				null, null, null, "password");
@@ -312,6 +318,7 @@ CT.modal.Prompt = CT.Class({
 	},
 	submit: function() {
 		this.opts.cb(this.input && (this.input.ctfile
+			|| ((typeof this.input.value == "function") && this.input.value())
 			|| this.opts.data[this.input.value] || this.input.value));
 		this.hide();
 	},
