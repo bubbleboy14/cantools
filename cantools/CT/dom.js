@@ -176,7 +176,7 @@ CT.dom = {
 					CT.dom.remove(butt.parentNode);
 				});
 				return CT.dom.node([ butt, input(v) ]);
-			}, n = CT.dom.node(vals.map(row), null, null, null, null, style);
+			}, n = CT.dom.node(vals && vals.map(row), null, null, null, null, style);
 		n.empty = input();
 		n.addButton = CT.dom.button("add", function() {
 			if (n.empty.value) {
