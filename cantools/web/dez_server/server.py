@@ -80,7 +80,9 @@ def getcache():
 	c = {}
 	orig = dweb().memcache.cache
 	for k, v in orig.items():
-		if v.__class__ == dict and "ttl" in v: # countdown
+		if v.__class__ == set:
+			v = list(v)
+		elif v.__class__ == dict and "ttl" in v: # countdown
 			v = str(v)
 		c[k] = v
 	return c
