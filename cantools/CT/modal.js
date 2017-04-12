@@ -40,7 +40,7 @@ a string, a password, or one or more selections from a list.
 
 defaults:
 	{
-		style: "string", // string|password|single-choice|multiple-choice|file
+		style: "string", // string|multiple-string|password|single-choice|multiple-choice|file
 		prompt: "",
 		clear: false, // string/password only
 		data: [] // only applies to choice styles
