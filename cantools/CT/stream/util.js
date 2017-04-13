@@ -58,7 +58,7 @@ var _sutil = CT.stream.util = {
 		return new MediaRecorder(stream, {
 			mimeType: CT.stream.opts.codecs.video, // for OSX
 			videoBitsPerSecond: 256000,
-			audioBitsPerSecond: 64000,
+			audioBitsPerSecond: 64000
 		});
 	},
 	videoRecorder: function(stream) {
@@ -124,13 +124,14 @@ var _sutil = CT.stream.util = {
 	},
 	_single: function(ondata, onrecorder) {
 		return function(stream) {
-			var segment = 0, segments = [], recorder = _sutil.avRecorder(stream);
+			var segment = 0, recorder = _sutil.avRecorder(stream);
 			recorder.ondataavailable = function(blobevent) {
 				CT.log("ondataavailable!!");
 				segment = (segment + 1) % CT.stream.opts.segments;
-				if (!segment)
-					segments.length = 0;
 				ondata && ondata({ video: blobevent.data }, segment);
+			};
+			recorder.onerror = function(e) {
+				CT.log("error! " + e.message);
 			};
 			recorder.start(CT.stream.opts.chunk);
 			onrecorder && onrecorder(recorder, stream);
