@@ -287,15 +287,15 @@ def processResponse(data, code):
 
 def succeed_sync(func, cb):
     log("succeed_sync")
-    args, kwargs = None, None
+    d = {}
     def handle(*a, **k):
         log("handle")
-        args = a
-        kwargs = k
+        d["a"] = a
+        d["k"] = k
     func(handle)
     while True:
         time.sleep(0.01)
-        if args or kwargs:
+        if d["a"] or d["k"]:
             log("successssss!")
             succeed(cb(*args, **kwargs))
 
