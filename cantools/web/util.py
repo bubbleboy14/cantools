@@ -232,12 +232,12 @@ def gae_wrap(resp, failure):
 
 resp_wrap = { "dez": dez_wrap, "gae": gae_wrap }
 
-def do_respond(responseFunc, failMsg="failed", failHtml=False, failNoEnc=False, noLoad=False, threaded=False, response=None):
+def do_respond(responseFunc, failMsg="failed", failHtml=False, failNoEnc=False, noLoad=False, threaded=False, response=None, autowin=True):
     def resp():
         response and response.set_cbs()
         noLoad or cgi_load()
         responseFunc()
-        succeed()
+        autowin and succeed()
 
     def failure(e):
         fail(data=failMsg, html=failHtml, err=e, noenc=failNoEnc)
