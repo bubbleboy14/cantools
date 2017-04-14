@@ -49,3 +49,8 @@ CT.stream.opts = {
 		CT.stream.opts.waiting.forEach(function(w) { w.play(); });
 	}
 };
+CT.stream.opts.mropts = {
+	mimeType: CT.stream.opts.codecs.video, // for OSX
+	videoBitsPerSecond: 256000,
+	audioBitsPerSecond: 64000
+};
