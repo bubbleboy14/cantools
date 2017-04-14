@@ -1,4 +1,4 @@
-# cantools 0.9.6.5
+# cantools 0.9.7
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
  - Docs: http://ct.mkult.co
@@ -689,7 +689,7 @@ a string, a password, or one or more selections from a list.
 
 defaults:
 	{
-		style: "string", // string|password|single-choice|multiple-choice|file
+		style: "string", // string|multiple-string|password|single-choice|multiple-choice|file
 		prompt: "",
 		clear: false, // string/password only
 		data: [] // only applies to choice styles
