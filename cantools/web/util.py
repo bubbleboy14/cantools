@@ -1,4 +1,4 @@
-import re, sys, json, threading
+import re, sys, json, time, threading
 from urllib import quote, unquote
 from base64 import b64encode, b64decode
 from cantools import config
@@ -284,6 +284,17 @@ def processResponse(data, code):
             data = rec_conv(data)
             code = "2"
     return "%s%s"%(code, data)
+
+def succeed_sync(func, cb):
+    args, kwargs = None, None
+    def handle(*a, **k):
+        args = a
+        kwargs = k
+    func(handle)
+    while True:
+        time.sleep(0.01)
+        if args or kwargs:
+            succeed(cb(*args, **kwargs))
 
 def succeed(data="", html=False, noenc=False, savename=None, cache=False):
     if cache or config.memcache.request:
