@@ -297,7 +297,7 @@ def succeed_sync(func, cb):
         time.sleep(0.01)
         if d["a"] or d["k"]:
             log("successssss!")
-            succeed(cb(*args, **kwargs))
+            succeed(cb(*d["a"], **d["k"]))
 
 def succeed(data="", html=False, noenc=False, savename=None, cache=False):
     if cache or config.memcache.request:
