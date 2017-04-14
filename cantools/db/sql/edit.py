@@ -1,5 +1,5 @@
 from datetime import datetime
-from properties import KeyWrapper
+from properties import KeyWrapper, BlobWrapper
 from session import session
 
 def _trans_key(val):
@@ -8,12 +8,16 @@ def _trans_key(val):
 def _trans_keylist(val):
     return [KeyWrapper(v) for v in val]
 
+def _trans_bloblist(val):
+    return [BlobWrapper(urlsafe=v) for v in val]
+
 def _trans_datetime(val):
     return isinstance(val, datetime) and val or datetime.strptime(val, "%Y-%m-%d %H:%M:%S")
 
 ETRANS = {
     "key": _trans_key,
     "keylist": _trans_keylist,
+    "bloblist": _trans_bloblist,
     "datetime": _trans_datetime
 }
 def add_edit_transformation(ptype, func):

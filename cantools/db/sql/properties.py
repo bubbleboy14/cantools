@@ -20,9 +20,15 @@ def _col(colClass, *args, **kwargs):
 	default = kwargs.pop("default", None)
 	if kwargs.pop("repeated", None):
 		isKey = kwargs["isKey"] = colClass is Key
+		isBlob = kwargs["isBlob"] = colClass is Blob
 		typeInstance = ArrayType(**kwargs)
 		col = sqlalchemy.Column(typeInstance, *args, **cargs)
-		col._ct_type = isKey and "keylist" or "list"
+		if isKey:
+			col._ct_type = "keylist"
+		elif isBlob:
+			col._ct_type = "bloblist"
+		else:
+			col._ct_type = "list"
 		if isKey:
 			col._kinds = typeInstance.kinds
 		return col
@@ -74,7 +80,9 @@ class BasicString(basicType(sqlalchemy.UnicodeText, StringType)):
 String = sqlColumn(BasicString)
 
 class BlobWrapper(object):
-	def __init__(self, data="", value=0):
+	def __init__(self, data="", value=0, urlsafe=None):
+		if urlsafe:
+			self.value = int(urlsafe.split("/")[-1])
 		self.value = value
 		if data:
 			self.set(data)
@@ -140,6 +148,7 @@ class Binary(basicType(sqlString)):
 class ArrayType(BasicString):
 	def __init__(self, *args, **kwargs):
 		self.isKey = kwargs.pop("isKey", False)
+		self.isBlob = kwargs.pop("isBlob", False)
 		if self.isKey:
 			self.kinds = kwargs.pop("kinds", [kwargs.pop("kind", "*")])
 			for i in range(len(self.kinds)):
@@ -148,7 +157,7 @@ class ArrayType(BasicString):
 		BasicString.__init__(self, *args, **kwargs)
 
 	def process_bind_param(self, value, dialect):
-		if self.isKey:
+		if self.isKey or self.isBlob:
 			for i in range(len(value)):
 				if hasattr(value[i], "urlsafe"):
 					value[i] = value[i].urlsafe()
@@ -156,9 +165,11 @@ class ArrayType(BasicString):
 
 	def process_result_value(self, value, dialect):
 		vlist = json.loads(value) or []
-		if self.isKey:
+		if self.isKey or self.isBlob:
+			wrapper = self.isKey and KeyWrapper or BlobWrapper
 			for i in range(len(vlist)):
-				vlist[i] = KeyWrapper(vlist[i])
+				if isinstance(vlist[i], basestring):
+					vlist[i] = wrapper(urlsafe=vlist[i])
 		return vlist
 
 class KeyWrapper(object):

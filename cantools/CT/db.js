@@ -281,7 +281,8 @@ CT.db.edit = {
 		"key": null,
 		"blob": null,
 		"list": [],
-		"keylist": []
+		"keylist": [],
+		"bloblist": []
 	},
 	_no_ent: {
 		"key": null,
