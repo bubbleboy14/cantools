@@ -286,17 +286,14 @@ def processResponse(data, code):
     return "%s%s"%(code, data)
 
 def succeed_sync(func, cb):
-    log("succeed_sync")
     d = {}
     def handle(*a, **k):
-        log("handle")
         d["a"] = a
         d["k"] = k
     func(handle)
     while True:
         time.sleep(0.01)
         if d["a"] or d["k"]:
-            log("successssss!")
             succeed(cb(*d["a"], **d["k"]))
 
 def succeed(data="", html=False, noenc=False, savename=None, cache=False):
