@@ -291,7 +291,7 @@ CT.db.edit = {
 		return CT.db.edit._d[ptype];
 	},
 	isSupported: function(ptype, key) {
-		if (key == "label" || key == "_label")
+		if (["label", "_label", "created", "modified"].indexOf(key) != -1)
 			return false;
 		// implement list editing soon!!
 		return ptype in CT.db.edit._d;
