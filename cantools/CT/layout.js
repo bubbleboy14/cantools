@@ -106,24 +106,27 @@ CT.layout = {
 	},
 	grid: function(data, columns, rows, hardheight) {
 		var className = "w1-" + (columns || 3) + " h1-" + (rows || 4)
-			+ " noflow inline-block hoverglow pointer";
-		return CT.dom.node(data.map(function(d) {
-			var nstyle = {
-				backgroundImage: "url(" + d.img + ")",
-				backgroundPosition: "center",
-				backgroundSize: "cover"
-			};
-			if (hardheight)
-				nstyle.height = hardheight + "px";
-			return CT.dom.node(CT.dom.node(d.label,
-				"div", "biggest centered p20p overlay", null, null, {
-					paddingTop: "20%"
-				}), "div", className, null, {
-					onclick: d.onclick || function() {
-						location = d.link;
-					}
-				}, nstyle);
-		}), "div", "full");
+			+ " noflow inline-block hoverglow pointer", data2cell = function(d) {
+				var nstyle = {
+					backgroundImage: "url(" + d.img + ")",
+					backgroundPosition: "center",
+					backgroundSize: "cover"
+				};
+				if (hardheight)
+					nstyle.height = hardheight + "px";
+				return CT.dom.div(CT.dom.div(d.label,
+					"biggest centered p20p overlay", d.id, null, {
+						paddingTop: "20%"
+					}), className, null, {
+						onclick: d.onclick || function() {
+							location = d.link;
+						}
+					}, nstyle);
+			}, gnode = CT.dom.div(data.map(data2cell), "full");
+		gnode.addCell = function(d) {
+			gnode.appendChild(data2cell(d));
+		};
+		return gnode;
 	},
 	profile: function(opts) {
 		opts = CT.merge(opts, {
