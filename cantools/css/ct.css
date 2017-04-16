@@ -20,6 +20,7 @@
     margin: 0px !important;
     padding: 0px !important;
 }
+.hminit { max-height: initial !important; }
 .hm0 { max-height: 0px !important; }
 .wm0 { max-width: 0px !important; }
 .hm20p { max-height: 20px !important; }
