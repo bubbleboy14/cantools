@@ -397,7 +397,7 @@ CT.dom = {
 		psize = psize || 1;
 		var ptxt = "";
 		for (var i = 0; i < psize; i++)
-			ptxt += "&nbsp;";
+			ptxt += "&ensp;";
 		return CT.dom.node(ptxt, "span");
 	},
 	"br": function(bsize) {
