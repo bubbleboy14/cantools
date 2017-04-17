@@ -168,6 +168,12 @@ class KeyWrapper(object):
 	def __nonzero__(self):
 		return bool(self.value)
 
+	def __eq__(self, other):
+		return self.value == other.value
+
+	def __ne__(self, other):
+		return self.value != other.value
+
 	def get(self, session=None):
 		from cantools.db import get
 		if not session:
