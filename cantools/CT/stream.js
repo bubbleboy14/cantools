@@ -39,6 +39,10 @@ CT.stream.opts = {
 	width: 320,
 	height: 240,
 	waiting: [],
+	transcoder: null, // set to func, such as web hook procedure
+	setTranscoder: function(cb) {
+		CT.stream.opts.transcoder = cb;
+	},
 	merged: true,
 	codecs: {
 		av: 'video/webm; codecs="vp9,opus"',
