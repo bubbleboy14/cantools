@@ -26,8 +26,10 @@ CT.file = {
 		return f;
 	},
 	make: function(data) { // from data
+		if (!Array.isArray(data))
+			data = [data];
 		return new CT.file.File({
-			file: new Blob([data])
+			file: new Blob(data)
 		});
 	}
 };
