@@ -124,7 +124,8 @@ var _sutil = CT.stream.util = {
 			recorder.ondataavailable = function(blobevent) {
 				CT.log("ondataavailable!!");
 				segment = (segment + 1) % CT.stream.opts.segments;
-				ondata && ondata({ video: blobevent.data }, segment);
+				!recorder._stopped && ondata &&
+					ondata({ video: blobevent.data }, segment);
 			};
 			recorder.onerror = function(e) {
 				CT.log("error! " + e.message);
