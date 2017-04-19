@@ -4,23 +4,11 @@ CT.stream.Audio = CT.Class({
 	_flip: function() {
 		if (this.disabled) return;
 		this.active = !this.active;
-		if (CT.stream.opts.merged)
-			this.video.video.muted = !this.active;
-		else if (!this.active && this.node)
-			this.node.src = null;
+		this.video.video.muted = !this.active;
 		this.button.firstChild.classList[this.active ? "add" : "remove"]("buttonActive");
 	},
 	push: function(buff) {
 		this._buffers.push(buff);
-	},
-	next: function() {
-		var buff;
-		while (this._buffers.length > this.video._buffers.length)
-			buff = this._buffers.shift();
-		if (buff && this.active && !CT.stream.opts.merged) {
-			this.node.src = buff;
-			this.play();
-		}
 	},
 	build: function() {
 		this.node = CT.dom.audio({
@@ -48,7 +36,7 @@ CT.stream.Audio = CT.Class({
 		this.video = video;
 		this.button = CT.dom.img("/img/audio.png",
 			active && "buttonActive", this._flip);
-		if (CT.stream.opts.merged && !active)
+		if (!active)
 			video.video.muted = true;
 	}
 });

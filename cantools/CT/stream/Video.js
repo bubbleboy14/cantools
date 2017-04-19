@@ -26,29 +26,13 @@ CT.stream.Video = CT.Class({
 		this.log("setSourceBuffer - exists:", !!this.sourceBuffer);
 		if (!this.sourceBuffer) {
 			var opts = CT.stream.opts;
-			this.sourceBuffer = this.mediaSource.addSourceBuffer(opts.merged
-				? opts.codecs.av : opts.codecs.video);
+			this.sourceBuffer = this.mediaSource.addSourceBuffer(opts.codecs.av);
 			this.sourceBuffer.mode = 'sequence';
 			this.sourceBuffer.addEventListener("updateend", this._sourceUpdate);
 			this.sourceBuffer.addEventListener("error", this._error);
 		}
 	},
-	process: function(b64s) {
-		if (CT.stream.opts.merged)
-			return this.process_single(b64s);
-		this.log("process", b64s.video.length,
-			b64s.audio && b64s.audio.length);
-		var that = this;
-		CT.stream.util.b64_to_blob(b64s.video, function(videoblob) {
-			that.recorder && that.recorder.remember(videoblob);
-			CT.stream.util.blob_to_buffer(videoblob, function(videobuffer) {
-				that.audio.push(b64s.audio);
-				that._buffers.push(videobuffer);
-				that.sourceBuffer && that._sourceUpdate();
-			});
-		});
-	},
-	process_single: function(dataURL) { // video only, or working av feed :-\
+	process: function(dataURL) {
 		this.log("process", dataURL.length);
 		var that = this, v = this.video;
 		CT.stream.util.b64_to_blob(dataURL, function(blob) {
@@ -82,15 +66,6 @@ CT.stream.Video = CT.Class({
 			}
 			CT.stream.opts.waiting.push(that.video);
 		});
-	},
-	_sync: function(e) {
-		var s = CT.stream.opts.sync, ms = this.video.currentTime * 1000;
-		if (this._nextChunk <= ms + s.range) {
-			var target = this._nextChunk - ms - s.lead;
-			this.log("carerror", this._nextChunk, ms, s.lead, target);
-			setTimeout(this.audio.next, target);
-			this._nextChunk += CT.stream.opts.chunk;
-		}
 	},
 	_miniRecorder: function() {
 		var rec = {
@@ -227,10 +202,7 @@ CT.stream.Video = CT.Class({
 		else {
 			this.setMediaSource();
 			this.audio.build();
-			if (CT.stream.opts.merged)
-				setInterval(this._wakeup, 1000);
-			else
-				this.video.on("timeupdate", this._sync);
+			setInterval(this._wakeup, 1000);
 		}
 	}
 });

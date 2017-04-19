@@ -56,7 +56,7 @@ CT.stream.Multiplexer = CT.Class({
 		CT.log.startTimer("push", channel + segment);
 		var that = this, signature = channel + this.opts.user,
 			video = this.getVideo(channel, this.opts.user, stream);
-		if (CT.stream.opts.merged && !this.initChunk) {// requires init chunk
+		if (!this.initChunk) {// requires init chunk
 			this.initChunk = true;
 			signature += "init";
 		} else
@@ -124,7 +124,7 @@ CT.stream.Multiplexer = CT.Class({
 				this.opts.onstart();
 			video = chan[user] = new CT.stream.Video(CT.merge(this.opts.vidopts, { stream: stream }));
 			CT.dom.addContent(this.opts.node, video.node);
-			video.requiredInitChunk = CT.stream.opts.merged && !stream && (channel + user + "init");
+			video.requiredInitChunk = !stream && (channel + user + "init");
 		}
 		return video;
 	},

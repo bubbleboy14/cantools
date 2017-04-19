@@ -19,7 +19,6 @@ Wraps an HTML5 video tag in a class with functions for streaming a video
 that arrives in chunks.
 */
 
-CT.scriptImport("CT.lib.MediaStreamRecorder");
 CT.require("CT.stream.util");
 CT.require("CT.stream.Audio");
 CT.require("CT.stream.Video");
@@ -31,10 +30,6 @@ CT.stream.opts = {
 	requestedInput: false,
 	segments: 10,
 	chunk: 1000,
-	sync: {
-		range: 800,
-		lead: 200
-	},
 	cutoff: 30000,
 	width: 320,
 	height: 240,
@@ -43,7 +38,6 @@ CT.stream.opts = {
 	setTranscoder: function(cb) {
 		CT.stream.opts.transcoder = cb;
 	},
-	merged: true,
 	codecs: {
 		av: 'video/webm; codecs="vp9,opus"',
 		video: 'video/webm; codecs="vp9"',

@@ -54,73 +54,9 @@ var _sutil = CT.stream.util = {
 		};
 		buffer ? fr.readAsArrayBuffer(blob) : fr.readAsDataURL(blob);
 	},
-	avRecorder: function(stream) {
-		return new MediaRecorder(stream, CT.stream.opts.mropts);
-	},
-	videoRecorder: function(stream) {
-		var r = new MediaStreamRecorder(stream);
-		r.mimeType = CT.stream.opts.codecs.video;
-		r.recorderType = WhammyRecorder;
-		return r;
-	},
-	audioRecorder: function(stream) {
-		var r = new MediaStreamRecorder(stream);
-		r.mimeType = CT.stream.opts.codecs.audio;
-		r.recorderType = StereoAudioRecorder;
-		r.audioChannels = 1;
-		return r;
-	},
-	_multi: function(ondata, onrecorder) {
+	_recorder: function(ondata, onrecorder) {
 		return function(stream) {
-			CT.log.endTimer("record", "got data!");
-			var vrec = _sutil.videoRecorder(stream),
-				arec = _sutil.audioRecorder(stream),
-				segment = 0, segments = [], addseg = function() {
-					if (segment > segments.length - 1) {
-						segments.push({
-							audio: null,
-							video: null
-						});
-					}
-				}, checkseg = function() {
-					var seg = segments[segment];
-					if (seg && seg.audio && seg.video) {
-						ondata(seg, segment);
-						segment = (segment + 1) % CT.stream.opts.segments;
-						if (!segment)
-							segments.length = 0;
-					}
-				};
-			vrec.onStartedDrawingNonBlankFrames = function() {
-				CT.log("STARTING AUDIO");
-				vrec.clearOldRecordedFrames();
-				arec.start(CT.stream.opts.chunk);
-			};
-			arec.ondataavailable = function(blob) {
-				CT.log("AUDIO");
-				addseg();
-				segments[segment].audio = blob;
-				checkseg();
-			};
-			vrec.ondataavailable = function(blob) {
-				CT.log("VIDEO");
-				addseg();
-				segments[segment].video = blob;
-				checkseg();
-			};
-			vrec.start(CT.stream.opts.chunk);
-			onrecorder && onrecorder({
-				stop: function() {
-					arec.stop();
-					vrec.stop();
-				},
-				save: vrec.save
-			}, stream);
-		};
-	},
-	_single: function(ondata, onrecorder) {
-		return function(stream) {
-			var segment = 0, recorder = _sutil.avRecorder(stream);
+			var segment = 0, recorder = new MediaRecorder(stream, CT.stream.opts.mropts);
 			recorder.ondataavailable = function(blobevent) {
 				CT.log("ondataavailable!!");
 				segment = (segment + 1) % CT.stream.opts.segments;
@@ -135,12 +71,10 @@ var _sutil = CT.stream.util = {
 		};
 	},
 	record: function(ondata, onrecorder, onfail) {
-		var recorder = CT.stream.opts.merged
-			? _sutil._single : _sutil._multi;
 		CT.log.startTimer("record", "(attempt)");
 		navigator.mediaDevices.getUserMedia({
 			video: true, audio: true
-		}).then(recorder(ondata, onrecorder))["catch"](onfail || function(err) {
+		}).then(_sutil._recorder(ondata, onrecorder))["catch"](onfail || function(err) {
 			CT.log.endTimer("record", "got error: " + err);
 		});
 	}
