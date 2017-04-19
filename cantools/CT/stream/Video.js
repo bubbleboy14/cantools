@@ -105,11 +105,13 @@ CT.stream.Video = CT.Class({
 			stop: function() {
 				rec.recording = false;
 			},
+			_save: function(file) {
+				invokeSaveAsDialog(file,
+					(new Date()).toString().split("-")[0].replace(/\W/g, "") + ".webm");
+			},
 			save: function() {
-				ConcatenateBlobs(rec.blobs, rec.blobs[0].type, function(file) {
-					invokeSaveAsDialog(file,
-						(new Date()).toString().split("-")[0].replace(/\W/g, "") + ".webm");
-				});
+				ConcatenateBlobs(rec.blobs, rec.blobs[0].type,
+					CT.stream.opts.transcoder ? CT.stream.opts.transcoder(rec._save) : rec._save);
 				rec.blobs = [];
 			}
 		};
