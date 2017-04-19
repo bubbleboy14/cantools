@@ -10,16 +10,16 @@ CT.stream.Multiplexer = CT.Class({
 						action: "clip",
 						data: signature
 					}); // (no echo)
-				}, true);
+				});
 			},
 			update: function(message, process, requiredInitChunk) {
 				if (requiredInitChunk && !message.data.endsWith("init")) {
 					CT.memcache.get(requiredInitChunk, function(d) {
 						process(d);
-						CT.memcache.get(message.data, process, true);
-					}, true);
+						CT.memcache.get(message.data, process);
+					});
 				} else
-					CT.memcache.get(message.data, process, true);
+					CT.memcache.get(message.data, process);
 			}
 		},
 		websocket: { // buggy AND needs multistream support!! (don't use)
@@ -53,10 +53,8 @@ CT.stream.Multiplexer = CT.Class({
 	leave: function(channel) {
 		if (channel in this.channels) {
 			CT.pubsub.unsubscribe(channel);
-			Object.values(this.channels).forEach(function(streams) {
-				Object.values(streams).forEach(function(video) {
-					video.remove();
-				});
+			Object.values(this.channels[channel]).forEach(function(video) {
+				video.remove();
 			});
 			delete this.channels[channel];
 		}
@@ -69,6 +67,10 @@ CT.stream.Multiplexer = CT.Class({
 			if (!Object.keys(chan).length && this.opts.onstop)
 				this.opts.onstop();
 		}
+	},
+	stop: function() {
+		for (var chan in this.channels)
+			this.leave(chan);
 	},
 	push: function(blobs, segment, channel, stream) {
 		CT.log.startTimer("push", channel + segment);
