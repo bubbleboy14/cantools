@@ -1,42 +1,22 @@
 CT.stream.Multiplexer = CT.Class({
 	CLASSNAME: "CT.stream.Multiplexer",
-	mode: "memcache", // websocket|memcache
 	initChunk: false,
-	modes: {
-		memcache: {
-			push: function(b64s, channel, signature) {
-				CT.memcache.set(signature, b64s, function() {
-					CT.pubsub.publish(channel, {
-						action: "clip",
-						data: signature
-					}); // (no echo)
-				});
-			},
-			update: function(message, process, requiredInitChunk) {
-				if (requiredInitChunk && !message.data.endsWith("init")) {
-					CT.memcache.get(requiredInitChunk, function(d) {
-						process(d);
-						CT.memcache.get(message.data, process);
-					});
-				} else
-					CT.memcache.get(message.data, process);
-			}
-		},
-		websocket: { // buggy AND needs multistream support!! (don't use)
-			push: function(b64, channel, signature) { // no echo!!!
-				CT.log.startTimer("websocket_push", signature);
-				CT.pubsub.publish(channel, encodeURIComponent(b64));
-				CT.log.endTimer("websocket_push", b64.length);
-			},
-			update: function(message, process) {
-				CT.log.startTimer("websocket_update", message.length);
-				process(unescape(message));
-				CT.log.endTimer("websocket_update", message.length);
-			}
-		}
+	_push: function(b64s, channel, signature) {
+		CT.memcache.set(signature, b64s, function() {
+			CT.pubsub.publish(channel, {
+				action: "clip",
+				data: signature
+			}); // (no echo)
+		});
 	},
-	setMode: function(mode) {
-		this.mode = mode;
+	_update: function(message, process, requiredInitChunk) {
+		if (requiredInitChunk && !message.data.endsWith("init")) {
+			CT.memcache.get(requiredInitChunk, function(d) {
+				process(d);
+				CT.memcache.get(message.data, process);
+			});
+		} else
+			CT.memcache.get(message.data, process);
 	},
 	join: function(channel) {
 		if (this.opts.singlechannel) {
@@ -85,12 +65,12 @@ CT.stream.Multiplexer = CT.Class({
 		if (video.audio.active) {
 			CT.stream.util.blobs_to_b64s(blobs, function(b64s) {
 				CT.log.endTimer("push", signature);
-				that.modes[that.mode].push(b64s, channel, signature);
+				that._push(b64s, channel, signature);
 			});
 		} else {
 			CT.stream.util.blob_to_b64(blobs.video, function(b64) {
 				CT.log.endTimer("push", signature);
-				that.modes[that.mode].push({
+				that._push({
 					audio: null,
 					video: b64
 				}, channel, signature);
@@ -126,7 +106,7 @@ CT.stream.Multiplexer = CT.Class({
 		CT.log.startTimer("update", data.channel);
 		if (data.message.action == "clip") {
 			var v = this.getVideo(data.channel, data.user);
-			this.modes[this.mode].update(data.message, v.process, v.requiredInitChunk);
+			this._update(data.message, v.process, v.requiredInitChunk);
 			if (v.requiredInitChunk) {
 				v.receivedInitChunk = v.requiredInitChunk;
 				delete v.requiredInitChunk;
