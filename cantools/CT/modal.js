@@ -278,7 +278,7 @@ CT.modal.Prompt = CT.Class({
 					modelName: this.opts.autocomplete.modelName
 				}).input;
 			else
-				return CT.dom.smartField(this.submit);
+				return CT.dom.smartField({ cb: this.submit, isTA: this.opts.isTA });
 		},
 		"multiple-string": function() {
 			var fl = CT.dom.fieldList();
