@@ -207,9 +207,20 @@ CT.stream.Video = CT.Class({
 			], "centered")
 		], opts.className, opts.id) : CT.dom.div(this.video, opts.className || "fulldef", opts.id);
 		this.node.video = this.video;
-		var hasRecorder = opts.record[opts.stream ? "streamer" : "lurker"];
-		if (!opts.frame && hasRecorder)
-			this.node.appendChild(CT.dom.div(this._saveButton, "abs cbl"));
+		var hasRecorder = opts.record[opts.stream ? "streamer" : "lurker"],
+			hasFullscreen = opts.fullscreen[opts.stream ? "streamer" : "lurker"];
+		if (!opts.frame) {
+			var cbl = CT.dom.div(null, "abs cbl");
+			if (hasRecorder)
+				cbl.appendChild(this._saveButton);
+			if (hasFullscreen) {
+				if (cbl.childNodes.length)
+					cbl.appendChild(CT.dom.pad());
+				cbl.appendChild(this._fullscreenButton);
+			}
+			if (cbl.childNodes.length)
+				this.node.appendChild(cbl);
+		}
 		hasRecorder && opts.record.auto && this.save();
 		if (opts.watermark)
 			this.node.appendChild(CT.dom.img(opts.watermark, "abs ctr w1-4 mosthigh nofilt"));
