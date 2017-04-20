@@ -66,6 +66,7 @@ a {
 }
 
 .rcol {
+	box-sizing: border-box;
 	border: 1px solid black;
 	float: right;
 	width: 20%;
@@ -76,6 +77,7 @@ a {
 }
 
 .data {
+	box-sizing: border-box;
 	border: 1px solid black;
 	width: 79%;
 	height: 100%;
