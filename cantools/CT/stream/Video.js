@@ -139,6 +139,13 @@ CT.stream.Video = CT.Class({
 		this.mediaSource.addEventListener("sourceopen", this._sourceOpen);
 		this.mediaSource.addEventListener("error", this._error);
 	},
+	fullscreen: function() {
+		var v = this.video;
+		if (v.requestFullscreen)
+			v.requestFullscreen();
+		else if (v.webkitRequestFullscreen)
+			v.webkitRequestFullscreen();
+	},
 	reset: function() {
 		this.video.removeEventListener("canplay", this.start);
 		this.video.removeEventListener("pause", this.start);
@@ -173,6 +180,10 @@ CT.stream.Video = CT.Class({
 				lurker: false,
 				auto: false
 			},
+			fullscreen: {
+				streamer: false,
+				lurker: true
+			},
 			attrs: {
 				autoplay: true
 			}
@@ -181,11 +192,16 @@ CT.stream.Video = CT.Class({
 			opts.attrs.mozSrcObject = opts.stream;
 		this.setVideo();
 		this.audio = new CT.stream.Audio(opts.activeAudio, this);
-		this._saveButton = CT.dom.img("/img/save.png", "defpointer hoverglow", this.save);
+		this._fullscreenButton = CT.dom.img("/img/fullscreen.png",
+			"defpointer hoverglow w80p", this.fullscreen);
+		this._saveButton = CT.dom.img("/img/save.png",
+			"defpointer hoverglow w80p", this.save);
 		this.node = opts.frame ? CT.dom.div([
 			this.video,
 			CT.dom.div([
 				this.audio.button,
+				CT.dom.pad(2),
+				this._fullscreenButton,
 				CT.dom.pad(2),
 				this._saveButton
 			], "centered")

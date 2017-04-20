@@ -35,7 +35,7 @@ CT.stream.Audio = CT.Class({
 		this.active = active;
 		this.video = video;
 		this.button = CT.dom.img("/img/audio.png",
-			active && "buttonActive", this._flip);
+			"w80p" + (active && " buttonActive" || ""), this._flip);
 		if (!active)
 			video.video.muted = true;
 	}
