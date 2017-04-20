@@ -32,6 +32,7 @@ CT.pubsub = {
 			"subscribe": CT.log.getLogger("CT.pubsub|subscribe"),
 			"join": CT.log.getLogger("CT.pubsub|join"),
 			"leave": CT.log.getLogger("CT.pubsub|leave"),
+			"presence": CT.log.getLogger("CT.pubsub|presence"),
 			"open": CT.log.getLogger("CT.pubsub|open"),
 			"close": CT.log.getLogger("CT.pubsub|close"),
 			"wserror": CT.log.getLogger("CT.pubsub|wserror"), // websocket -- almost same as close
@@ -51,12 +52,18 @@ CT.pubsub = {
 			"subscribe": function(data) {
 				CT.pubsub._.cb.join(data.channel, data.user);
 				var chan = CT.pubsub._.channels[data.channel];
-				chan && CT.data.append(chan.presence, data.user);
+				if (chan) {
+					CT.data.append(chan.presence, data.user);
+					CT.pubsub._.cb.presence(chan.presence.length);
+				}
 			},
 			"unsubscribe": function(data) {
 				CT.pubsub._.cb.leave(data.channel, data.user);
 				var chan = CT.pubsub._.channels[data.channel];
-				chan && CT.data.remove(chan.presence, data.user);
+				if (chan) {
+					CT.data.remove(chan.presence, data.user);
+					CT.pubsub._.cb.presence(chan.presence.length);
+				}
 			},
 			"pm": function(data) {
 				CT.pubsub._.cb.pm(data.message, data.user);
@@ -141,7 +148,7 @@ CT.pubsub = {
 		}
 	},
 	"set_cb": function(action, cb) {
-		// action: message|subscribe|join|leave|open|close|error|pm
+		// action: message|subscribe|join|leave|presence|open|close|error|pm
 		CT.pubsub._.cb[action] = cb;
 	},
 	"pm": function(user, message) {
