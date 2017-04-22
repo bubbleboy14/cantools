@@ -1,4 +1,5 @@
-from system import cmd, rm
+import os
+from system import cmd, rm, mkdir
 from reporting import log
 from io import read, write
 
@@ -31,6 +32,17 @@ def transcode(orig, tmp=False):
 def segment(orig, p):
 	log("media.segment > segmenting to %s (hls)"%(p,), 1)
 	cmd(SEG%(orig, p, p))
+
+def hlsify(blobpath, check=False):
+	p = blobpath.replace("blob/", "blob/hls/")
+	isd = os.path.isdir(p)
+	if check:
+		return isd
+	if not isd:
+		log("transcode > attempt with video: '%s'"%(blobpath,), important=True)
+		mkdir(p, True)
+		segment(blobpath, p)
+		log("transcode > done!")
 
 #
 # images (PIL)
