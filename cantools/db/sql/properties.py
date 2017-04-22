@@ -169,10 +169,10 @@ class KeyWrapper(object):
 		return bool(self.value)
 
 	def __eq__(self, other):
-		return self.value == other.value
+		return hasattr(other, "value") and self.value == other.value
 
 	def __ne__(self, other):
-		return self.value != other.value
+		return hasattr(other, "value") and self.value != other.value
 
 	def get(self, session=None):
 		from cantools.db import get
