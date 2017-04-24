@@ -41,13 +41,13 @@ def init_ndb():
 # rules for operating outside of their native environment
 # are crappy and generally get worse with time. these
 # _sort of_ work, but easily get messed up. it's whatever.
-def init_ndb_cloud():
+def init_ndb_cloud(url=None):
     from cantools import config
     from google.appengine.ext.remote_api import remote_api_stub
-    app_id = read("app.yaml", True)[0].split(": ")[1].strip()
-    remote_api_stub.ConfigureRemoteApiForOAuth(
-        "%s.appspot.com"%(app_id,),
-        "/_ah/remote_api")
+    if not url:
+        app_id = read("app.yaml", True)[0].split(": ")[1].strip()
+        url = "%s.appspot.com"%(app_id,)
+    remote_api_stub.ConfigureRemoteApiForOAuth(url, "/_ah/remote_api")
 
 def init_ndb_depped(datastore_file="/dev/null"):
     import os
