@@ -1,8 +1,10 @@
 import subprocess, os
-from ply import yacc, lex
-from slimit import minify
 from cantools import config
 from cantools.util import log, error, read, write, mkdir
+try:
+    from slimit import minify
+except ImportError:
+    pass # skipping slimit.minify() import for gae compatibility -- if you need it, install it!
 
 def nextQuote(text, lastIndex=0):
     z = i = text.find('"', lastIndex)
@@ -185,6 +187,7 @@ def build(admin_ct_path, dirname, fnames):
         os.path.walk(os.path.join(dirname, fname), build, admin_ct_path)
 
 def silence_warnings():
+    from ply import yacc, lex
     def quiet(*args, **kwargs):
         pass
     yacc.PlyLogger.warning = quiet
