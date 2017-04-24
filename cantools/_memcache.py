@@ -17,7 +17,8 @@ def response():
 			elif data:
 				succeed({
 					"ttl": (data["ttl"] - datetime.datetime.now()).total_seconds(),
-					"token": data["token"]
+					"token": data["token"],
+					"meta": data["meta"]
 				})
 		elif mode == "blob":
 			send_file(data, detect=True)
@@ -30,7 +31,8 @@ def response():
 			setmem("_countdown_list", cdl, False)
 			setmem(key, {
 				"ttl": datetime.datetime.now() + datetime.timedelta(0, value),
-				"token": token()
+				"token": token(),
+				"meta": cgi_get("meta", default={})
 			}, json)
 		elif mode == "blob":
 			value = read_file(value)

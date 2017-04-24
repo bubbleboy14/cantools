@@ -78,8 +78,11 @@ CT.memcache.countdown = {
 	get: function(key, cb) {
 		CT.memcache._rq("get", cb, key, null, { mode: "countdown" });
 	},
-	set: function(key, seconds, cb) {
-		CT.memcache._rq("set", cb, key, seconds, { mode: "countdown" });
+	set: function(key, seconds, cb, meta) {
+		var params = { mode: "countdown" };
+		if (meta)
+			params.meta = meta;
+		CT.memcache._rq("set", cb, key, seconds, params);
 	},
 	list: function(cb) {
 		CT.memcache._rq("get", cb, "_countdown_list", null, { mode: "countdown" });
