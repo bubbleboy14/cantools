@@ -123,6 +123,12 @@ if config.ssl.certfile:
 	config.web.update("protocol", "https")
 	config.admin.update("protocol", "https")
 
+# extract mailer name from MAILER
+if config.mailer and " <" in config.mailer:
+	mn, m = config.mailer[:-1].split(" <")
+	config.update("mailer", m)
+	config.update("mailername", mn)
+
 def mod_and_repo(plug):
 	repo = "/" in plug and plug or "%s/%s"%(config.plugin.base, plug)
 	if repo == plug:
