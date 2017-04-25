@@ -23,7 +23,7 @@ setup(
     install_requires = [
         "rel >= 0.3.5",
         "dez >= 0.7.7.7",
-        "yagmail >= 0.4.116",
+        "yagmail >= 0.6.161",
         "requests >= 2.3.0",
         "slimit",
         "ply >= 3.7",
