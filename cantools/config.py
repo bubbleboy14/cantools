@@ -103,8 +103,14 @@ for key, val in [[term.strip() for term in line.split(" = ")] for line in read("
 			config.update("customscrambler", True)
 		target = key.lower()
 		c = config
-		if target in ["pubsub_botnames", "log_allow", "geo_user_geonames", "geo_user_google", "plugin_modules", "admin_contacts"]:
+		if target in ["pubsub_botnames", "log_allow", "geo_user_geonames", "geo_user_google", "plugin_modules", "admin_contacts", "web_rollz"]:
 			val = val.split("|")
+			if target == "web_rollz":
+				rollz = {}
+				for v in val:
+					flag, domain = v.split(":")
+					rollz[flag] = domain
+				val = rollz
 		if "_" in target:
 			path, target = target.rsplit("_", 1)
 			for part in path.split("_"):

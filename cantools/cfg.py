@@ -38,7 +38,8 @@ cfg = {
 		"host": "0.0.0.0",
 		"port": 8080,
 		"protocol": "http",
-		"log": None
+		"log": None,
+		"rollz": {}
 	},
 	"ssl": {
 		"verify": True,
