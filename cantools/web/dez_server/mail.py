@@ -14,4 +14,4 @@ def send_mail(to=None, sender=None, subject=None, body=None, html=None):
 	if type(to) == unicode:
 		to = str(to)
 	log('emailing "%s" to %s'%(subject, to))
-	yag.send(to, subject, str(html or body)) # ignore sender -- same every time
+	yag.send(to, subject, html or body) # ignore sender -- same every time
