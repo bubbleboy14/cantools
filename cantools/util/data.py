@@ -60,7 +60,7 @@ def batch(dlist, f, *args, **kwargs):
 	chunk = kwargs.pop("chunk", 1000)
 	i = 0
 	while i < len(dlist):
-		f(dlist[i:i+1000], *args, **kwargs)
+		f(dlist[i:i+chunk], *args, **kwargs)
 		i += chunk
 
 def token(n=10):
