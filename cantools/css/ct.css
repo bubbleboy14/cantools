@@ -35,6 +35,8 @@
 .wmin1 { min-width: 100%; }
 .hmin1-2 { min-height: 50%; }
 .wmin1-2 { min-width: 50%; }
+.hmin200p { min-height: 200px; }
+.hmin400p { min-height: 400px; }
 .h15p { height: 15px; }
 .h50p { height: 50px; }
 .h80p { height: 80px; }
