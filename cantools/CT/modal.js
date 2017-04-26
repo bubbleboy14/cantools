@@ -281,6 +281,7 @@ CT.modal.Prompt = CT.Class({
 				return CT.dom.smartField({
 					cb: this.submit,
 					isTA: this.opts.isTA,
+					blurs: this.opts.blurs,
 					classname: this.opts.inputClass
 				});
 			}
@@ -311,7 +312,7 @@ CT.modal.Prompt = CT.Class({
 	},
 	on: {
 		show: function() {
-			this.input && this.input.focus();
+			this.input && !this.opts.blurs && this.input.focus();
 			if (this.opts.clear)
 				this.input.value = "";
 		},
