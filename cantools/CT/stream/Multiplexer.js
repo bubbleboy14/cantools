@@ -147,12 +147,13 @@ CT.stream.Multiplexer = CT.Class({
 			vidopts: {},
 			closeunsubs: true,
 			chatnames: false,
+			chatclass: "green",
 			chatcolors: ["pink", "purple", "blue", "green", "red", "orange", "yellow"],
 			chatblurs: ["say what?", "any questions?", "what's up?"]
 		});
 		if (opts.chat) { // auto-sets singlechannel to true --> multi later!!
 			opts.singlechannel = true;
-			this.chatOut = CT.dom.div(null, "abs l0 t50 r0 b15 scrolly green pointer");
+			this.chatOut = CT.dom.div(null, "abs l0 t50 r0 b15 scrolly pointer " + opts.chatclass);
 			var ci = this.chatIn = CT.dom.smartField({
 				cb: this.say,
 				blurs: opts.chatblurs,
