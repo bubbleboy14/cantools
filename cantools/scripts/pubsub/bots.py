@@ -81,14 +81,14 @@ class Monitor(Bot):
 
 	def _cpu(self):
 		c = self.current["cpu"] = psutil.cpu_percent()
-		if self.alerts.get("cpu"):
+		if self.alert.get("cpu"):
 			if c < config.admin.monitor.thresholds.cpu:
-				del self.alerts["cpu"]
+				del self.alert["cpu"]
 				self.log("CPU calmed down")
 				send_mail(core.admin.contacts, subject="High CPU", body="just ended")
 		else:
 			if c >= config.admin.monitor.thresholds.cpu:
-				self.alerts["cpu"] = True
+				self.alert["cpu"] = True
 				self.log("CPU just started going crazy")
 				send_mail(core.admin.contacts, subject="High CPU", body="just started")
 
