@@ -29,7 +29,10 @@ cfg = {
 		"contacts": [],
 		"monitor": {
 			"interval": 5,
-			"log": False
+			"log": False,
+			"thresholds": {
+				"cpu": 80
+			}
 		}
 	},
 	"web": {
