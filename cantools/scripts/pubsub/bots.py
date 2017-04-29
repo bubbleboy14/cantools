@@ -1,8 +1,12 @@
 import datetime, json, os
 from cantools import config
 from cantools.util import log, write
-from cantools.web import fetch
+from cantools.web import fetch, send_mail
 from actor import Actor
+try:
+	import psutil
+except ImportError, e:
+	pass # google crap engine (get it if you need it!)
 
 class BotMeta(type):
 	def __new__(cls, name, bases, attrs):
@@ -49,6 +53,8 @@ class Bot(Actor):
 class Monitor(Bot):
 	def __init__(self, server, channel, name="monitor"): # only one monitor
 		import event # here for google crap engine
+		self.current = {}
+		self.alert = {}
 		Bot.__init__(self, server, channel, name)
 		event.timeout(config.admin.monitor.interval, self._tick)
 
@@ -73,14 +79,27 @@ class Monitor(Bot):
 		if config.admin.monitor.log:
 			write(data, self._datedir(), True, append=True, newline=True)
 
+	def _cpu(self):
+		c = self.current["cpu"] = psutil.cpu_percent()
+		if self.alerts.get("cpu"):
+			if c < config.admin.monitor.thresholds.cpu:
+				del self.alerts["cpu"]
+				self.log("CPU calmed down")
+				send_mail(core.admin.contacts, subject="High CPU", body="just ended")
+		else:
+			if c >= config.admin.monitor.thresholds.cpu:
+				self.alerts["cpu"] = True
+				self.log("CPU just started going crazy")
+				send_mail(core.admin.contacts, subject="High CPU", body="just started")
+
 	def _tick(self):
-		import psutil # here for google crap engine
+		self._cpu()
 		dioc = psutil.disk_io_counters()
 		nioc = psutil.net_io_counters()
 		dmon = fetch(config.admin.host, "/_report",
 			config.admin.port, True, protocol=config.admin.protocol)
 		self.log({
-			"cpu": psutil.cpu_percent(),
+			"cpu": self.current["cpu"],
 			"read": dioc.read_time,
 			"write": dioc.write_time,
 			"sent": nioc.bytes_sent,
