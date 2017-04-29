@@ -35,9 +35,12 @@ def read_file(data_field):
 
 # emails
 def send_mail(to=None, subject=None, body=None, html=None):
-    if not config.mailer:
+    m = config.mailer
+    if not m:
         fail("failed to send email -- no MAILER specified in ct.cfg!")
-    mail.send_mail(to=to, sender=config.mailer, subject=subject, body=body, html=html)
+    if config.mailername:
+        m = "%s <%s>"%(config.mailername, m)
+    mail.send_mail(to=to, sender=m, subject=subject, body=body, html=html)
 
 # memcache stuff
 def getmem(key, tojson=True):
