@@ -84,12 +84,12 @@ class Monitor(Bot):
 		if self.alert.get("cpu"):
 			if c < config.admin.monitor.thresholds.cpu:
 				del self.alert["cpu"]
-				self.log("CPU calmed down")
+				log("CPU calmed down")
 				send_mail(config.admin.contacts, subject="High CPU", body="just ended")
 		else:
 			if c >= config.admin.monitor.thresholds.cpu:
 				self.alert["cpu"] = True
-				self.log("CPU just started going crazy")
+				log("CPU just started going crazy")
 				send_mail(config.admin.contacts, subject="High CPU", body="just started")
 
 	def _tick(self):
