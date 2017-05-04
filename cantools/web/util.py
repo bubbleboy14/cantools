@@ -95,22 +95,10 @@ def set_read(f):
     localvars.read = f
 
 def rdec(data):
-    val = unquote(data)
-    try:
-        val = val.decode("utf_8")
-    except:
-        pass
-    return val
+    return unquote(b64decode(data)).decode('utf-8')
 
 def renc(data):
-    try:
-        data = data.decode('ascii', 'replace').encode('utf-8')
-    except:
-        try:
-            data = data.encode('utf-8')
-        except:
-            pass
-    return data
+    return b64encode(quote(data.encode('utf-8')))
 
 def rb64(data, de=False): # depped
     log("[DEPRECATION WARNING] Something just called rb64(), which is depped -- use rec_conv()")

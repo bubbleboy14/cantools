@@ -201,10 +201,10 @@ var CT = {
 				alert(msg);
 		},
 		"_u2l": function (s) {
-			return encodeURIComponent(s);
+			return btoa(encodeURIComponent(s));
 		},
 		"_l2u": function (s) {
-			return decodeURIComponent(s);
+			return decodeURIComponent(atob(s));
 		},
 		"_rd": function(d, enc) {
 			if (d) {
