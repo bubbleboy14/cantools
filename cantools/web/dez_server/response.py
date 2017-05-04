@@ -26,7 +26,8 @@ class Response(object):
                     obj[name] = signature
                 else:
                     obj[name] = data
-            b = json.dumps(obj)
+            b = json.dumps(rec_conv(obj))
+            print b
         return b
 
     def _send(self, *args, **kwargs):
