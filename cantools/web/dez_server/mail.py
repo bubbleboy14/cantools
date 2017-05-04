@@ -13,11 +13,13 @@ def _refresh():
 	yag.login(config.cache("email password? "))
 	yag.send_unsent()
 
+def _prep(*args):
+	return [(a and type(a) == unicode and a.encode("utf-8") or a) for a in args]
+
 def send_mail(to=None, sender=None, subject=None, body=None, html=None, bcc=None):
 	if not yag:
 		return log("failed to send email -- no MAILER specified in ct.cfg!")
-	if type(to) == unicode:
-		to = str(to)
+	to, subject, body, html = _prep(to, subject, body, html)
 	if yag.is_closed:
 		_refresh()
 	log('emailing "%s" to %s'%(subject, to)) # ignore sender -- same every time
