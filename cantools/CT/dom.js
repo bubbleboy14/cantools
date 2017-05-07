@@ -1030,7 +1030,7 @@ CT.dom = {
 	"doWhenNodeExists": function(id, cb) {
 		if (document.getElementById(id))
 			return cb();
-		setTimeout(CT.dom.doWhenNodeExists, 1000, id, cb);
+		setTimeout(CT.dom.doWhenNodeExists, 500, id, cb);
 	},
 
 	// getters
