@@ -118,7 +118,9 @@ def customChunk(path, fnames):
         })
     for fname in fnames:
         fdata = read(os.path.join(path, fname))
-        if fname.endswith(".js"):
+        if fname == "config.js" or fname.startswith("ct.cfg"): # for non-local backend cfgs
+            fdata = space(fdata)
+        elif fname.endswith(".js"):
             fdata = fdata[3:].split("\n*/")[0]
         elif fname.endswith(".py"):
             fdata = fdata[4:].split('\n"""')[0]
