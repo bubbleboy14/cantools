@@ -1,4 +1,4 @@
-# cantools 0.9.8.1
+# cantools 0.9.8.2
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
  - Docs: http://ct.mkult.co
@@ -200,11 +200,17 @@ Run this in 'index' mode on a database with lots of missing index values.
     -h, --help  show this help message and exit
     -w, --web   build web docs
 
-Run either from cantools root (contains setup.py, cantools/, README.md, etc) or
-from root of plugin. In cantools, builds docs for all frontend (js) and CLI (py)
-files. In plugin, docs consist of about file (about.txt), initialization config
-(init.py) and default frontend config (js/config.js) (TODO: application mode,
-which recursively includes any py/js file with a docstring at the top).
+Run from cantools root (contains setup.py, cantools/, README.md, etc), from root
+of a CT plugin, or from within a custom project. In cantools, builds docs for all
+frontend (js) and CLI (py) files. In plugin, docs consist of about file (about.txt),
+initialization config (init.py) and default frontend config (js/config.js). In custom
+(project) mode (when ctdoc is run somewhere other than cantools root or a plugin root,
+and additionally a configuration file, doc.cfg, is present), for each path declared in
+doc.cfg, include the docstring of each file specified, as well as the contents of
+about.txt (if present). (TODO: application mode, which doesn't require configuration
+[doc.cfg] -- instead, it recurses through the directories of your project, continuing
+to drill as long as the current directory contains an about.txt, and includes these
+[about.txt files], as well as [the top of] any py/js file that starts with a docstring).
 
 # Front (JS Library)
 
