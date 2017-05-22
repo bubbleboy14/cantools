@@ -366,11 +366,12 @@ CT.slider.Frame = CT.Class({
 			});
 		}
 		if (opts.title || opts.blurb) {
-			var teaser = CT.dom.node([
+			var blurbNode = CT.dom.node(opts.blurb, "div", "bigger"), teaser = CT.dom.node([
 				CT.dom.node(opts.title, "div", "biggest"),
-				CT.dom.node(opts.blurb, "div", "bigger")
+				blurbNode
 			], "div", "carousel-content-teaser transparent hoverglow pointer cc-teaser-"
 				+ (slider.opts.translucentTeaser ? "trans" : "opaque"));
+			CT.dom.fit(blurbNode);
 			nodes.push(teaser);
 		}
 		if (opts.pulse) {
@@ -380,8 +381,11 @@ CT.slider.Frame = CT.Class({
 			nodes.push(pulser);
 		}
 		this.on.show = function() {
-			if (opts.title || opts.blurb)
+			if (opts.title || opts.blurb) {
 				CT.trans.fadeIn(teaser);
+				blurbNode.style.maxHeight = (teaser.parentNode.clientHeight - 200) + "px";
+				blurbNode.fit();
+			}
 			if (slider.opts.keys && teaser) // unreg somewhere?
 				CT.key.on("ENTER", teaserTap);
 			if (slider.opts.pan)
