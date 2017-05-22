@@ -9,7 +9,8 @@ the 'opts' object itself, are all optional.
 ### Definable properties are as follows:
     - parent (default: document.body): DOM element in which to build the slider
     - mode (default: 'peekaboo'): how to display each frame - 'peekaboo', 'chunk', 'menu', 'profile', or 'track'
-    - subMode (default: 'peekaboo'): which mode to use for chunk-mode frames ('peekaboo', 'menu', 'profile', 'track')
+    - subMode (default: 'peekaboo'): which mode to use for chunk-mode frames ('peekaboo', 'menu', 'profile', 'track', 'custom')
+    - frameCb (default: null): frame generation callback ('custom' mode)
     - defaultImg (default: undefined): fallback img for any frame mode
     - img (default: undefined): panning background image for whole slider. also works per-chunk.
     - arrow (default: null): image for pointer arrow (falls back to pointy brackets)
@@ -22,6 +23,7 @@ the 'opts' object itself, are all optional.
     - pan (default: true): slow-pan frame background images
     - translucentTeaser (default: true): translucent box around teaser text (otherwise opaque)
     - startFrame (default: null): label (or index if frames are unlabeled) of frame to slide to initially (disables autoSlide)
+    - noStyle (default: false): if true, prevent carousel from overriding color/background rules
     - bubblePosition (default: 'bottom'): where to position frame indicator bubbles ('top' or 'bottom')
     - arrowPosition (default: 'middle'): where to position navigator arrows
     - orientation (default: 'horizontal'): orientation for slider frames to arrange themselves
@@ -61,10 +63,12 @@ CT.slider.Slider = CT.Class({
 			startFrame: null,
 			circular: false,
 			pan: true,
+			noStyle: false,
 			translucentTeaser: true,
 			arrow: null,
 			parent: document.body,
-			mode: "peekaboo", // or 'menu' or 'profile' or 'chunk' or 'track'
+			frameCb: null,
+			mode: "peekaboo", // or 'menu' or 'profile' or 'chunk' or 'track' or 'custom'
 			subMode: "peekaboo", // or 'menu' or 'profile' or 'track'
 			orientation: "horizontal",
 			arrowPosition: "middle", // or "top" or "middle"
@@ -72,6 +76,8 @@ CT.slider.Slider = CT.Class({
 		});
 		if (typeof opts.parent == "string")
 			opts.parent = CT.dom.id(opts.parent);
+		if (opts.frameCb) // only makes sense in custom mode
+			opts.mode = 'custom';
 		this.jumpers = {};
 		this.dimension = CT.slider.orientation2dim[opts.orientation];
 		this.circlesContainer = CT.dom.node("", "div",
@@ -116,8 +122,8 @@ CT.slider.Slider = CT.Class({
 			}
 			content.unshift(imgBack);
 		}
-		this.node = CT.dom.div(content,
-			"carousel fullwidth fullheight" + (opts.visible ? "" : " hider"));
+		this.node = CT.dom.div(content, "carousel fullwidth fullheight"
+			+ (opts.visible ? "" : " hider") + (opts.noStyle ? " carousel-nostyle" : ""));
 		this.opts.parent.appendChild(this.node);
 		this.opts.frames.forEach(this.addFrame);
 		CT.gesture.listen("tap", this.prevButton, this.prevButtonCallback);
@@ -366,10 +372,9 @@ CT.slider.Frame = CT.Class({
 			});
 		}
 		if (opts.title || opts.blurb) {
-			var blurbNode = CT.dom.node(opts.blurb, "div", "bigger"), teaser = CT.dom.node([
-				CT.dom.node(opts.title, "div", "biggest"),
-				blurbNode
-			], "div", "carousel-content-teaser transparent hoverglow pointer cc-teaser-"
+			var blurbNode = CT.dom.div(opts.blurb, "bigger"), teaser = CT.dom.div([
+				CT.dom.div(opts.title, "biggest"), blurbNode
+			], "carousel-content-teaser transparent hoverglow pointer cc-teaser-"
 				+ (slider.opts.translucentTeaser ? "trans" : "opaque"));
 			CT.dom.fit(blurbNode);
 			nodes.push(teaser);
@@ -489,20 +494,24 @@ CT.slider.Frame = CT.Class({
 			resume();
 			CT.key.on("SPACE", pauseResume);
 		};
-		CT.dom.addContent(this.node, CT.dom.node([
-			CT.dom.node(this.opts.song, "div", "gigantic"),
-			CT.dom.node(this.opts.album, "div", "biggerest"),
+		CT.dom.addContent(this.node, CT.dom.div([
+			CT.dom.div(this.opts.song, "gigantic"),
+			CT.dom.div(this.opts.album, "biggerest"),
 			audio
-		], "div", "full-center outlined"));
+		], "full-center outlined"));
+	},
+	custom: function() {
+		CT.dom.addContent(this.node, this.slider.opts.frameCb(this.opts));
 	},
 	init: function(opts, slider) {
+		var mode = opts.mode || slider.opts.mode;
 		this.opts = opts;
-		this.node = CT.dom.node("", "div",
-			"carousel-content-container full" + CT.slider.other_dim[slider.dimension]);
+		this.node = CT.dom.div("", "carousel-content-container full"
+			+ CT.slider.other_dim[slider.dimension] + ((mode == "custom") ? " scroller" : ""));
 		this.node.frame = this;
 		this.slider = this.node.slider = slider;
 		if (slider.dimension == "width")
 			this.node.style.display = "inline-block";
-		this[opts.mode || slider.opts.mode]();
+		this[mode]();
 	}
 });
