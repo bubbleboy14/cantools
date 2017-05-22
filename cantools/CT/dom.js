@@ -856,6 +856,16 @@ CT.dom = {
 		node.classList.remove(v ? "w1" : "h1");
 		return v;
 	},
+	"fit": function(node) {
+		node.resize = function() {
+			if (node.scrollHeight != node.clientHeight) {
+				var size = parseInt(getComputedStyle(node).fontSize);
+				node.style.fontSize = (size - 1) + "px";
+				setTimeout(node.resize);
+			}
+		};
+		CT.onresize(node.resize);
+	},
 
 	// rich input stuff
 	"_ricounter": 0,
