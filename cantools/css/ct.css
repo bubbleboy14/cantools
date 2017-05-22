@@ -706,6 +706,12 @@
     -moz-transition: opacity 500ms ease-in-out;
     -webkit-transition: opacity 500ms ease-in-out;
 }
+.carousel-nostyle {
+    background: initial;
+}
+.carousel-nostyle .carousel-content-container {
+    color: initial;
+}
 .indicator-circle {
     margin: 0 5px;
     display: inline-block;
