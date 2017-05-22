@@ -857,14 +857,14 @@ CT.dom = {
 		return v;
 	},
 	"fit": function(node) {
-		node.resize = function() {
+		node.fit = function() {
 			if (node.scrollHeight != node.clientHeight) {
 				var size = parseInt(getComputedStyle(node).fontSize);
 				node.style.fontSize = (size - 1) + "px";
-				setTimeout(node.resize);
+				setTimeout(node.fit);
 			}
 		};
-		CT.onresize(node.resize);
+		CT.onresize(node.fit);
 	},
 
 	// rich input stuff
