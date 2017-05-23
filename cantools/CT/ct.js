@@ -403,6 +403,14 @@ var CT = {
 	"getVal": function(k) {
 		return CT._.vals[k];
 	},
+	"clipboard": function(val, msg) {
+		var n = CT.dom.field(null, val, "transparent");
+		document.body.appendChild(n);
+		n.select();
+		document.execCommand('copy');
+		CT.dom.remove(n);
+		alert(msg || "copied to clipboard");
+	},
 	"onload": function(cb, n) {
 		n = n || window;
 		if (!n._ct_onload) {
