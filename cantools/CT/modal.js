@@ -222,6 +222,9 @@ CT.modal.Modal = CT.Class({
 	clear: function() {
 		this.node.lastChild.innerHTML = "";
 	},
+	isClear: function() {
+		return !this.node.lastChild.childElementCount;
+	},
 	add: function(content) {
 		CT.dom.addContent(this.node.lastChild, content);
 	},
