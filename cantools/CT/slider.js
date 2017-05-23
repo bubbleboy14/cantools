@@ -13,6 +13,7 @@ the 'opts' object itself, are all optional.
     - frameCb (default: null): frame generation callback ('custom' mode)
     - defaultImg (default: undefined): fallback img for any frame mode
     - img (default: undefined): panning background image for whole slider. also works per-chunk.
+    - tab (default: undefined): little thing to the side of the frame
     - arrow (default: null): image for pointer arrow (falls back to pointy brackets)
     - autoSlideInterval (default: 5000): how many milliseconds to wait before auto-sliding frames
     - panDuration (default: autoSlideInterval): pan duration for background images
@@ -303,7 +304,7 @@ CT.slider.Frame = CT.Class({
 		hide: function() {}
 	},
 	peekaboo: function() {
-		var opts = this.opts, node = this.node, slider = this.slider, pulser, tab,
+		var opts = this.opts, node = this.node, slider = this.slider, pulser,
 			full = CT.dom.node(opts.content, "div", "big carousel-content-full"),
 			imageBack = CT.dom.node(CT.dom.img(opts.img || slider.opts.defaultImg, "abs"), "div", "w1 h1 noflow carousel-content-image"),
 			nodes = [ imageBack, full ];
@@ -329,7 +330,7 @@ CT.slider.Frame = CT.Class({
 					value: "0px"
 				});
 				slider.hideNav();
-				tab && tab.hide();
+				this.tab && this.tab.hide();
 			} else {
 				if (pulser) pulser.style.zIndex = 0;
 				CT.trans.resize(imageBack, {
@@ -347,7 +348,7 @@ CT.slider.Frame = CT.Class({
 					value: "100px"
 				});
 				slider.showNav();
-				tab && tab.show(slider.opts.parent);
+				this.tab && this.tab.show(slider.opts.parent);
 			}
 		};
 		if (slider.opts.pan) {
@@ -358,18 +359,6 @@ CT.slider.Frame = CT.Class({
 			CT.onload(function() {
 				CT.dom.cover(imageBack.firstChild);
 			}, imageBack.firstChild);
-		}
-		if (opts.tab) {
-			tab = new CT.modal.Modal({
-				content: opts.tab.content,
-				center: false,
-				noClose: true,
-				className: "basicpopup abs rounder translucent above shiftall",
-				transition: "slide",
-				slide: {
-					origin: opts.tab.origin
-				}
-			});
 		}
 		if (opts.title || opts.blurb) {
 			var blurbNode = CT.dom.div(opts.blurb, "bigger"), teaser = CT.dom.div([
@@ -397,8 +386,8 @@ CT.slider.Frame = CT.Class({
 				imageBack.controller.resume();
 			if (opts.pulse)
 				pulser.controller.resume();
-			if (tab)
-				tab.show(slider.opts.parent);
+			if (this.tab)
+				this.tab.show(slider.opts.parent);
 		};
 		this.on.hide = function() {
 			if (opts.title || opts.blurb)
@@ -409,8 +398,8 @@ CT.slider.Frame = CT.Class({
 				imageBack.controller.pause();
 			if (opts.pulse)
 				pulser.controller.pause();
-			if (tab)
-				tab.hide();
+			if (this.tab)
+				this.tab.hide();
 		};
 		CT.dom.addEach(node, nodes);
 		if (opts.content) // assume title/blurb exists
@@ -512,6 +501,25 @@ CT.slider.Frame = CT.Class({
 		this.slider = this.node.slider = slider;
 		if (slider.dimension == "width")
 			this.node.style.display = "inline-block";
+		var topts = opts.tab || slider.opts.tab;
+		if (topts) {
+			var tab = this.tab = new CT.modal.Modal({
+				content: topts.content,
+				center: false,
+				noClose: true,
+				className: "basicpopup abs rounder translucent above shiftall",
+				transition: "slide",
+				slide: {
+					origin: topts.origin
+				}
+			});
+			this.on.show = function() {
+				if (tab.isClear())
+					tab.set(topts.content);
+				tab.show(slider.opts.parent);
+			};
+			this.on.hide = tab.hide;
+		}
 		this[mode]();
 	}
 });
