@@ -1,4 +1,4 @@
-# cantools 0.9.8.2
+# cantools 0.9.8.3
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
  - Docs: http://ct.mkult.co
@@ -856,9 +856,11 @@ the 'opts' object itself, are all optional.
 ### Definable properties are as follows:
     - parent (default: document.body): DOM element in which to build the slider
     - mode (default: 'peekaboo'): how to display each frame - 'peekaboo', 'chunk', 'menu', 'profile', or 'track'
-    - subMode (default: 'peekaboo'): which mode to use for chunk-mode frames ('peekaboo', 'menu', 'profile', 'track')
+    - subMode (default: 'peekaboo'): which mode to use for chunk-mode frames ('peekaboo', 'menu', 'profile', 'track', 'custom')
+    - frameCb (default: null): frame generation callback ('custom' mode)
     - defaultImg (default: undefined): fallback img for any frame mode
     - img (default: undefined): panning background image for whole slider. also works per-chunk.
+    - tab (default: undefined): little thing to the side of the frame
     - arrow (default: null): image for pointer arrow (falls back to pointy brackets)
     - autoSlideInterval (default: 5000): how many milliseconds to wait before auto-sliding frames
     - panDuration (default: autoSlideInterval): pan duration for background images
@@ -869,6 +871,7 @@ the 'opts' object itself, are all optional.
     - pan (default: true): slow-pan frame background images
     - translucentTeaser (default: true): translucent box around teaser text (otherwise opaque)
     - startFrame (default: null): label (or index if frames are unlabeled) of frame to slide to initially (disables autoSlide)
+    - noStyle (default: false): if true, prevent carousel from overriding color/background rules
     - bubblePosition (default: 'bottom'): where to position frame indicator bubbles ('top' or 'bottom')
     - arrowPosition (default: 'middle'): where to position navigator arrows
     - orientation (default: 'horizontal'): orientation for slider frames to arrange themselves
