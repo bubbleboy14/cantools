@@ -101,3 +101,23 @@ a {
 	margin: 5px;
 	text-align: center;
 }
+
+.infobubble {
+	position: absolute;
+	background: white;
+	font-weight: bold;
+	padding: 10px;
+	border: 1px solid black;
+	border-radius: 5px;
+}
+
+#pie {
+	top: 50%;
+	left: 50%;
+	margin-top: -350px;
+	margin-left: -350px;
+}
+
+.ct-label {
+	font-weight: bold;
+}
