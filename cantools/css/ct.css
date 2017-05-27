@@ -47,6 +47,8 @@
 .h300p { height: 300px; }
 .h400p { height: 400px; }
 .h500p { height: 500px; }
+.h600p { height: 600px; }
+.h700p { height: 700px; }
 .h800p { height: 800px; }
 .w15p { width: 15px; }
 .w50p { width: 50px; }
@@ -57,6 +59,8 @@
 .w300p { width: 300px; }
 .w400p { width: 400px; }
 .w500p { width: 500px; }
+.w600p { width: 600px; }
+.w700p { width: 700px; }
 .w800p { width: 800px; }
 .hm200p { max-height: 200px; }
 .wm200p { max-width: 200px; }
