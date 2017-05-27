@@ -115,11 +115,17 @@ class Monitor(Bot):
 				"web": {
 					"connections": dmon["web"]["total_connections"],
 					"requests": dmon["web"]["total_requests"],
+					"rolls": dmon["web"]["rolls"]
 				},
 				"admin": {
 					"connections": dmon["admin"]["total_connections"],
-					"requests": dmon["admin"]["total_requests"]
+					"requests": dmon["admin"]["total_requests"],
+					"rolls": dmon["admin"]["rolls"]
 				}
+			},
+			"devices": {
+				"web": dmon["web"]["devices"],
+				"admin": dmon["admin"]["devices"]
 			}
 		})
 		return True
