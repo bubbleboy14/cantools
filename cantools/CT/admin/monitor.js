@@ -78,6 +78,22 @@ CT.admin.monitor.Graph = CT.Class({
 			series: Object.values(this.data)
 		}, { low: 0, high: 100 });
 	},
+	_pie: function(data) {
+		var subd, ua, combined = {};
+		for (subd in data) {
+			for (ua in data[subd]) {
+				if (ua.startsWith("python-requests")) // filter these out
+					continue;
+				if (!(ua in combined))
+					combined[ua] = 0;
+				combined[ua] += data[subd][ua];
+			}
+		}
+		new Chartist.Pie("#" + this.opts.pie, {
+			labels: Object.keys(combined),
+			series: Object.values(combined)
+		});
+	},
 	update: function(data) {
 		var key, d, tcat, fresh = !Object.keys(this.data).length;
 		for (key in data.message) {
@@ -90,6 +106,8 @@ CT.admin.monitor.Graph = CT.Class({
 				}
 				continue;
 			}
+			if (key == "devices")
+				continue; // handle below
 			if (!(key in this.data))
 				this.data[key] = [];
 			if (["read", "write"].indexOf(key) != -1)
@@ -99,26 +117,34 @@ CT.admin.monitor.Graph = CT.Class({
 			this.data[key].push(d);
 		}
 		this._graph();
+		this._pie(data.message.devices);
 		if (fresh) {
-			var lines = Object.keys(this.data).map(function(k) {
+			var hovers = this.hovers = {};
+			var labels = Object.keys(this.data).map(function(k) {
+				var hover = hovers[k] = CT.dom.div();
 				if (["read", "write"].indexOf(k) != -1)
 					k += " (X 10,000)";
 				else if (["sent", "recv"].indexOf(k) != -1)
 					k += " (X 100,000,000)";
-				return CT.dom.div(k, "big m5 padded inline-block")
+				var n = CT.dom.div(k, "big m5 padded inline-block pointer");
+				CT.dom.setInfoBubble(n, hover);
+				return n;
 			}), graph = CT.dom.id(this.opts.graph);
-			CT.dom.addContent(this.opts.legend, lines);
+			CT.dom.addContent(this.opts.legend, labels);
 			setTimeout(function() {
 				CT.dom.className("ct-line", graph).forEach(function(n, i) {
-					lines[i].style.background
+					labels[i].style.background
 						= window.getComputedStyle(n).getPropertyValue("stroke");
 				});
 			}, 200);
 		}
+		for (var k in this.hovers)
+			CT.dom.setContent(this.hovers[k], data.message[k]);
 	},
 	init: function(opts) {
 		this.opts = opts = CT.merge(opts, {
 			data: {},
+			pie: "pie",
 			graph: "graph",
 			legend: "legend",
 			web_totals: "web_totals",
