@@ -127,7 +127,7 @@ CT.admin.monitor.Graph = CT.Class({
 				else if (["sent", "recv"].indexOf(k) != -1)
 					k += " (X 100,000,000)";
 				var n = CT.dom.div(k, "big m5 padded inline-block pointer");
-				CT.dom.setInfoBubble(n, hover);
+				CT.hover.set(n, hover);
 				return n;
 			}), graph = CT.dom.id(this.opts.graph);
 			CT.dom.addContent(this.opts.legend, labels);
