@@ -216,6 +216,7 @@ This portable modern web framework is the application-neutral backbone of Civil 
   - steps
     - git clone https://github.com/bubbleboy14/cantools.git
     - cd cantools
+    - python setup.py install
     - python setup.py develop
 
 ## Package Installation (limited -- not recommended)
@@ -230,6 +231,7 @@ This takes less than a moment. Pop open a terminal in your home directory:
 
 	~$ git clone https://github.com/bubbleboy14/cantools.git
 	~$ cd cantools/
+	~/cantools$ python setup.py install
 	~/cantools$ python setup.py develop
 	~/cantools$ cd ..
 	~$ ctinit hello_world
