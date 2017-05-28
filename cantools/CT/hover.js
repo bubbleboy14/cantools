@@ -13,7 +13,7 @@ CT.hover = {
 		setTimeout(function() {
 			!_.nodeOn && !_.hoverOn && CT.dom.hide(_.infoBubble);
 		}, 1000);
-	};
+	},
 	set: function(node, content, poptop, stayopen) {
 		if (arguments.length == 1 && !(node instanceof Node)) {
 			var obj = arguments[0];
