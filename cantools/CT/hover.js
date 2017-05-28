@@ -32,7 +32,6 @@ CT.hover = {
 			};
 		}
 		node.onmouseover = function(e) {
-			CT.log("node in");
 			_.nodeOn = true;
 			var npos = CT.hover._pos(node); // recheck every time in case target moves
 			CT.dom.ALLNODE.appendChild(_.infoBubble);
@@ -47,17 +46,14 @@ CT.hover = {
 			_.infoBubble.style.top = (npos[1] + voffset) + "px";
 		};
 		node.onmouseout = function() {
-			CT.log("node out");
 			_.nodeOn = false;
 			CT.hover._hide();
 		};
 		if (stayopen) {
 			content.onmouseover = function(e) {
-				CT.log("hover in");
 				_.hoverOn = true;
 			};
 			content.onmouseout = function(e) {
-				CT.log("hover out");
 				_.hoverOn = false;
 				CT.hover._hide();
 			};
