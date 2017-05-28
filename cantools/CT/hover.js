@@ -1,3 +1,8 @@
+/*
+This module is all about hover nodes. Want a hover node?
+Well, use this module.
+*/
+
 CT.hover = {
 	"_": {},
 	"checkPos": function(n) {
