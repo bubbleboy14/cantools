@@ -967,6 +967,10 @@
 }
 
 /* some extras for funsies */
+.infobubble {
+    position: fixed;
+    z-index: 999999;
+}
 .overlay {
     width: 100%;
     height: 100%;

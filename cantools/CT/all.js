@@ -13,6 +13,7 @@ This loader imports almost every CT module.
     - CT.dom
     - CT.file
     - CT.gesture
+    - CT.hover
     - CT.key
     - CT.memcache *
     - CT.mobile
@@ -22,15 +23,16 @@ This loader imports almost every CT module.
     - CT.pubsub *
     - CT.recaptcha
     - CT.slider
+    - CT.stream *
     - CT.storage
     - CT.trans
-    - CT.upload
+    - CT.upload *
     - CT.video
 
 * tightly coupled to backend
 
 ### This excludes:
-    - CT.map, CT.pay, CT.rte, and CT.stream, which require large script imports
+    - CT.map, CT.pay, and CT.rte, which require large script imports
     - CT.admin, which is not for typical use.
 */
 
@@ -45,6 +47,7 @@ CT.require("CT.drag");
 CT.require("CT.dom");
 CT.require("CT.file");
 CT.require("CT.gesture");
+CT.require("CT.hover");
 CT.require("CT.key");
 CT.require("CT.layout");
 CT.require("CT.memcache");
@@ -55,6 +58,7 @@ CT.require("CT.parse");
 CT.require("CT.pubsub");
 CT.require("CT.recaptcha");
 CT.require("CT.slider");
+CT.require("CT.stream");
 CT.require("CT.storage");
 CT.require("CT.trans");
 CT.require("CT.upload");

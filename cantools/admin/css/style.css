@@ -103,7 +103,6 @@ a {
 }
 
 .infobubble {
-	position: absolute;
 	background: white;
 	font-weight: bold;
 	padding: 10px;

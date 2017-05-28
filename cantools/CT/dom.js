@@ -421,46 +421,6 @@ CT.dom = {
 		return n;
 	},
 
-	// info bubbles
-	"bubbleInfo": {},
-	"checkPos": function(n) {
-		return [n.offsetLeft, n.offsetTop];
-	},
-	"setInfoBubble": function(n, content, poptop) {
-    	var _f = CT.dom.bubbleInfo;
-	    if (!_f.infoBubble) {
-	        _f.infoBubble = CT.dom.div("", "small hidden infobubble");
-			CT.dom.getAllNode(true).appendChild(_f.infoBubble);
-	        _f.bubbleBounds = {
-	            'left': 0,
-	            'top': 0
-	        };
-	    }
-	    n.onmouseover = function(e) {
-	        if (n.nodeName == "A") // contains image
-	            n = n.firstChild;
-	        var npos = CT.dom.checkPos(n); // recheck every time in case target moves
-        	CT.dom.ALLNODE.appendChild(_f.infoBubble);
-	        CT.dom.setContent(_f.infoBubble, content);
-	        CT.dom.show(_f.infoBubble);
-	        var voffset = poptop ? -(_f.infoBubble.clientHeight + 10)
-	        	: ((n.clientHeight || n.offsetHeight) + 10);
-	        _f.bubbleBounds.right = _f.bubbleBounds.left
-	        	+ CT.dom.ALLNODE.clientWidth - _f.infoBubble.clientWidth;
-	        _f.bubbleBounds.bottom = _f.bubbleBounds.top
-	        	+ CT.dom.ALLNODE.clientHeight - _f.infoBubble.clientHeight;
-	        _f.infoBubble.style.left = Math.min(_f.bubbleBounds.right - 10,
-	            Math.max(_f.bubbleBounds.left + 10,
-	            npos[0] - (_f.infoBubble.clientWidth - (n.clientWidth || n.offsetWidth)) / 2)) + "px";
-	        _f.infoBubble.style.top = Math.min(_f.bubbleBounds.bottom - 10,
-	            Math.max(_f.bubbleBounds.top + 10, npos[1] + voffset)) + "px";
-	    };
-	    n.onmouseout = function() {
-	        CT.dom.hide(_f.infoBubble);
-	    };
-	    return n;
-	},
-
 	// iframe getters
 	"getDoc": function(iframe) {
 		return iframe.documentWindow || iframe.contentWindow || iframe.contentDocument;
