@@ -4,11 +4,17 @@ Well, use this module.
 */
 
 CT.hover = {
-	"_": {},
-	"checkPos": function(n) {
+	_: {},
+	_pos: function(n) {
 		return [n.offsetLeft, n.offsetTop];
 	},
-	"set": function(node, content, poptop, stayopen) {
+	_hide: function() {
+		var _ = CT.hover._;
+		setTimeout(function() {
+			!_.nodeOn && !_.hoverOn && CT.dom.hide(_.infoBubble);
+		}, 1000);
+	};
+	set: function(node, content, poptop, stayopen) {
 		if (arguments.length == 1 && !(node instanceof Node)) {
 			var obj = arguments[0];
 			node = obj.node;
@@ -25,15 +31,10 @@ CT.hover = {
 				'top': 0
 			};
 		}
-		var hide = function() {
-			setTimeout(function() {
-				!_.nodeOn && !_.hoverOn && CT.dom.hide(_.infoBubble);
-			}, 1000);
-		};
 		node.onmouseover = function(e) {
 			CT.log("node in");
 			_.nodeOn = true;
-			var npos = CT.hover.checkPos(node); // recheck every time in case target moves
+			var npos = CT.hover._pos(node); // recheck every time in case target moves
 			CT.dom.ALLNODE.appendChild(_.infoBubble);
 			CT.dom.setContent(_.infoBubble, content);
 			CT.dom.show(_.infoBubble);
@@ -48,7 +49,7 @@ CT.hover = {
 		node.onmouseout = function() {
 			CT.log("node out");
 			_.nodeOn = false;
-			hide();
+			CT.hover._hide();
 		};
 		if (stayopen) {
 			content.onmouseover = function(e) {
@@ -58,7 +59,7 @@ CT.hover = {
 			content.onmouseout = function(e) {
 				CT.log("hover out");
 				_.hoverOn = false;
-				hide();
+				CT.hover._hide();
 			};
 		}
 		return node;
