@@ -1,4 +1,4 @@
-# cantools 0.9.8.5
+# cantools 0.9.8.6
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
  - Docs: http://ct.mkult.co
@@ -263,6 +263,7 @@ This loader imports almost every CT module.
     - CT.dom
     - CT.file
     - CT.gesture
+    - CT.hover
     - CT.key
     - CT.memcache *
     - CT.mobile
@@ -272,15 +273,16 @@ This loader imports almost every CT module.
     - CT.pubsub *
     - CT.recaptcha
     - CT.slider
+    - CT.stream *
     - CT.storage
     - CT.trans
-    - CT.upload
+    - CT.upload *
     - CT.video
 
 * tightly coupled to backend
 
 ### This excludes:
-    - CT.map, CT.pay, CT.rte, and CT.stream, which require large script imports
+    - CT.map, CT.pay, and CT.rte, which require large script imports
     - CT.admin, which is not for typical use.
 
 ## CT.autocomplete
@@ -571,6 +573,11 @@ The main one to look out for is listen, defined below.
     - cb - the function to call when something happens
     - stopPropagation - whether to propagate this event beyond node
     - preventDefault - whether to prevent default behavior
+
+## CT.hover
+### Import line: 'CT.require("CT.hover");'
+This module is all about hover nodes. Want a hover node?
+Well, use this module.
 
 ## CT.key
 ### Import line: 'CT.require("CT.key");'
