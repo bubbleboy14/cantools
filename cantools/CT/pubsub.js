@@ -45,6 +45,7 @@ CT.pubsub = {
 				_.cb.subscribe(data);
 				if (_.autohistory && (_.autohistory_exemptions.indexOf(data.channel) == -1))
 					data.history.forEach(CT.pubsub._.process.publish);
+				CT.pubsub._.cb.presence(data.presence.length);
 			},
 			"publish": function(data) {
 				CT.pubsub._.cb.message(data);
