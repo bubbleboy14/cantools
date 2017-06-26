@@ -238,6 +238,13 @@ def update():
 			log("retrieving latest %s"%(d,), 2)
 			cmd("git pull")
 	log("finished updates", 1)
+	if raw_input("update cantools dependencies? [N/y] ").lower().startswith("y"):
+		os.chdir("%s/.."%(CTP,))
+		log("updating dependencies", important=True)
+		cmd("sudo python setup.py install")
+		log("restoring cantools develop status", important=True)
+		cmd("sudo python setup.py develop")
+	log("goodbye")
 
 def admin():
 	log("compiling admin pages -- thanks for developing!!", important=True)
