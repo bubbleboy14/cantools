@@ -12,10 +12,9 @@ initialization config (init.py) and default frontend config (js/config.js). In c
 (project) mode (when ctdoc is run somewhere other than cantools root or a plugin root,
 and additionally a configuration file, doc.cfg, is present), for each path declared in
 doc.cfg, include the docstring of each file specified, as well as the contents of
-about.txt (if present). (TODO: application mode, which doesn't require configuration
-[doc.cfg] -- instead, it recurses through the directories of your project, continuing
-to drill as long as the current directory contains an about.txt, and includes these
-[about.txt files], as well as [the top of] any py/js file that starts with a docstring).
+about.txt (if present). Lastly, auto mode doesn't require configuration (doc.cfg) --
+instead, it recurses through the directories of your project, and includes the contents of
+any about.txt files, as well as (the top of) any py/js file that starts with a docstring.
 """
 
 import os, json
@@ -23,14 +22,16 @@ from optparse import OptionParser
 from cantools import __version__, config
 from cantools.util import read, write, log, cp, cmd
 
-HERE = os.path.abspath(".").split(os.path.sep)[-1]
-CUSTOM = HERE != "cantools" and os.path.isfile("doc.cfg") and read("doc.cfg")
-ISPLUGIN = HERE != "cantools" and not CUSTOM and HERE
 WEB = []
 ALTS = {
     "pubsub": os.path.join("pubsub", "__init__")
 }
-if not CUSTOM:
+HERE = os.path.abspath(".").split(os.path.sep)[-1]
+CUSTOM = os.path.isfile("doc.cfg") and read("doc.cfg")
+ISPLUGIN = not CUSTOM and HERE.startswith("ct") and HERE
+AUTO = HERE != "cantools" and not CUSTOM and not ISPLUGIN
+
+if not CUSTOM and not AUTO:
     if ISPLUGIN:
         JSPATH = os.path.join(HERE, "js")
         BPATH = "."
@@ -131,6 +132,37 @@ def customChunk(path, fnames):
         })
     return f
 
+def autodoc(data, curdir, contents):
+    if curdir == HERE:
+        path, dirname = ".", HERE
+    else:
+        path, dirname = curdir.rsplit(os.path.sep, 1)
+    head = "#" * len(curdir.split(os.path.sep))
+    hashead = False
+    about = os.path.join(curdir, "about.txt")
+    if os.path.isfile(about):
+        if not hashead:
+            hashead = True
+            data.append("%s %s"%(head, dirname))
+        data.append(read(about))
+    for fname in contents:
+        if fname.endswith(".js"):
+            fdata = read(os.path.join(curdir, fname))
+            if fdata.startswith("/*\n"):
+                if not hashead:
+                    hashead = True
+                    data.append("%s %s"%(head, dirname))
+                data.append("%s# %s"%(head, fname))
+                data.append(fdata[3:].split("\n*/")[0])
+        elif fname.endswith(".py"):
+            fdata = read(os.path.join(curdir, fname))
+            if fdata.startswith('"""\n'):
+                if not hashead:
+                    hashead = True
+                    data.append("%s %s"%(head, dirname))
+                data.append("%s# %s"%(head, fname))
+                data.append(fdata[4:].split('\n"""')[0])
+
 def build():
     parser = OptionParser("ctdoc [-w]")
     parser.add_option("-w", "--web", action="store_true",
@@ -138,19 +170,22 @@ def build():
     options, args = parser.parse_args()
     log("building docs")
     ds = []
-    abdata = (ISPLUGIN or CUSTOM) and "# %s\n%s"%(HERE, read("about.txt")) or config.about%(__version__,)
-    ds.append(abdata)
-    WEB.append({
-        "name": HERE,
-        "children": [{
-            "name": "about",
-            "content": abdata
-        }]
-    })
+    if not AUTO:
+        abdata = (ISPLUGIN or CUSTOM) and "# %s\n%s"%(HERE, read("about.txt")) or config.about%(__version__,)
+        ds.append(abdata)
+        WEB.append({
+            "name": HERE,
+            "children": [{
+                "name": "about",
+                "content": abdata
+            }]
+        })
     if CUSTOM:
         for line in CUSTOM.split("\n"):
             path, fnames = line.split(" = ")
             ds.extend(customChunk(path, fnames.split("|")))
+    elif AUTO:
+        os.path.walk(HERE, autodoc, ds)
     else:
         ds.extend(back())
         ds.extend(front())
