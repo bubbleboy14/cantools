@@ -184,7 +184,9 @@ def build():
     options, args = parser.parse_args()
     log("building docs")
     ds = []
-    if not AUTO:
+    if AUTO:
+        os.path.walk(HERE, autodoc, ds)
+    else:
         abdata = (ISPLUGIN or CUSTOM) and "# %s\n%s"%(HERE, read("about.txt")) or config.about%(__version__,)
         ds.append(abdata)
         WEB.append({
@@ -194,15 +196,13 @@ def build():
                 "content": abdata
             }]
         })
-    if CUSTOM:
-        for line in CUSTOM.split("\n"):
-            path, fnames = line.split(" = ")
-            ds.extend(customChunk(path, fnames.split("|")))
-    elif AUTO:
-        os.path.walk(HERE, autodoc, ds)
-    else:
-        ds.extend(back())
-        ds.extend(front())
+        if CUSTOM:
+            for line in CUSTOM.split("\n"):
+                path, fnames = line.split(" = ")
+                ds.extend(customChunk(path, fnames.split("|")))
+        else:
+            ds.extend(back())
+            ds.extend(front())
     log("writing data", important=True)
     log("README.md", 1)
     write("\n\n".join(ds), "README.md")
