@@ -132,36 +132,50 @@ def customChunk(path, fnames):
         })
     return f
 
+frules = {
+    ".js": {
+        "top": "/*\n",
+        "bottom": "\n*/"
+    },
+    ".py": {
+        "top": '"""\n',
+        "bottom": '\n"""'
+    }
+}
+
+hashead = set()
+def sethead(curdir, data):
+    if curdir not in hashead:
+        dirname = curdir.rsplit(os.path.sep, 1)[-1]
+        hashead.add(dirname)
+        data.append("%s %s"%("#" * len(curdir.split(os.path.sep)), dirname))
+        wobj = { "name": dirname, "children": [] }
+        WEB.append(wobj)
+    return WEB[-1]["children"]
+
 def autodoc(data, curdir, contents):
-    if curdir == HERE:
-        path, dirname = ".", HERE
-    else:
-        path, dirname = curdir.rsplit(os.path.sep, 1)
-    head = "#" * len(curdir.split(os.path.sep))
-    hashead = False
     about = os.path.join(curdir, "about.txt")
     if os.path.isfile(about):
-        if not hashead:
-            hashead = True
-            data.append("%s %s"%(head, dirname))
-        data.append(read(about))
+        kids = sethead(curdir, data)
+        adata = read(about)
+        data.append(adata)
+        kids.append({
+            "name": "about",
+            "content": adata
+        })
     for fname in contents:
-        if fname.endswith(".js"):
-            fdata = read(os.path.join(curdir, fname))
-            if fdata.startswith("/*\n"):
-                if not hashead:
-                    hashead = True
-                    data.append("%s %s"%(head, dirname))
-                data.append("%s# %s"%(head, fname))
-                data.append(fdata[3:].split("\n*/")[0])
-        elif fname.endswith(".py"):
-            fdata = read(os.path.join(curdir, fname))
-            if fdata.startswith('"""\n'):
-                if not hashead:
-                    hashead = True
-                    data.append("%s %s"%(head, dirname))
-                data.append("%s# %s"%(head, fname))
-                data.append(fdata[4:].split('\n"""')[0])
+        for flag, rule in frules.items():
+            if fname.endswith(flag):
+                fdata = read(os.path.join(curdir, fname))
+                if fdata.startswith(rule["top"]):
+                    kids = sethead(curdir, data)
+                    fstr = fdata[len(rule["top"]):].split(rule["bottom"])[0]
+                    data.append("%s# %s"%("#" * len(curdir.split(os.path.sep)), fname))
+                    data.append(fstr)
+                    kids.append({
+                        "name": fname,
+                        "content": fstr
+                    })
 
 def build():
     parser = OptionParser("ctdoc [-w]")
