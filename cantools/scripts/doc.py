@@ -12,10 +12,9 @@ initialization config (init.py) and default frontend config (js/config.js). In c
 (project) mode (when ctdoc is run somewhere other than cantools root or a plugin root,
 and additionally a configuration file, doc.cfg, is present), for each path declared in
 doc.cfg, include the docstring of each file specified, as well as the contents of
-about.txt (if present). (TODO: application mode, which doesn't require configuration
-[doc.cfg] -- instead, it recurses through the directories of your project, continuing
-to drill as long as the current directory contains an about.txt, and includes these
-[about.txt files], as well as [the top of] any py/js file that starts with a docstring).
+about.txt (if present). Lastly, auto mode doesn't require configuration (doc.cfg) --
+instead, it recurses through the directories of your project, and includes the contents of
+any about.txt files, as well as (the top of) any py/js file that starts with a docstring.
 """
 
 import os, json
@@ -23,14 +22,16 @@ from optparse import OptionParser
 from cantools import __version__, config
 from cantools.util import read, write, log, cp, cmd
 
-HERE = os.path.abspath(".").split(os.path.sep)[-1]
-CUSTOM = HERE != "cantools" and os.path.isfile("doc.cfg") and read("doc.cfg")
-ISPLUGIN = HERE != "cantools" and not CUSTOM and HERE
 WEB = []
 ALTS = {
     "pubsub": os.path.join("pubsub", "__init__")
 }
-if not CUSTOM:
+HERE = os.path.abspath(".").split(os.path.sep)[-1]
+CUSTOM = os.path.isfile("doc.cfg") and read("doc.cfg")
+ISPLUGIN = not CUSTOM and HERE.startswith("ct") and HERE
+AUTO = HERE != "cantools" and not CUSTOM and not ISPLUGIN
+
+if not CUSTOM and not AUTO:
     if ISPLUGIN:
         JSPATH = os.path.join(HERE, "js")
         BPATH = "."
@@ -131,6 +132,51 @@ def customChunk(path, fnames):
         })
     return f
 
+frules = {
+    ".js": {
+        "top": "/*\n",
+        "bottom": "\n*/"
+    },
+    ".py": {
+        "top": '"""\n',
+        "bottom": '\n"""'
+    }
+}
+
+hashead = set()
+def sethead(curdir, data):
+    if curdir not in hashead:
+        dirname = curdir.rsplit(os.path.sep, 1)[-1]
+        hashead.add(dirname)
+        data.append("%s %s"%("#" * len(curdir.split(os.path.sep)), dirname))
+        wobj = { "name": dirname, "children": [] }
+        WEB.append(wobj)
+    return WEB[-1]["children"]
+
+def autodoc(data, curdir, contents):
+    about = os.path.join(curdir, "about.txt")
+    if os.path.isfile(about):
+        kids = sethead(curdir, data)
+        adata = read(about)
+        data.append(adata)
+        kids.append({
+            "name": "about",
+            "content": adata
+        })
+    for fname in contents:
+        for flag, rule in frules.items():
+            if fname.endswith(flag):
+                fdata = read(os.path.join(curdir, fname))
+                if fdata.startswith(rule["top"]):
+                    kids = sethead(curdir, data)
+                    fstr = fdata[len(rule["top"]):].split(rule["bottom"])[0]
+                    data.append("%s# %s"%("#" * len(curdir.split(os.path.sep)), fname))
+                    data.append(fstr)
+                    kids.append({
+                        "name": fname,
+                        "content": fstr
+                    })
+
 def build():
     parser = OptionParser("ctdoc [-w]")
     parser.add_option("-w", "--web", action="store_true",
@@ -138,22 +184,25 @@ def build():
     options, args = parser.parse_args()
     log("building docs")
     ds = []
-    abdata = (ISPLUGIN or CUSTOM) and "# %s\n%s"%(HERE, read("about.txt")) or config.about%(__version__,)
-    ds.append(abdata)
-    WEB.append({
-        "name": HERE,
-        "children": [{
-            "name": "about",
-            "content": abdata
-        }]
-    })
-    if CUSTOM:
-        for line in CUSTOM.split("\n"):
-            path, fnames = line.split(" = ")
-            ds.extend(customChunk(path, fnames.split("|")))
+    if AUTO:
+        os.path.walk(HERE, autodoc, ds)
     else:
-        ds.extend(back())
-        ds.extend(front())
+        abdata = (ISPLUGIN or CUSTOM) and "# %s\n%s"%(HERE, read("about.txt")) or config.about%(__version__,)
+        ds.append(abdata)
+        WEB.append({
+            "name": HERE,
+            "children": [{
+                "name": "about",
+                "content": abdata
+            }]
+        })
+        if CUSTOM:
+            for line in CUSTOM.split("\n"):
+                path, fnames = line.split(" = ")
+                ds.extend(customChunk(path, fnames.split("|")))
+        else:
+            ds.extend(back())
+            ds.extend(front())
     log("writing data", important=True)
     log("README.md", 1)
     write("\n\n".join(ds), "README.md")
