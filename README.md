@@ -1,4 +1,4 @@
-# cantools 0.9.9
+# cantools 0.9.9.1
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
  - Docs: http://ct.mkult.co
@@ -209,10 +209,9 @@ initialization config (init.py) and default frontend config (js/config.js). In c
 (project) mode (when ctdoc is run somewhere other than cantools root or a plugin root,
 and additionally a configuration file, doc.cfg, is present), for each path declared in
 doc.cfg, include the docstring of each file specified, as well as the contents of
-about.txt (if present). (TODO: application mode, which doesn't require configuration
-[doc.cfg] -- instead, it recurses through the directories of your project, continuing
-to drill as long as the current directory contains an about.txt, and includes these
-[about.txt files], as well as [the top of] any py/js file that starts with a docstring).
+about.txt (if present). Lastly, auto mode doesn't require configuration (doc.cfg) --
+instead, it recurses through the directories of your project, and includes the contents of
+any about.txt files, as well as (the top of) any py/js file that starts with a docstring.
 
 # Front (JS Library)
 
