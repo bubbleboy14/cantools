@@ -110,7 +110,14 @@ def vpush():
     cmd("git add -u")
     cmd('git commit -m "vpush %s"'%(version,))
     cmd("git push")
-    log("we did it (%s -> %s)!"%(__version__, version))
+    if raw_input("push to cheese shop? [N/y] ").lower().startswith("y"):
+        log("laying egg", important=True)
+        cmd("sudo python setup.py install")
+        log("pushing to cheese shop", important=True)
+        cmd("twine upload dist/ct-%s-py2.7.egg"%(version,))
+        log("restoring cantools develop status", important=True)
+        cmd("sudo python setup.py develop")
+    log("we did it (%s -> %s)!"%(__version__, version), important=True)
 
 def run():
     from optparse import OptionParser
