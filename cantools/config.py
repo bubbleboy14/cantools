@@ -85,7 +85,7 @@ for plugin in config.plugin.modules:
 for key, val in [[term.strip() for term in line.split(" = ")] for line in read("ct.cfg", True)]:
 	if key.startswith("#"):
 		continue
-	if key in ["ENCODE", "DB_ECHO", "DB_PUBLIC", "GEO_TEST", "MEMCACHE_REQUEST", "MEMCACHE_DB", "PUBSUB_ECHO", "SSL_VERIFY", "ADMIN_MONITOR_LOG"]:
+	if key in ["ENCODE", "DB_ECHO", "DB_PUBLIC", "GEO_TEST", "MEMCACHE_REQUEST", "MEMCACHE_DB", "PUBSUB_ECHO", "SSL_VERIFY", "ADMIN_MONITOR_LOG", "WEB_XORIGIN"]:
 		val = val == "True"
 	elif key in ["PUBSUB_HISTORY"]:
 		val = int(val)

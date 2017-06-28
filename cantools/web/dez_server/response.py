@@ -1,6 +1,7 @@
 import json
 from rel import abort_branch, timeout
 from dez.http.server import HTTPResponse
+from cantools import config
 from ..util import *
 
 files = {}
@@ -31,6 +32,8 @@ class Response(object):
         return b
 
     def _send(self, *args, **kwargs):
+        if config.web.xorigin:
+            self.response.headers["Access-Control-Allow-Origin"] = "*"
         self.response.write(*args, **kwargs)
 
     def _close(self):
