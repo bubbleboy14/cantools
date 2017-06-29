@@ -30,6 +30,7 @@ cfg = {
 		"monitor": {
 			"interval": 5,
 			"log": False,
+			"proxy": None,
 			"thresholds": {
 				"cpu": 80
 			}
