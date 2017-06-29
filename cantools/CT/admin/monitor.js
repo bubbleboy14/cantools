@@ -106,7 +106,7 @@ CT.admin.monitor.Graph = CT.Class({
 				}
 				continue;
 			}
-			if (key == "devices")
+			if (key == "devices" || key == "ips")
 				continue; // handle below
 			if (!(key in this.data))
 				this.data[key] = [];
