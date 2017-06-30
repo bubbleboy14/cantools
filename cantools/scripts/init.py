@@ -40,7 +40,7 @@ import os, sys
 from optparse import OptionParser
 from cantools import config, include_plugin, mods_and_repos
 from cantools.util import log, error, cp, sym, mkdir, rm, cmd, read
-from builder import build
+from builder import build_all
 
 CTP = __file__.rsplit(os.path.sep, 2)[0]
 
@@ -249,7 +249,7 @@ def update():
 def admin():
 	log("compiling admin pages -- thanks for developing!!", important=True)
 	os.chdir(os.path.join(CTP, "admin"))
-	os.path.walk("dynamic", build, CTP)
+	build_all("admin", CTP)
 	log("finished compilation")
 
 def parse_and_make():
