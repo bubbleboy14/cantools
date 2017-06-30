@@ -67,6 +67,14 @@ CT.admin.monitor = {
 				snap.onclick = CT.admin.monitor.snapshot;
 				CT.dom.show(snap);
 			}
+			if (data.geo) {
+				CT.setVal("mapkey", CT.data.choice(data.geo));
+				CT.require("CT.parse", true);
+				CT.require("CT.storage", true);
+				CT.require("CT.map", true);
+				CT.map.util.setGeoKeys(data.geo);
+				CT.admin.monitor._graph.enableMaps();
+			}
 		});
 	}
 };
@@ -94,6 +102,57 @@ CT.admin.monitor.Graph = CT.Class({
 			series: Object.values(combined)
 		});
 	},
+	_mapButton: function(category) {
+		var that = this;
+		CT.dom.addContent("map_buttons", CT.dom.button(category + " map", function() {
+			CT.dom.show("map_node");
+			CT.dom.clear("map");
+			var ips = {},
+				llz = {},
+				ipz = Object.keys(that._ips[category]);
+			/*
+			Much of the following should be moved into CT.map.util / configuration.
+			*/
+			CT.net.post({
+				path: "http://api.mkult.co/geo",
+				params: { action: "ips", ips: ipz },
+				cb: function(data) {
+					ipz.forEach(function(ip, i) {
+						var d = ips[ip] = data[i],
+							count = that._ips[category][ip],
+							llkey = d.latitude + ", " + d.longitude;
+						if (d.location == "unknown")
+							return;
+						if (!llz[llkey])
+							llz[llkey] = { total: 0 };
+						llz[llkey][ip] = count;
+						llz[llkey].total += count;
+					});
+					var map = new CT.map.Map({
+						node: CT.dom.id("map"),
+						markers: Object.keys(llz).map(function(ll) {
+							var parts = ll.split(", "),
+								lat = parseFloat(parts[0]),
+								lng = parseFloat(parts[1]);
+							return {
+								title: ll + " (" + llz[ll].total  + ")",
+								position: {
+									lat: lat,
+									lng: lng
+								}
+							}
+						})
+					});
+				}
+			});
+		}, "margined"));
+	},
+	enableMaps: function() {
+		this._mapsEnabled = true;
+		CT.dom.id("map_close").onclick = function() {
+			CT.dom.hide("map_node");
+		};
+	},
 	update: function(data) {
 		var key, d, tcat, fresh = !Object.keys(this.data).length;
 		for (key in data.message) {
@@ -106,7 +165,7 @@ CT.admin.monitor.Graph = CT.Class({
 				}
 				continue;
 			}
-			if (key == "devices")
+			if (key == "devices" || key == "ips")
 				continue; // handle below
 			if (!(key in this.data))
 				this.data[key] = [];
@@ -118,6 +177,7 @@ CT.admin.monitor.Graph = CT.Class({
 		}
 		this._graph();
 		this._pie(data.message.devices);
+		this._ips = data.message.ips;
 		if (fresh) {
 			var hovers = this.hovers = {};
 			var labels = Object.keys(this.data).map(function(k) {
@@ -137,6 +197,9 @@ CT.admin.monitor.Graph = CT.Class({
 						= window.getComputedStyle(n).getPropertyValue("stroke");
 				});
 			}, 200);
+			if (this._mapsEnabled)
+				for (key in data.message.ips)
+					this._mapButton(key);
 		}
 		for (var k in this.hovers)
 			CT.dom.setContent(this.hovers[k], data.message[k]);

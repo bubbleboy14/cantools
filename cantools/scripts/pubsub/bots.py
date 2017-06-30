@@ -98,7 +98,7 @@ class Monitor(Bot):
 		nioc = psutil.net_io_counters()
 		dmon = fetch(config.admin.host, "/_report",
 			config.admin.port, True, protocol=config.admin.protocol)
-		self.log({
+		data = {
 			"cpu": self.current["cpu"],
 			"read": dioc.read_time,
 			"write": dioc.write_time,
@@ -126,6 +126,14 @@ class Monitor(Bot):
 			"devices": {
 				"web": dmon["web"]["devices"],
 				"admin": dmon["admin"]["devices"]
+			},
+			"ips": {
+				"web": dmon["web"]["ips"],
+				"admin": dmon["admin"]["ips"]
 			}
-		})
+		}
+		if config.admin.monitor.proxy:
+			data["ips"]["proxy"] = fetch(config.admin.host, "/_report",
+				config.admin.monitor.proxy, True)["ips"]
+		self.log(data)
 		return True

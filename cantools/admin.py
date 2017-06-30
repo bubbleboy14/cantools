@@ -14,9 +14,11 @@ def response():
     else:
         obj = { "host": config.pubsub.host, "port": config.pubsub.port }
         if action == "monitor": # vs pubsub
-            logs = []
+            if config.admin.monitor.geo:
+                obj["geo"] = config.admin.monitor.geo
             p = os.path.join("logs", "monitor")
             if config.admin.monitor.log and os.path.isdir(p):
+                obj["logs"] = logs = []
                 for year in os.listdir(p):
                     yp = os.path.join(p, year)
                     for month in os.listdir(yp):
@@ -24,7 +26,6 @@ def response():
                         for day in os.listdir(mp):
                             dp = os.path.join(mp, day)
                             logs.append((dp, os.listdir(dp)))
-                obj["logs"] = logs
         succeed(obj)
 
 respond(response)
