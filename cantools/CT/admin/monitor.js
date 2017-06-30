@@ -69,6 +69,7 @@ CT.admin.monitor = {
 			}
 			if (data.geo) {
 				CT.setVal("mapkey", CT.data.choice(data.geo));
+				CT.require("CT.parse", true);
 				CT.require("CT.storage", true);
 				CT.require("CT.map", true);
 				CT.map.util.setGeoKeys(data.geo);
@@ -102,12 +103,44 @@ CT.admin.monitor.Graph = CT.Class({
 		});
 	},
 	_mapButton: function(category) {
+		var that = this;
 		CT.dom.addContent("map_buttons", CT.dom.button(category + " map", function() {
-			console.log(category);
 			CT.dom.show("map_node");
 			CT.dom.clear("map");
-			var map = new CT.map.Map({
-				node: CT.dom.id("map")
+			var ips = {},
+				llz = {},
+				ipz = Object.keys(that._ips[category]);
+			CT.net.post({
+				path: "http://localhost:8080/geo",
+				params: { action: "ips", ips: ipz },
+				cb: function(data) {
+					ipz.forEach(function(ip, i) {
+						var d = ips[ip] = data[i],
+							count = that._ips[category][ip],
+							llkey = d.latitude + ", " + d.longitude;
+						if (d.location == "unknown")
+							return;
+						if (!llz[llkey])
+							llz[llkey] = { total: 0 };
+						llz[llkey][ip] = count;
+						llz[llkey].total += count;
+					});
+					var map = new CT.map.Map({
+						node: CT.dom.id("map"),
+						markers: Object.keys(llz).map(function(ll) {
+							var parts = ll.split(", "),
+								lat = parseFloat(parts[0]),
+								lng = parseFloat(parts[1]);
+							return {
+								title: ll + " (" + llz[ll].total  + ")",
+								position: {
+									lat: lat,
+									lng: lng
+								}
+							}
+						})
+					});
+				}
 			});
 		}, "margined"));
 	},
