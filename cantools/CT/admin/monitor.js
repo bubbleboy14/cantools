@@ -114,7 +114,7 @@ CT.admin.monitor.Graph = CT.Class({
 			Much of the following should be moved into CT.map.util / configuration.
 			*/
 			CT.net.post({
-				path: "http://api.mkult.co/geo",
+				path: location.protocol + "//api.mkult.co/geo",
 				params: { action: "ips", ips: ipz },
 				cb: function(data) {
 					ipz.forEach(function(ip, i) {
