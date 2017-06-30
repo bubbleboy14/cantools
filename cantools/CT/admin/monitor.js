@@ -110,8 +110,11 @@ CT.admin.monitor.Graph = CT.Class({
 			var ips = {},
 				llz = {},
 				ipz = Object.keys(that._ips[category]);
+			/*
+			Much of the following should be moved into CT.map.util / configuration.
+			*/
 			CT.net.post({
-				path: "http://localhost:8080/geo",
+				path: "http://api.mkult.co/geo",
 				params: { action: "ips", ips: ipz },
 				cb: function(data) {
 					ipz.forEach(function(ip, i) {
