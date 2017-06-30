@@ -187,7 +187,7 @@ var CT = {
 						params = CT.net._rd(params, true);
 					params = JSON.stringify(params);
 				}
-				if (CT.net._encode && !(params instanceof FormData))
+				if (CT.net._encode && !(params instanceof FormData || path.startsWith("http")))
 					params = CT.net._encoder(params);
 			}
 			xhr.send(params);
@@ -226,8 +226,8 @@ var CT = {
 				CT.storage.set(signature, pl);
 			return pl;
 		},
-		"_ctresponse": function(data, signature) {
-			if (CT.net._encode)
+		"_ctresponse": function(data, signature, noenc) {
+			if (CT.net._encode && !noenc)
 				data = CT.net._decoder(data);
 			var code = data.charAt(0), result = {
 				success: !!(code % 2)
@@ -258,7 +258,7 @@ var CT = {
 					if (basic || CT.net._mode == "basic")
 						cb(data, cbarg);
 					else if (!noct && CT.net._mode == "ct") {
-						var result = CT.net._ctresponse(data, signature);
+						var result = CT.net._ctresponse(data, signature, path.startsWith("http"));
 						if (result.success)
 							cb(result.data, cbarg);
 						else
