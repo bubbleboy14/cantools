@@ -67,6 +67,13 @@ CT.admin.monitor = {
 				snap.onclick = CT.admin.monitor.snapshot;
 				CT.dom.show(snap);
 			}
+			if (data.geo) {
+				CT.setVal("mapkey", CT.data.choice(data.geo));
+				CT.require("CT.storage", true);
+				CT.require("CT.map", true);
+				CT.map.util.setGeoKeys(data.geo);
+				CT.admin.monitor._graph.enableMaps();
+			}
 		});
 	}
 };
@@ -94,6 +101,22 @@ CT.admin.monitor.Graph = CT.Class({
 			series: Object.values(combined)
 		});
 	},
+	_mapButton: function(category) {
+		CT.dom.addContent("map_buttons", CT.dom.button(category + " map", function() {
+			console.log(category);
+			CT.dom.show("map_node");
+			CT.dom.clear("map");
+			var map = new CT.map.Map({
+				node: CT.dom.id("map")
+			});
+		}, "margined"));
+	},
+	enableMaps: function() {
+		this._mapsEnabled = true;
+		CT.dom.id("map_close").onclick = function() {
+			CT.dom.hide("map_node");
+		};
+	},
 	update: function(data) {
 		var key, d, tcat, fresh = !Object.keys(this.data).length;
 		for (key in data.message) {
@@ -118,6 +141,7 @@ CT.admin.monitor.Graph = CT.Class({
 		}
 		this._graph();
 		this._pie(data.message.devices);
+		this._ips = data.message.ips;
 		if (fresh) {
 			var hovers = this.hovers = {};
 			var labels = Object.keys(this.data).map(function(k) {
@@ -137,6 +161,9 @@ CT.admin.monitor.Graph = CT.Class({
 						= window.getComputedStyle(n).getPropertyValue("stroke");
 				});
 			}, 200);
+			if (this._mapsEnabled)
+				for (key in data.message.ips)
+					this._mapButton(key);
 		}
 		for (var k in this.hovers)
 			CT.dom.setContent(this.hovers[k], data.message[k]);
