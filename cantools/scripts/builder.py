@@ -137,12 +137,12 @@ def checkdir(p, recursive=False):
 def remerge(txt, js):
     return txt.format(jsspot=js).replace("&#123", "{").replace("&#125", "}")
 
-def build_frags():
+def build_frags(mode="web", admin_ct_path=None):
     log("Compiling Dynamically-Referenced Fragments", important=True)
-    base = config.build.web.compiled.production
+    base = config.build[mode].compiled.production
     for frag in fragz:
         log("processing: %s"%(frag,), 1)
-        block = processjs(frag)
+        block = processjs(frag, admin_ct_path=admin_ct_path)
         path = os.path.join(base, frag[len(config.js.path)+1:])
         checkdir(path.rsplit("/", 1)[0], True)
         write(minify(block, mangle=True), path)
@@ -193,10 +193,10 @@ def silence_warnings():
     yacc.PlyLogger.warning = quiet
     lex.PlyLogger.warning = quiet
 
-def build_all():
+def build_all(mode="web", admin_ct_path=None):
     silence_warnings()
-    os.path.walk(config.build.web.dynamic, build, None)
-    build_frags()
+    os.path.walk(config.build[mode].dynamic, build, admin_ct_path)
+    build_frags(mode, admin_ct_path)
 
 if __name__ == "__main__":
     build_all()
