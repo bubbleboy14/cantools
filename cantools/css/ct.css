@@ -311,7 +311,7 @@
 .bold { font-weight: bold; }
 .italic { font-style: italic; }
 .bordered { border: 1px solid black; }
-.noborder { border: 0px; }
+.noborder { border: 0px !important; }
 .bw0 { border-width: 0px ;}
 .shadowed { text-shadow: 1px 1px 1px #fff, 2px 2px 2px #111; }
 .outlined {
