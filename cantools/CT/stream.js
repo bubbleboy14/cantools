@@ -5,7 +5,7 @@ Highlights include:
 
 ### CT.stream.record(ondata, onrecorder, onfail)
 Starts up a video stream from your webcam. Breaks stream into segments as
-defined by CT.stream.opts.chunk (default 3000) and CT.stream.opts.segments
+defined by CT.stream.opts.chunk (default 1000) and CT.stream.opts.segments
 (default 10).
 
 ### CT.stream.Multiplexer
