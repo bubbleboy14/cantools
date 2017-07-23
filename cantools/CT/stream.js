@@ -49,6 +49,6 @@ CT.stream.opts = {
 };
 CT.stream.opts.mropts = {
 	mimeType: CT.stream.opts.codecs.video, // for OSX
-	videoBitsPerSecond: 512000,
+	videoBitsPerSecond: 256000,
 	audioBitsPerSecond: 64000
 };
