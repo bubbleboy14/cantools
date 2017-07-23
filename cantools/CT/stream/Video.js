@@ -147,6 +147,11 @@ CT.stream.Video = CT.Class({
 			v.webkitRequestFullscreen();
 	},
 	reset: function() {
+		var n = Date.now();
+		if (this._lastReset && this.opts.onreset &&
+			n - this._lastReset < CT.stream.opts.reset)
+				this.opts.onreset();
+		this._lastReset = n;
 		this.video.removeEventListener("canplay", this.start);
 		this.video.removeEventListener("pause", this.start);
 		this.video.removeEventListener("error", this._error);
@@ -175,6 +180,7 @@ CT.stream.Video = CT.Class({
 			videoId: null,
 			watermark: null,
 			activeAudio: false,
+			onreset: null,
 			buttons: [], // only checked when frame is false
 			record: { // recorder always shows when frame is true
 				streamer: false,
