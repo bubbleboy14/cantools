@@ -133,7 +133,7 @@ CT.stream.Multiplexer = CT.Class({
 			if (!Object.keys(chan).length && this.opts.onstart)
 				this.opts.onstart();
 			video = chan[user] = new CT.stream.Video(CT.merge(this.opts.vidopts,
-				{ stream: stream, onreset: this.resetcb(channel, user) }));
+				{ stream: stream, onreset: this.resetcb(channel, this.opts.user) }));
 			CT.dom.addContent(this.opts.node, video.node);
 			video.requiredInitChunk = !stream && (channel + user + "init");
 		}
