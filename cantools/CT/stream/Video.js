@@ -148,9 +148,12 @@ CT.stream.Video = CT.Class({
 	},
 	reset: function() {
 		var n = Date.now();
-		if (this._lastReset && this.opts.onreset &&
-			n - this._lastReset < CT.stream.opts.reset)
+		if (this._lastReset) {
+			var diff = n - this._lastReset;
+			this.log("RESET", diff);
+			if (this.opts.onreset && diff < CT.stream.opts.reset)
 				this.opts.onreset();
+		}
 		this._lastReset = n;
 		this.video.removeEventListener("canplay", this.start);
 		this.video.removeEventListener("pause", this.start);
