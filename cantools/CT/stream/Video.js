@@ -147,6 +147,14 @@ CT.stream.Video = CT.Class({
 			v.webkitRequestFullscreen();
 	},
 	reset: function() {
+		var n = Date.now();
+		if (this._lastReset) {
+			var diff = n - this._lastReset;
+			this.log("RESET", diff);
+			if (this.opts.onreset && diff < CT.stream.opts.reset)
+				this.opts.onreset();
+		}
+		this._lastReset = n;
 		this.video.removeEventListener("canplay", this.start);
 		this.video.removeEventListener("pause", this.start);
 		this.video.removeEventListener("error", this._error);
@@ -175,6 +183,8 @@ CT.stream.Video = CT.Class({
 			videoId: null,
 			watermark: null,
 			activeAudio: false,
+			onreset: null,
+			buttons: [], // only checked when frame is false
 			record: { // recorder always shows when frame is true
 				streamer: false,
 				lurker: false,
@@ -218,6 +228,11 @@ CT.stream.Video = CT.Class({
 					cbl.appendChild(CT.dom.pad());
 				cbl.appendChild(this._fullscreenButton);
 			}
+			opts.buttons.forEach(function(b) {
+				if (cbl.childNodes.length)
+					cbl.appendChild(CT.dom.pad());
+				cbl.appendChild(b);
+			});
 			if (cbl.childNodes.length)
 				this.node.appendChild(cbl);
 		}

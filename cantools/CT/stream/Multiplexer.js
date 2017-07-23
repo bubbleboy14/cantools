@@ -102,6 +102,14 @@ CT.stream.Multiplexer = CT.Class({
 		});
 		this.chat({ data: msg }); // no bounce back!!!
 	},
+	resetcb: function(chan, user) {
+		return function() {
+			CT.pubsub.publish(chan, {
+				action: "error",
+				data: user
+			});
+		};
+	},
 	update: function(data) {
 		CT.log.startTimer("update", data.channel);
 		if (data.message.action == "clip") {
@@ -111,8 +119,10 @@ CT.stream.Multiplexer = CT.Class({
 				v.receivedInitChunk = v.requiredInitChunk;
 				delete v.requiredInitChunk;
 			}
-		} else // chat
+		} else if (data.message.action == "chat")
 			this.chat(data.message, data.user);
+		else if (data.message.action == "error" && this.opts.onerror)
+			this.opts.onerror(data.message.data);
 		CT.log.endTimer("update", data.message.data.length
 			+ " " + data.channel + " " + data.user);
 	},
@@ -122,7 +132,8 @@ CT.stream.Multiplexer = CT.Class({
 		if (!video) {
 			if (!Object.keys(chan).length && this.opts.onstart)
 				this.opts.onstart();
-			video = chan[user] = new CT.stream.Video(CT.merge(this.opts.vidopts, { stream: stream }));
+			video = chan[user] = new CT.stream.Video(CT.merge(this.opts.vidopts,
+				{ stream: stream, onreset: this.resetcb(channel, user) }));
 			CT.dom.addContent(this.opts.node, video.node);
 			video.requiredInitChunk = !stream && (channel + user + "init");
 		}
@@ -141,6 +152,7 @@ CT.stream.Multiplexer = CT.Class({
 			singlechannel: false,
 			onstart: null,
 			onstop: null,
+			onerror: null,
 			wserror: null,
 			chat: true,
 			title: null,
