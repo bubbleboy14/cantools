@@ -175,6 +175,7 @@ CT.stream.Video = CT.Class({
 			videoId: null,
 			watermark: null,
 			activeAudio: false,
+			buttons: [], // only checked when frame is false
 			record: { // recorder always shows when frame is true
 				streamer: false,
 				lurker: false,
@@ -218,6 +219,11 @@ CT.stream.Video = CT.Class({
 					cbl.appendChild(CT.dom.pad());
 				cbl.appendChild(this._fullscreenButton);
 			}
+			opts.buttons.forEach(function(b) {
+				if (cbl.childNodes.length)
+					cbl.appendChild(CT.dom.pad());
+				cbl.appendChild(b);
+			});
 			if (cbl.childNodes.length)
 				this.node.appendChild(cbl);
 		}
