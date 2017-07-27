@@ -19,14 +19,14 @@ which python
 if [ $? -ne 0 ]
 then
     echo "installing python"
-    sudo apt install python2.7
+    sudo apt install --yes python2.7 </dev/null
     echo "python installed"
 else
     echo "you got it"
 fi
 
 echo "installing other deps"
-sudo apt install build-essential libssl-dev libffi-dev python-dev python-setuptools git
+sudo apt install --yes build-essential libssl-dev libffi-dev python-dev python-setuptools git </dev/null
 
 echo "checking for cantools"
 python -c 'import cantools'
