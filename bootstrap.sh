@@ -29,12 +29,14 @@ echo "installing other deps"
 sudo apt install --yes build-essential libssl-dev libffi-dev python-dev python-setuptools git </dev/null
 
 echo "checking for cantools"
-python -c 'import cantools'
-if [ $? -ne 0 ]
+if pwd | grep cantools;
 then
-    echo "cantools is present"
-else
-    echo "installing cantools"
+    echo "installing right here right now"
+    sudo python setup.py install
+    sudo python setup.py develop
+elif python -c 'import cantools';
+then
+    echo "cloning (and hiding) and installing cantools"
     cd ~
     mkdir .ctp
     cd .ctp
@@ -43,7 +45,9 @@ else
     sudo python setup.py install
     sudo python setup.py develop
     echo "cantools installed"
+else
+    echo "cantools is installed -- we're good"
 fi
 
-echo "installed cantools and all dependencies"
+echo "installed cantools and all dependencies. happy coding."
 echo "goodbye"
