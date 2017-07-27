@@ -222,6 +222,13 @@ This portable modern web framework is the application-neutral backbone of Civil 
     - python setup.py install
     - python setup.py develop
 
+If you're running Ubuntu (or probably any Debian derivative), you may consider running:
+
+    ./bootstrap.sh
+
+Instead of the two "python setup.py" lines. This will also install various dependencies
+that may not already be present on your system (some systems don't even come with Python).
+
 ## Production Installation (transparent)
   - upside
     - cantools and all dependencies installed in one line
