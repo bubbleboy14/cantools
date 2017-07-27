@@ -1,4 +1,4 @@
-# cantools 0.9.11.2
+# cantools 0.9.11.3
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
  - Docs: http://ct.mkult.co
@@ -50,6 +50,19 @@ This takes less than a moment. Pop open a terminal in your home directory:
 	~/hello_world$ ctstart
 
 And that's it. Open http://localhost:8080/ in your browser and call it a day.
+
+## Deployment Steps
+You just found out that you need to deploy a cantools project to a fresh, naked
+Debian system that doesn't even have Python or git. Oh no, what do you do? This:
+
+	~$ wget -O - https://raw.githubusercontent.com/bubbleboy14/cantools/master/bootstrap.sh | bash
+	~$ git clone https://github.com/your_organization/your_project.git
+	~$ cd your_project
+	~/your_project$ ctinit -r
+	~/your_project$ sudo ctstart -p80
+
+Now just make sure port 80 is open, and you're good to go. Also, you should probably
+run ctstart in a screen or something (so that you can eventually log out) - that's it!
 
 # Back (CLI)
 
