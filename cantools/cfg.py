@@ -222,6 +222,16 @@ This portable modern web framework is the application-neutral backbone of Civil 
     - python setup.py install
     - python setup.py develop
 
+## Production Installation (transparent)
+  - upside
+    - cantools and all dependencies installed in one line
+    - hidden away like any standard system library
+    - cleanest way to deploy your applications
+  - downside
+    - no easy access to ct source -- aren't you curious?
+    - Debian (especially Ubuntu) -only (until you add support for your system!)
+  - command: wget -O - https://raw.githubusercontent.com/bubbleboy14/cantools/master/bootstrap.sh | bash
+
 ## Package Installation (limited -- not recommended)
   - downside
     - does _not_ include full package (such as client-side web files)
