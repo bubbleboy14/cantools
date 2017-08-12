@@ -40,8 +40,8 @@ CT.stream.opts = {
 		CT.stream.opts.transcoder = cb;
 	},
 	codecs: {
-		av: 'video/webm; codecs="vp9,opus"',
-		video: 'video/webm; codecs="vp9"',
+		av: 'video/webm; codecs="vp8,opus"',
+		video: 'video/webm; codecs="vp8"',
 		audio: 'audio/webm; codecs="opus"'
 	},
 	startWaiting: function() {
@@ -50,6 +50,6 @@ CT.stream.opts = {
 };
 CT.stream.opts.mropts = {
 	mimeType: CT.stream.opts.codecs.video, // for OSX
-	videoBitsPerSecond: 128000,
-	audioBitsPerSecond: 32000
+//	videoBitsPerSecond: 512000,
+//	audioBitsPerSecond: 32000
 };

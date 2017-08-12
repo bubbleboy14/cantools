@@ -58,7 +58,7 @@ var _sutil = CT.stream.util = {
 		return function(stream) {
 			var segment = 0, recorder = new MediaRecorder(stream, CT.stream.opts.mropts);
 			recorder.ondataavailable = function(blobevent) {
-				CT.log("ondataavailable!!");
+				CT.log("ondataavailable!! " + blobevent.data.size);
 				segment = (segment + 1) % CT.stream.opts.segments;
 				!recorder._stopped && ondata &&
 					ondata({ video: blobevent.data }, segment);
