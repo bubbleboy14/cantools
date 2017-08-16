@@ -22,7 +22,7 @@ def run_dez_webserver():
 	c = getController()
 	setlog(c.web.logger.simple)
 	if config.web.log:
-		set_log(config.web.log and os.path.join("logs", config.web.log))
+		set_log(os.path.join("logs", config.web.log))
 	set_error(fail)
 	if config.fdup:
 		fdup()

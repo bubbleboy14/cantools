@@ -13,21 +13,21 @@ def end_timer(tname, msg=""):
     log("[timer] Completed in %s |%s| %s"%(diff, msg, tname), important=True)
 
 def set_log(fname):
-	global LOG_FILE
-	LOG_FILE = open(fname, "a")
+    global LOG_FILE
+    LOG_FILE = open(fname, "a")
 
 def close_log():
-	global LOG_FILE
-	if LOG_FILE:
-		LOG_FILE.close()
-		LOG_FILE = None
+    global LOG_FILE
+    if LOG_FILE:
+        LOG_FILE.close()
+        LOG_FILE = None
 
 def log(msg, level=0, important=False):
     s = "* %s : %s %s"%(datetime.now(), "  " * level, msg)
     if important:
         s = "\n%s"%(s,)
     if LOG_FILE:
-    	LOG_FILE.write("%s\n"%(s,))
+        LOG_FILE.write("%s\n"%(s,))
     print s
 
 def set_error(f):
