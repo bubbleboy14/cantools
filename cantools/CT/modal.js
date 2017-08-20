@@ -326,9 +326,16 @@ CT.modal.Prompt = CT.Class({
 		this.hide();
 	},
 	submit: function() {
-		this.opts.cb(this.input && (this.input.ctfile
-			|| ((typeof this.input.value == "function") && this.input.value())
-			|| this.opts.data[this.input.value] || this.input.value));
+		if (this.opts.style == "multiple-choice") {
+			var that = this;
+			this.opts.cb(this.input.value.map(function(val) {
+				return that.opts.data[val];
+			}));
+		} else {
+			this.opts.cb(this.input && (this.input.ctfile
+				|| ((typeof this.input.value == "function") && this.input.value())
+				|| this.opts.data[this.input.value] || this.input.value));
+		}
 		this.hide();
 	},
 	_nodify: function(data) {
