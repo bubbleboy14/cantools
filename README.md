@@ -1,4 +1,4 @@
-# cantools 0.9.11.5
+# cantools 0.9.11.6
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
  - Docs: http://ct.mkult.co
@@ -902,6 +902,7 @@ the 'opts' object itself, are all optional.
     - arrow (default: null): image for pointer arrow (falls back to pointy brackets)
     - autoSlideInterval (default: 5000): how many milliseconds to wait before auto-sliding frames
     - panDuration (default: autoSlideInterval): pan duration for background images
+    - translateDuration (default: 300): translation duration for frame advancement transition
     - autoSlide (default: true): automatically proceed through frames (else, trigger later with .resume())
     - visible (default: true): maps to visibility css property
     - navButtons (default: true): include nav bubbles and arrows
