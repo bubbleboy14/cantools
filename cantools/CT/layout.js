@@ -89,10 +89,12 @@ CT.layout = {
 			}));
 		if (opts.contact.email || opts.contact.phone) {
 			var contacts = [];
+			if (opts.contact.email_prefix)
+				contacts.push(CT.dom.div(opts.contact.email_prefix, "padded inline-block"));
 			if (opts.contact.email)
-				contacts.push(CT.dom.node(opts.contact.email, "div", "padded inline-block"));
+				contacts.push(CT.dom.div(opts.contact.email, "padded inline-block"));
 			if (opts.contact.phone)
-				contacts.push(CT.dom.node(opts.contact.phone, "div", "padded inline-block"));
+				contacts.push(CT.dom.div(opts.contact.phone, "padded inline-block"));
 			rights.push(contacts);
 		}
 		if (rights.length)
