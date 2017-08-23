@@ -17,6 +17,7 @@ the 'opts' object itself, are all optional.
     - arrow (default: null): image for pointer arrow (falls back to pointy brackets)
     - autoSlideInterval (default: 5000): how many milliseconds to wait before auto-sliding frames
     - panDuration (default: autoSlideInterval): pan duration for background images
+    - translateDuration (default: 300): translation duration for frame advancement transition
     - autoSlide (default: true): automatically proceed through frames (else, trigger later with .resume())
     - visible (default: true): maps to visibility css property
     - navButtons (default: true): include nav bubbles and arrows
@@ -57,6 +58,7 @@ CT.slider.Slider = CT.Class({
 		this.opts = opts = CT.merge(opts, {
 			frames: [],
 			keys: true,
+			translateDuration: 300,
 			autoSlideInterval: 5000,
 			autoSlide: true,
 			visible: true,
@@ -278,6 +280,7 @@ CT.slider.Slider = CT.Class({
 		var opts = {}, axis = CT.drag._.orientation2axis[this.opts.orientation];
 		opts[axis] = this.container[axis + "Drag"] = -this.index
 			* CT.align[this.dimension](this.container) / this.container.childNodes.length;
+		opts.duration = this.opts.translateDuration;
 		CT.trans.translate(this.container, opts);
 	},
 	shift: function(direction, force) {
