@@ -5,7 +5,16 @@ Well, use this module.
 
 CT.hover = {
 	_: {},
-	_pos: function(n) {
+	_pos: function(n, recursive) {
+		if (recursive) {
+			var left = 0, top = 0;
+			while (!isNaN(n.offsetLeft)) {
+				left += n.offsetLeft;
+				top += n.offsetTop;
+				n = n.parentNode;
+			}
+			return [left, top];
+		}
 		return [n.offsetLeft, n.offsetTop];
 	},
 	_hide: function() {
@@ -14,13 +23,14 @@ CT.hover = {
 			!_.nodeOn && !_.hoverOn && CT.dom.hide(_.infoBubble);
 		}, 1000);
 	},
-	set: function(node, content, poptop, stayopen) {
+	set: function(node, content, poptop, stayopen, recursive) {
 		if (arguments.length == 1 && !(node instanceof Node)) {
 			var obj = arguments[0];
 			node = obj.node;
 			content = obj.content;
 			poptop = obj.poptop;
 			stayopen = obj.stayopen;
+			recursive = obj.recursive;
 		}
 		var _ = CT.hover._;
 		if (!_.infoBubble) {
@@ -33,7 +43,7 @@ CT.hover = {
 		}
 		node.onmouseover = function(e) {
 			_.nodeOn = true;
-			var npos = CT.hover._pos(node); // recheck every time in case target moves
+			var npos = CT.hover._pos(node, recursive); // recheck every time in case target moves
 			CT.dom.ALLNODE.appendChild(_.infoBubble);
 			CT.dom.setContent(_.infoBubble, content);
 			CT.dom.show(_.infoBubble);
