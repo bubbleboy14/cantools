@@ -155,7 +155,10 @@ class ArrayType(BasicString):
 		return json.dumps(value)
 
 	def process_result_value(self, value, dialect):
-		vlist = json.loads(value) or []
+		try:
+			vlist = json.loads(value) or []
+		except:
+			vlist = []
 		if self.isKey:
 			for i in range(len(vlist)):
 				vlist[i] = KeyWrapper(vlist[i])
