@@ -45,7 +45,7 @@ CT.pubsub = {
 				_.cb.subscribe(data);
 				if (_.autohistory && (_.autohistory_exemptions.indexOf(data.channel) == -1))
 					data.history.forEach(CT.pubsub._.process.publish);
-				CT.pubsub._.cb.presence(data.presence.length);
+				CT.pubsub._.cb.presence(data.presence.length, data.channel);
 			},
 			"publish": function(data) {
 				CT.pubsub._.cb.message(data);
@@ -55,7 +55,7 @@ CT.pubsub = {
 				var chan = CT.pubsub._.channels[data.channel];
 				if (chan) {
 					CT.data.append(chan.presence, data.user);
-					CT.pubsub._.cb.presence(chan.presence.length);
+					CT.pubsub._.cb.presence(chan.presence.length, data.channel);
 				}
 			},
 			"unsubscribe": function(data) {
@@ -63,7 +63,7 @@ CT.pubsub = {
 				var chan = CT.pubsub._.channels[data.channel];
 				if (chan) {
 					CT.data.remove(chan.presence, data.user);
-					CT.pubsub._.cb.presence(chan.presence.length);
+					CT.pubsub._.cb.presence(chan.presence.length, data.channel);
 				}
 			},
 			"pm": function(data) {
@@ -151,6 +151,9 @@ CT.pubsub = {
 	"set_cb": function(action, cb) {
 		// action: message|subscribe|join|leave|presence|open|close|error|pm
 		CT.pubsub._.cb[action] = cb;
+	},
+	"presence": function(channel) {
+		return CT.pubsub._.channels[channel].presence;
 	},
 	"pm": function(user, message) {
 		CT.pubsub._.write({
