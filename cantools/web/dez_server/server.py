@@ -1,4 +1,4 @@
-import os, resource, requests, ssl
+import os, rel, ssl, json, resource, requests
 from dez.http import fetch as dfetch
 from ..util import *
 from ...util import set_log, set_error
@@ -16,6 +16,11 @@ def fdup():
 		resource.setrlimit(resource.RLIMIT_NOFILE, (hard, hard))
 		log("new limits! soft: %s. hard: %s"%resource.getrlimit(resource.RLIMIT_NOFILE))
 
+def log_kernel():
+	from cantools.web.util import log
+	log(json.dumps(rel.report()), "kernel")
+	return True
+
 def run_dez_webserver():
 	if not config.ssl.verify and hasattr(ssl, "_https_verify_certificates"):
 		ssl._https_verify_certificates(False)
@@ -23,6 +28,8 @@ def run_dez_webserver():
 	setlog(c.web.logger.simple)
 	if config.web.log:
 		set_log(os.path.join("logs", config.web.log))
+	if "kernel" in config.log.allow:
+		rel.timeout(1, log_kernel)
 	set_error(fail)
 	if config.fdup:
 		fdup()
