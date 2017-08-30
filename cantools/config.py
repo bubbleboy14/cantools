@@ -75,16 +75,35 @@ def _getpass(val, ptype):
 
 config = Config(cfg)
 
-# load plugins
-for plugin in config.plugin.modules:
-	plugin = plugin.slice("/")[1]
-	mod = __import__(plugin)
-	if hasattr(mod.init, "cfg"):
-		config.update(plugin, mod.init.cfg)
+def include_plugins():
+	try:
+		plugs = {}
+		def loadp(plugin):
+			if plugin not in plugs:
+				mod = plugs[plugin] = __import__(plugin)
+				if hasattr(mod.init, "requires"):
+					for p in mod.init.requires:
+						loadp(p)
+				if hasattr(mod.init, "cfg"):
+					config.update(plugin, mod.init.cfg)
+		for plugin in config.plugin.modules:
+			loadp(plugin)
+	except:
+		pass # plugin import error - fine if refreshing project for 1st time
 
-for key, val in [[term.strip() for term in line.split(" = ")] for line in read("ct.cfg", True)]:
-	if key.startswith("#"):
+items = []
+for line in read("ct.cfg", True):
+	if line.startswith("#"):
 		continue
+	key, val = [term.strip() for term in line.split(" = ")]
+	if key == "PLUGIN_MODULES":
+		mods = val.split("|")
+		config.plugin.update("modules", map(lambda p : p.split("/")[-1], mods))
+		include_plugins()
+	else:
+		items.append([key, val])
+
+for key, val in items:
 	if key in ["ENCODE", "DB_ECHO", "DB_PUBLIC", "GEO_TEST", "MEMCACHE_REQUEST", "MEMCACHE_DB", "PUBSUB_ECHO", "SSL_VERIFY", "ADMIN_MONITOR_LOG", "WEB_XORIGIN"]:
 		val = val == "True"
 	elif key in ["PUBSUB_HISTORY"]:
@@ -103,7 +122,7 @@ for key, val in [[term.strip() for term in line.split(" = ")] for line in read("
 			config.update("customscrambler", True)
 		target = key.lower()
 		c = config
-		if target in ["pubsub_botnames", "log_allow", "geo_user_geonames", "geo_user_google", "plugin_modules", "admin_contacts", "web_rollz", "admin_monitor_geo"]:
+		if target in ["pubsub_botnames", "log_allow", "geo_user_geonames", "geo_user_google", "admin_contacts", "web_rollz", "admin_monitor_geo"]:
 			val = val.split("|")
 			if target == "web_rollz":
 				rollz = {}
@@ -117,12 +136,9 @@ for key, val in [[term.strip() for term in line.split(" = ")] for line in read("
 				c = c.sub(part)
 		c.update(target, val)
 
+config.plugin.update("repos", map(lambda p : "/" in p and p or "%s/%s"%(config.plugin.base, p), config.plugin.modules))
 config.db.update("main", config.db[config.web.server])
 config.update("cache", pc)
-
-# set repos, update modules
-config.plugin.update("repos", map(lambda p : "/" in p and p or "%s/%s"%(config.plugin.base, p), config.plugin.modules))
-config.plugin.update("modules", map(lambda p : p.split("/")[-1], config.plugin.modules))
 
 # set protocol based on certs
 if config.ssl.certfile:
