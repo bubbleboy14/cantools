@@ -31,6 +31,9 @@ class Config(object):
 		return json.dumps(self.obj(), indent=4)
 
 	# dict compabitility
+	def get(self, key, fallback=None):
+		return self._cfg.get(key, fallback)
+
 	def values(self):
 		return self._cfg.values()
 
