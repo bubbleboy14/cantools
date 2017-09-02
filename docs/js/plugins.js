@@ -73,6 +73,12 @@ CT.onload(function() {
 				CT.dom.link("Code", null, "https://github.com/bubbleboy14/ctstream", "biggest p30 right")
 			]
 		}, {
+			name: "ctedit",
+			content: [
+				"This package provides a simple interface (and corresponding models) for generically modifying content on a site without touching code or configuration.",
+				CT.dom.link("Code", null, "https://github.com/bubbleboy14/ctedit", "biggest p30 right")
+			]
+		}, {
 			name: "ctnet",
 			content: [
 				"This module contains the framework for a content-driven social network.",
