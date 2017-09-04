@@ -497,10 +497,12 @@ CT.db.Query = CT.Class({
 		this.filters.appendChild(CT.dom.node([selectcell, compcell, valcell, rmcell]));
 	},
 	_suborders: function() {
-		var mod = this.modelName, subs = [];
+		var mod = this.modelName, subs = [], submap;
+		if (!CT.db._rmap[mod]) return [];
 		CT.db._rmap[mod].forEach(function(sub) {
 			subs.push(sub);
-			CT.db._rmap[sub.split(".")[0]].forEach(function(subsub) {
+			submap = CT.db._rmap[sub.split(".")[0]];
+			submap && submap.forEach(function(subsub) {
 				subs.push(subsub + "." + mod);
 			});
 		});
