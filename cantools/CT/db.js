@@ -503,7 +503,9 @@ CT.db.Query = CT.Class({
 	_filter: function() {
 		var valcell = CT.dom.span(), that = this,
 			compcell = CT.dom.span(),
-			selector = function([mod, property]) {
+			selector = function(argarr) {
+				var mod, property;
+				[mod, property] = argarr;
 				var val = CT.db._schema[mod][property];
 				CT.dom.setContent(compcell, val.slice(-4) == "list" ?
 					CT.dom.select(["contains", "lacks"]) :
