@@ -578,19 +578,21 @@ CT.db.Query = CT.Class({
 	_build: function() {
 		this.filters = CT.dom.node();
 		this.order = this._order();
-		this.node = CT.dom.node([
-			CT.dom.node("Query: " + this.modelName, "div", "bigger bold"),
-			CT.dom.node("Order", "div", "big bold"),
+		this.node = CT.dom.div([
+			CT.dom.div("Query: " + this.modelName, "bigger bold"),
+			CT.dom.div("Order", "big bold"),
+			CT.dom.div("Single-dot compound orders (ie eviction.building) expose additional filters on properties found on the reference table",
+				this.opts.showHelp && "italic" || "hidden"),
 			this.order,
 			CT.dom.node([
-				CT.dom.node("Filters", "span", "big bold"),
+				CT.dom.span("Filters", "big bold"),
 				CT.dom.button("add", this._filter)
 			]),
-			CT.dom.node("Select 'like' comparator for values such as 'MO%' (meaning 'starts with MO')",
-				"div", this.opts.showHelp && "italic" || "hidden"),
+			CT.dom.div("Select 'like' comparator for values such as 'MO%' (meaning 'starts with MO')",
+				this.opts.showHelp && "italic" || "hidden"),
 			this.filters,
 			CT.dom.button("submit", this._submit)
-		], "div", "centered");
+		], "centered");
 	},
 	_filterables: function() {
 		this.filterables = [];
