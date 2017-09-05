@@ -479,17 +479,42 @@ CT.db.edit.EntityRow = CT.Class({
 
 CT.db.Query = CT.Class({
 	CLASSNAME: "CT.db.Query",
+	_subprops: function(mods) {
+		var props = [], thismod = this.modelName;
+		mods.split(".").filter(function(mod) {
+			return mod != thismod;
+		}).forEach(function(mod) {
+			props = props.concat(Object.keys(CT.db._schema[mod]).filter(function(prop) {
+				return !prop.startsWith("_");
+			}).map(function(prop) {
+				return [mod, prop];
+			}));
+		});
+		return props;
+	},
+	_subfilters: function() {
+		return (this._orderSelect.value.indexOf(".") != -1)
+			? this._subprops(this._orderSelect.value).map(function(filtarr) {
+				return filtarr.join(".");
+			}) : [];
+	},
 	_filter: function() {
-		var valcell = CT.dom.node(null, "span"), that = this,
-			compcell = CT.dom.node(null, "span"),
-			selectcell = CT.dom.select(this.filterables, null, null, null, null, function() {
-				var val = that.schema[selectcell.value];
+		var valcell = CT.dom.span(), that = this,
+			compcell = CT.dom.span(),
+			selector = function([mod, property]) {
+				var val = CT.db._schema[mod][property];
 				CT.dom.setContent(compcell, val.slice(-4) == "list" ?
 					CT.dom.select(["contains", "lacks"]) :
 					CT.dom.select(["==", ">", "<", ">=", "<=", "!=", "like"]))
 				CT.dom.setContent(valcell,
-					CT.db.edit.input(selectcell.value, val,
-						null, that.modelName, that.opts));
+					CT.db.edit.input(property, val, null, mod, that.opts));
+			}, selectcell = CT.dom.select(this.filterables.concat(this._subfilters()),
+				null, null, null, null, function() {
+				var scv = selectcell.value;
+				if (scv.indexOf(".") == -1)
+					selector([that.modelName, scv]);
+				else
+					selector(scv.split("."));
 			}), rmcell = CT.dom.button("remove", function() {
 				CT.dom.remove(selectcell.parentNode);
 			});
@@ -509,7 +534,7 @@ CT.db.Query = CT.Class({
 		return subs;
 	},
 	_order: function() {
-		var selectcell = CT.dom.select(["None"].concat(this.filterables).concat(this._suborders())),
+		var selectcell = this._orderSelect = CT.dom.select(["None"].concat(this.filterables).concat(this._suborders())),
 			dircell = CT.dom.select(["ascending", "descending"]);
 		dircell.className = "hidden";
 		selectcell.onchange = function() {
