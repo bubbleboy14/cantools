@@ -5,30 +5,47 @@ from sqlalchemy import func
 from session import session
 from ..shared import *
 
-def get_page(modelName, limit, offset, order='index', filters={}, session=session):
+def _apply_filter(query, key, obj, modelName, joinz):
     from properties import KeyWrapper
+    val = obj["value"]
+    comp = obj["comparator"]
+    if "." in key:
+        altname, key = key.split(".")
+        mod = get_model(altname)
+        schema = get_schema(altname)
+        if altname not in joinz:
+            joinz.add(altname)
+            query.join(mod,
+                get_model(modelName).key == getattr(mod,
+                    schema["_kinds"][modelName][0])) # not first index???
+    else:
+        schema = get_schema(modelName)
+        mod = get_model(modelName)
+    prop = getattr(mod, key)
+    ptype = schema[key]
+    if ptype == "key" and not isinstance(val, KeyWrapper):
+        val = KeyWrapper(val)
+    elif ptype == "datetime" and not isinstance(val, datetime):
+        val = datetime.strptime(val, "%Y-%m-%d %H:%M:%S")
+    if comp == "like":
+        query.filter(func.lower(prop).like(val.lower()))
+    elif comp == "contains":
+        query.filter(prop.contains(val))
+    elif comp == "lacks":
+        query.filter(~prop.contains(val))
+    else:
+        query.filter(operators[comp](prop, val))
+
+def get_page(modelName, limit, offset, order='index', filters={}, session=session):
     #SAWarning: Can't resolve label reference '-draw_num'; converting to text()
     #'-column_name' or 'column_name desc' work but give this warning
-    schema = get_schema(modelName)
-    mod = get_model(modelName)
-    query = mod.query(session=session)
+    query = get_model(modelName).query(session=session)
+    joinz = set()
     for key, obj in filters.items():
-        val = obj["value"]
-        comp = obj["comparator"]
-        prop = getattr(mod, key)
-        if schema[key] == "key" and not isinstance(val, KeyWrapper):
-            val = KeyWrapper(val)
-        elif schema[key] == "datetime" and not isinstance(val, datetime):
-            val = datetime.strptime(val, "%Y-%m-%d %H:%M:%S")
-        if comp == "like":
-            query.filter(func.lower(prop).like(val.lower()))
-        elif comp == "contains":
-            query.filter(prop.contains(val))
-        elif comp == "lacks":
-            query.filter(~prop.contains(val))
-        else:
-            query.filter(operators[comp](prop, val))
-    return [d.export() for d in query.order(order).fetch(limit, offset)]
+        _apply_filter(query, key, obj, modelName, joinz)
+    # skip compound order if filtering on joined table
+    joinz and "." in order or query.order(order)
+    return [d.export() for d in query.fetch(limit, offset)]
 
 def getall(entity=None, query=None, keys_only=False, session=session):
     if query:
