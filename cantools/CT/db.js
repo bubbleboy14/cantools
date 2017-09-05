@@ -479,17 +479,44 @@ CT.db.edit.EntityRow = CT.Class({
 
 CT.db.Query = CT.Class({
 	CLASSNAME: "CT.db.Query",
+	_subprops: function(mods) {
+		var props = [], thismod = this.modelName;
+		mods.split(".").filter(function(mod) {
+			return mod != thismod;
+		}).forEach(function(mod) {
+			props = props.concat(Object.keys(CT.db._schema[mod]).filter(function(prop) {
+				return !prop.startsWith("_");
+			}).map(function(prop) {
+				return [mod, prop];
+			}));
+		});
+		return props;
+	},
+	_subfilters: function() {
+		var v = this._orderSelect.value,
+			vind = v.indexOf("."); // only add subprops for single dot
+		return (vind != -1 && v.indexOf(".", vind + 1) == -1)
+			? this._subprops(v).map(function(filtarr) {
+				return filtarr.join(".");
+			}) : [];
+	},
 	_filter: function() {
-		var valcell = CT.dom.node(null, "span"), that = this,
-			compcell = CT.dom.node(null, "span"),
-			selectcell = CT.dom.select(this.filterables, null, null, null, null, function() {
-				var val = that.schema[selectcell.value];
+		var valcell = CT.dom.span(), that = this,
+			compcell = CT.dom.span(),
+			selector = function([mod, property]) {
+				var val = CT.db._schema[mod][property];
 				CT.dom.setContent(compcell, val.slice(-4) == "list" ?
 					CT.dom.select(["contains", "lacks"]) :
 					CT.dom.select(["==", ">", "<", ">=", "<=", "!=", "like"]))
 				CT.dom.setContent(valcell,
-					CT.db.edit.input(selectcell.value, val,
-						null, that.modelName, that.opts));
+					CT.db.edit.input(property, val, null, mod, that.opts));
+			}, selectcell = CT.dom.select(this.filterables.concat(this._subfilters()),
+				null, null, null, null, function() {
+				var scv = selectcell.value;
+				if (scv.indexOf(".") == -1)
+					selector([that.modelName, scv]);
+				else
+					selector(scv.split("."));
 			}), rmcell = CT.dom.button("remove", function() {
 				CT.dom.remove(selectcell.parentNode);
 			});
@@ -509,7 +536,7 @@ CT.db.Query = CT.Class({
 		return subs;
 	},
 	_order: function() {
-		var selectcell = CT.dom.select(["None"].concat(this.filterables).concat(this._suborders())),
+		var selectcell = this._orderSelect = CT.dom.select(["None"].concat(this.filterables).concat(this._suborders())),
 			dircell = CT.dom.select(["ascending", "descending"]);
 		dircell.className = "hidden";
 		selectcell.onchange = function() {
@@ -551,19 +578,21 @@ CT.db.Query = CT.Class({
 	_build: function() {
 		this.filters = CT.dom.node();
 		this.order = this._order();
-		this.node = CT.dom.node([
-			CT.dom.node("Query: " + this.modelName, "div", "bigger bold"),
-			CT.dom.node("Order", "div", "big bold"),
+		this.node = CT.dom.div([
+			CT.dom.div("Query: " + this.modelName, "bigger bold"),
+			CT.dom.div("Order", "big bold"),
+			CT.dom.div("Single-dot compound orders (ie eviction.building) expose additional filters on properties found on the reference table",
+				this.opts.showHelp && "italic" || "hidden"),
 			this.order,
 			CT.dom.node([
-				CT.dom.node("Filters", "span", "big bold"),
+				CT.dom.span("Filters", "big bold"),
 				CT.dom.button("add", this._filter)
 			]),
-			CT.dom.node("Select 'like' comparator for values such as 'MO%' (meaning 'starts with MO')",
-				"div", this.opts.showHelp && "italic" || "hidden"),
+			CT.dom.div("Select 'like' comparator for values such as 'MO%' (meaning 'starts with MO')",
+				this.opts.showHelp && "italic" || "hidden"),
 			this.filters,
 			CT.dom.button("submit", this._submit)
-		], "div", "centered");
+		], "centered");
 	},
 	_filterables: function() {
 		this.filterables = [];
