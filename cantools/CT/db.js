@@ -493,8 +493,10 @@ CT.db.Query = CT.Class({
 		return props;
 	},
 	_subfilters: function() {
-		return (this._orderSelect.value.indexOf(".") != -1)
-			? this._subprops(this._orderSelect.value).map(function(filtarr) {
+		var v = this._orderSelect.value,
+			vind = v.indexOf("."); // only add subprops for single dot
+		return (vind != -1 && v.indexOf(".", vind + 1) == -1)
+			? this._subprops(v).map(function(filtarr) {
 				return filtarr.join(".");
 			}) : [];
 	},
