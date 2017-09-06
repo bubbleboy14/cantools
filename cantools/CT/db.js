@@ -597,10 +597,18 @@ CT.db.Query = CT.Class({
 		], "centered");
 	},
 	_filterables: function() {
-		this.filterables = [];
+		var filterables = this.filterables = [];
 		for (var k in this.schema)
 			if (CT.db.edit.isSupported(this.schema[k], k))
 				this.filterables.push(k);
+		for (var k in this.schema._kinds) {
+			this.schema._kinds[k].forEach(function(label) {
+				schema = CT.db.getSchema(label);
+				for (var j in schema)
+					if (CT.db.edit.isSupported(schema[j], j))
+						filterables.push(label + "." + j);
+			});
+		}
 	},
 	init: function(opts) {
 		this.opts = opts = CT.merge(opts, {
