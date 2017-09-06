@@ -479,37 +479,24 @@ CT.db.edit.EntityRow = CT.Class({
 
 CT.db.Query = CT.Class({
 	CLASSNAME: "CT.db.Query",
-	_subprops: function(mods) {
-		var props = [], thismod = this.modelName;
-		mods.split(".").filter(function(mod) {
-			return mod != thismod;
-		}).forEach(function(mod) {
-			props = props.concat(Object.keys(CT.db._schema[mod]).filter(function(prop) {
-				return !prop.startsWith("_");
-			}).map(function(prop) {
-				return [mod, prop];
-			}));
-		});
-		return props;
-	},
-	_reversefilters: function() {
-		var v = this._orderSelect.value,
-			vind = v.indexOf("."); // only add subprops for single dot
-		return (vind != -1 && v.indexOf(".", vind + 1) == -1)
-			? this._subprops(v).map(function(filtarr) {
-				return filtarr.join(".");
-			}) : [];
-	},
 	_subfilters: function() {
 		var filts = [];
-		for (var k in this.schema._kinds) {
-			this.schema._kinds[k].forEach(function(label) {
-				var schema = CT.db.getSchema(label);
-				for (var j in schema)
-					if (CT.db.edit.isSupported(schema[j], j))
-						filts.push(label + "." + j);
-			});
-		}
+		var addProps = function(label) {
+			var schema = CT.db.getSchema(label);
+			for (var j in schema)
+				if (CT.db.edit.isSupported(schema[j], j))
+					filts.push(label + "." + j);
+		};
+
+		// forward composite - building.owner.name
+		for (var k in this.schema._kinds)
+			this.schema._kinds[k].forEach(addProps);
+
+		// reverse composite - eviction.reason
+		for (var k in CT.db._schema)
+			if (this.modelName in CT.db._schema[k]._kinds)
+				addProps(k);
+
 		return filts;
 	},
 	_filter: function() {
@@ -524,7 +511,7 @@ CT.db.Query = CT.Class({
 					CT.dom.select(["==", ">", "<", ">=", "<=", "!=", "like"]))
 				CT.dom.setContent(valcell,
 					CT.db.edit.input(property, val, null, mod, that.opts));
-			}, selectcell = CT.dom.select(this.filterables.concat(this._subfilters()).concat(this._reversefilters()),
+			}, selectcell = CT.dom.select(this.filterables.concat(this._subfilters()),
 				null, null, null, null, function() {
 				var scv = selectcell.value;
 				if (scv.indexOf(".") == -1)
