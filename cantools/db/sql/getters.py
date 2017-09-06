@@ -14,20 +14,7 @@ def _apply_filter(query, key, obj, modelName, joinz):
         mod = get_model(altname)
         schema = get_schema(altname)
         if altname not in joinz:
-            joinz.add(altname)
-            if modelName in schema["_kinds"]:
-                mod1 = get_model(modelName)
-                mod2 = mod
-                kinds = schema["_kinds"][modelName]
-            else:
-                mod1 = mod
-                mod2 = get_model(modelName)
-                kinds = get_schema(modelName)["_kinds"][altname]
-            for kind in kinds:
-                if hasattr(mod2, kind):
-                    mod2attr = getattr(mod2, kind)
-                    break
-            query.join(mod, mod1.key == mod2attr)
+            _join(modelName, altname, joinz, query)
     else:
         schema = get_schema(modelName)
         mod = get_model(modelName)
@@ -46,16 +33,40 @@ def _apply_filter(query, key, obj, modelName, joinz):
     else:
         query.filter(operators[comp](prop, val))
 
+def _join(modelName, altname, joinz, query):
+    joinz.add(altname)
+    altschema = get_schema(altname)
+    if modelName in altschema["_kinds"]:
+        mod1 = get_model(modelName)
+        mod2 = get_model(altname)
+        kinds = altschema["_kinds"][modelName]
+    else:
+        mod1 = get_model(altname)
+        mod2 = get_model(modelName)
+        kinds = get_schema(modelName)["_kinds"][altname]
+    for kind in kinds:
+        if hasattr(mod2, kind):
+            mod2attr = getattr(mod2, kind)
+            break
+    query.join(get_model(altname), mod1.key == mod2attr)
+
 def get_page(modelName, limit, offset, order='index', filters={}, session=session):
-    #SAWarning: Can't resolve label reference '-draw_num'; converting to text()
-    #'-column_name' or 'column_name desc' work but give this warning
     query = get_model(modelName).query(session=session)
     joinz = set()
     for key, obj in filters.items():
         _apply_filter(query, key, obj, modelName, joinz)
-    # skip compound order if filtering on joined table
-    joinz and "." in order or query.order(order)
-    return [d.export() for d in query.fetch(limit, offset)]
+    if "." in order:
+        mod, attr = order.split(".")[-2:]
+        if joinz or not get_model(attr): # skip refcount shortcut if filtering on joined table
+            desc = False
+            if mod.startswith("-"):
+                desc = True
+                mod = mod[1:]
+            order = getattr(get_model(mod), attr)
+            if desc:
+                order = -order
+            _join(modelName, mod, joinz, query)
+    return [d.export() for d in query.order(order).fetch(limit, offset)]
 
 def getall(entity=None, query=None, keys_only=False, session=session):
     if query:
