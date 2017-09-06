@@ -15,9 +15,19 @@ def _apply_filter(query, key, obj, modelName, joinz):
         schema = get_schema(altname)
         if altname not in joinz:
             joinz.add(altname)
-            query.join(mod,
-                get_model(modelName).key == getattr(mod,
-                    schema["_kinds"][modelName][0])) # not first index???
+            if modelName in schema["_kinds"]:
+                mod1 = get_model(modelName)
+                mod2 = mod
+                kinds = schema["_kinds"][modelName]
+            else:
+                mod1 = mod
+                mod2 = get_model(modelName)
+                kinds = get_schema(modelName)["_kinds"][altname]
+            for kind in kinds:
+                if hasattr(mod2, kind):
+                    mod2attr = getattr(mod2, kind)
+                    break
+            query.join(mod, mod1.key == mod2attr)
     else:
         schema = get_schema(modelName)
         mod = get_model(modelName)
