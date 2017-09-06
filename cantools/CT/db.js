@@ -561,8 +561,6 @@ CT.db.Query = CT.Class({
 		this.node = CT.dom.div([
 			CT.dom.div("Query: " + this.modelName, "bigger bold"),
 			CT.dom.div("Order", "big bold"),
-			CT.dom.div("Single-dot compound orders (ie eviction.building) expose additional filters on properties found on the reference table",
-				this.opts.showHelp && "italic" || "hidden"),
 			this.order,
 			CT.dom.node([
 				CT.dom.span("Filters", "big bold"),
