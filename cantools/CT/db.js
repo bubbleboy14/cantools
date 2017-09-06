@@ -479,26 +479,6 @@ CT.db.edit.EntityRow = CT.Class({
 
 CT.db.Query = CT.Class({
 	CLASSNAME: "CT.db.Query",
-	_subfilters: function() {
-		var filts = [];
-		var addProps = function(label) {
-			var schema = CT.db.getSchema(label);
-			for (var j in schema)
-				if (CT.db.edit.isSupported(schema[j], j))
-					filts.push(label + "." + j);
-		};
-
-		// forward composite - building.owner.name
-		for (var k in this.schema._kinds)
-			this.schema._kinds[k].forEach(addProps);
-
-		// reverse composite - eviction.reason
-		for (var k in CT.db._schema)
-			if (this.modelName in CT.db._schema[k]._kinds)
-				addProps(k);
-
-		return filts;
-	},
 	_filter: function() {
 		var valcell = CT.dom.span(), that = this,
 			compcell = CT.dom.span(),
@@ -511,7 +491,7 @@ CT.db.Query = CT.Class({
 					CT.dom.select(["==", ">", "<", ">=", "<=", "!=", "like"]))
 				CT.dom.setContent(valcell,
 					CT.db.edit.input(property, val, null, mod, that.opts));
-			}, selectcell = CT.dom.select(this.filterables.concat(this._subfilters()),
+			}, selectcell = CT.dom.select(this.filterables,
 				null, null, null, null, function() {
 				var scv = selectcell.value;
 				if (scv.indexOf(".") == -1)
@@ -528,7 +508,6 @@ CT.db.Query = CT.Class({
 		var mod = this.modelName, subs = [], submap;
 		if (!CT.db._rmap[mod]) return [];
 		CT.db._rmap[mod].forEach(function(sub) {
-			subs.push(sub);
 			submap = CT.db._rmap[sub.split(".")[0]];
 			submap && submap.forEach(function(subsub) {
 				subs.push(subsub + "." + mod);
@@ -596,10 +575,23 @@ CT.db.Query = CT.Class({
 		], "centered");
 	},
 	_filterables: function() {
-		this.filterables = [];
-		for (var k in this.schema)
-			if (CT.db.edit.isSupported(this.schema[k], k))
-				this.filterables.push(k);
+		var filts = this.filterables = [], addProps = function(label, nodot) {
+			var schema = CT.db.getSchema(label);
+			for (var j in schema)
+				if (CT.db.edit.isSupported(schema[j], j))
+					filts.push(nodot && j || (label + "." + j));
+		};
+
+		addProps(this.modelName, true);
+
+		// forward composite - building.owner.name
+		for (var k in this.schema._kinds)
+			this.schema._kinds[k].forEach(addProps);
+
+		// reverse composite - eviction.reason
+		for (var k in CT.db._schema)
+			if (this.modelName in CT.db._schema[k]._kinds)
+				addProps(k);
 	},
 	init: function(opts) {
 		this.opts = opts = CT.merge(opts, {
