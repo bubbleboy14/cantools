@@ -65,7 +65,7 @@ def get_page(modelName, limit, offset, order='index', filters={}, session=sessio
             order = getattr(get_model(mod), attr)
             if desc:
                 order = -order
-            _join(modelName, mod, joinz, query)
+            mod not in joinz and _join(modelName, mod, joinz, query)
     return [d.export() for d in query.order(order).fetch(limit, offset)]
 
 def getall(entity=None, query=None, keys_only=False, session=session):
