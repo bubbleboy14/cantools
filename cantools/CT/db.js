@@ -492,13 +492,25 @@ CT.db.Query = CT.Class({
 		});
 		return props;
 	},
-	_subfilters: function() {
+	_reversefilters: function() {
 		var v = this._orderSelect.value,
 			vind = v.indexOf("."); // only add subprops for single dot
 		return (vind != -1 && v.indexOf(".", vind + 1) == -1)
 			? this._subprops(v).map(function(filtarr) {
 				return filtarr.join(".");
 			}) : [];
+	},
+	_subfilters: function() {
+		var filts = [];
+		for (var k in this.schema._kinds) {
+			this.schema._kinds[k].forEach(function(label) {
+				var schema = CT.db.getSchema(label);
+				for (var j in schema)
+					if (CT.db.edit.isSupported(schema[j], j))
+						filts.push(label + "." + j);
+			});
+		}
+		return filts;
 	},
 	_filter: function() {
 		var valcell = CT.dom.span(), that = this,
@@ -512,7 +524,7 @@ CT.db.Query = CT.Class({
 					CT.dom.select(["==", ">", "<", ">=", "<=", "!=", "like"]))
 				CT.dom.setContent(valcell,
 					CT.db.edit.input(property, val, null, mod, that.opts));
-			}, selectcell = CT.dom.select(this.filterables.concat(this._subfilters()),
+			}, selectcell = CT.dom.select(this.filterables.concat(this._subfilters()).concat(this._reversefilters()),
 				null, null, null, null, function() {
 				var scv = selectcell.value;
 				if (scv.indexOf(".") == -1)
@@ -597,18 +609,10 @@ CT.db.Query = CT.Class({
 		], "centered");
 	},
 	_filterables: function() {
-		var filterables = this.filterables = [];
+		this.filterables = [];
 		for (var k in this.schema)
 			if (CT.db.edit.isSupported(this.schema[k], k))
 				this.filterables.push(k);
-		for (var k in this.schema._kinds) {
-			this.schema._kinds[k].forEach(function(label) {
-				schema = CT.db.getSchema(label);
-				for (var j in schema)
-					if (CT.db.edit.isSupported(schema[j], j))
-						filterables.push(label + "." + j);
-			});
-		}
 	},
 	init: function(opts) {
 		this.opts = opts = CT.merge(opts, {
