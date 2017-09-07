@@ -138,7 +138,11 @@ cfg = {
 				"scale": False
 			}
 		},
-		"util": {},
+		"util": {
+			"main": {},
+			"post": "",
+			"template": "core.util = %s;\r\n\r\nCT.log.grep(core.config.log.include, core.config.log.exclude);%s"
+		},
 		"dirs": ["js", "css", "img", "logs", "blob", "html", "html-static", "html-production"],
 		"vcignore": {
 			".": ["*pyc", "*~", ".ctp", "_", "admin.py", "_db.py", "_memcache.py", "_pay.py", "logs", "blob"],

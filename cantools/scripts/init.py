@@ -88,6 +88,9 @@ class Builder(object):
 		sys.path.insert(0, os.path.join(config.plugin.path, plug))
 		self._getplug(plug)
 
+	def _update(self, cfg, prop, lines):
+		cfg.update(prop, "%s\r\n%s"%(cfg[prop], "\r\n".join(lines)))
+
 	def _getplug(self, plugin):
 		log("Installing Plugin: %s"%(plugin,), important=True)
 		mod = self.plugins[plugin] = __import__(plugin)
@@ -97,19 +100,18 @@ class Builder(object):
 		if os.path.isfile(jscc):
 			log("adding custom config entries to core.config (js)", 3)
 			config.init.config.update(plugin, read(jscc, isjson=True))
+		if hasattr(init, "util"):
+			log("adding post instructions to core.util (js)", 3)
+			self._update(config.init.util, "post", [init.util])
 		if hasattr(init, "model"):
 			log("adding %s imports to model"%(len(init.model),), 3)
-			config.init.update("model",
-				"%s\r\n%s"%(config.init.model,
-					"\r\n".join(["from %s import %s"%(m,
-						", ".join(k)) for (m, k) in init.model.items()])))
+			self._update(config.init, "model", ["from %s import %s"%(m,
+				", ".join(k)) for (m, k) in init.model.items()])
 		if hasattr(init, "routes"):
 			log("adding %s routes to app.yaml"%(len(init.routes),), 3)
-			config.init.yaml.update("core",
-				"%s\r\n\r\n%s"%(config.init.yaml.core,
-					"\r\n\r\n".join(["- url: %s\r\n  %s: %s"%(u,
-						s.endswith(".py") and "script" or "static_dir", s) for (u,
-						s) in init.routes.items()])))
+			self._update(config.init.yaml, "core", ["- url: %s\r\n  %s: %s"%(u,
+				s.endswith(".py") and "script" or "static_dir", s) for (u,
+				s) in init.routes.items()])
 		if hasattr(init, "requires"):
 			log("installing %s ct dependencies"%(len(init.requires),), 3)
 			self._getplugs(*mods_and_repos(init.requires))
@@ -163,7 +165,7 @@ class Builder(object):
 		log("Building core js files: %s, %s, %s"%(jsc, jscc, jscu), important=True)
 		cp(os.linesep.join(config.init.core), jsc)
 		cp("core.config = %s;"%(config.init.config.json(),), jscc)
-		cp("core.util = %s;\r\n\r\nCT.log.grep(core.config.log.include, core.config.log.exclude);"%(config.init.util.json(),), jscu)
+		cp(config.init.util.template%(config.init.util.main.json(), config.init.util.post), jscu)
 		for plugin, mod in self.plugins.items():
 			if hasattr(mod.init, "copies"):
 				for dname, fnames in mod.init.copies.items():
