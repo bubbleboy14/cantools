@@ -17,7 +17,7 @@ class Response(object):
         ctype = self.request.headers.get("content-type")
         if ctype and ctype.startswith("multipart/form-data"):
             obj = {}
-            splitter, body = b.rsplit("\r\n", 1)[0].split("\r\n", 1)
+            splitter, body = b.rsplit("\r\n", 2)[0].split("\r\n", 1)
             for chunk in body.split("\r\n%s\r\n"%(splitter,)):
                 nameline, data = chunk.split("\r\n\r\n")
                 name = nameline.split("; filename=")[0][:-1].split('name="')[1]
