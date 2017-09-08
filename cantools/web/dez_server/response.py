@@ -28,7 +28,6 @@ class Response(object):
                 else:
                     obj[name] = data
             b = json.dumps(rec_conv(obj))
-            print b
         return b
 
     def _send(self, *args, **kwargs):
