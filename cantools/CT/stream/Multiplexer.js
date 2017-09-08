@@ -1,22 +1,22 @@
 CT.stream.Multiplexer = CT.Class({
 	CLASSNAME: "CT.stream.Multiplexer",
 	initChunk: false,
-	_push: function(b64s, channel, signature) {
-		CT.memcache.set(signature, b64s, function() {
+	_push: function(blob, channel, signature) {
+		CT.memcache.blob.set(signature, blob, function() {
 			CT.pubsub.publish(channel, {
 				action: "clip",
 				data: signature
 			}); // (no echo)
 		});
 	},
-	_update: function(message, process, requiredInitChunk) {
-		if (requiredInitChunk && !message.data.endsWith("init")) {
-			CT.memcache.get(requiredInitChunk, function(d) {
+	_update: function(signature, process, requiredInitChunk) {
+		if (requiredInitChunk && !signature.endsWith("init")) {
+			CT.memcache.blob.get(requiredInitChunk, function(d) {
 				process(d);
-				CT.memcache.get(message.data, process);
-			});
+				CT.memcache.blob.get(signature, process, CT.stream.opts.codecs.video);
+			}, CT.stream.opts.codecs.video);
 		} else
-			CT.memcache.get(message.data, process);
+			CT.memcache.blob.get(signature, process, CT.stream.opts.codecs.video);
 	},
 	join: function(channel) {
 		if (this.opts.singlechannel) {
@@ -53,8 +53,7 @@ CT.stream.Multiplexer = CT.Class({
 			this.leave(chan);
 	},
 	push: function(blobs, segment, channel, stream) {
-		CT.log.startTimer("push", channel + segment);
-		var that = this, signature = channel + this.opts.user,
+		var signature = channel + this.opts.user,
 			video = this.getVideo(channel, this.opts.user, stream);
 		if (!this.initChunk) {// requires init chunk
 			this.initChunk = true;
@@ -62,20 +61,7 @@ CT.stream.Multiplexer = CT.Class({
 		} else
 			signature += segment;
 		video.recorder && video.recorder.remember(blobs.video);
-		if (video.audio.active) {
-			CT.stream.util.blobs_to_b64s(blobs, function(b64s) {
-				CT.log.endTimer("push", signature);
-				that._push(b64s, channel, signature);
-			});
-		} else {
-			CT.stream.util.blob_to_b64(blobs.video, function(b64) {
-				CT.log.endTimer("push", signature);
-				that._push({
-					audio: null,
-					video: b64
-				}, channel, signature);
-			});
-		}
+		this._push(blobs.video, channel, signature);
 		return video;
 	},
 	chat: function(message, user) {
@@ -114,7 +100,7 @@ CT.stream.Multiplexer = CT.Class({
 		CT.log.startTimer("update", data.channel);
 		if (data.message.action == "clip") {
 			var v = this.getVideo(data.channel, data.user);
-			this._update(data.message, v.process, v.requiredInitChunk);
+			this._update(data.message.data, v.process, v.requiredInitChunk);
 			if (v.requiredInitChunk) {
 				v.receivedInitChunk = v.requiredInitChunk;
 				delete v.requiredInitChunk;

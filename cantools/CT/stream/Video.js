@@ -8,11 +8,11 @@ CT.stream.Video = CT.Class({
 	},
 	_sourceUpdate: function() {
 		this.log("_sourceUpdate", this._buffers.length,
-			this.sourceBuffer.updating, this.mediaSource.readyState);
+			(this.sourceBuffer && this.sourceBuffer.updating), this.mediaSource.readyState);
 		if (this.video.error) {
 			this.log("ERROR - resetting video");
 			this.reset();
-		} else if (!this.sourceBuffer.updating) {
+		} else if (this.sourceBuffer && !this.sourceBuffer.updating) {
 			if (this._buffers.length)
 				this.sourceBuffer.appendBuffer(this._buffers.shift());
 			else if (this.mediaSource.readyState == "open")
@@ -32,18 +32,15 @@ CT.stream.Video = CT.Class({
 			this.sourceBuffer.addEventListener("error", this._error);
 		}
 	},
-	process: function(dataURL) {
-		this.log("process", dataURL.length);
+	process: function(blob) {
 		var that = this, v = this.video;
-		CT.stream.util.b64_to_blob(dataURL, function(blob) {
-			that.recorder && that.recorder.remember(blob);
-			CT.stream.util.blob_to_buffer(blob, function(buffer) {
-				that._buffers.push(buffer);
-				that._sourceUpdate();
-				var target = v.duration - (CT.stream.opts.chunk / 1000);
-				if (!v.paused && v.currentTime < target)
-					v.currentTime = target;
-			});
+		this.recorder && this.recorder.remember(blob);
+		CT.stream.util.blob_to_buffer(blob, function(buffer) {
+			that._buffers.push(buffer);
+			that._sourceUpdate();
+			var target = v.duration - (CT.stream.opts.chunk / 1000);
+			if (!v.paused && v.currentTime < target)
+				v.currentTime = target;
 		});
 	},
 	start: function() {

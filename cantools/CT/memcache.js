@@ -64,7 +64,7 @@ CT.memcache.blob = {
 	get: function(key, cb, btype) {
 		CT.memcache._rq("get", function(data) {
 			cb(new Blob([data], { type : btype }));
-		}, key, null, { mode: "blob" }, { basic: true });
+		}, key, null, { mode: "blob" }, { basic: true, responseType: "blob" });
 	},
 	set: function(key, blob, cb, transcode) {
 		var opts = { mode: "blob" };
