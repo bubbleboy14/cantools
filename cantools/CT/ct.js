@@ -169,11 +169,13 @@ var CT = {
 			}
 			return CT.net._path + p;
 		},
-		"xhr": function(path, method, params, async, cb, headers, passthrough, noct) {
+		"xhr": function(path, method, params, async, cb, headers, passthrough, noct, responseType) {
 			var xhr = window.XMLHttpRequest
 				? new XMLHttpRequest()
 				: new ActiveXObject("Microsoft.XMLHTTP");
 			xhr.open(method, path, async);
+			if (responseType)
+				xhr.responseType = responseType;
 			if ( !(headers && "Content-Type" in headers))
 				xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 			for (var header in headers)
@@ -254,7 +256,7 @@ var CT = {
 				if (xhr.status == 200 || (_500as200 && xhr.status == 500)) {
 					if (CT.net._spinner || spinner)
 						CT.dom.remove(CT.net._spinner_node);
-					var data = xhr.responseText.trim();
+					var data = xhr.responseType == "blob" ? xhr.response : xhr.responseText.trim();
 					if (basic || CT.net._mode == "basic")
 						cb(data, cbarg);
 					else if (!noct && CT.net._mode == "ct") {
@@ -283,7 +285,7 @@ var CT = {
 			opts.headers["Content-Type"] = "multipart/form-data";
 			return CT.net.post(opts);
 		},
-		"post": function(path, params, errMsg, cb, eb, headers, cbarg, ebarg, sync, passthrough, noct, spinner, basic) {
+		"post": function(path, params, errMsg, cb, eb, headers, cbarg, ebarg, sync, passthrough, noct, spinner, basic, responseType) {
 			if (arguments.length == 1 && typeof arguments[0] != "string") {
 				var obj = arguments[0];
 				path = obj.path;
@@ -299,6 +301,7 @@ var CT = {
 				noct = obj.noct;
 				spinner = obj.spinner;
 				basic = obj.basic;
+				responseType = obj.responseType;
 			}
 			var signature;
 			if (CT.net._cache) {
@@ -307,8 +310,9 @@ var CT = {
 				if (cachedVersion)
 					return cb(cachedVersion, cbarg);
 			}
-			return CT.net.xhr(path, "POST", params, !sync, CT.net._xhrcb(path, cb, eb,
-				cbarg, ebarg, errMsg, signature, null, noct, spinner, basic), headers, passthrough, noct);
+			return CT.net.xhr(path, "POST", params, !sync, CT.net._xhrcb(path, cb,
+				eb, cbarg, ebarg, errMsg, signature, null, noct, spinner, basic),
+				headers, passthrough, noct, responseType);
 		},
 		"put": function(path, params, cb, headers, passthrough, _500as200, noct, spinner, basic) {
 			CT.net.xhr(path, "PUT", params, true, CT.net._xhrcb(path, cb, null, null, null,
