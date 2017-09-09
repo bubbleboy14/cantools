@@ -1,6 +1,7 @@
 CT.stream.Video = CT.Class({
 	CLASSNAME: "CT.stream.Video",
 	_buffers: [],
+	_lastTime: 0,
 	_nextChunk: 0,
 	_sourceOpen: function() {
 		this.log("sourceopen");
@@ -10,7 +11,7 @@ CT.stream.Video = CT.Class({
 		this.log("_sourceUpdate", this._buffers.length,
 			(this.sourceBuffer && this.sourceBuffer.updating), this.mediaSource.readyState);
 		if (this.video.error) {
-			this.log("ERROR - resetting video");
+			this.log("ERROR - RESET video");
 			this.reset();
 		} else if (this.sourceBuffer && !this.sourceBuffer.updating) {
 			if (this._buffers.length)
@@ -20,7 +21,8 @@ CT.stream.Video = CT.Class({
 		}
 	},
 	_error: function(e) {
-		this.log("ERROR", e.message, e.target.error);
+		this.log("ERROR RESET", e.message, e.target.error);
+		this.reset();
 	},
 	setSourceBuffer: function() {
 		this.log("setSourceBuffer - exists:", !!this.sourceBuffer);
@@ -39,6 +41,11 @@ CT.stream.Video = CT.Class({
 			that._buffers.push(buffer);
 			that._sourceUpdate();
 			var target = v.duration - (CT.stream.opts.chunk / 1000);
+			if (v.currentTime < that._lastTime) {
+				that.log("RESET (backtracking)");
+				that.reset();
+			}
+			that._lastTime = v.currentTime;
 			if (!v.paused && v.currentTime < target)
 				v.currentTime = target;
 		});
@@ -148,8 +155,9 @@ CT.stream.Video = CT.Class({
 		if (this._lastReset) {
 			var diff = n - this._lastReset;
 			this.log("RESET", diff);
-			if (this.opts.onreset && diff < CT.stream.opts.reset)
-				this.opts.onreset();
+			if (diff < CT.stream.opts.chunk / 2)
+				return; // wait
+			this.opts.onreset && this.opts.onreset();
 		}
 		this._lastReset = n;
 		this.video.removeEventListener("canplay", this.start);
