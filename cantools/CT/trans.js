@@ -247,12 +247,14 @@ CT.trans = {
 			node._bound = node.parentNode[node._dim] - node[node._dim];
 			cb && setTimeout(cb);
 		}, controllercb = function() {
-			if (node._vertical == undefined)
-				return setV(controllercb);
 			opts[node._prop] = opts[node._prop] ? 0 : node._bound;
 			CT.trans.translate(node, opts);
 		}, controller = new CT.trans.Controller(controllercb);
 		node.onload = function() {
+			var oldprop = node._prop;
+			setV();
+			if (oldprop && oldprop != node._prop)
+				opts[oldprop] = 0;
 			setTimeout(controller.resume); // wait a tic!
 		};
 		CT.onresize(node.onload); // ??? <-- looks wrong
