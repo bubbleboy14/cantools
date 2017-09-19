@@ -148,7 +148,7 @@ CT.slider.Slider = CT.Class({
 		if (opts.autoSlideInterval && opts.autoSlide && !opts.startFrame)
 			this.resume();
 		CT.gesture.listen("down", this.container, this.pause);
-		CT.onresize(this.trans, this.opts.parent);
+		CT.onresize(this.trans);//, this.opts.parent);
 		this._reflow();
 		if (opts.startFrame in this.jumpers)
 			setTimeout(this.jumpers[opts.startFrame]); // wait one tick for inits
