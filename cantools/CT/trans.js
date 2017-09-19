@@ -171,10 +171,12 @@ CT.trans = {
             	});
 	            opts.cb();
 	        }
-            if (opts.node) CT.trans._.enames.forEach(function(ename) {
-	            opts.node.addEventListener(ename, wrapper, false);
-        	});
-	        transTimeout = setTimeout(wrapper, opts.duration);
+            if (opts.node)
+            	CT.trans._.enames.forEach(function(ename) {
+		            opts.node.addEventListener(ename, wrapper, false);
+	        	});
+            else // only use timeout as fallback
+		        transTimeout = setTimeout(wrapper, opts.duration);
 	    }
 	    if (opts.node && opts.property && opts.property != "*") {
 	        if (opts.prefix)
@@ -240,22 +242,20 @@ CT.trans = {
 		opts = CT.merge(opts, CT.trans._.defaults.pan);
 		var setV = function(cb) {
 			node._vertical = CT.dom.cover(node);
+			node._prop = node._vertical ? "y" : "x",
+			node._dim = node._vertical ? "clientHeight" : "clientWidth";
+			node._bound = node.parentNode[node._dim] - node[node._dim];
 			cb && setTimeout(cb);
 		}, controllercb = function() {
 			if (node._vertical == undefined)
 				return setV(controllercb);
-			var prop = node._vertical ? "y" : "x",
-				dim = node._vertical ? "clientHeight" : "clientWidth";
-			if (opts[prop])
-				opts[prop] = 0;
-			else
-				opts[prop] = node.parentNode[dim] - node[dim];
+			opts[node._prop] = opts[node._prop] ? 0 : node._bound;
 			CT.trans.translate(node, opts);
 		}, controller = new CT.trans.Controller(controllercb);
 		node.onload = function() {
 			setTimeout(controller.resume); // wait a tic!
 		};
-		CT.onresize(node.onload);
+		CT.onresize(node.onload); // ??? <-- looks wrong
 		opts.cb = controller.tick;
 		return controller;
 	},
@@ -322,16 +322,23 @@ CT.trans.Controller = CT.Class({
 	resume: function() {
 		if (this._paused != false) {
 			this._paused = false;
-			this.cb();
+			if (this._stalled) {
+				this._stalled = false;
+				this.cb();
+			}
 		}
 	},
 	active: function() {
 		return !this._paused;
 	},
 	tick: function() {
-		this.active() && this.cb();
+		if (this.active())
+			this.cb();
+		else
+			this._stalled = true;
 	},
 	init: function(cb) {
 		this.cb = cb;
+		this._stalled = true;
 	}
 });
