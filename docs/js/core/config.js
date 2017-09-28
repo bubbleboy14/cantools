@@ -34,7 +34,7 @@ core.config = {
 				CT.dom.node(")", "span")
 			], "center")
 		], null, "abs b0 pointer", "winker"),
-		"bottom": ["user", "blog", "store", "decide", "coop", "tunes", "docs"].map(function(pname) {
+		"bottom": ["user", "blog", "store", "stream", "map", "net", "coop", "unes", "docs"].map(function(pname) {
 				var p = "ct" + pname;
 				return CT.dom.link(p, function() {
 					if (location.pathname == "/plugins.html")
