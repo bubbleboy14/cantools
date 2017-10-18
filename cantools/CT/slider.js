@@ -30,6 +30,7 @@ the 'opts' object itself, are all optional.
     - arrowPosition (default: 'middle'): where to position navigator arrows
     - orientation (default: 'horizontal'): orientation for slider frames to arrange themselves
     - keys (default: true): use arrow keys to navigate slider, as well as enter key for peekaboo transitions
+    - noEnter (default: false): disable enter key for peekaboo transitions
     - frames (default: []): an array of items corresponding to the frames in the slider
 
 The last one, 'frames', must be an array either of strings (interpreted
@@ -58,6 +59,7 @@ CT.slider.Slider = CT.Class({
 		this.opts = opts = CT.merge(opts, {
 			frames: [],
 			keys: true,
+			noEnter: false,
 			translateDuration: 300,
 			autoSlideInterval: 5000,
 			autoSlide: true,
@@ -383,7 +385,7 @@ CT.slider.Frame = CT.Class({
 				blurbNode.style.maxHeight = (teaser.parentNode.clientHeight - 200) + "px";
 				blurbNode.fit();
 			}
-			if (slider.opts.keys && teaser) // unreg somewhere?
+			if (slider.opts.keys && !slider.opts.noEnter && teaser) // unreg somewhere?
 				CT.key.on("ENTER", teaserTap);
 			if (slider.opts.pan)
 				imageBack.controller.resume();
