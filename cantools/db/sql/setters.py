@@ -1,8 +1,8 @@
-from cantools.util import batch
+from cantools.util import batch, log
 from edit import *
 from ..shared import ct_key
 
-def _init_entity(instance, session=session):
+def _init_entity(instance, session=session, preserve_timestamps=False):
     from lookup import inc_counter, dec_counter
     puts = []
     now = datetime.now()
@@ -10,7 +10,7 @@ def _init_entity(instance, session=session):
     tname = instance.__tablename__
     if tname != "ctrefcount":
         for key, val in cls.__dict__.items():
-            if getattr(val, "is_dt_autostamper", False) and val.should_stamp(not instance.index):
+            if not preserve_timestamps and getattr(val, "is_dt_autostamper", False) and val.should_stamp(not instance.index):
                 setattr(instance, key, now)
             if key in instance._orig_fkeys:
                 oval = instance._orig_fkeys[key]
@@ -29,19 +29,21 @@ def _init_entity(instance, session=session):
                             puts.append(inc_counter(val, reference, session=session))
     return puts
 
-def init_multi(instances, session=session):
+def init_multi(instances, session=session, preserve_timestamps=False):
+    if preserve_timestamps:
+        log("initializing %s instances -- preserving timestamps!"%(len(instances),))
     lookups = []
     with session.no_autoflush:
         for instance in instances:
-            lookups += _init_entity(instance, session)
+            lookups += _init_entity(instance, session, preserve_timestamps)
     session.add_all(instances + lookups)
     session.flush()
     for instance in instances:
         instance.key = instance.key or KeyWrapper(ct_key(instance.polytype, instance.index))
 
-def put_multi(instances, session=session):
+def put_multi(instances, session=session, preserve_timestamps=False):
     session.init()
-    batch(instances, init_multi, session)
+    batch(instances, init_multi, session, preserve_timestamps)
     session.commit()
 
 def delete_multi(instances, session=session):
