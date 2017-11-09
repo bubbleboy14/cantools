@@ -8,7 +8,7 @@ def index(kind, i=0): # be careful with this!
 		mod = get_model(kind)
 		schema = get_schema(kind)
 		q = mod.query()
-		for prop in ["date", "created", "modified"]:
+		for prop in ["created", "modified", "date"]:
 			if prop in schema:
 				q.order(getattr(mod, prop))
 				break
