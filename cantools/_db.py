@@ -92,6 +92,7 @@ def response():
 	elif action == "delete":
 		get(cgi_get("key")).rm()
 	elif action == "index":
-		setmem("last_index", admin.index(cgi_get("kind", default="*"), getmem("last_index", False) or 0), False)
+		setmem("last_index", admin.index(cgi_get("kind", default="*"),
+			getmem("last_index", False) or int(cgi_get("index", default=0))), False)
 
 respond(response)
