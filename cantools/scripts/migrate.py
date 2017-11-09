@@ -169,7 +169,7 @@ def dump(host, port, session, binary, skip=[]):
 		mod = db.get_model(model)
 		puts += [mod(**db.dprep(c)) for c in mods[model]]
 	log("saving %s records to sqlite dump file"%(len(puts),))
-	db.put_multi(puts, session=session)
+	db.put_multi(puts, session=session, preserve_timestamps=True)
 
 MODES = { "load": load, "dump": dump }
 
