@@ -6,7 +6,13 @@ def index(kind, i=0): # be careful with this!
 	puts = []
 	for kind in kinds:
 		mod = get_model(kind)
-		items = mod.query().fetch() # gae doesn't support all()...
+		schema = get_schema(kind)
+		q = mod.query()
+		for prop in ["date", "created", "modified"]:
+			if prop in schema:
+				q.order(getattr(mod, prop))
+				break
+		items = q.fetch() # gae doesn't support all()...
 		log("assigning sequential index properties to %s %s records"%(len(items), kind), important=True)
 		for n in range(len(items)):
 			item = items[n]
