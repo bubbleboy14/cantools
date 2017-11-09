@@ -581,6 +581,7 @@ CT.db.Query = CT.Class({
 		};
 
 		addProps(this.modelName, true);
+		filts.sort();
 
 		// forward composite - building.owner.name
 		for (var k in this.schema._kinds)
