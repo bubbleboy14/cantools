@@ -578,10 +578,15 @@ CT.db.Query = CT.Class({
 			for (var j in schema)
 				if (CT.db.edit.isSupported(schema[j], j))
 					filts.push(nodot && j || (label + "." + j));
-		};
+		}, schema = this.schema;
 
 		addProps(this.modelName, true);
 		filts.sort();
+
+		["created", "modified"].forEach(function(prop) {
+			if (prop in schema)
+				filts.push(prop);
+		});
 
 		// forward composite - building.owner.name
 		for (var k in this.schema._kinds)
