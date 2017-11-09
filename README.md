@@ -1,4 +1,4 @@
-# cantools 0.9.14.1
+# cantools 0.9.14.2
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
  - Docs: http://ct.mkult.co
@@ -211,6 +211,8 @@ Generates fresh 'static' and 'production' files (from 'development' source files
 	-s SKIP, --skip=SKIP  skip these tables ('index' mode only) - use '|' as
 	                      separator, such as 'table1|table2|table3' (default:
 	                      none)
+	-i INDEX, --index=INDEX
+                          start with this index ('index' mode only) (default: 0)
 
 As you can see, this script's behavior changes according to the backend of the target project.
 
@@ -915,6 +917,7 @@ the 'opts' object itself, are all optional.
     - arrowPosition (default: 'middle'): where to position navigator arrows
     - orientation (default: 'horizontal'): orientation for slider frames to arrange themselves
     - keys (default: true): use arrow keys to navigate slider, as well as enter key for peekaboo transitions
+    - noEnter (default: false): disable enter key for peekaboo transitions
     - frames (default: []): an array of items corresponding to the frames in the slider
 
 The last one, 'frames', must be an array either of strings (interpreted
