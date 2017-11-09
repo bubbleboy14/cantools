@@ -25,6 +25,8 @@
 	-s SKIP, --skip=SKIP  skip these tables ('index' mode only) - use '|' as
 	                      separator, such as 'table1|table2|table3' (default:
 	                      none)
+	-i INDEX, --index=INDEX
+                          start with this index ('index' mode only) (default: 0)
 
 As you can see, this script's behavior changes according to the backend of the target project.
 
@@ -120,17 +122,17 @@ def _log_fetch(host, url, port):
 	log(res)
 	return res
 
-def _index_kind(kind, host, port, pw):
+def _index_kind(kind, host, port, pw, index):
 	log("indexing %s"%(kind,), important=True)
 	retry = 0
-	while "Error" in _log_fetch(host, "/_db?action=index&pw=%s&kind=%s"%(pw, kind), port):
+	while "Error" in _log_fetch(host, "/_db?action=index&pw=%s&kind=%s&index=%s"%(pw, kind, index), port):
 		log("error indexing %s"%(kind,), important=True)
 		if retry == RETRIES:
 			error("tried %s times! sorry."%(retry,))
 		retry += 1
 		log("trying again (retry: %s)"%(retry,))
 
-def index(host, port, skips):
+def index(host, port, skips, index):
 	pw = getpass("what's the admin password? ")
 	log("indexing db at %s:%s"%(host, port), important=True)
 #	log(fetch(host, "/_db?action=index&pw=%s"%(pw,), port))
@@ -140,7 +142,7 @@ def index(host, port, skips):
 		if kind in skips:
 			log("skipping %s"%(kind,), important=True)
 		else:
-			_index_kind(kind, host, port, pw)
+			_index_kind(kind, host, port, pw, index)
 
 #
 # url safety
@@ -197,13 +199,16 @@ def go():
 		help="('index' mode only) what's the port of the target server? (default: 8080)")
 	parser.add_option("-s", "--skip", dest="skip", default="",
 		help="skip these tables ('index' mode only) - use '|' as separator, such as 'table1|table2|table3' (default: none)")
+	parser.add_option("-i", "--index", dest="index", default=0,
+		help="start with this index ('index' mode only) (default: 0)")
 	options, args = parser.parse_args()
 
 	log("mode: %s"%(options.mode,), important=True)
 	if options.mode == "refcount":
 		refcount()
 	elif options.mode == "index":
-		index(options.domain, int(options.port), options.skip and options.skip.split("|") or [])
+		index(options.domain, int(options.port),
+			options.skip and options.skip.split("|") or [], options.index)
 	elif options.mode == "urlsafekeys":
 		urlsafe()
 	elif options.mode == "cleanup":
