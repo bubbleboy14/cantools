@@ -29,7 +29,9 @@ def encodestrings(text):
 
 def processhtml(html):
     html = html.replace("{", "&#123").replace("}", "&#125").replace("</body>", "%s</body>"%(config.noscript,))
-    firststart = start = end = html.find(config.js.flag)
+    start = 0
+    while not start or html[start + config.js.offset + 1] == "/":
+        firststart = start = end = html.find(config.js.flag, start + 1)
     js = []
     while start != -1:
         start += config.js.offset
