@@ -34,19 +34,18 @@ then
     echo "installing right here right now"
     sudo python setup.py install
     sudo python setup.py develop
-elif python -c 'import cantools';
-then
-    echo "cloning (and hiding) and installing cantools"
-    cd ~
-    mkdir .ctp
-    cd .ctp
-    git clone https://github.com/bubbleboy14/cantools.git
-    cd cantools
-    sudo python setup.py install
-    sudo python setup.py develop
-    echo "cantools installed"
 else
-    echo "cantools is installed -- we're good"
+    python -c 'import cantools' || {
+	echo "cloning (and hiding) and installing cantools"
+	cd ~
+	mkdir .ctp
+	cd .ctp
+	git clone https://github.com/bubbleboy14/cantools.git
+	cd cantools
+	sudo python setup.py install
+	sudo python setup.py develop
+	echo "cantools installed"
+    }
 fi
 
 echo "installed cantools and all dependencies. happy coding."
