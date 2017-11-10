@@ -23,6 +23,8 @@ class Query(object):
         self.filter(*args, **kwargs)
 
     def order(self, prop):
+        if type(prop) == elements.UnaryExpression:
+            prop = "-%s"%(prop.element.description,)
         if isinstance(prop, basestring):
             asc = False
             if prop.startswith("-"):
@@ -38,7 +40,7 @@ class Query(object):
                 return self.join(sub, self.mod.key == sub.c.target).order(order)
             prop = getattr(self.mod, prop)
             if not asc:
-                prop = -prop
+                prop = prop.desc()
         return self._order(prop)
 
     def _qpass(self, fname):
