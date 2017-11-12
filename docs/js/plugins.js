@@ -84,6 +84,12 @@ CT.onload(function() {
 				"This module contains the framework for a content-driven social network.",
 				CT.dom.link("Code", null, "https://github.com/bubbleboy14/ctnet", "biggest p30 right")
 			]
+		}, {
+			name: "ctswarm",
+			content: [
+				"The aim of this plugin is to simplify the deployment and administration of cloud based web services.",
+				CT.dom.link("Code", null, "https://github.com/bubbleboy14/ctswarm", "biggest p30 right")
+			]
 		}
 	]);
 });
