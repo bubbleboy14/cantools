@@ -196,10 +196,11 @@ class Builder(object):
 		sym(os.path.join(self.ctroot, "_memcache.py"), "_memcache.py")
 		sym(os.path.join(self.ctroot, "_pay.py"), "_pay.py")
 		for mod in self.plugins.values():
-			for dname, fnames in mod.init.syms.items():
-				for fname in fnames:
-					sym(os.path.join(mod.__ct_mod_path__, dname, fname),
-						os.path.join(dname, fname))
+			if hasattr(mod.init, "syms"):
+				for dname, fnames in mod.init.syms.items():
+					for fname in fnames:
+						sym(os.path.join(mod.__ct_mod_path__, dname, fname),
+							os.path.join(dname, fname))
 
 	def vcignore(self):
 		log("configuring version control path exclusion", 1)
