@@ -21,7 +21,7 @@ class Rule(object):
         self.parse()
 
     def trigger(self):
-        self.logger.info("trigger: %s %s"%(self.url, getattr(self, "seconds", self.rule)))
+        self.logger.info("trigger: %s (%s)"%(self.url, getattr(self, "seconds", self.rule)))
         self.controller.trigger_handler(self.url, self.url[1:])
         return True
 
