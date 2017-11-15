@@ -26,13 +26,13 @@ class Rule(object):
         return True
 
     def start(self):
-        if self.words != "on start":
+        if self.rule != "on start":
             self.logger.info("start (%s seconds)"%(self.seconds,))
             self.timer.add(self.seconds)
 
     def parse(self):
         self.logger.info("parse")
-        if self.words == "on start":
+        if self.rule == "on start":
             self.logger.info("triggering start script")
             self.trigger()
         elif len(self.words) == 3 and self.words[0] == "every": # every [NUMBER] [UNIT]
@@ -40,7 +40,7 @@ class Rule(object):
             unit = self.words[2]
             self.seconds = num * secsPerUnit[unit]
         else: # we can implement more later...
-            self.logger.error("can't parse: %s"%(self.words,))
+            self.logger.error("can't parse: %s"%(self.rule,))
 
 class Cron(object):
     def __init__(self, controller, logger_getter):
