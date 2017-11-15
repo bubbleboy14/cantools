@@ -26,12 +26,16 @@ class Rule(object):
         return True
 
     def start(self):
-        self.logger.info("start (%s seconds)"%(self.seconds,))
-        self.timer.add(self.seconds)
+        if self.words != "on start":
+            self.logger.info("start (%s seconds)"%(self.seconds,))
+            self.timer.add(self.seconds)
 
     def parse(self):
         self.logger.info("parse")
-        if len(self.words) == 3 and self.words[0] == "every": # every [NUMBER] [UNIT]
+        if self.words == "on start":
+            self.logger.info("triggering start script")
+            self.trigger()
+        elif len(self.words) == 3 and self.words[0] == "every": # every [NUMBER] [UNIT]
             num = int(self.words[1])
             unit = self.words[2]
             self.seconds = num * secsPerUnit[unit]
