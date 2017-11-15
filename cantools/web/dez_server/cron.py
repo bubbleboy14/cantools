@@ -55,7 +55,9 @@ class Cron(object):
         self.logger.info("parse")
         url = None
         for line in read("cron.yaml", True):
-            if line.startswith("  url: "):
+            if line.startswith("- description: "):
+                self.logger.info("initializing %s"%(line[15:],))
+            elif line.startswith("  url: "):
                 url = line[7:].strip()
             elif url:
                 self.timers[url] = Rule(self.controller,
