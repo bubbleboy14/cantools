@@ -40,7 +40,7 @@ class Rule(object):
             unit = self.words[2]
             self.seconds = num * secsPerUnit[unit]
         else: # we can implement more later...
-            self.logger.error("can't parse: %s"%(self.line,))
+            self.logger.error("can't parse: %s"%(self.words,))
 
 class Cron(object):
     def __init__(self, controller, logger_getter):
