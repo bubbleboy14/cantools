@@ -24,11 +24,11 @@ CT.video = {
 	    "mp4": "", "ogg": "", "webm": ""
 	},
 	"embed_url": {
-	    "youtube": "http://www.youtube.com/embed/",
+	    "youtube": location.protocol + "//www.youtube.com/embed/",
 	    "vimeo": "//player.vimeo.com/video/"
 	},
 	"urlFromData": function(player, docid) {
-	    return player ? ("http://" + CT.video.player2url[player] + docid) : "";
+	    return player ? (location.protocol + "//" + CT.video.player2url[player] + docid) : "";
 	},
 	"getQSParam": function(url, param) {
 	    var s = url.indexOf(param + "=") + param.length + 1,
@@ -81,13 +81,13 @@ CT.video = {
 		if (h)
 			dims += " height=" + h;
 	    if (video.player == "google")
-	        return "<embed " + dims + " id=VideoPlayback src=http://video.google.com/googleplayer.swf?docid=" + video.docid + "&hl=en&fs=true allowFullScreen=true allowScriptAccess=always type=application/x-shockwave-flash> </embed>";
+	        return "<embed " + dims + " id=VideoPlayback src=" + location.protocol + "//video.google.com/googleplayer.swf?docid=" + video.docid + "&hl=en&fs=true allowFullScreen=true allowScriptAccess=always type=application/x-shockwave-flash> </embed>";
 	    else if (video.player == "youtube" || video.player == "vimeo")
 	        return "<iframe src=\"" + CT.video.embed_url[video.player] + video.docid + "?html5=1\" " + dims + " frameborder=0 webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>";
 	    else if (video.player == "ustream")
-	        return "<object type=application/x-shockwave-flash data=http://static-cdn1.ustream.tv/swf/live/viewerqos:21.swf " + dims + "id=utv" + video.docid + " name=utv" + video.docid + "><param name=flashvars value=autoplay=true&locale=en_US&referrer=http%3A%2F%2Fwww.ustream.tv%2Frecorded%2F" + video.docid + "%3Futm_campaign%3Dustre.am%26utm_source%3Dustre.am%2F%3A44gEy%26utm_medium%3Dsocial%26utm_content%3D20150324210416&autoResize=false&enablejsapi=true&sv=6&volume=1&ts=1427256261325&vid=" + video.docid + "&loc=" + video.docid + "&hasticket=false><param name=allowfullscreen value=true><param name=allowscriptaccess value=always><param name=bgcolor value=000000><param name=wmode value=transparent></object>"
+	        return "<object type=application/x-shockwave-flash data=" + location.protocol + "//static-cdn1.ustream.tv/swf/live/viewerqos:21.swf " + dims + "id=utv" + video.docid + " name=utv" + video.docid + "><param name=flashvars value=autoplay=true&locale=en_US&referrer=http%3A%2F%2Fwww.ustream.tv%2Frecorded%2F" + video.docid + "%3Futm_campaign%3Dustre.am%26utm_source%3Dustre.am%2F%3A44gEy%26utm_medium%3Dsocial%26utm_content%3D20150324210416&autoResize=false&enablejsapi=true&sv=6&volume=1&ts=1427256261325&vid=" + video.docid + "&loc=" + video.docid + "&hasticket=false><param name=allowfullscreen value=true><param name=allowscriptaccess value=always><param name=bgcolor value=000000><param name=wmode value=transparent></object>"
 	    else if (CT.video.rawVidTypes.indexOf(video.player) != -1)
-	        return "<video " + dims + " controls><source src=http://" + video.docid + " type=video/" + video.player + "></video>";
+	        return "<video " + dims + " controls><source src=" + location.protocol + "//" + video.docid + " type=video/" + video.player + "></video>";
 	    else
 	        alert("unknown video player: "+video.player);
 	},
