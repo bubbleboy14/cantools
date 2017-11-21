@@ -1,6 +1,6 @@
 __version__ = "0.10.0.4"
 
-import util
+import util, hooks
 import config as cfgmod
 config = cfgmod.config
 include_plugin = cfgmod.include_plugin
