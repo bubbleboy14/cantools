@@ -233,11 +233,12 @@ CT.parse = {
 			parts.push(~~secs + " seconds");
 		return parts.join(", ");
 	},
-	"countdown": function(secs) {
+	"countdown": function(secs, cb) {
 		var n = CT.dom.span(CT.parse._countdown(secs));
 		setInterval(function() {
 			secs -= 1;
 			CT.dom.setContent(n, CT.parse._countdown(secs));
+			!secs && cb && cb();
 		}, 1000);
 		return n;
 	},
