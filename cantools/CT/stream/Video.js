@@ -151,6 +151,7 @@ CT.stream.Video = CT.Class({
 			v.webkitRequestFullscreen();
 	},
 	reset: function() {
+		if (!this.video.parentNode) return; //  node is removed -- we're done
 		var n = Date.now();
 		if (this._lastReset) {
 			var diff = n - this._lastReset;
