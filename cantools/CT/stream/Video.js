@@ -42,8 +42,8 @@ CT.stream.Video = CT.Class({
 			that._sourceUpdate();
 			var target = v.duration - (CT.stream.opts.chunk / 1000);
 			if (v.currentTime < that._lastTime) {
-				that.log("RESET (backtracking)");
-				that.reset();
+				that.log("SKIPPED RESET (backtracking)");
+//				that.reset();
 			}
 			that._lastTime = v.currentTime;
 			if (!v.paused && v.currentTime < target)
