@@ -98,5 +98,8 @@ CT.video = {
 	},
 	"fit": function(video) {
 		return CT.video._embed(video, "90%", "90%");
+	},
+	"full": function(video) {
+		return CT.video._embed(video, "100%", "100%");
 	}
 };
