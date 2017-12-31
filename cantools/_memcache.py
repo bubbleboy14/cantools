@@ -8,6 +8,7 @@ def response():
 	key = cgi_get("key")
 	json = cgi_get("json", default=False)
 	mode = cgi_get("mode", default="normal")
+	value = cgi_get("value", required=False) # set only
 	countdown_list = getmem("_countdown_list", False)
 	meta = cgi_get("meta", default={})
 	if action == "forget":
@@ -27,7 +28,6 @@ def response():
 			send_file(data, detect=True)
 		succeed(data)
 	elif action == "set":
-		value = cgi_get("value")
 		if mode == "countdown":
 			cdl = countdown_list or set()
 			cdl.add(key);
@@ -51,6 +51,7 @@ def response():
 		"mode": mode,
 		"json": json,
 		"meta": meta,
+		"value": value,
 		"countdown_list": countdown_list
 	})
 
