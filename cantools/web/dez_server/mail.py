@@ -18,6 +18,10 @@ def _prep(*args):
 
 def send_mail(to=None, sender=None, subject=None, body=None, html=None, bcc=None):
 	if not yag:
+		log('email attempted to "%s"'%(to,))
+		log("## content start ##")
+		log(body)
+		log("## content end ##")
 		return log("failed to send email -- no MAILER specified in ct.cfg!")
 	to, subject, body, html = _prep(to, subject, body, html)
 	if yag.is_closed:
