@@ -41,16 +41,16 @@ CT.stream.Video = CT.Class({
 			that._buffers.push(buffer);
 			that._sourceUpdate();
 
-			/* disabled when Chrome changed duration to Infinity...
-			var target = v.duration - (CT.stream.opts.chunk / 1000);
-			if (v.currentTime < that._lastTime) {
-				that.log("SKIPPED RESET (backtracking)");
-//				that.reset();
+			if (v.duration != Infinity) {
+				var target = v.duration - (CT.stream.opts.chunk / 1000);
+				if (v.currentTime < that._lastTime) {
+					that.log("SKIPPED RESET (backtracking)");
+	//				that.reset();
+				}
+				that._lastTime = v.currentTime;
+				if (!v.paused && v.currentTime < target)
+					v.currentTime = target;
 			}
-			that._lastTime = v.currentTime;
-			if (!v.paused && v.currentTime < target)
-				v.currentTime = target;
-			*/
 		});
 	},
 	start: function() {
