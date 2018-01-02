@@ -9,7 +9,7 @@ CT.stream.Video = CT.Class({
 	},
 	_sourceUpdate: function() {
 		this.log("_sourceUpdate", this._buffers.length,
-			(this.sourceBuffer && this.sourceBuffer.updating), this.mediaSource.readyState);
+			(this.sourceBuffer && this.sourceBuffer.updating));//, this.mediaSource.readyState);
 		if (this.video.error) {
 			this.log("ERROR - RESET video");
 			this.reset();
@@ -40,6 +40,8 @@ CT.stream.Video = CT.Class({
 		CT.stream.util.blob_to_buffer(blob, function(buffer) {
 			that._buffers.push(buffer);
 			that._sourceUpdate();
+
+			/* disabled when Chrome changed duration to Infinity...
 			var target = v.duration - (CT.stream.opts.chunk / 1000);
 			if (v.currentTime < that._lastTime) {
 				that.log("SKIPPED RESET (backtracking)");
@@ -48,6 +50,7 @@ CT.stream.Video = CT.Class({
 			that._lastTime = v.currentTime;
 			if (!v.paused && v.currentTime < target)
 				v.currentTime = target;
+			*/
 		});
 	},
 	start: function() {
