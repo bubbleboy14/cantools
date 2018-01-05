@@ -875,10 +875,10 @@ CT.dom = {
 		CT.dom._ricounter += 1;
 		return taid;
 	},
-	"richInput": function(inputnode, taid, submitbutton, content, charlimit, blurs, noclear) {
+	"richInput": function(inputnode, taid, submitbutton, content, charlimit, blurs, noclear, taclass) {
 		taid = taid || CT.dom._get_ta_id();
 		charlimit = charlimit || 500;
-		var cbody = CT.dom.textArea(taid, content, "fullwidth");
+		var cbody = CT.dom.textArea(taid, content, taclass || "fullwidth");
 		CT.dom.blurField(cbody, blurs);
 		inputnode.appendChild(CT.dom.node(cbody));
 		var charcount = CT.dom.node("(" + charlimit
