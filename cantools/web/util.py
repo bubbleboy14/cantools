@@ -328,7 +328,7 @@ def send_image(data):
     _send(data)
     _close()
 
-FILETYPES = {"pdf": "application/pdf", "img": "image/png"}
+FILETYPES = {"pdf": "application/pdf", "img": "image/png", "ico": "image/ico"}
 
 def send_file(data, file_type=None, detect=False):
     if detect:
