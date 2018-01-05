@@ -28,6 +28,7 @@ Centered, almost-fullscreen, fade-in, image-backed modal with translucent backdr
 defaults:
 	{
 		className: "backdrop",
+		innerClass: "lightbox",
 		transition: "fade",
 		caption: "",
 		noClose: true
@@ -60,6 +61,7 @@ CT.modal._defaults = {
 	},
 	LightBox: {
 		className: "backdrop",
+		innerClass: "lightbox",
 		transition: "fade",
 		caption: "",
 		noClose: true
