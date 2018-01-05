@@ -12,6 +12,7 @@ defaults:
 		transition: "none", // none|fade|slide
 		center: true,
 		noClose: false, // turns off 'x' in corner
+		onclick: null,
 		slide: { // only applies if transition is 'slide'
 			origin: "top"
 		}
@@ -55,6 +56,7 @@ CT.modal._defaults = {
 		transition: "none",
 		center: true,
 		noClose: false, // turns off 'x' in corner
+		onclick: null,
 		slide: { // only applies if transition is 'slide'
 			origin: "top"
 		}
@@ -240,8 +242,8 @@ CT.modal.Modal = CT.Class({
 			if (side in opts.slide)
 				nodeStyle[side] = opts.slide[side];
 		});
-		this.node = CT.dom.node(CT.dom.node(null, null, opts.innerClass),
-			"div", opts.className, null, null, nodeStyle);
+		this.node = CT.dom.div(CT.dom.div(null, opts.innerClass),
+			opts.className, null, { onclick: opts.onclick }, nodeStyle);
 		if (!opts.noClose)
 			this.addClose();
 		this.node.modal = this;
@@ -258,15 +260,17 @@ CT.modal.Modal = CT.Class({
 
 CT.modal.LightBox = CT.Class({
 	init: function(opts) {
-		this.opts = CT.merge(opts, CT.modal._defaults.LightBox, CT.modal._defaults.Modal, {
+		var thiz = this;
+		this.opts = CT.merge(opts, {
+			onclick: function(e) {
+				if (e.currentTarget == e.target) thiz.hide();
+			},
 			content: CT.dom.div(CT.dom.div(this.opts.caption,
 				"biggest bold padded round translucent full-center white grayback pointer hoverglow"),
-				"backdrop-img filler", "", {
-					onclick: this.hide
-				}, {
+				"backdrop-img filler", "", null, {
 					backgroundImage: "url(" + this.opts.img + ")"
 				})
-		});
+		}, CT.modal._defaults.LightBox, CT.modal._defaults.Modal);
 	}
 }, CT.modal.Modal);
 
