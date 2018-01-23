@@ -36,7 +36,7 @@ def load(host, port, session, filters={}):
 				"action": "put",
 				"data": chunk
 			}, ctjson=True))
-			offset += LIMIT
+			offset += len(chunk)
 			if len(chunk) < LIMIT:
 				break
 			log("processed %s %s records"%(offset, model), 1)
