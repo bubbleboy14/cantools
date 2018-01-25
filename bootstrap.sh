@@ -14,6 +14,9 @@ else
     echo "you're good to go!"
 fi
 
+echo "updating repos"
+sudo apt update
+
 echo "checking for python"
 which python
 if [ $? -ne 0 ]
