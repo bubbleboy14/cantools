@@ -226,7 +226,7 @@ This portable modern web framework is the application-neutral backbone of Civil 
     - python setup.py install
     - python setup.py develop
 
-If you're running Ubuntu (or probably any Debian derivative), you may consider running:
+If you're running Ubuntu (or probably most Debian derivatives), you may consider running (as root or sudoer):
 
     ./bootstrap.sh
 
@@ -266,13 +266,14 @@ And that's it. Open http://localhost:8080/ in your browser and call it a day.
 
 ## Deployment Steps
 You just found out that you need to deploy a cantools project to a fresh, naked
-Debian system that doesn't even have Python or git. Oh no, what do you do? This:
+Ubuntu system that doesn't even have Python or git. Oh no, what do you do? This
+(as root or sudoer for first and last commands):
 
 	~$ wget -O - https://raw.githubusercontent.com/bubbleboy14/cantools/master/bootstrap.sh | bash
 	~$ git clone https://github.com/your_organization/your_project.git
 	~$ cd your_project
 	~/your_project$ ctinit -r
-	~/your_project$ sudo ctstart -p80
+	~/your_project$ ctstart -p80
 
 Now just make sure port 80 is open, and you're good to go. Also, you should probably
 run ctstart in a screen or something (so that you can eventually log out) - that's it!"""
