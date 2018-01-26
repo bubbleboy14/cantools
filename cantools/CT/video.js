@@ -2,7 +2,7 @@
 This module supports video playback.
 
 ### video players
-We support Google Video, YouTube, Vimeo, and uStream.
+We support Google Video, YouTube, Vimeo, Facebook, and uStream.
 
 ### raw formats
 We support mp4, ogg, and webm.
