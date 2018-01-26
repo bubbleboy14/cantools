@@ -17,7 +17,7 @@ CT.video = {
 	// video link detection and parsing
 	"rawVidTypes": ["mp4", "ogg", "webm"],
 	"player2url": {
-		"facebook": "www.facebook.com/facebook/videos/",
+		"facebook": "www.facebook.com/",
 		"google": "video.google.com?docid=",
 		"youtube": "www.youtube.com/watch?v=",
 		"vimeo": "vimeo.com/",
@@ -25,7 +25,7 @@ CT.video = {
 		"mp4": "", "ogg": "", "webm": ""
 	},
 	"embed_url": {
-		"facebook": "https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Ffacebook%2Fvideos%2F",
+		"facebook": "https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2F",
 		"youtube": location.protocol + "//www.youtube.com/embed/",
 		"vimeo": "//player.vimeo.com/video/"
 	},
@@ -49,7 +49,7 @@ CT.video = {
 		else if (url.indexOf("vimeo.com") != -1)
 			return url.slice(url.lastIndexOf('/') + 1);
 		else if (url.indexOf("facebook.com") != -1)
-			return url.split("/videos/")[1].slice(0, -1);
+			return encodeURIComponent(url.split("facebook.com/")[1]);
 		else if (url.indexOf("ustream.tv/recorded/") != -1)
 			return url.split("recorded/")[1].split("?")[0];
 		var spliturl = url.split('.'),
@@ -86,9 +86,14 @@ CT.video = {
 		var dims = "width=" + w;
 		if (h)
 			dims += " height=" + h;
-		if (video.player == "facebook")
-			return '<iframe src="' + CT.video.embed_url[video.player] + video.docid + '%2F&show_text=false&' + dims.replace(" ", "&") + '&appId" ' +  dims + ' style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true" allowFullScreen="true"></iframe>';
-		else if (video.player == "google")
+		if (video.player == "facebook") {
+			if (typeof w == "number") {
+				h = w * 315 / 560; // w 560 h 315
+				dims = "width=" + w + " height=" + h;
+			} else
+				w = 254; // maybe?
+			return '<iframe src="' + CT.video.embed_url[video.player] + video.docid + '&show_text=0&width=' + w + '" ' +  dims + ' style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true" allowFullScreen="true"></iframe>';
+		} else if (video.player == "google")
 			return "<embed " + dims + " id=VideoPlayback src=" + location.protocol + "//video.google.com/googleplayer.swf?docid=" + video.docid + "&hl=en&fs=true allowFullScreen=true allowScriptAccess=always type=application/x-shockwave-flash> </embed>";
 		else if (video.player == "youtube" || video.player == "vimeo")
 			return "<iframe src=\"" + CT.video.embed_url[video.player] + video.docid + "?html5=1\" " + dims + " frameborder=0 webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>";
