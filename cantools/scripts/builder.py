@@ -174,7 +174,7 @@ def build(admin_ct_path, dirname, fnames):
             if js:
                 jspaths, jsblock = compilejs(js, admin_ct_path)
                 log('writing static: %s -> %s'%(frompath, topath_stat), important=True)
-                write(remerge(txt, '\n'.join([p.endswith("js") and '<script src="/%s"></script>'%(p,) or '<script>%s</script>'%(p,) for p in jspaths])), topath_stat)
+                write(remerge(txt, '\n'.join([p.split("#")[0].endswith("js") and '<script src="/%s"></script>'%(p,) or '<script>%s</script>'%(p,) for p in jspaths])), topath_stat)
                 log('writing production: %s -> %s'%(frompath, topath_prod))
                 jsb = jsblock.replace('"_encode": false,', '"_encode": true,').replace("CT.log._silent = false;", "CT.log._silent = true;")
                 if config.customscrambler:
