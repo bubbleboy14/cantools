@@ -110,7 +110,7 @@ def require(line, jspaths, block, inits, admin_ct_path=None):
     return block
 
 def processjs(path, jspaths=[], inits=set(), admin_ct_path=None):
-    p = path # potentially modded to locate file for prod (path remains the same for static)
+    p = path.split("#")[0] # potentially modded to locate file for prod (path remains the same for static)
     if admin_ct_path: # admin pages
         if path.startswith(config.js.path): # such as /js/CT/ct.js
             p = admin_ct_path + path[len(config.js.path):]
