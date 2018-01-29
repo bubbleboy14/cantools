@@ -148,6 +148,11 @@ CT.db = {
 			cb(d);
 		}, null, null, null, null, sync);
 	},
+	index: function(index, modelName, cb, nothingcb) {
+		CT.db.get(modelName, function(dz) {
+			dz[0] ? cb(dz[0]) : nothingcb();
+		}, 1, 0, null, { index: index });
+	},
 	multi: function(keys, cb) {
 		var needed = keys.filter(function(k) {
 			return !CT.data.get(k);
