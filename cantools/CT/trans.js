@@ -171,11 +171,12 @@ CT.trans = {
             	});
 	            opts.cb();
 	        }
-            if (opts.node)
+            if (opts.node) {
             	CT.trans._.enames.forEach(function(ename) {
 		            opts.node.addEventListener(ename, wrapper, false);
 	        	});
-            else // only use timeout as fallback
+	        	opts.node.finish = wrapper;
+            } else // only use timeout as fallback
 		        transTimeout = setTimeout(wrapper, opts.duration);
 	    }
 	    if (opts.node && opts.property && opts.property != "*") {
@@ -245,6 +246,10 @@ CT.trans = {
 			node._prop = node._vertical ? "y" : "x",
 			node._dim = node._vertical ? "clientHeight" : "clientWidth";
 			node._bound = node.parentNode[node._dim] - node[node._dim];
+			if (opts[node._prop] < node._bound) {
+				opts[node._prop] = 0;
+				node.finish();
+			}
 			cb && setTimeout(cb);
 		}, controllercb = function() {
 			opts[node._prop] = opts[node._prop] ? 0 : node._bound;
