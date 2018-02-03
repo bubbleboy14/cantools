@@ -38,8 +38,7 @@ def response():
 		put_multi(puts)
 	elif action == "get":
 		sig = cgi_dump()
-		# gae web cache disabled for now ... seems messed up
-		res = config.web.server == "dez" and getmem(sig, False) or None
+		res = config.memcache.db and getmem(sig, False) or None
 		if not res:
 			mname = cgi_get("modelName", required=False)
 			keys = cgi_get("keys", required=False)
