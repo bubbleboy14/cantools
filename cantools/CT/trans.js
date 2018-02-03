@@ -248,7 +248,7 @@ CT.trans = {
 			node._bound = node.parentNode[node._dim] - node[node._dim];
 			if (opts[node._prop] < node._bound) {
 				opts[node._prop] = 0;
-				node.finish();
+				node.finish && node.finish();
 			}
 			cb && setTimeout(cb);
 		}, controllercb = function() {
