@@ -143,6 +143,15 @@ CT.parse = {
 	},
 
 	// strippers, formatters, sanitization
+	"extractImage": function(s) {
+		var i, token, tokens = s.replace("<", " <").split(" ");
+		for (i = 0; i < tokens.length; i++) {
+			token = tokens[i];
+			if (token.startsWith("http")
+				&& CT.parse.imgTypes.indexOf(token.slice(-4)) != -1)
+					return token;
+		}
+	},
 	"stripLast": function(w) {
 	    var lcs = "",
 	        lc = w.charAt(w.length - 1);
