@@ -567,5 +567,7 @@ if (!Object.values)
 	CT.require("CT.lib.shims.ObjectValues", true);
 if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia)
 	CT.require("CT.lib.shims.getUserMedia", true);
+if (typeof MediaStream !== 'undefined' && !('stop' in MediaStream.prototype))
+	CT.require("CT.lib.shims.MediaStreamStop", true);
 if (!window.addEventListener)
 	window.addEventListener = window.attachEvent;
