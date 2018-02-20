@@ -191,12 +191,14 @@ CT.parse = {
 	    var pn = CT.parse.formatPhone(s);
 	    return "<a href='tel:+1" + pn + "'>" + pn + "</a>";
 	},
-	"shortened": function(txt, len) {
-	    len = len || 500;
-	    if (txt.length < len) {
-	        return txt;
-	    }
-	    return txt.slice(0, len) + ' ...';
+	"shortened": function(txt, len, wlen, nolink) {
+		if (wlen) {
+			if (nolink)
+				txt = txt.split(" http")[0];
+			txt = txt.split(" ").slice(0, wlen).join(" ");
+		}
+		len = len || 500;
+		return (txt.length < len) ? txt : txt.slice(0, len) + ' ...';
 	},
 	"sanitize": function(b) {
 	    var sstart = "<scr" + "ipt";
