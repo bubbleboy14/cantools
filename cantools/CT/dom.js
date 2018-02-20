@@ -132,6 +132,13 @@ CT.dom = {
 				d.style[rule] = style[rule];
 		return d;
 	},
+	"table": function(rows, classname, id, attrs, style) {
+		return CT.dom.node(rows.map(function(row) {
+			return CT.dom.node(row.map(function(cell) {
+				return CT.dom.node(cell, "td");
+			}), "tr");
+		}), "table", classname, id, attrs, style);
+	},
 	"div": function(content, classname, id, attrs, style) {
 		return CT.dom.node(content, "div", classname, id, attrs, style);
 	},
