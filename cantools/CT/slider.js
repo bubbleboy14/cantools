@@ -474,7 +474,7 @@ CT.slider.Frame = CT.Class({
 		CT.dom.addContent(this.node, CT.layout.profile(opts));
 	},
 	track: function() { // add img!
-		var audio = CT.dom.audio(this.opts.src, true, false, false,
+		var oz = this.opts, audio = CT.dom.audio(this.opts.src, true, false, false,
 			null, this.slider.autoSlideCallback), pause = function() {
 				audio.playing = false;
 				audio.pause();
@@ -488,6 +488,8 @@ CT.slider.Frame = CT.Class({
 		this.on.show = function() {
 			resume();
 			CT.key.on("SPACE", pauseResume);
+			if (oz.deepLink)
+				document.location.hash = oz.album + "|" + oz.song;
 		};
 		CT.dom.addContent(this.node, CT.dom.div([
 			CT.dom.div(this.opts.song, "gigantic"),
