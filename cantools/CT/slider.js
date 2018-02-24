@@ -421,6 +421,7 @@ CT.slider.Frame = CT.Class({
 			img: this.opts.img,
 			pan: this.slider.opts.pan,
 			arrow: this.slider.opts.arrow,
+			startFrame: this.opts.startFrame,
 			defaultImg: this.slider.opts.defaultImg,
 			translucentTeaser: this.slider.opts.translucentTeaser,
 			orientation: CT.slider.other_orientation[this.slider.opts.orientation],
