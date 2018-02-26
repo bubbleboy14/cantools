@@ -6,7 +6,7 @@ from media import transcode, segment, hlsify, crop
 
 def init_gae():
     try:
-        import google
+        from google import appengine
     except: # running outside of dev_appserver
         import os, sys
         gae_p = None
@@ -25,6 +25,8 @@ def init_gae():
             if not gae_p:
                 error("can't find google_appengine in path! please add and retry.")
         sys.path.append(gae_p)
+        if 'google' in sys.modules:
+            del sys.modules['google']
         import dev_appserver
         dev_appserver.fix_sys_path()
         sys.path.insert(0, ".")
