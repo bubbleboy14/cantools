@@ -93,8 +93,10 @@ class ModelBase(sa_dbase):
         if commit:
             session.commit()
 
-    def collection(self, entity_model, property_name, fetch=True, keys_only=False, data=False):
-        q = entity_model.query(getattr(entity_model, property_name) == self.key)
+    def collection(self, entity_model, property_name=None, fetch=True, keys_only=False, data=False):
+        if isinstance(entity_model, basestring):
+            entity_model = get_model(entity_model)
+        q = entity_model.query(getattr(entity_model, property_name or self.polytype) == self.key)
         if not fetch:
             return q
         if not data:
