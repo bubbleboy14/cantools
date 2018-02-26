@@ -105,6 +105,7 @@ CT.data = {
 	},
 	"uniquify": function(items, exceptions) {
 	    exceptions = exceptions || [];
+	    items = CT.data.copyList(items); // preserve original list!!
 	    items.sort();
 	    var newitems = [];
 	    var latestitem = "";
