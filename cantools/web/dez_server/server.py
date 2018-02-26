@@ -48,6 +48,9 @@ def _ctjson(result):
 		return json.loads(result[1:])
 
 def fetch(host, path="/", port=80, asjson=False, cb=None, timeout=1, async=False, protocol="http", ctjson=False, qsp=None):
+	if ":" in host:
+		host, port = host.split(":")
+		port = int(port)
 	if qsp:
 		path += "?"
 		for k, v in qsp.items():
