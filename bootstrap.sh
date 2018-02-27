@@ -1,5 +1,5 @@
 echo "determining platform"
-if [ $OSTYPE == "darwin16" ]
+if [ ${OSTYPE:0:6} = "darwin" ]
 then
     echo "you've got a mac!"
     python -c 'import magic' || {
