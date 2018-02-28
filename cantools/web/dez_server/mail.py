@@ -16,10 +16,13 @@ def _refresh():
 def _prep(*args):
 	return [(a and type(a) == unicode and a.encode("utf-8") or a) for a in args]
 
-queue = []
+status = {
+	queue: [],
+	churning: False
+}
 def _sender():
-	while len(queue):
-		to, subject, body, bcc = queue.pop(0)
+	while len(status["queue"]):
+		to, subject, body, bcc = status["queue"].pop(0)
 		if yag.is_closed:
 			_refresh()
 		log('emailing "%s" to %s'%(subject, to))
@@ -27,14 +30,14 @@ def _sender():
 		if yag.unsent:
 			_refresh()
 	log("closing mail thread")
-	yag.churning = False
+	status["churning"] = False
 
 def _send(to, subject, body, bcc):
 	log('enqueueing email "%s" to %s'%(subject, to))
-	queue.append([to, subject, body, bcc])
-	if not yag.churning:
+	status["queue"].append([to, subject, body, bcc])
+	if not status["churning"]:
 		log('spawning mail thread')
-		yag.churning = True
+		status["churning"] = True
 		rel.thread(_sender)
 
 def send_mail(to=None, sender=None, subject=None, body=None, html=None, bcc=None):
