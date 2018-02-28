@@ -17,8 +17,8 @@ def _prep(*args):
 	return [(a and type(a) == unicode and a.encode("utf-8") or a) for a in args]
 
 status = {
-	queue: [],
-	churning: False
+	"queue": [],
+	"churning": False
 }
 def _sender():
 	while len(status["queue"]):
