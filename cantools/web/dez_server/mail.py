@@ -1,5 +1,5 @@
 from ..util import config, log
-import yagmail
+import yagmail, rel
 yag = None
 if config.mailer:
 	mailer = config.mailer
@@ -16,6 +16,28 @@ def _refresh():
 def _prep(*args):
 	return [(a and type(a) == unicode and a.encode("utf-8") or a) for a in args]
 
+queue = []
+churning = False
+def _sender():
+	while len(queue):
+		to, subject, body, bcc = queue.pop(0)
+		if yag.is_closed:
+			_refresh()
+		log('emailing "%s" to %s'%(subject, to))
+		yag.send(to, subject, body, bcc=bcc)
+		if yag.unsent:
+			_refresh()
+	log("closing mail thread")
+	churning = False
+
+def _send(to, subject, body, bcc):
+	log('enqueueing email "%s" to %s'%(subject, to))
+	queue.append([to, subject, body, bcc])
+	if not churning:
+		log('spawning mail thread')
+		churning = True
+		rel.thread(_sender)
+
 def send_mail(to=None, sender=None, subject=None, body=None, html=None, bcc=None):
 	if not yag:
 		log('email attempted to "%s"'%(to,))
@@ -24,9 +46,4 @@ def send_mail(to=None, sender=None, subject=None, body=None, html=None, bcc=None
 		log("## content end ##")
 		return log("failed to send email -- no MAILER specified in ct.cfg!")
 	to, subject, body, html = _prep(to, subject, body, html)
-	if yag.is_closed:
-		_refresh()
-	log('emailing "%s" to %s'%(subject, to)) # ignore sender -- same every time
-	yag.send(to, subject, html or body, bcc=bcc)
-	if yag.unsent:
-		_refresh()
+	_send(to, subject, html or body, bcc) # ignore sender -- same every time
