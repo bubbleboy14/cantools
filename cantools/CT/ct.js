@@ -109,6 +109,7 @@ var CT = {
 		// defaults
 		"_path": "",
 		"_mode": "ct",
+		"_retry": 0,
 		"_cache": false,
 		"_encode": false,
 		"_spinner": false,
@@ -131,6 +132,9 @@ var CT = {
 		"_decoder": function (d) { return atob(CT.net._scramble(d)); },
 		"_silentFail": true,
 		// functions
+		"setRetry": function(val) {
+			CT.net._retry = val;
+		},
 		"setMode": function(mode) {
 			if (mode != "ct" && mode != "basic" && mode != "passthrough") {
 				CT.log("CT.net.setMode() - illegal mode specified: " + mode);
@@ -285,7 +289,7 @@ var CT = {
 			opts.headers["Content-Type"] = "multipart/form-data";
 			return CT.net.post(opts);
 		},
-		"post": function(path, params, errMsg, cb, eb, headers, cbarg, ebarg, sync, passthrough, noct, spinner, basic, responseType) {
+		"post": function(path, params, errMsg, cb, eb, headers, cbarg, ebarg, sync, passthrough, noct, spinner, basic, responseType, retry) {
 			if (arguments.length == 1 && typeof arguments[0] != "string") {
 				var obj = arguments[0];
 				path = obj.path;
@@ -302,6 +306,7 @@ var CT = {
 				spinner = obj.spinner;
 				basic = obj.basic;
 				responseType = obj.responseType;
+				retry = obj.retry;
 			}
 			var signature;
 			if (CT.net._cache) {
@@ -309,6 +314,18 @@ var CT = {
 				var cachedVersion = CT.storage.get(signature);
 				if (cachedVersion)
 					return cb(cachedVersion, cbarg);
+			}
+			retry = retry || CT.net._retry;
+			if (retry && retry == CT.net._retry) {
+				var origEb = eb;
+				eb = function(msg) {
+					retry -= 1;
+					if (retry)
+						setTimeout(CT.net.post, (CT.net._retry - retry) * 1000, path, params, errMsg, cb, eb,
+							headers, cbarg, ebarg, sync, passthrough, noct, spinner, basic, responseType, retry);
+					else
+						origEb && origEb(msg);
+				};
 			}
 			return CT.net.xhr(path, "POST", params, !sync, CT.net._xhrcb(path, cb,
 				eb, cbarg, ebarg, errMsg, signature, null, noct, spinner, basic),
