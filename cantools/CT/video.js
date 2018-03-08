@@ -2,7 +2,7 @@
 This module supports video playback.
 
 ### video players
-We support Google Video, YouTube, Vimeo, Facebook, and uStream.
+We support DTube, Vimeo, YouTube, Google Video, Facebook, and uStream.
 
 ### raw formats
 We support mp4, ogg, and webm.
@@ -27,7 +27,8 @@ CT.video = {
 	"embed_url": {
 		"facebook": "https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2F",
 		"youtube": location.protocol + "//www.youtube.com/embed/",
-		"vimeo": "//player.vimeo.com/video/"
+		"vimeo": "//player.vimeo.com/video/",
+		"dtube": "https://emb.d.tube/#!/"
 	},
 	"urlFromData": function(player, docid) {
 		return player ? (location.protocol + "//" + CT.video.player2url[player] + docid) : "";
@@ -42,7 +43,9 @@ CT.video = {
 		return url.slice(s, e);
 	},
 	"docidFromUrl": function(url) {
-		if (url.indexOf("video.google.com") != -1)
+		if (url.indexOf("d.tube") != -1)
+			return url.split("/v/")[1];
+		else if (url.indexOf("video.google.com") != -1)
 			return CT.video.getQSParam(url, "docid");
 		else if (url.indexOf("youtube.com") != -1)
 			return CT.video.getQSParam(url, "v");
@@ -59,6 +62,8 @@ CT.video = {
 		return "";
 	},
 	"playerFromUrl": function(url) {
+		if (url.indexOf("d.tube") != -1)
+			return "dtube";
 		if (url.indexOf("facebook.com") != -1)
 			return "facebook";
 		if (url.indexOf("video.google.com") != -1)
@@ -86,14 +91,18 @@ CT.video = {
 		var dims = "width=" + w;
 		if (h)
 			dims += " height=" + h;
-		if (video.player == "facebook") {
+		if (["facebook", "dtube"].indexOf(video.player) != -1) {
 			if (typeof w == "number") {
 				h = w * 315 / 560; // w 560 h 315
 				dims = "width=" + w + " height=" + h;
 			} else
 				w = 254; // maybe?
+		}
+		if (video.player == "dtube")
+			return '<iframe ' + dims + ' src="' + CT.video.embed_url[video.player] + video.docid + '" frameborder="0" allowfullscreen></iframe>';
+		else if (video.player == "facebook")
 			return '<iframe src="' + CT.video.embed_url[video.player] + video.docid + '&show_text=0&width=' + w + '" ' +  dims + ' style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true" allowFullScreen="true"></iframe>';
-		} else if (video.player == "google")
+		else if (video.player == "google")
 			return "<embed " + dims + " id=VideoPlayback src=" + location.protocol + "//video.google.com/googleplayer.swf?docid=" + video.docid + "&hl=en&fs=true allowFullScreen=true allowScriptAccess=always type=application/x-shockwave-flash> </embed>";
 		else if (video.player == "youtube" || video.player == "vimeo")
 			return "<iframe src=\"" + CT.video.embed_url[video.player] + video.docid + "?html5=1\" " + dims + " frameborder=0 webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>";
