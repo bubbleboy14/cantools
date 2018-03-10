@@ -407,6 +407,7 @@ var CT = {
 			if (!curmod)
 				eval(CT.net.get(CT.net.fullPath(modname.replace(/\./g, "/") + ".js")));
 		}
+		return eval(modname);
 	},
 	"initCore": function() {
 		core.config.css.forEach(function(css) {
