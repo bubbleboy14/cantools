@@ -153,7 +153,7 @@ class Builder(object):
 			config.init.yaml.core)%(self.pname,) or config.init.yaml.core, "app.yaml")
 		cfg = config.init.ctcfg%(self.web_backend,)
 		if self.plugins:
-			cfg = os.linesep.join([cfg, "PLUGIN_MODULES = %s"%("|".join(map(lambda r : r.strip("%s/"%(config.plugin.base,)), config.plugin.repos)),)])
+			cfg = os.linesep.join([cfg, "PLUGIN_MODULES = %s"%("|".join(map(lambda r : r.replace("%s/"%(config.plugin.base,), ""), config.plugin.repos)),)])
 		cp(cfg, "ct.cfg")
 		log("demo index page", 1)
 		cp(config.init.html%(self.pname,), os.path.join("html", "index.html"))
