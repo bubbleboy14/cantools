@@ -350,24 +350,23 @@ def send_xml(data):
     send_text(data, "xml")
 
 # misc
-def verify_recaptcha(cchallenge, cresponse, pkey):
+def verify_recaptcha(cresponse, pkey):
     import os, urllib, urllib2
     verification_result = urllib2.urlopen(urllib2.Request(
-        url = "http://api-verify.recaptcha.net/verify",
+        url = "https://www.google.com/recaptcha/api/siteverify",
         data = urllib.urlencode({
-            'privatekey': pkey,
+            'secret': pkey,
             'remoteip': os.environ.get('REMOTE_ADDR', os.environ.get('REMOTE_HOST')),
-            'challenge': cchallenge,
             'response': cresponse
             }),
         headers = {
             "Content-type": "application/x-www-form-urlencoded"
             }
         ))
-    vdata = verification_result.read().splitlines()
+    vdata = verification_result.read()
     verification_result.close()
-    if vdata[0] != "true":
-        fail(vdata[1])
+    if "true" not in vdata:
+        fail(vdata)
 
 def strip_punctuation(s):
     return "".join([c for c in s if c.isalnum() or c.isspace()])

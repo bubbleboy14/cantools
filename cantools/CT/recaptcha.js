@@ -6,33 +6,37 @@ TODO: this functionality requires backend
 integration - include complementary python module!
 */
 CT.recaptcha = {
-	"build": function(key, rnode, eb, iecb, response_field_id) {
-		CT.require("CT.lib.recaptcha_ajax", true);
+	build: function(key, rnode, eb, iecb, response_field_id) {
 	    try {
-	        Recaptcha.create(key, rnode);
-	        iecb && setTimeout(function() {
-	        	var n = document.getElementById(response_field_id
-            		|| "recaptcha_response_field");
-	            n && CT.dom.inputEnterCallback(n, iecb);
-	        }, 1000);
+	    	var cbname = "_" + Math.round(Math.random() * 100000);
+			window[cbname] = function() {
+		        grecaptcha.render(rnode, { sitekey: key });
+		        if (iecb) {
+		        	var n = document.getElementById(response_field_id
+		        		|| "recaptcha_response_field");
+		            n && CT.dom.inputEnterCallback(n, iecb);
+		        }
+			},
+			CT.scriptImport("https://www.google.com/recaptcha/api.js?onload=" + cbname + "&render=explicit");
 	    } catch(e) {
 	        eb && eb(e) || alert(e);
 	    }
 	},
-	"submit": function(respOnSuccess, respOnAttempt, respPath, respArgs) {
-	    var resp = Recaptcha.get_response();
+	submit: function(respOnSuccess, respOnAttempt, respPath, respArgs) {
+	    var resp = grecaptcha.getResponse();
 	    if (resp.length < 3)
 	        alert("don't forget to fill in the CAPTCHA! you are human, right?");
 	    else {
 	        respArgs = respArgs || {};
 	        respArgs.cresponse = resp;
-	        respArgs.cchallenge = Recaptcha.get_challenge();
 	        CT.net.post(respPath || "/recaptcha", respArgs, null,
 	            respOnSuccess, function(e) {
-	                if (e.trim() == "incorrect-captcha-sol")
+	                if (e.indexOf("false") != -1) {
+	                	CT.log(e);
 	                    e = "That's not quite right! Please try again.";
+	                }
 	                alert(e);
-	                Recaptcha.reload();
+	                grecaptcha.reset();
 	            });
 	        respOnAttempt && respOnAttempt();
 	    }
