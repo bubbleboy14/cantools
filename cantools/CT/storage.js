@@ -24,7 +24,7 @@ CT.storage = {
 				"compress": true
 			});
 			if (CT.storage.opts.compress)
-				CT.require("CT.lib.lz-string", true);
+				CT.require("CT.lib.lz_string", true);
 		}
 		return CT.storage.opts;
 	},
