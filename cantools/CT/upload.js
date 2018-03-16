@@ -54,7 +54,7 @@ CT.upload = {
 	        if (didSucceed == '0')
 	            (failure || alert)(data.slice(1));
 	        else if (iskey)
-	            success(data.slice(2, -2));
+	            success(data.slice(2, -1));
 	        else
 	            success(data.slice(1));
 	    }});
