@@ -123,5 +123,11 @@ CT.video = {
 	},
 	"full": function(video) {
 		return CT.video._embed(video, "100%", "100%");
+	},
+	"thumbnail": function(video) {
+		var thumb = CT.dom.img(video.thumbnail, "w1", function() {
+			thumb.parentNode.innerHTML = CT.video.embed(video);
+		});
+		return CT.dom.div(thumb);
 	}
 };
