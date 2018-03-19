@@ -155,7 +155,7 @@ CT.parse = {
 	"stripLast": function(w) {
 	    var lcs = "",
 	        lc = w.charAt(w.length - 1);
-	    while (['.', ',', ':', ';', ')', ']'].indexOf(lc) != -1) {
+	    while (['.', ',', ':', ';', ')', ']', '!'].indexOf(lc) != -1) {
 	        w = w.slice(0, w.length - 1);
 	        lcs = lc + lcs;
 	        lc = w.charAt(w.length - 1);
