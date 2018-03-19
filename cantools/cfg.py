@@ -45,6 +45,7 @@ cfg = {
 		"protocol": "http",
 		"xorigin": False,
 		"log": None,
+		"errlog": None,
 		"rollz": {}
 	},
 	"ssl": {

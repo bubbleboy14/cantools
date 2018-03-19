@@ -1,4 +1,4 @@
-import os, rel, ssl, json, resource, requests
+import os, rel, ssl, sys, json, resource, requests
 from dez.http import fetch as dfetch
 from ..util import *
 from ...util import set_log, set_error
@@ -21,6 +21,13 @@ def log_kernel():
 	log(json.dumps(rel.report()), "kernel")
 	return True
 
+def quit():
+	from cantools.util import log
+	if config.web.errlog:
+		log("closing error log")
+		sys.stderr.close()
+	log("quitting - goodbye!", important=True)
+
 def run_dez_webserver():
 	if not config.ssl.verify and hasattr(ssl, "_https_verify_certificates"):
 		ssl._https_verify_certificates(False)
@@ -33,7 +40,9 @@ def run_dez_webserver():
 	set_error(fail)
 	if config.fdup:
 		fdup()
-	c.start()
+	if config.web.errlog:
+		sys.stderr = open(os.path.join("logs", config.web.errlog), "a")
+	c.start(quit)
 
 def dweb():
 	return getController().web
