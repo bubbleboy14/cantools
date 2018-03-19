@@ -24,7 +24,7 @@ def log_kernel():
 def quit():
 	from cantools.util import log
 	if config.web.errlog:
-		log("closing error log")
+		log("closing error log", important=True)
 		sys.stderr.close()
 	log("quitting - goodbye!", important=True)
 
