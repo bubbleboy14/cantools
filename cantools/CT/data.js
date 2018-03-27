@@ -120,7 +120,13 @@ CT.data = {
 
 	// random stuff
 	"numstr": function(len) {
-		return Math.floor(Math.random() * Math.pow(10, len)).toString();
+		var s = "", chunk;
+		while (len) {
+			chunk = Math.min(len, 16);
+			s += "" + CT.data.random(Math.pow(10, chunk));
+			len -= chunk;
+		}
+		return s;
 	},
 	"random": function(max) {
 		return Math.floor(Math.random() * max);
