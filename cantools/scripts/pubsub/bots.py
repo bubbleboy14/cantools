@@ -99,6 +99,7 @@ class Monitor(Bot):
 		dmon = fetch(config.admin.host, "/_report",
 			config.admin.port, True, protocol=config.admin.protocol)
 		data = {
+			"gc": dmon["gc"],
 			"cpu": self.current["cpu"],
 			"read": dioc.read_time,
 			"write": dioc.write_time,
