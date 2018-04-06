@@ -169,7 +169,9 @@ CT.admin.monitor.Graph = CT.Class({
 				continue; // handle below
 			if (!(key in this.data))
 				this.data[key] = [];
-			if (["read", "write"].indexOf(key) != -1)
+			if (key == "gc")
+				d /= 1000;
+			else if (["read", "write"].indexOf(key) != -1)
 				d /= 10000;
 			else if (["sent", "recv"].indexOf(key) != -1)
 				d /= 100000000;
@@ -182,7 +184,9 @@ CT.admin.monitor.Graph = CT.Class({
 			var hovers = this.hovers = {};
 			var labels = Object.keys(this.data).map(function(k) {
 				var hover = hovers[k] = CT.dom.div();
-				if (["read", "write"].indexOf(k) != -1)
+				if (k == "gc")
+					k += " (X 1,000)";
+				else if (["read", "write"].indexOf(k) != -1)
 					k += " (X 10,000)";
 				else if (["sent", "recv"].indexOf(k) != -1)
 					k += " (X 100,000,000)";
