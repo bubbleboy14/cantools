@@ -1,4 +1,4 @@
-import sys, json
+import sys, json, gc
 from dez.memcache import get_memcache
 from dez.http.application import HTTPApplication
 from routes import static, cb
@@ -45,7 +45,8 @@ class Admin(CTWebBase):
     def report(self, req):
         report = json.dumps({
             "web": self.controller.web.daemon.counter.report(),
-            "admin": self.daemon.counter.report()
+            "admin": self.daemon.counter.report(),
+            "gc": len(gc.get_objects())
         })
         req.write("HTTP/1.0 200 OK\r\n\r\n%s"%(report,))
         req.close()
