@@ -105,6 +105,7 @@ class Monitor(Bot):
 			"write": dioc.write_time,
 			"sent": nioc.bytes_sent,
 			"recv": nioc.bytes_recv,
+			"process_memory": dmon["mem"],
 			"virtual_memory": psutil.virtual_memory().percent,
 			"swap_memory": psutil.swap_memory().percent,
 			"connections": len(psutil.net_connections()),
