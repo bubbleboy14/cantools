@@ -1,4 +1,4 @@
-import sys, json, gc
+import sys, json, gc, os, psutil
 from dez.memcache import get_memcache
 from dez.http.application import HTTPApplication
 from routes import static, cb
@@ -46,7 +46,8 @@ class Admin(CTWebBase):
         report = json.dumps({
             "web": self.controller.web.daemon.counter.report(),
             "admin": self.daemon.counter.report(),
-            "gc": len(gc.get_objects())
+            "gc": len(gc.get_objects()),
+            "mem": psutil.Process(os.getpid()).memory_percent()
         })
         req.write("HTTP/1.0 200 OK\r\n\r\n%s"%(report,))
         req.close()
