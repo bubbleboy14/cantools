@@ -196,11 +196,13 @@ def trysavedresponse(key=None):
     response and _write(response, exit=True)
 
 def dez_wrap(resp, failure):
+    from cantools.db import session
     from rel.errors import AbortBranch
     def f():
         try:
             resp()
         except AbortBranch, e:
+            session.generator.remove()
             raise AbortBranch() # handled in rel
         except SystemExit:
             pass
