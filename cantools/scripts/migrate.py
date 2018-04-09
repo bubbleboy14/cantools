@@ -22,14 +22,14 @@ from cantools.util import error, log
 
 LIMIT = 500
 
-def load(host, port, session, filters={}):
+def load(host, port, session, filters={}, protocol="http"):
 	pw = getpass.getpass("admin password? ")
-	log("loading database into %s:%s"%(host, port), important=True)
+	log("loading database into %s://%s:%s"%(host, port), important=True)
 	for model in db.get_schema():
-		load_model(model, host, port, session, filters=filters, pw=pw)
+		load_model(model, host, port, session, filters=filters, protocol=protocol, pw=pw)
 	log("finished loading data from sqlite dump file")
 
-def load_model(model, host, port, session, filters={}, pw=None):
+def load_model(model, host, port, session, filters={}, protocol="http", pw=None):
 	log("retrieving %s entities"%(model,), important=True)
 	mod = db.get_model(model)
 	offset = 0
@@ -39,7 +39,7 @@ def load_model(model, host, port, session, filters={}, pw=None):
 			"pw": pw,
 			"action": "put",
 			"data": chunk
-		}, ctjson=True))
+		}, protocol=protocol, ctjson=True))
 		offset += len(chunk)
 		if len(chunk) < LIMIT:
 			break
