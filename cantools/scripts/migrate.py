@@ -22,8 +22,8 @@ from cantools.util import error, log
 
 LIMIT = 500
 
-def load(host, port, session, filters={}):
-	pw = getpass.getpass("admin password? ")
+def load(host, port, session, filters={}, pw=None):
+	pw = pw or getpass.getpass("admin password? ")
 	log("loading database into %s:%s"%(host, port), important=True)
 	for model in db.get_schema():
 		log("retrieving %s entities"%(model,), important=True)
