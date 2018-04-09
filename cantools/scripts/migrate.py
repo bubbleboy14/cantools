@@ -22,25 +22,28 @@ from cantools.util import error, log
 
 LIMIT = 500
 
-def load(host, port, session, filters={}, pw=None):
-	pw = pw or getpass.getpass("admin password? ")
+def load(host, port, session, filters={}):
+	pw = getpass.getpass("admin password? ")
 	log("loading database into %s:%s"%(host, port), important=True)
 	for model in db.get_schema():
-		log("retrieving %s entities"%(model,), important=True)
-		mod = db.get_model(model)
-		offset = 0
-		while 1:
-			chunk = db.get_page(model, LIMIT, offset, filters=filters, session=session)
-			log(post(host, "/_db", port, {
-				"pw": pw,
-				"action": "put",
-				"data": chunk
-			}, ctjson=True))
-			offset += len(chunk)
-			if len(chunk) < LIMIT:
-				break
-			log("processed %s %s records"%(offset, model), 1)
+		load_model(model, host, port, session, filters=filters, pw=pw)
 	log("finished loading data from sqlite dump file")
+
+def load_model(model, host, port, session, filters={}, pw=None):
+	log("retrieving %s entities"%(model,), important=True)
+	mod = db.get_model(model)
+	offset = 0
+	while 1:
+		chunk = db.get_page(model, LIMIT, offset, filters=filters, session=session)
+		log(post(host, "/_db", port, {
+			"pw": pw,
+			"action": "put",
+			"data": chunk
+		}, ctjson=True))
+		offset += len(chunk)
+		if len(chunk) < LIMIT:
+			break
+		log("processed %s %s records"%(offset, model), 1)
 
 keys = {}
 missing = {}
