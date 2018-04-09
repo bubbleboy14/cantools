@@ -29,17 +29,23 @@ def load(host, port, session, filters={}, protocol="http"):
 		load_model(model, host, port, session, filters=filters, protocol=protocol, pw=pw)
 	log("finished loading data from sqlite dump file")
 
-def load_model(model, host, port, session, filters={}, protocol="http", pw=None):
+def load_model(model, host, port, session, filters={}, protocol="http", pw=None, action="put"):
 	log("retrieving %s entities"%(model,), important=True)
 	mod = db.get_model(model)
+	def push(data):
+		log(post(host, "/_db", port, {
+			"pw": pw,
+			"action": action,
+			"data": data
+		}, protocol=protocol, ctjson=True))
 	offset = 0
 	while 1:
 		chunk = db.get_page(model, LIMIT, offset, filters=filters, session=session)
-		log(post(host, "/_db", port, {
-			"pw": pw,
-			"action": "put",
-			"data": chunk
-		}, protocol=protocol, ctjson=True))
+		if action == "edit":
+			for item in chunk:
+				push(item)
+		else:
+			push(chunk)
 		offset += len(chunk)
 		if len(chunk) < LIMIT:
 			break
