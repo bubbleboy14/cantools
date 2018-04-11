@@ -54,9 +54,9 @@ CT.parse = {
 	"_linkProcessor": null,
 	"_NUMS": '0123456789',
 	"imgTypes": [
+	    ".jpg", ".JPG",
 	    ".gif", ".GIF",
 	    ".png", ".PNG",
-	    ".jpg", ".JPG",
 	    "jpeg", "JPEG"
 	],
 
@@ -78,9 +78,14 @@ CT.parse = {
 	    return '<a target="_blank" href=' + furl + '>' + (rname || CT.parse.breakurl(rurl)) + "</a>";
 	},
 	"processLink": function(url, customArg) {
-	    var ext = url.slice(-4);
-	    if (CT.parse.imgTypes.indexOf(ext) != -1)
+	    var itz = CT.parse.imgTypes,
+	    	ext = url.slice(-4);
+	    if (itz.indexOf(ext) != -1) // first pass (fast)
 	        return '<img src=' + url + '>';
+	    for (var i = 0; i < itz.length; i++) { // second pass
+	    	if (url.indexOf(itz[i] + "?") != -1)
+		        return '<img src=' + url + '>';
+	    }
 	    return CT.parse._linkProcessor
 	    	&& CT.parse._linkProcessor(url, customArg)
 	    	|| CT.parse.url2link(url);
