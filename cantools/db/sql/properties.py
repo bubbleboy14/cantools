@@ -175,7 +175,7 @@ class KeyWrapper(object):
 		return hasattr(other, "value") and self.value == other.value
 
 	def __ne__(self, other):
-		return hasattr(other, "value") and self.value != other.value
+		return not hasattr(other, "value") or self.value != other.value
 
 	def get(self, session=None):
 		from cantools.db import get
