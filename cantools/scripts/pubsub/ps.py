@@ -98,6 +98,15 @@ class PubSub(WebSocketDaemon):
         else:
             self._log('FAILED UNSUBSCRIBE: "%s" -> "%s"'%(user.name, channel), 2)
 
+    def meta(self, data, user):
+        channel = data["channel"]
+        self._check_channel(channel)
+        user.meta = data["meta"]
+        self.channels[channel].meta({
+            "meta": user.meta,
+            "user": user.name
+        })
+
     def publish(self, data, user):
         channel = data["channel"]
         self._check_channel(channel)
