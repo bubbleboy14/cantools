@@ -5,6 +5,7 @@ This module provides a direct interface with the ctpubsub backend. Here's how to
 	CT.pubsub.publish(channel, message)
 	CT.pubsub.subscribe(channel)
 	CT.pubsub.unsubscribe(channel)
+	CT.pubsub.meta(channel, meta)
 	CT.pubsub.pm(user, message)
 	CT.pubsub.set_cb(action, cb)
 	CT.pubsub.set_reconnect(bool)
@@ -28,6 +29,7 @@ CT.pubsub = {
 		"cb": { // default callbacks -- override w/ set_cb()
 			"snapshot": CT.log.getLogger("CT.pubsub|snapshot"),
 			"pm": CT.log.getLogger("CT.pubsub|pm"),
+			"meta": CT.log.getLogger("CT.pubsub|meta"),
 			"message": CT.log.getLogger("CT.pubsub|message"),
 			"subscribe": CT.log.getLogger("CT.pubsub|subscribe"),
 			"join": CT.log.getLogger("CT.pubsub|join"),
@@ -53,6 +55,10 @@ CT.pubsub = {
 					data.history.forEach(CT.pubsub._.process.publish);
 				CT.pubsub._.cb.presence(data.presence.length, data.channel);
 			},
+			"meta": function(data) {
+				CT.pubsub._.channels[data.channel].metamap[data.user] = data.meta;
+				CT.pubsub._.cb.meta(data);
+			},
 			"publish": function(data) {
 				CT.pubsub._.cb.message(data);
 			},
@@ -60,6 +66,8 @@ CT.pubsub = {
 				CT.pubsub._.cb.join(data.channel, data.user, data.meta);
 				var chan = CT.pubsub._.channels[data.channel];
 				if (chan) {
+					if (chan.metamap)
+						chan.metamap[data.user] = data.meta;
 					CT.data.append(chan.presence, data.user);
 					CT.pubsub._.cb.presence(chan.presence.length, data.channel);
 				}
@@ -68,6 +76,8 @@ CT.pubsub = {
 				CT.pubsub._.cb.leave(data.channel, data.user);
 				var chan = CT.pubsub._.channels[data.channel];
 				if (chan) {
+					if (chan.metamap)
+						delete chan.metamap[data.user];
 					CT.data.remove(chan.presence, data.user);
 					CT.pubsub._.cb.presence(chan.presence.length, data.channel);
 				}
@@ -156,7 +166,7 @@ CT.pubsub = {
 		}
 	},
 	"set_cb": function(action, cb) {
-		// action: message|subscribe|join|leave|presence|open|close|error|pm
+		// action: message|subscribe|join|leave|presence|open|close|error|pm|meta
 		CT.pubsub._.cb[action] = cb;
 	},
 	"presence": function(channel) {
@@ -168,6 +178,15 @@ CT.pubsub = {
 			"data": {
 				"user": user,
 				"message": message
+			}
+		});
+	},
+	"meta": function(channel, meta) {
+		CT.pubsub._.write({
+			"action": "meta",
+			"data": {
+				"channel": channel,
+				"meta": meta
 			}
 		});
 	},
