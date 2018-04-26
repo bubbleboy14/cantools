@@ -45,12 +45,15 @@ class PubSubChannel(object):
             })
 
     def join(self, user):
+        data = {
+            "user": user.name,
+            "channel": self.name
+        }
+        if config.pubsub.meta:
+            data["meta"] = user.meta
         self._broadcast({
             "action": "subscribe",
-            "data": {
-                "user": user.name,
-                "channel": self.name
-            }
+            "data": data
         })
         self.users.add(user)
         user.join(self)

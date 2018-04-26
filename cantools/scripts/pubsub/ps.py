@@ -79,13 +79,16 @@ class PubSub(WebSocketDaemon):
         chan = self.channels[channel]
         chan.join(user)
         self._log('SUBSCRIBE: "%s" -> "%s"'%(user.name, channel), 2)
+        data = {
+            "channel": channel,
+            "presence": [u.name for u in chan.users],
+            "history": chan.history
+        }
+        if config.pubsub.meta:
+            data["meta"] = [u.meta for u in chan.users]
         user.write({
             "action": "channel",
-            "data": {
-                "channel": channel,
-                "presence": [u.name for u in chan.users],
-                "history": chan.history
-            }
+            "data": data
         })
 
     def unsubscribe(self, channel, user):

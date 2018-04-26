@@ -45,6 +45,7 @@ class PubSubUser(Actor):
             name = str(self.id)
         self._log('REGISTER: "%s"'%(name,), 1, True)
         self.name = name
+        self.meta = obj.get("meta")
         self.server.newUser(self)
         self.conn.set_cb(self._read)
         self.conn.set_close_cb(self._close)
