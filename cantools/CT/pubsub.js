@@ -41,6 +41,12 @@ CT.pubsub = {
 		"process": { // pubsub events
 			"channel": function(data) {
 				var _ = CT.pubsub._;
+				if (data.meta) {
+					data.metamap = {};
+					data.presence.forEach(function(u, i) {
+						data.metamap[u] = data.meta[i];
+					});
+				}
 				_.channels[data.channel] = data;
 				_.cb.subscribe(data);
 				if (_.autohistory && (_.autohistory_exemptions.indexOf(data.channel) == -1))
@@ -51,7 +57,7 @@ CT.pubsub = {
 				CT.pubsub._.cb.message(data);
 			},
 			"subscribe": function(data) {
-				CT.pubsub._.cb.join(data.channel, data.user);
+				CT.pubsub._.cb.join(data.channel, data.user, data.meta);
 				var chan = CT.pubsub._.channels[data.channel];
 				if (chan) {
 					CT.data.append(chan.presence, data.user);
@@ -89,7 +95,8 @@ CT.pubsub = {
 				CT.pubsub._.reconnect_interval = 250;
 				CT.pubsub._.write({
 					"action": "register",
-					"data": CT.pubsub._.args[2]
+					"data": CT.pubsub._.args[2],
+					"meta": CT.pubsub._.args[4]
 				});
 				for (var channel in CT.pubsub._.channels)
 					CT.pubsub.subscribe(channel);
@@ -185,7 +192,7 @@ CT.pubsub = {
 			"data": channel
 		});
 	},
-	"connect": function(host, port, uname, onbeforeunload) {
+	"connect": function(host, port, uname, onbeforeunload, meta) {
 		CT.pubsub._.args = arguments;
 		CT.pubsub._.initialized = true;
 		CT.pubsub._.ws = new WebSocket(CT.pubsub._.protocol + "://" + host + ":" + port);
