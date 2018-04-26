@@ -22,6 +22,14 @@ class PubSubChannel(object):
         for user in self.server.admins.values():
             user.write(obj)
 
+    def meta(self, subobj):
+        subobj["channel"] = self.name
+        obj = {
+            "action": "meta",
+            "data": subobj
+        }
+        self._broadcast(obj)
+
     def write(self, subobj):
         subobj["channel"] = self.name
         obj = {
