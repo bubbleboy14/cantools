@@ -122,12 +122,13 @@ CT.db = {
 			property: CT.db._schema[t]._label
 		};
 	},
-	get: function(modelName, cb, limit, offset, order, filters, sync) {
+	get: function(modelName, cb, limit, offset, order, filters, sync, count) {
 		var f, v, qdata = {
 			"action": "get",
 			"modelName": modelName,
 			"limit": limit || CT.db._limit,
-			"offset": offset || 0
+			"offset": offset || 0,
+			"count": count
 		};
 		if (order)
 			qdata.order = order;
