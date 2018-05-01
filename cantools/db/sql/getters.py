@@ -50,7 +50,7 @@ def _join(modelName, altname, joinz, query):
             break
     query.join(get_model(altname), mod1.key == mod2attr)
 
-def get_page(modelName, limit, offset, order='index', filters={}, session=session):
+def get_page(modelName, limit, offset, order='index', filters={}, session=session, count=False):
     query = get_model(modelName).query(session=session)
     joinz = set()
     for key, obj in filters.items():
@@ -66,7 +66,10 @@ def get_page(modelName, limit, offset, order='index', filters={}, session=sessio
             if desc:
                 order = -order
             mod not in joinz and _join(modelName, mod, joinz, query)
-    return [d.export() for d in query.order(order).fetch(limit, offset)]
+    query.order(order)
+    if count:
+        return query.count()
+    return [d.export() for d in query.fetch(limit, offset)]
 
 def getall(entity=None, query=None, keys_only=False, session=session):
     if query:
