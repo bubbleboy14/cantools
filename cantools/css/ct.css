@@ -482,6 +482,12 @@
 .toppadded {
     padding-top: 10px;
 }
+.topmargined {
+    margin-top: 10px;
+}
+.bottommargined {
+    margin-bottom: 10px;
+}
 .bottombordered {
     border-bottom: 1px solid black;
 }
@@ -592,7 +598,7 @@
 .padded {
     padding: 10px;
 }
-.padded5 {
+.smallpadded, .padded5 {
     padding: 5px;
 }
 .subpadded div {
@@ -615,8 +621,23 @@
     -moz-border-radius: 0px 15px 15px 0px;
     -webkit-border-radius: 0px 15px 15px 0px;
 }
+.rpadded {
+    padding-right: 5px;
+}
 .rpaddedsmall {
     padding-right: 2px;
+}
+.lpaddedsmall {
+    padding-left: 2px;
+}
+.lpadded {
+    padding-left: 5px;
+}
+.rmargined {
+    margin-right: 5px;
+}
+.lmargined {
+    margin-left: 5px;
 }
 .shiftleft {
     margin-left: -18px;
