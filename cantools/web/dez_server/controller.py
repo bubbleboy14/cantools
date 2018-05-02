@@ -20,6 +20,7 @@ class DController(SocketController):
 	def _respond(self, resp, *args, **kwargs):
 		if resp: # regular request
 			kwargs["response"] = resp
+			localvars.response = resp
 		else: # cron
 			kwargs["noLoad"] = True
 			kwargs["threaded"] = True
