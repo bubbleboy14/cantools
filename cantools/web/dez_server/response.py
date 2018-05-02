@@ -9,6 +9,7 @@ files = {}
 class Response(object):
     def __init__(self, request):
         self.id = request.id
+        self.ip = request.ip
         self.request = request
         self.response = HTTPResponse(request)
 
