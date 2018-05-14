@@ -127,7 +127,7 @@ CT.video = {
 	"thumbnail": function(video) {
 		var thumb = CT.dom.img(video.thumbnail, "w1", function() {
 			thumb.parentNode.innerHTML = CT.video.embed(video);
-		});
+		}, null, null, null, null, "vidthumb");
 		return CT.dom.div(thumb);
 	}
 };
