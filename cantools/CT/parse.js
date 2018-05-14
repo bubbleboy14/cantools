@@ -149,8 +149,8 @@ CT.parse = {
 
 	// strippers, formatters, sanitization
 	"extractImage": function(s) {
-		var i, j, token, tokens = s.replace("<", " <").split(" "),
-			ytparts, itz = CT.parse.imgTypes;
+		var i, j, token, ytparts, itz = CT.parse.imgTypes,
+			tokens = s.replace(/\n/g, " ").replace("<", " <").split(" ");
 		for (i = 0; i < tokens.length; i++) {
 			token = tokens[i];
 			if (token.startsWith("http")) {
