@@ -152,9 +152,13 @@ CT.parse = {
 		var i, token, tokens = s.replace("<", " <").split(" ");
 		for (i = 0; i < tokens.length; i++) {
 			token = tokens[i];
-			if (token.startsWith("http")
-				&& CT.parse.imgTypes.indexOf(token.slice(-4)) != -1)
+			if (token.startsWith("http")) {
+				if (CT.parse.imgTypes.indexOf(token.slice(-4)) != -1)
 					return token;
+				var ytparts = token.split("?v=");
+				if (ytparts.length == 2)
+					return 'http://img.youtube.com/vi/' + ytparts[1] + '/0.jpg';
+			}
 		}
 	},
 	"stripLast": function(w) {
