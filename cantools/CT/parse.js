@@ -149,12 +149,17 @@ CT.parse = {
 
 	// strippers, formatters, sanitization
 	"extractImage": function(s) {
-		var i, token, tokens = s.replace("<", " <").split(" ");
+		var i, token, tokens = s.replace("<", " <").split(" "),
+			itz = CT.parse.imgTypes;
 		for (i = 0; i < tokens.length; i++) {
 			token = tokens[i];
 			if (token.startsWith("http")) {
-				if (CT.parse.imgTypes.indexOf(token.slice(-4)) != -1)
-					return token;
+				if (itz.indexOf(token.slice(-4)) != -1)
+					return token; // first pass (quick)
+				for (var i = 0; i < itz.length; i++) { // second pass
+					if (token.indexOf(itz[i] + "?") != -1)
+						return token;
+				}
 				var ytparts = token.split("?v=");
 				if (ytparts.length == 2)
 					return 'http://img.youtube.com/vi/' + ytparts[1] + '/0.jpg';
