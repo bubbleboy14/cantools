@@ -686,7 +686,7 @@ CT.dom = {
 			if (!noday)
 				val += "-" + d.day.value;
 			if (withtime)
-				val += " " + d.time.value + ":00";
+				val += " " + (d.time.value || "00:00") + ":00";
 			else
 				val += " 00:00:00";
 			return val;
