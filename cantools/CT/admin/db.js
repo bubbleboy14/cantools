@@ -132,7 +132,7 @@ CT.admin.db.Editor = CT.Class({
 				});
 			}
 			if (data.label != resp.label) {
-				CT.panel.rename(data.label, resp.label, data.modelName, "starred");
+				CT.panel.rename(data.label, resp.label || resp.key, data.modelName, "starred");
 				data.label = resp.label;
 			}
 			alert("you did it");
