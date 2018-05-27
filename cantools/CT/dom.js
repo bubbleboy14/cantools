@@ -676,8 +676,14 @@ CT.dom = {
 			d.month.value = dsplit[1];
 			if (!noday)
 				d.day.value = dsplit[2];
-			if (withtime)
-				d.time.value = vsplit[1].slice(0, -3);
+			if (withtime) {
+				var t = vsplit[1].slice(0, -3);
+				d.time.value = t;
+				if (t && d.time.value != t) { // no option yet
+					d.time.insertBefore(CT.dom.node(t, "option"), d.time.firstChild.nextSibling);
+					d.time.value = t;
+				}
+			}
 		}
 		d.value = function() {
 			if (d.year.value == "Year" || d.month.value == "Month" || (!noday && d.day.value == "Day"))
