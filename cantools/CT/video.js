@@ -2,7 +2,7 @@
 This module supports video playback.
 
 ### video players
-We support DTube, Vimeo, YouTube, Google Video, Facebook, and uStream.
+We support DTube, BitChute, Vimeo, YouTube, Google Video, Facebook, and uStream.
 
 ### raw formats
 We support mp4, ogg, and webm.
@@ -28,7 +28,8 @@ CT.video = {
 		"facebook": "https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2F",
 		"youtube": location.protocol + "//www.youtube.com/embed/",
 		"vimeo": "//player.vimeo.com/video/",
-		"dtube": "https://emb.d.tube/#!/"
+		"dtube": "https://emb.d.tube/#!/",
+		"bitchute": "https://www.bitchute.com/embed/"
 	},
 	"urlFromData": function(player, docid) {
 		return player ? (location.protocol + "//" + CT.video.player2url[player] + docid) : "";
@@ -45,6 +46,8 @@ CT.video = {
 	"docidFromUrl": function(url) {
 		if (url.indexOf("d.tube") != -1)
 			return url.split("/v/")[1];
+		else if (url.indexOf("bitchute.com") != -1)
+			return url.split("/video/")[1];
 		else if (url.indexOf("video.google.com") != -1)
 			return CT.video.getQSParam(url, "docid");
 		else if (url.indexOf("youtube.com") != -1)
@@ -62,6 +65,8 @@ CT.video = {
 		return "";
 	},
 	"playerFromUrl": function(url) {
+		if (url.indexOf("bitchute.com") != -1)
+			return "bitchute";
 		if (url.indexOf("d.tube") != -1)
 			return "dtube";
 		if (url.indexOf("facebook.com") != -1)
@@ -91,14 +96,14 @@ CT.video = {
 		var dims = "width=" + w;
 		if (h)
 			dims += " height=" + h;
-		if (["facebook", "dtube"].indexOf(video.player) != -1) {
+		if (["facebook", "dtube", "bitchute"].indexOf(video.player) != -1) {
 			if (typeof w == "number") {
 				h = w * 315 / 560; // w 560 h 315
 				dims = "width=" + w + " height=" + h;
 			} else
 				w = 254; // maybe?
 		}
-		if (video.player == "dtube")
+		if (video.player == "dtube" || video.player == "bitchute")
 			return '<iframe ' + dims + ' src="' + CT.video.embed_url[video.player] + video.docid + '" frameborder="0" allowfullscreen></iframe>';
 		else if (video.player == "facebook")
 			return '<iframe src="' + CT.video.embed_url[video.player] + video.docid + '&show_text=0&width=' + w + '" ' +  dims + ' style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true" allowFullScreen="true"></iframe>';
