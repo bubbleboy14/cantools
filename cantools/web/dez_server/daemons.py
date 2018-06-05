@@ -1,4 +1,8 @@
-import sys, json, gc, os, psutil
+import sys, json, gc, os
+try:
+    import psutil
+except ImportError, e:
+    pass # google crap engine (get it if you need it!)
 from dez.memcache import get_memcache
 from dez.http.application import HTTPApplication
 from routes import static, cb
