@@ -65,7 +65,7 @@ def fetch(host, path="/", port=80, asjson=False, cb=None, timeout=1, async=False
 		for k, v in qsp.items():
 			path += "%s=%s&"%(k, v)
 		path = path[:-1]
-	if async:
+	if async or cb: # async w/o cb works, will just log
 		return dfetch(host, path, port, cb, timeout, asjson)
 	if protocol == "https":
 		port = 443
