@@ -45,7 +45,7 @@ class Bot(Actor):
 		return _h
 
 	def _set_defaults(self):
-		for action in ["channel", "publish", "subscribe", "unsubscribe", "pm", "error"]:
+		for action in ["channel", "publish", "subscribe", "unsubscribe", "pm", "error", "meta"]:
 			hname = "on_%s"%(action,)
 			if not hasattr(self, hname):
 				setattr(self, hname, self._default_handler(action))
