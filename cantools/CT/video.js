@@ -54,7 +54,7 @@ CT.video = {
 			return CT.video.getQSParam(url, "v");
 		else if (url.indexOf("vimeo.com") != -1)
 			return url.slice(url.lastIndexOf('/') + 1);
-		else if (url.indexOf("facebook.com") != -1)
+		else if (url.indexOf("facebook.com") != -1 && url.indexOf("video") != -1)
 			return encodeURIComponent(url.split("facebook.com/")[1]);
 		else if (url.indexOf("ustream.tv/recorded/") != -1)
 			return url.split("recorded/")[1].split("?")[0];
@@ -69,7 +69,7 @@ CT.video = {
 			return "bitchute";
 		if (url.indexOf("d.tube") != -1)
 			return "dtube";
-		if (url.indexOf("facebook.com") != -1)
+		if (url.indexOf("facebook.com") != -1 && url.indexOf("video") != -1)
 			return "facebook";
 		if (url.indexOf("video.google.com") != -1)
 			return "google";
