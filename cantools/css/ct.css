@@ -973,7 +973,7 @@
 }
 #resize_btn, #mobile_menu_btn {
     cursor: pointer;
-    position: absolute;
+    position: fixed;
     top: 5px;
     z-index: 10;
 }
