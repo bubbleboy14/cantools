@@ -1,4 +1,4 @@
-import os, rel, ssl, sys, json, resource, requests
+import os, rel, ssl, sys, json, requests
 from dez.http import fetch as dfetch
 from ..util import *
 from ...util import set_log, set_error
@@ -7,6 +7,7 @@ from controller import getController
 from cantools import config
 
 def fdup():
+	import resource
 	from cantools.util import log # gives us logger set in run_dez_webserver()
 	log("checking the number of file descriptors allowed on your system", important=True)
 	soft, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
