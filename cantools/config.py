@@ -157,7 +157,7 @@ if config.mailer and " <" in config.mailer:
 def mod_and_repo(plug):
 	repo = "/" in plug and plug or "%s/%s"%(config.plugin.base, plug)
 	if repo == plug:
-		plug = plug.slice("/")[1]
+		plug = plug.split("/")[1]
 	return plug, repo
 
 def mods_and_repos(plugs):
