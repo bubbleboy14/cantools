@@ -7,12 +7,9 @@ def cp(content, fname): # more write than copy, buuuut...
 	write(content, fname)
 
 def _init_win_sym():
-	import ctypes
-	csl = ctypes.windll.kernel32.CreateSymbolicLinkW
-	csl.argtypes = (ctypes.c_wchar_p, ctypes.c_wchar_p, ctypes.c_uint32)
-	csl.restype = ctypes.c_ubyte
-	def win_sym(src, target):
-		csl(target, src, os.path.isdir(src) and 1 or 0)
+	def win_sym(src, dest):
+		mode = os.path.isdir(src) and "J" or "H"
+		cmd("mklink /%s %s %s"%(mode, dest, src))
 	os.symlink = win_sym
 
 def sym(src, dest, safe=False):
