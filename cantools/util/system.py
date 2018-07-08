@@ -1,4 +1,4 @@
-import commands, os, subprocess
+import commands, os, subprocess, platform
 from reporting import log
 from io import write
 
@@ -50,7 +50,9 @@ def rm(pname):
 	else:
 		log("can't remove file (doesn't exist): %s"%(pname,), 2)
 
-def cmd(cline):
+def cmd(cline, sudo=False):
+	if sudo and platform.system() is not "Windows":
+		cline = "sudo %s"%(cline,)
 	log('issuing command: "%s"'%(cline,), 2)
 	subprocess.call(cline, shell=True)
 
