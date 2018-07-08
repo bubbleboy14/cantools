@@ -6,8 +6,19 @@ def cp(content, fname): # more write than copy, buuuut...
 	log("writing %s"%(fname,), 2)
 	write(content, fname)
 
+def _init_win_sym():
+	import ctypes
+	csl = ctypes.windll.kernel32.CreateSymbolicLinkW
+	csl.argtypes = (ctypes.c_wchar_p, ctypes.c_wchar_p, ctypes.c_uint32)
+	csl.restype = ctypes.c_ubyte
+	def win_sym(src, target):
+		csl(target, src, os.path.isdir(src) and 1 or 0)
+	os.symlink = win_sym
+
 def sym(src, dest, safe=False):
 	log("symlinking %s to %s"%(src, dest), 2)
+	if not hasattr(os, "symlink"):
+		_init_win_sym()
 	try:
 		os.symlink(src, dest)
 	except Exception, e:
