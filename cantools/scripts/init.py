@@ -79,11 +79,11 @@ class Builder(object):
 		cmd("git clone https://github.com/%s.git"%(repo,))
 		os.chdir(plug)
 		log("installing plugin", important=True)
-		cmd("sudo python setup.py install")
-		cmd("sudo python setup.py develop")
+		cmd("python setup.py install", True)
+		cmd("python setup.py develop", True)
 		os.chdir("%s/.."%(self.ctroot,))
 		log("restoring cantools develop status", important=True)
-		cmd("sudo python setup.py develop")
+		cmd("python setup.py develop", True)
 		os.chdir(curdir)
 		sys.path.insert(0, os.path.join(config.plugin.path, plug))
 		self._getplug(plug)
@@ -247,9 +247,9 @@ def update():
 	if raw_input("update cantools dependencies? [N/y] ").lower().startswith("y"):
 		os.chdir("%s/.."%(CTP,))
 		log("updating dependencies", important=True)
-		cmd("sudo python setup.py install")
+		cmd("python setup.py install", True)
 		log("restoring cantools develop status", important=True)
-		cmd("sudo python setup.py develop")
+		cmd("python setup.py develop", True)
 	log("goodbye")
 
 def admin():
