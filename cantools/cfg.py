@@ -6,7 +6,7 @@ cfg = {
 	},
 	"plugin": {
 		"modules": [],
-		"path": "%s/.ctplug"%(os.environ.get("HOME"),),
+		"path": "%s/.ctplug"%(os.environ.get("HOME") or os.environ.get("USERPROFILE"),),
 		"base": "bubbleboy14", # change to 'cantools' account or something
 	},
 	"geo": {
