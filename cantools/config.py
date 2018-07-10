@@ -102,6 +102,7 @@ for line in read("ct.cfg", True):
 	if key == "PLUGIN_MODULES":
 		mods = val.split("|")
 		config.plugin.update("modules", map(lambda p : p.split("/")[-1], mods))
+		config.plugin.update("repos", map(lambda p : "/" in p and p or "%s/%s"%(config.plugin.base, p), mods))
 		include_plugins()
 	else:
 		items.append([key, val])
@@ -139,7 +140,6 @@ for key, val in items:
 				c = c.sub(part)
 		c.update(target, val)
 
-config.plugin.update("repos", map(lambda p : "/" in p and p or "%s/%s"%(config.plugin.base, p), config.plugin.modules))
 config.db.update("main", config.db[config.web.server])
 config.update("cache", pc)
 
