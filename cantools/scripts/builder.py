@@ -119,7 +119,7 @@ def processjs(path, jspaths=[], inits=set(), admin_ct_path=None):
     block = read(p)
     for line in [bit for bit in block.split("\n") if not bit.startswith("//")]:
         for flag in ["CT.require(", "CT.scriptImport("]:
-            if flag in line:
+            if flag in line and line[line.index(flag) - 1] != "'":
                 rline = line.strip().split(flag)[1]
                 if rline[0] != "\\" and rline[1] != ",": # indicates this require() is embedded in text
                     block = require("%s%s"%(flag, rline),
