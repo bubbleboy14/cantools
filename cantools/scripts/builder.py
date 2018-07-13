@@ -143,12 +143,16 @@ def remerge(txt, js):
 def build_frags(mode="web", admin_ct_path=None):
     log("Compiling Dynamically-Referenced Fragments", important=True)
     base = config.build[mode].compiled.production
-    for frag in fragz:
+    fcopy = set()
+    def build_frag(frag):
         log("processing: %s"%(frag,), 1)
         block = processjs(frag, admin_ct_path=admin_ct_path)
         path = os.path.join(base, frag[len(config.js.path)+1:])
         checkdir(path.rsplit("/", 1)[0], True)
         write(minify(block, mangle=True), path)
+    while len(fcopy) is not len(fragz):
+        fcopy = fragz.difference(fcopy)
+        map(build_frag, fcopy)
 
 def build(admin_ct_path, dirname, fnames):
     """
