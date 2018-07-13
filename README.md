@@ -1,4 +1,4 @@
-# cantools 0.10.6.5
+# cantools 0.10.6.6
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
  - Docs: http://ct.mkult.co
@@ -396,14 +396,14 @@ functionality of the framework, as follows.
 	- CT.net.xhr(path, method, params, async, cb, headers)
 	  - thin wrapper around browser-level XHR abstraction
 
-### CT.require(modname, lazy)
+### CT.require (modname, lazy)
 This is the basis of the cantools module system. Any time your code requires
 a module (CT or otherwise), simply call CT.require ('MyProject.submodule.whatever')
 to dynamically pull in the necessary code. When your project is compiled in
 production mode, these imports are baked into the host HTML file, _except_
 those flagged 'lazy' (second argument is 'true').
 
-### CT.scriptImport(modpath, cb, delay)
+### CT.scriptImport (modpath, cb, delay)
 This function supports the importation of libraries that only work if they
 know their path (which they ascertain by checking their own script tag).
 This includes many popular libraries, such as TinyMCE and Google Maps.
