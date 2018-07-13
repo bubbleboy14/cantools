@@ -264,13 +264,13 @@ CT.onload(function() {
 				"The <b>CT.require</b>() function ties it all together by dynamically acquiring modules, <b>AJAX</b>-style. Here are a few examples:",
 				CT.dom.div([
 					"// require a CT package",
-					'CT.require("CT.map");',
+					'CT.require ("CT.map");',
 					CT.dom.br(),
 					"// require some other package",
-					'CT.require("mything.gizmos");',
+					'CT.require ("mything.gizmos");',
 					CT.dom.br(),
 					"// require dynamically -- compiler skips this import",
-					'CT.require("mything.modes." + modeVar, true);'
+					'CT.require ("mything.modes." + modeVar, true);'
 				], "code"),
 				CT.dom.div("CT.scriptImport", "big pv10"),
 				"But maybe you want to use some third party library that in turn imports other stuff. Such a library generally determines where to find those other things based on its own location, which is typically derived from its script tag. Without a script tag, all is lost. In these cases, we use <b>CT.scriptImport</b>():",
