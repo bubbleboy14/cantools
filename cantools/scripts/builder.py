@@ -80,7 +80,7 @@ def require(line, jspaths, block, inits, admin_ct_path=None):
             return block
         dynamic = True
     else:
-        rline = line.split('require(')[1][1:].strip(");")
+        rline = line.split('require(')[1][1:].split(");")[0].strip(")")
         if rline.endswith(", true"):
             dynamic = True
             rline = rline.split(", ")[0]
