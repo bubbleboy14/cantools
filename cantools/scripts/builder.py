@@ -117,7 +117,7 @@ def processjs(path, jspaths=[], inits=set(), admin_ct_path=None):
         else: # regular admin pages (/memcache/mc.js)
             p = os.path.join(os.path.abspath(os.curdir), "dynamic", path)
     block = read(p)
-    for line in [bit for bit in block.split("\n") if not bit.startswith("//") and not bit.startswith("###")]:
+    for line in [bit for bit in block.split("\n") if not bit.startswith("//")]:
         for flag in ["CT.require(", "CT.scriptImport("]:
             if flag in line:
                 rline = line.strip().split(flag)[1]
