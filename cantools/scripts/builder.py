@@ -80,7 +80,7 @@ def require(line, jspaths, block, inits, admin_ct_path=None):
             return block
         dynamic = True
     else:
-        rline = line[12:].split(");")[0]
+        rline = line.split('require(')[1][1:].strip(");")
         if rline.endswith(", true"):
             dynamic = True
             rline = rline.split(", ")[0]
@@ -117,10 +117,11 @@ def processjs(path, jspaths=[], inits=set(), admin_ct_path=None):
         else: # regular admin pages (/memcache/mc.js)
             p = os.path.join(os.path.abspath(os.curdir), "dynamic", path)
     block = read(p)
-    for line in block.split("\n"):
-        sline = line.strip()
-        if sline.startswith("CT.require(") or sline.startswith("CT.scriptImport("):
-            block = require(sline, jspaths, block, inits, admin_ct_path)
+    for line in [bit for bit in block.split("\n") if not bit.startswith("//") and not bit.startswith("###")]:
+        for flag in ["CT.require(", "CT.scriptImport("]:
+            if flag in line:
+                block = require("%s%s"%(flag, line.strip().split(flag)[1]),
+                    jspaths, block, inits, admin_ct_path)
     jspaths.append(path)
     return "%s;\n"%(block,)
 
