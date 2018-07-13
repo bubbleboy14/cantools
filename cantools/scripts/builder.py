@@ -121,7 +121,7 @@ def processjs(path, jspaths=[], inits=set(), admin_ct_path=None):
         for flag in ["CT.require(", "CT.scriptImport("]:
             if flag in line and line[line.index(flag) - 1] != "'":
                 rline = line.strip().split(flag)[1]
-                if rline[0] != "\\" and rline[1] != ",": # indicates this require() is embedded in text
+                if rline[0] != "\\" and rline[1] not in ".,": # require() is embedded in text. dot is weird.
                     block = require("%s%s"%(flag, rline),
                         jspaths, block, inits, admin_ct_path)
     jspaths.append(path)
