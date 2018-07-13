@@ -37,7 +37,7 @@ functionality of the framework, as follows.
 
 ### CT.require(modname, lazy)
 This is the basis of the cantools module system. Any time your code requires
-a module (CT or otherwise), simply call CT.require('MyProject.submodule.whatever')
+a module (CT or otherwise), simply call CT.require ('MyProject.submodule.whatever')
 to dynamically pull in the necessary code. When your project is compiled in
 production mode, these imports are baked into the host HTML file, _except_
 those flagged 'lazy' (second argument is 'true').
