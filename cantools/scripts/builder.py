@@ -120,8 +120,10 @@ def processjs(path, jspaths=[], inits=set(), admin_ct_path=None):
     for line in [bit for bit in block.split("\n") if not bit.startswith("//") and not bit.startswith("###")]:
         for flag in ["CT.require(", "CT.scriptImport("]:
             if flag in line:
-                block = require("%s%s"%(flag, line.strip().split(flag)[1]),
-                    jspaths, block, inits, admin_ct_path)
+                rline = line.strip().split(flag)[1]
+                if rline[0] != "\\": # indicates this require() is embedded in text
+                    block = require("%s%s"%(flag, rline),
+                        jspaths, block, inits, admin_ct_path)
     jspaths.append(path)
     return "%s;\n"%(block,)
 
