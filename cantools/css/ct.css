@@ -557,6 +557,9 @@
 .fullwidth {
     width: 100%;
 }
+.fwimg img {
+    width: 100%;
+}
 .full-center {
     position: absolute;
     top: 50%;
