@@ -53,6 +53,6 @@ def cmd(cline, sudo=False):
 	log('issuing command: "%s"'%(cline,), 2)
 	subprocess.call(cline, shell=True)
 
-def output(cline):
-	log('getting output for: "%s"'%(cline,), 2)
+def output(cline, silent=False):
+	silent or log('getting output for: "%s"'%(cline,), 2)
 	return commands.getoutput(cline)
