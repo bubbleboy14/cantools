@@ -52,6 +52,13 @@ CT.map.util = {
 		}
 		return c[addr];
 	},
+	ips2latlngs: function(ips, cb) {
+		CT.net.post({
+			path: location.protocol + "//api.mkult.co/geo",
+			params: { action: "ips", ips: ips },
+			cb: cb
+		});
+	},
 	bounds: function(sw, ne) {
 		return new google.maps.LatLngBounds(CT.map.util.latlng(sw),
 			CT.map.util.latlng(ne));

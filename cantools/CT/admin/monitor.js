@@ -107,43 +107,39 @@ CT.admin.monitor.Graph = CT.Class({
 		CT.dom.addContent("map_buttons", CT.dom.button(category + " map", function() {
 			CT.dom.show("map_node");
 			CT.dom.clear("map");
-			var ips = {},
-				llz = {},
-				ipz = Object.keys(that._ips[category]);
+			var ipz = Object.keys(that._ips[category]);
 			/*
 			Much of the following should be moved into CT.map.util / configuration.
 			*/
-			CT.net.post({
-				path: location.protocol + "//api.mkult.co/geo",
-				params: { action: "ips", ips: ipz },
-				cb: function(data) {
-					ipz.forEach(function(ip, i) {
-						var d = ips[ip] = data[i],
-							count = that._ips[category][ip],
-							llkey = d.latitude + ", " + d.longitude;
-						if (d.location == "unknown")
-							return;
-						if (!llz[llkey])
-							llz[llkey] = { total: 0 };
-						llz[llkey][ip] = count;
-						llz[llkey].total += count;
-					});
-					var map = new CT.map.Map({
-						node: CT.dom.id("map"),
-						markers: Object.keys(llz).map(function(ll) {
-							var parts = ll.split(", "),
-								lat = parseFloat(parts[0]),
-								lng = parseFloat(parts[1]);
-							return {
-								title: ll + " (" + llz[ll].total  + ")",
-								position: {
-									lat: lat,
-									lng: lng
-								}
+			CT.map.util.ips2latlngs(ipz, function(data) {
+				var ips = {},
+					llz = {};
+				ipz.forEach(function(ip, i) {
+					var d = ips[ip] = data[i],
+						count = that._ips[category][ip],
+						llkey = d.latitude + ", " + d.longitude;
+					if (d.location == "unknown")
+						return;
+					if (!llz[llkey])
+						llz[llkey] = { total: 0 };
+					llz[llkey][ip] = count;
+					llz[llkey].total += count;
+				});
+				var map = new CT.map.Map({
+					node: CT.dom.id("map"),
+					markers: Object.keys(llz).map(function(ll) {
+						var parts = ll.split(", "),
+							lat = parseFloat(parts[0]),
+							lng = parseFloat(parts[1]);
+						return {
+							title: ll + " (" + llz[ll].total  + ")",
+							position: {
+								lat: lat,
+								lng: lng
 							}
-						})
-					});
-				}
+						}
+					})
+				});
 			});
 		}, "margined"));
 	},
