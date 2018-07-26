@@ -94,6 +94,9 @@ def include_plugins():
 	except:
 		pass # plugin import error - fine if refreshing project for 1st time
 
+config.plugin.update("modules", [])
+config.plugin.update("repos", [])
+
 items = []
 for line in read("ct.cfg", True):
 	if line.startswith("#"):
