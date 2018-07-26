@@ -28,9 +28,6 @@ CT.map.Panorama = CT.Class({
 			},
 			node: document.body
 		});
-		this.pan = new google.maps.StreetViewPanorama(opts.node, {
-			pov: opts.pov,
-			position: opts.position
-		});
+		this.pan = new google.maps.StreetViewPanorama(opts.node, opts);
 	}
 });
