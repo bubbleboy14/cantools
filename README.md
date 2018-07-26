@@ -1,4 +1,4 @@
-# cantools 0.10.6.8
+# cantools 0.10.7
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
  - Docs: http://ct.mkult.co
@@ -658,12 +658,19 @@ This module provides functions that generate common UI elements. These include:
 ## CT.map
 ### Import line: 'CT.require("CT.map");'
 This module loads the Google Maps API via CT.scriptImport(),
-as well as a utility submodule (CT.map.util) and four classes:
+as well as a utility submodule (CT.map.util) and five classes:
 
     - CT.map.Map
     - CT.map.Node
     - CT.map.Marker
     - CT.map.Shape
+    - CT.map.Panorama
+
+To facilitate key injection, we recommend loading this module
+dynamically, like so:
+
+    CT.setVal("mapkey", MY_MAP_KEY);
+    CT.require("CT.map", true);
 
 ## CT.memcache
 ### Import line: 'CT.require("CT.memcache");'
