@@ -23,7 +23,7 @@ class Query(object):
         self.filter(*args, **kwargs)
 
     def order(self, prop):
-        if type(prop) == elements.UnaryExpression:
+        if type(prop) == elements.UnaryExpression and "count" not in prop.element.description:
             prop = "-%s"%(prop.element.description,)
         if isinstance(prop, basestring):
             asc = False
