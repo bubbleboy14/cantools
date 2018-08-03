@@ -8,17 +8,44 @@ CT.map.Panorama = CT.Class({
 		this.opts.pov.pitch += diff;
 		this.pan.setPov(this.opts.pov);
 	},
-	move: function(diffs) {
-		for (var axis in diffs)
-			this.opts.position[axis] += diffs[axis];
-		this.pan.setPosition(this.opts.position);
+	zoom: function(z) {
+		this.opts.zoom = z;
+		this.pan.setZoom(z);
+	},
+	shift: function(lnum) {
+		this.pan.setPano(this.pan.getLinks()[lnum || 0].pano);
+	},
+	_move: function(data, status) {
+		if (status == "OK")
+			this.pan.setPano(data.location.pano);
+		else
+			this.log("move failed!", status);
+	},
+	move: function(coords, as_diffs) {
+		if (as_diffs) {
+			this.opts.position = {
+				lat: this.pan.position.lat(),
+				lng: this.pan.position.lng()
+			};
+			for (var axis in coords)
+				this.opts.position[axis] += coords[axis];
+		} else
+			this.opts.position = coords;
+		this.service.getPanorama({
+			radius: 50,
+			location: this.opts.position
+		}, this._move);
 	},
 	update: function(opts) {
 		this.opts = CT.merge(opts, this.opts);
 		if (opts.position)
-			this.pan.setPosition(opts.position);
+			this.move(opts.position);
+		if (opts.pano)
+			this.pan.setPano(opts.pano);
 		if (opts.pov)
 			this.pan.setPov(opts.position);
+		if (opts.zoom)
+			this.pan.setZoom(opts.zoom);
 	},
 	init: function(opts) {
 		this.opts = opts = CT.merge(opts, {
@@ -28,6 +55,7 @@ CT.map.Panorama = CT.Class({
 			},
 			node: document.body
 		});
+		this.service = new google.maps.StreetViewService();
 		this.pan = new google.maps.StreetViewPanorama(opts.node, opts);
 	}
 });
