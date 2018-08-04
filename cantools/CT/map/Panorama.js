@@ -49,6 +49,7 @@ CT.map.Panorama = CT.Class({
 	},
 	init: function(opts) {
 		this.opts = opts = CT.merge(opts, {
+			cbs: {},
 			pov: { // requires: position
 				pitch: 0,
 				heading: 0
@@ -56,6 +57,10 @@ CT.map.Panorama = CT.Class({
 			node: document.body
 		});
 		this.service = new google.maps.StreetViewService();
-		this.pan = new google.maps.StreetViewPanorama(opts.node, opts);
+		var pan = this.pan = new google.maps.StreetViewPanorama(opts.node, opts);
+		setTimeout(function() {
+			for (var event_name in opts.cbs)
+				pan.addListener(event_name, opts.cbs[event_name]);
+		}, 2000);
 	}
 });
