@@ -1,4 +1,4 @@
-__version__ = "0.10.7.1"
+__version__ = "0.10.7.2"
 
 import util, hooks
 import config as cfgmod
