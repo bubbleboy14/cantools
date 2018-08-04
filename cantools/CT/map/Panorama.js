@@ -4,7 +4,7 @@ CT.map.Panorama = CT.Class({
 		this.opts.pov.heading += diff;
 		this.pan.setPov(this.opts.pov);
 	},
-	pitch: function(diff) {
+	tilt: function(diff) {
 		this.opts.pov.pitch += diff;
 		this.pan.setPov(this.opts.pov);
 	},
