@@ -142,7 +142,8 @@ def getblobs(host, port):
 				entkey = d.get("gaekey", d["key"])
 				log("fetching %s.%s (%s.%s)"%(d["modelName"], key, entkey, d[key]))
 				d[key] = fetch(host, port=port,
-					path="/_db?action=blob&key=%s&property=%s"%(entkey, key))
+					path="/_db?action=blob&key=%s&property=%s"%(entkey, key),
+					protocol = (port == 443) and "https" or "http")
 
 def dump(host, port, session, binary, skip=[]):
 	log("dumping database at %s:%s"%(host, port), important=True)
@@ -158,7 +159,8 @@ def dump(host, port, session, binary, skip=[]):
 		offset = 0
 		while 1:
 			chunk = fetch(host, port=port, ctjson=True,
-				path="/_db?action=get&modelName=%s&offset=%s&limit=%s"%(model, offset, LIMIT))
+				path="/_db?action=get&modelName=%s&offset=%s&limit=%s"%(model, offset, LIMIT),
+				protocol = (port == 443) and "https" or "http")
 			for c in chunk:
 				fixkeys(c, schema)
 				checkblobs(c, schema)
