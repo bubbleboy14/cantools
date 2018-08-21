@@ -150,7 +150,7 @@ CT.parse = {
 	// strippers, formatters, sanitization
 	"extractImage": function(s) {
 		var i, j, token, ytparts, itz = CT.parse.imgTypes,
-			tokens = s.replace(/\n/g, " ").replace("<", " <").split(" ");
+			tokens = s.replace(/\n/g, " ").replace(/</g, " <").replace(/>/g, "> ").replace(/&amp;/g, "&").split(" ");
 		for (i = 0; i < tokens.length; i++) {
 			token = tokens[i];
 			if (token.startsWith("http")) {
