@@ -164,12 +164,14 @@ CT.dom = {
 	"button": function(content, onclick, classname, id) {
 		return CT.dom.node(content, "button", classname, id, {"onclick": onclick});
 	},
-	"field": function(id, value, classname, type, attrs) {
+	"field": function(id, value, classname, type, attrs, placeholder) {
 		attrs = attrs || {};
 		if (value)
 			attrs.value = value;
 		if (type)
 			attrs.type = type;
+		if (placeholder)
+			attrs.placeholder = placeholder;
 		return CT.dom.node("", "input", classname, id, attrs);
 	},
 	"file": function(cb, id, classname, multiple) {
