@@ -1030,7 +1030,7 @@
 .margined {
     margin: 5px;
 }
-button, a, .pointer {
+button, a, label, input[type='checkbox'], .pointer {
     cursor: pointer;
 }
 
