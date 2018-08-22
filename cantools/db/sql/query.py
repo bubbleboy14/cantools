@@ -61,7 +61,7 @@ class Query(object):
                     log("Missing column: %s"%(target,), important=True)
                     if config.db.alter:
                         tmod, tcol = target.split(".")
-                        if not raw_input("Add missing column '%s' to table '%s' (sqlite-only!)? [Y/n] "%(tcol, tmod)).lower().startswith("n"):
+                        if config.db.alter == "auto" or not raw_input("Add missing column '%s' to table '%s' (sqlite-only!)? [Y/n] "%(tcol, tmod)).lower().startswith("n"):
                             raise_anyway = False
                             log("adding '%s' to '%s'"%(tcol, tmod))
                             self.session.engine.execute("ALTER TABLE %s ADD COLUMN %s"%(tmod, tcol))
