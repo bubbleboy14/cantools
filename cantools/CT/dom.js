@@ -164,7 +164,7 @@ CT.dom = {
 	"button": function(content, onclick, classname, id) {
 		return CT.dom.node(content, "button", classname, id, {"onclick": onclick});
 	},
-	"field": function(id, value, classname, type, attrs, placeholder) {
+	"field": function(id, value, classname, type, attrs, style, placeholder) {
 		attrs = attrs || {};
 		if (value)
 			attrs.value = value;
@@ -172,7 +172,7 @@ CT.dom = {
 			attrs.type = type;
 		if (placeholder)
 			attrs.placeholder = placeholder;
-		return CT.dom.node("", "input", classname, id, attrs);
+		return CT.dom.node("", "input", classname, id, attrs, style);
 	},
 	"file": function(cb, id, classname, multiple) {
 		return CT.dom.field(id, null, classname,
@@ -429,6 +429,12 @@ CT.dom = {
 		});
 		return n;
 	},
+	"label": function(content, htmlFor, className) {
+		return CT.dom.node(content, "label", className, null, {
+			"for": htmlFor,
+			"htmlFor": htmlFor
+		});
+	},
 
 	// iframe getters
 	"getDoc": function(iframe) {
@@ -453,8 +459,7 @@ CT.dom = {
 				onclick(cb);
 			};
 		}
-		n.appendChild(CT.dom.node(lname || cbid, "label", lclass, "",
-			{"for": cbname, "htmlFor": cbname}));
+		n.appendChild(CT.dom.label(lname || cbid, cbname, lclass));
 		n.isChecked = function() {
 			return cb.checked;
 		};
