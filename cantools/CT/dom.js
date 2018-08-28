@@ -429,11 +429,17 @@ CT.dom = {
 		});
 		return n;
 	},
-	"label": function(content, htmlFor, className) {
-		return CT.dom.node(content, "label", className, null, {
+	"label": function(content, htmlFor, className, click) {
+		var n = CT.dom.node(content, "label", className, null, {
 			"for": htmlFor,
 			"htmlFor": htmlFor
 		});
+		if (click) {
+			n.onclick = function() {
+				CT.dom.id(htmlFor).onclick();
+			};
+		}
+		return n;
 	},
 
 	// iframe getters
