@@ -251,13 +251,14 @@ CT.db.Blob = CT.Class({
 			CT.dom.setContent(this.node, [
 				CT.dom.link("download", null,
 					"/_db?action=blob&value=" + this.index,
-					this.opts.className || "blue", null, null, true),
+					this.opts.className || "blue", this.opts.id, null, true),
 				CT.dom.pad(),
 				CT.dom.link("upload", this.uploadPrompt, null, this.opts.className || "nodecoration blue")
 			]);
 		} else if (this.opts.key)
 			CT.dom.setContent(this.node, CT.dom.link(this.opts.firstUp || "upload",
-				this.uploadPrompt, null, this.opts.className || "nodecoration blue"));
+				this.uploadPrompt, null, this.opts.className || "nodecoration blue",
+				this.opts.id));
 		else if (!this.opts.noNothing)
 			CT.dom.setContent(this.node, "(nothing yet)");
 	},
@@ -395,12 +396,13 @@ CT.db.edit = {
 			mediaType: "img" // or video
 		});
 		opts.property = opts.property || opts.mediaType;
-		var n = CT.dom.node(null, "div", opts.parentClass),
+		var n = CT.dom.div(null, opts.parentClass),
 			val = opts.data[opts.property],
 			uptype = opts.mediaType == "img" ? "image" : "video",
 			media = CT.dom[opts.mediaType](val, opts.className),
 			blob = new CT.db.Blob({
 				noNothing: true,
+				id: opts.id,
 				key: opts.data.key,
 				property: opts.property,
 				value: val,
