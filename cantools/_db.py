@@ -1,5 +1,5 @@
 from cantools.web import respond, succeed, fail, send_file, cgi_get, cgi_dump, read_file, getmem, setmem, clearmem
-from cantools.db import get, get_model, get_schema, get_page, get_multi, put_multi, edit, dprep, admin
+from cantools.db import get, get_model, get_schema, get_page, get_multi, put_multi, edit, dprep, admin, BlobWrapper
 from cantools.util import getxls
 from cantools import config
 import model # load up all models (for schema)
@@ -58,17 +58,18 @@ def response():
 	elif action == "blob":
 		value = cgi_get("value", required=False) # fastest way
 		data = cgi_get("data", required=False)
-		if value:
-			from cantools.db import BlobWrapper # keep gae happy
-			blob = BlobWrapper(value=value)
-		else:
-			ent = get(cgi_get("key"))
-			prop = cgi_get("property")
-			blob = getattr(ent, prop)
-		if data:
+		prop = cgi_get("property", required=False)
+		entkey = cgi_get("key", required=False)
+		ent = entkey and get(entkey)
+		blob = value and BlobWrapper(value=value) or (ent and prop and getattr(ent, prop))
+		if cgi_get("delBlob", default=False):
+			blob.delete()
+			setattr(ent, prop, None)
+			ent.put()
+		elif data:
 			if config.memcache.db:
 				clearmem()
-			if value:
+			if False:#value: # screw this -- doesn't update entity
 				blob.set(read_file(data))
 			else: # going by key, property -- must update index
 				setattr(ent, prop, read_file(data))
