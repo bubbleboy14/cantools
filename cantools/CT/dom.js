@@ -436,7 +436,8 @@ CT.dom = {
 		});
 		if (click) {
 			n.onclick = function() {
-				CT.dom.id(htmlFor).onclick();
+				var tnode = CT.dom.id(htmlFor);
+				tnode && tnode.onclick && tnode.onclick();
 			};
 		}
 		return n;
