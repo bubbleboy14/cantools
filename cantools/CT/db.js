@@ -231,14 +231,26 @@ CT.db.Blob = CT.Class({
 		})).show();
 	},
 	upload: function(ctfile) {
-		var params = { action: "blob" };
-		if (this.index)
-			params.value = this.index;
-		else {
-			params.key = this.opts.key;
-			params.property = this.opts.property;
+		ctfile.upload("/_db", this._update, {
+			action: "blob",
+			value: this.index,
+			key: this.opts.key,
+			property: this.opts.property
+		});
+	},
+	deletePrompt: function() {
+		if (confirm("really delete?") && confirm("are you sure?")) {
+			CT.net.post({
+				path: "/_db",
+				params: {
+					delBlob: true,
+					action: "blob",
+					key: this.opts.key,
+					property: this.opts.property
+				},
+				cb: this._update
+			});
 		}
-		ctfile.upload("/_db", this._update, params);
 	},
 	_update: function(val) {
 		this.opts.value = val;
@@ -246,19 +258,25 @@ CT.db.Blob = CT.Class({
 		this._setup();
 	},
 	_setup: function() {
+		var className = this.opts.className || "nodecoration blue";
 		if (this.opts.value) {
 			this.index = this.opts.value.slice(6);
-			CT.dom.setContent(this.node, [
+			var content = [
 				CT.dom.link("download", null,
 					"/_db?action=blob&value=" + this.index,
-					this.opts.className || "blue", this.opts.id, null, true),
+					className, this.opts.id, null, true),
 				CT.dom.pad(),
-				CT.dom.link("upload", this.uploadPrompt, null, this.opts.className || "nodecoration blue")
-			]);
+				CT.dom.link("upload", this.uploadPrompt, null, className)
+			];
+			if (this.opts.delNode) {
+				content.push(CT.dom.pad());
+				content.push(CT.dom.link("delete",
+					this.deletePrompt, null, className));
+			}
+			CT.dom.setContent(this.node, content);
 		} else if (this.opts.key)
 			CT.dom.setContent(this.node, CT.dom.link(this.opts.firstUp || "upload",
-				this.uploadPrompt, null, this.opts.className || "nodecoration blue",
-				this.opts.id));
+				this.uploadPrompt, null, className, this.opts.id));
 		else if (!this.opts.noNothing)
 			CT.dom.setContent(this.node, "(nothing yet)");
 	},
@@ -406,6 +424,7 @@ CT.db.edit = {
 				key: opts.data.key,
 				property: opts.property,
 				value: val,
+				delNode: opts.delNode,
 				firstUp: "upload " + uptype,
 				className: "round hoverglow",
 				cb: function(newVal) {
