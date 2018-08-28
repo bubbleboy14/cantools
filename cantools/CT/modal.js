@@ -42,6 +42,7 @@ a string, a password, or one or more selections from a list.
 
 defaults:
 	{
+		className: "basicpopup mosthigh",
 		style: "string", // string|multiple-string|password|single-choice|multiple-choice|file
 		prompt: "",
 		clear: false, // string/password only
@@ -69,6 +70,7 @@ CT.modal._defaults = {
 		noClose: true
 	},
 	Prompt: {
+		className: "basicpopup mosthigh",
 		style: "string",
 		prompt: "",
 		clear: false, // string/password only
@@ -360,6 +362,6 @@ CT.modal.Prompt = CT.Class({
 		this.node.appendChild(CT.dom.button("Cancel", this.hide));
 	},
 	init: function(opts) {
-		this.opts = CT.merge(this.opts, opts, CT.modal._defaults.Prompt, CT.modal._defaults.Modal);
+		this.opts = CT.merge(opts, CT.modal._defaults.Prompt, this.opts);
 	}
 }, CT.modal.Modal);
