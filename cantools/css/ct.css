@@ -25,6 +25,10 @@
 .wm0 { max-width: 0px !important; }
 .hm20p { max-height: 20px !important; }
 .wm20p { max-width: 20px !important; }
+.hm100p { max-height: 100px !important; }
+.wm100p { max-width: 100px !important; }
+.hm200p { max-height: 200px !important; }
+.wm200p { max-width: 200px !important; }
 .hm1 { max-height: 100%; }
 .wm1 { max-width: 100%; }
 .hm1-2 { max-height: 50%; }
