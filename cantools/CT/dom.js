@@ -110,10 +110,18 @@ CT.dom = {
 			CT.dom._nodes[id] = d;
 		}
 		d.on = function(e, func) {
-			if (func)
-				return d.addEventListener(e, func);
-			for (var k in e)
-				d.addEventListener(k, e[k]);
+			if (!func) {
+				for (var k in e)
+					d.addEventListener(k, e[k]);
+			}
+			else if (e == "visible") {
+				var io = new IntersectionObserver(function(entz) {
+					if (entz[0].intersectionRatio)
+						func();
+				});
+				io.observe(d);
+			} else
+				d.addEventListener(e, func);
 		};
 		if (attrs) {
 			for (var attr in attrs) {
