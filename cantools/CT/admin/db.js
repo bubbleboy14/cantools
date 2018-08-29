@@ -131,8 +131,8 @@ CT.admin.db.Editor = CT.Class({
 					b.blob.keyUp(resp.key);
 				});
 			}
-			if (data.label != resp.label) {
-				CT.panel.rename(data.label, resp.label || resp.key, data.modelName, "starred");
+			if (data.label != (resp.label || resp.key)) { // supports custom table data() w/o label
+				CT.panel.rename(data.label, resp.label, data.modelName, "starred");
 				data.label = resp.label;
 			}
 			alert("you did it");
