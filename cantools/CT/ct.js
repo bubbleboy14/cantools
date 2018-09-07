@@ -348,7 +348,7 @@ var CT = {
 			}
 			return path;
 		},
-		"get": function(path, qsp, isjson, ctjson) {
+		"get": function(path, qsp, isjson, ctjson, doublejson) { // doublejson for backwards compatibility
 			var d, cachedVersion, cache = CT.net._cache && (isjson || ctjson);
 			path = CT.net.qs(path, qsp);
 			if (cache) {
@@ -357,9 +357,11 @@ var CT = {
 					return cachedVersion;
 			}
 			d = CT.net.xhr(path, "GET");
-			if (ctjson)
+			if (ctjson) {
 				d = CT.net._ctresponse(d, path).data;
-			else {
+				if (doublejson)
+					d = JSON.parse(d);
+			} else {
 				if (isjson)
 					d = JSON.parse(d);
 				if (cache)
