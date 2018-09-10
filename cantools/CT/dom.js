@@ -402,10 +402,10 @@ CT.dom = {
 		};
 		return n;
 	},
-	"iframe": function(src, className, id) {
-		var iframe = CT.dom.node("", "iframe", className, id, {
+	"iframe": function(src, className, id, attrs) {
+		var iframe = CT.dom.node("", "iframe", className, id, CT.merge({
 			"src": src
-		});
+		}, attrs));
 		iframe.setHash = function(txt) {
 			CT.dom.getLoc(iframe).hash = txt;
 		};
