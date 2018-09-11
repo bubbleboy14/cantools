@@ -151,7 +151,12 @@ def build_frags(mode="web", admin_ct_path=None):
         block = processjs(frag, admin_ct_path=admin_ct_path)
         path = os.path.join(base, frag[len(config.js.path)+1:])
         checkdir(path.rsplit("/", 1)[0], True)
-        write(minify(block, mangle=True), path)
+        if frag in config.build.exclude:
+            log("path excluded -- skipping compression/obfuscation", 2)
+        else:
+            log("mangling", 2)
+            block = minify(block, mangle=True)
+        write(block, path)
     while len(fcopy) is not len(fragz):
         fcopy = fragz.difference(fcopy)
         map(build_frag, fcopy)
