@@ -14,15 +14,16 @@ CT.admin.core = {
 		if (c._skipinit) {
 			CT.admin.core.credcheck(function(msg) {
 				alert(msg);
-				location = "/";
+				location = c._failpath || "/";
 			}, c._initcb);
 		} else
 			c.q(c._mode, c._initcb, "failed to initialize " + c._mode);
 	},
-	init: function(mode, cb, skipinit) {
+	init: function(mode, cb, skipinit, failpath) {
 		CT.admin.core._mode = mode;
 		CT.admin.core._initcb = cb;
 		CT.admin.core._skipinit = skipinit;
+		CT.admin.core._failpath = failpath;
 		CT.modal.Prompt({
 			style: "password",
 			prompt: "password?",

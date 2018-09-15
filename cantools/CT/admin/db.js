@@ -1,5 +1,5 @@
 CT.admin.db = {
-	"init": function() {
+	"init": function(failpath) {
 		CT.admin.db.starred = CT.dom.id("dbstarred");
 		var stog = CT.dom.id("dbstarredtoggle");
 		stog.onclick = function() {
@@ -27,7 +27,7 @@ CT.admin.db = {
 				builder: CT.admin.db._build,
 				post_pager: CT.admin.db._post_pager
 			});
-		}, true);
+		}, true, failpath);
 	},
 	"_post_pager": function(key, modelName, startYear) {
 		var pnode = CT.dom.id("dbpanel" + key);
