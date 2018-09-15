@@ -49,7 +49,8 @@ def getController():
 		CTR.web.controller = CTR
 
 		# admin
-		config.admin.update("pw", config.cache("admin password? "))
+		config.admin.update("pw",
+			config.cache("admin password? ", overwrite=config.newpass))
 		CTR.admin = CTR.register_address(config.admin.host,
 			config.admin.port, dclass=daemon_wrapper(Admin, logger_getter))
 		CTR.admin.controller = CTR
