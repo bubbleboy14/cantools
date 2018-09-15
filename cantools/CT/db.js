@@ -296,7 +296,7 @@ CT.db.Blob = CT.Class({
 });
 
 CT.db.edit = {
-	_d: { // unimplemented: list -- no editing (yet) :)
+	_d: {
 		"string": "",
 		"text": "",
 		"integer": 0,
@@ -312,13 +312,16 @@ CT.db.edit = {
 		"key": null,
 		"label": "(tap to select)"
 	},
+	_unsupported: ["label", "_label", "created", "modified"],
+	unsupport: function(properties) {
+		CT.db.edit._unsupported = CT.db.edit._unsupported.concat(properties);
+	},
 	propertyDefault: function(ptype) {
 		return CT.db.edit._d[ptype];
 	},
 	isSupported: function(ptype, key) {
-		if (["label", "_label", "created", "modified"].indexOf(key) != -1)
+		if (CT.db.edit._unsupported.indexOf(key) != -1)
 			return false;
-		// implement list editing soon!!
 		return ptype in CT.db.edit._d;
 	},
 	getDefaults: function(modelName, extras) {
