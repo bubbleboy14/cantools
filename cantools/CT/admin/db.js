@@ -1,5 +1,5 @@
 CT.admin.db = {
-	"init": function(failpath) {
+	"init": function(failpath, exclusions) {
 		CT.admin.db.starred = CT.dom.id("dbstarred");
 		var stog = CT.dom.id("dbstarredtoggle");
 		stog.onclick = function() {
@@ -15,6 +15,11 @@ CT.admin.db = {
 			CT.db.init({
 				cb: function(schema) {
 					var skeys = Object.keys(schema);
+					if (exclusions) {
+						skeys = skeys.filter(function(k) {
+							return exclusions.indexOf(k) == -1;
+						});
+					}
 					skeys.sort();
 					CT.panel.simple({
 						pnames: skeys,
