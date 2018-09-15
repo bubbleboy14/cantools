@@ -10,6 +10,8 @@
                           select your port (default=8002)
     -d DATASTORE, --datastore=DATASTORE
                           select your datastore file (default=sqlite:///data.db)
+    -o, --overwrite_password
+                          overwrite admin password (default=False)
 """
 
 from optparse import OptionParser
@@ -26,10 +28,14 @@ def go():
 		help="select your port (default=%s)"%(config.admin.port,))
 	parser.add_option("-d", "--datastore", dest="datastore", default=config.db.main,
 		help="select your datastore file (default=%s)"%(config.db.main,))
+	parser.add_option("-o", "--overwrite_password", action="store_true", dest="overwrite_password",
+		default=False, help="overwrite admin password (default=False)")
 	options, args = parser.parse_args()
 
 	config.web.update("port", int(options.port))
 	config.admin.update("port", int(options.admin_port))
+	if options.overwrite_password:
+		config.update("newpass", True)
 
 	if options.web_backend == "gae":
 		import subprocess
