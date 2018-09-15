@@ -312,9 +312,13 @@ CT.db.edit = {
 		"key": null,
 		"label": "(tap to select)"
 	},
+	_options: {},
 	_unsupported: ["label", "_label", "created", "modified"],
 	unsupport: function(properties) {
 		CT.db.edit._unsupported = CT.db.edit._unsupported.concat(properties);
+	},
+	option: function(key, vals) {
+		CT.db.edit._options[key] = vals;
 	},
 	propertyDefault: function(ptype) {
 		return CT.db.edit._d[ptype];
@@ -349,9 +353,12 @@ CT.db.edit = {
 	input: function(k, ptype, val, modelName, opts) {
 		var valcell, lstyle = { marginLeft: "180px", minHeight: "18px" };
 		opts = opts || {};
-		if (ptype == "string")
-			valcell = CT.dom.field(null, val);
-		else if (ptype == "text")
+		if (ptype == "string") {
+			if (CT.db.edit._options[k])
+				valcell = CT.dom.select(CT.db.edit._options[k]);
+			else
+				valcell = CT.dom.field(null, val);
+		} else if (ptype == "text")
 			valcell = CT.dom.textArea(null, val);
 		else if (ptype == "boolean") {
 			if (opts.label)
