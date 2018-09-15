@@ -9,6 +9,8 @@ def _init_entity(instance, session=session, preserve_timestamps=False):
     cls = instance.__class__
     tname = instance.__tablename__
     if tname != "ctrefcount":
+        if hasattr(instance, "_pre_put"):
+            instance._pre_put()
         for key, val in cls.__dict__.items():
             if not preserve_timestamps and getattr(val, "is_dt_autostamper", False) and val.should_stamp(not instance.index):
                 setattr(instance, key, now)
