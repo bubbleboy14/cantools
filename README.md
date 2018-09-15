@@ -1,4 +1,4 @@
-# cantools 0.10.7.10
+# cantools 0.10.7.11
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
  - Docs: http://ct.mkult.co
@@ -117,6 +117,8 @@ any need for the developer to know or do anything beyond 'ctinit -r'.
                           select your port (default=8002)
     -d DATASTORE, --datastore=DATASTORE
                           select your datastore file (default=sqlite:///data.db)
+    -o, --overwrite_password
+                          overwrite admin password (default=False)
 
 ## ctdeploy
 ### Usage: ctdeploy [-d|s|p] [-un] [--js_path=PATH]
