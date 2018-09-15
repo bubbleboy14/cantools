@@ -59,9 +59,9 @@ class PCache(object):
 	def _save(self):
 		write(b64encode(json.dumps(self._cache)), self.fname)
 
-	def __call__(self, key, password=True):
+	def __call__(self, key, password=True, overwrite=False):
 		dk = b64encode(key)
-		if dk not in self._cache:
+		if overwrite or dk not in self._cache:
 			p = (password and getpass.getpass or raw_input)(key)
 			if raw_input("store %s? [Y/n]: "%(password and "password" or "value")).lower().startswith("n"):
 				return p
