@@ -355,7 +355,7 @@ CT.db.edit = {
 		opts = opts || {};
 		if (ptype == "string") {
 			if (CT.db.edit._options[k])
-				valcell = CT.dom.select(CT.db.edit._options[k]);
+				valcell = CT.dom.select(CT.db.edit._options[k], null, null, val);
 			else
 				valcell = CT.dom.field(null, val);
 		} else if (ptype == "text")
