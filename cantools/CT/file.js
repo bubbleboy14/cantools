@@ -9,7 +9,7 @@ CT.file = {
 		return CT.dom.div([
 			CT.dom.label(label || "drag file here", id),
 			CT.file.getter(cb, multi, "transparent", id)
-		], classname);
+		], classname || "w1 h80p dropper");
 	},
 	getter: function(cb, multi, classname, id) { // upload input element
 		var f = CT.dom.file(function(e) {
