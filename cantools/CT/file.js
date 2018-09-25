@@ -4,7 +4,7 @@ messing with (accessing, uploading, downloading) file objects.
 */
 
 CT.file = {
-	getter: function(cb, multi) { // upload input element
+	getter: function(cb, multi, classname, id) { // upload input element
 		var f = CT.dom.file(function(e) {
 			if (multi) {
 				var files = []; // can't map, f.files is not a real array
@@ -22,7 +22,7 @@ CT.file = {
 					file: f.files[0]
 				}));
 			}
-		}, null, null, multi);
+		}, id, classname, multi);
 		return f;
 	},
 	make: function(data) { // from data
