@@ -4,6 +4,13 @@ messing with (accessing, uploading, downloading) file objects.
 */
 
 CT.file = {
+	dragdrop: function(cb, classname, label, id, multi) {
+		id = id || ("dd" + Math.floor(Math.random * 1000));
+		return CT.dom.div([
+			CT.dom.label(label || "drag file here", id),
+			CT.file.getter(cb, multi, "transparent", id)
+		], classname);
+	},
 	getter: function(cb, multi, classname, id) { // upload input element
 		var f = CT.dom.file(function(e) {
 			if (multi) {
