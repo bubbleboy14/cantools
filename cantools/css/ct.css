@@ -486,14 +486,17 @@
 .bottom_out {
     bottom: -150px !important;
 }
-.bottompadded {
-    padding-bottom: 10px;
-}
 .toppadded {
     padding-top: 10px;
 }
 .topmargined {
     margin-top: 10px;
+}
+.topbordered {
+    border-top: 1px solid black;
+}
+.bottompadded {
+    padding-bottom: 10px;
 }
 .bottommargined {
     margin-bottom: 10px;
