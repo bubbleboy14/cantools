@@ -169,8 +169,11 @@ CT.dom = {
 			attrs.target = "_blank";
 		return CT.dom.node(content, "a", classname, id, attrs);
 	},
-	"button": function(content, onclick, classname, id) {
-		return CT.dom.node(content, "button", classname, id, {"onclick": onclick});
+	"button": function(content, onclick, classname, id, disabled) {
+		return CT.dom.node(content, "button", classname, id, {
+			"onclick": onclick,
+			"disabled": disabled
+		});
 	},
 	"field": function(id, value, classname, type, attrs, style, placeholder) {
 		attrs = attrs || {};
