@@ -9,8 +9,10 @@ def response():
 
 	# edit/delete/put/index/bulk always require credentials; getters do configurably
 	if not config.db.public or action in ["edit", "delete", "put", "index", "bulk", "credcheck"]:
-		if cgi_get("pw") != config.admin.pw:
-			fail("wrong")
+		pw = cgi_get("pw")
+		if pw != config.admin.pw:
+			if not pw or pw != config.apikey:
+				fail("wrong")
 
 	# clear cache!
 	if config.memcache.db and action in ["edit", "delete", "put", "bulk"]:
