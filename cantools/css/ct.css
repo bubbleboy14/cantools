@@ -133,6 +133,7 @@
 .clearnode { clear: both; }
 .justified { text-align: justify; }
 .centered { text-align: center; }
+.automarg,
 .centered > div {
     margin-left: auto;
     margin-right: auto;
