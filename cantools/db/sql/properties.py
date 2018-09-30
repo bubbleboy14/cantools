@@ -73,6 +73,15 @@ class BasicString(basicType(sqlalchemy.UnicodeText, StringType)):
 
 String = sqlColumn(BasicString)
 
+class JSONType(BasicString):
+	def process_bind_param(self, value, dialect):
+		return json.dumps(value)
+
+	def process_result_value(self, value, dialect):
+		return json.loads(value)
+
+JSON = sqlColumn(JSONType)
+
 class BlobWrapper(object):
 	def __init__(self, data="", value=0):
 		self.value = value
