@@ -126,9 +126,21 @@ class BlobWrapper(object):
 	def urlsafe(self):
 		return self.path and "/" + "/".join(os.path.split(self.path))
 
-class Blob(basicType(sqlInteger)):
+BasicInt = basicType(sqlInteger)
+
+class Blob(BasicInt):
+	def __init__(self, *args, **kwargs):
+		self.unique = kwargs.pop("unique", False)
+		BasicInt.__init__(self, *args, **kwargs)
+
 	def process_bind_param(self, data, dialect):
 		if type(data) is not BlobWrapper:
+			if self.unique:
+				from cantools.util import read, error
+				from cantools import config
+				for f in [os.path.join(config.db.blob, p) for p in os.listdir(config.db.blob)]:
+					if os.path.isfile(f) and data == read(f):
+						error("non-unique blob!")
 			data = BlobWrapper(data)
 		return data.value
 
