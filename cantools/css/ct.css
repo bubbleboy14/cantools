@@ -724,7 +724,7 @@
 .backtrans {
     background: rgba(255, 255, 255, 0.0);
 }
-.whitelink a {
+a.whitelink, .whitelink a {
     color: white;
 }
 /* drop classes */
