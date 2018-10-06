@@ -32,7 +32,8 @@ defaults:
 		innerClass: "lightbox",
 		transition: "fade",
 		caption: "",
-		noClose: true
+		noClose: true,
+		outerClose: true
 	}
 
 
@@ -67,7 +68,8 @@ CT.modal._defaults = {
 		innerClass: "lightbox",
 		transition: "fade",
 		caption: "",
-		noClose: true
+		noClose: true,
+		outerClose: true
 	},
 	Prompt: {
 		className: "basicpopup mosthigh",
@@ -263,9 +265,9 @@ CT.modal.Modal = CT.Class({
 CT.modal.LightBox = CT.Class({
 	init: function(opts) {
 		var thiz = this;
-		this.opts = CT.merge(opts, {
+		this.opts = opts = CT.merge(opts, {
 			onclick: function(e) {
-				if (e.currentTarget == e.target) thiz.hide();
+				if (opts.outerClose && (e.currentTarget == e.target)) thiz.hide();
 			},
 			content: CT.dom.div(CT.dom.div(this.opts.caption,
 				"biggest bold padded round translucent full-center white grayback pointer hoverglow"),
