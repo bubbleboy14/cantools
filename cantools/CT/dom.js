@@ -177,7 +177,7 @@ CT.dom = {
 	},
 	"field": function(id, value, classname, type, attrs, style, placeholder) {
 		attrs = attrs || {};
-		if (value)
+		if (value || (typeof value == "number")) // for 0 edge case
 			attrs.value = value;
 		if (type)
 			attrs.type = type;
