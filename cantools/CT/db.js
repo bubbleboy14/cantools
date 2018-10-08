@@ -339,8 +339,10 @@ CT.db.edit = {
 		return function() {
 			if (ptype == "boolean")
 				return f.isChecked ? f.isChecked() : f.checked;
-			if (ptype == "integer")
-				return parseInt(f.value) || null;
+			if (ptype == "integer") {
+				var val = parseInt(f.value);
+				return (typeof val == "number") ? val : null;
+			}
 			if (ptype == "float")
 				return parseFloat(f.value) || null;
 			if (ptype == "key")
