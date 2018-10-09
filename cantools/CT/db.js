@@ -144,10 +144,20 @@ CT.db = {
 			}
 			qdata.filters = filters;
 		}
-		return CT.net.post("/_db", qdata, null, function(d) {
+		if (sync) {
+			// TODO: process dz in net layer (w/o breaking anything :)
+			var dz = CT.net._ctresponse(CT.net.post({
+				path: "/_db",
+				params: qdata,
+				sync: true
+			}), "/_db").data;
+			CT.data.addSet(dz);
+			return dz;
+		}
+		CT.net.post("/_db", qdata, null, function(d) {
 			CT.data.addSet(d);
-			cb(d);
-		}, null, null, null, null, sync);
+			cb && cb(d);
+		});
 	},
 	index: function(index, modelName, cb, nothingcb) {
 		CT.db.get(modelName, function(dz) {
