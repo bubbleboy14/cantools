@@ -840,7 +840,7 @@ CT.dom = {
 	"inputEnterCallback": function(n, cb, fid, noBreak) {
 		n.onenter = function() {
 			if (noBreak)
-				n.value = n.value.slice(0, -1);
+				n.value = n.value.replace("\n", "").replace("\r", "");
 			// can prevent annoying repeating alert on enter scenarios
 			if (fid)
 				document.getElementById(fid).focus();
