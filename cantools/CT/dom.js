@@ -837,8 +837,10 @@ CT.dom = {
 		}
 		n.appendChild(CT.dom.node("", "div", "clearnode"));
 	},
-	"inputEnterCallback": function(n, cb, fid) {
+	"inputEnterCallback": function(n, cb, fid, noBreak) {
 		n.onenter = function() {
+			if (noBreak)
+				n.value = n.value.slice(0, -1);
 			// can prevent annoying repeating alert on enter scenarios
 			if (fid)
 				document.getElementById(fid).focus();
@@ -853,7 +855,7 @@ CT.dom = {
 		});
 		return n;
 	},
-	"smartField": function(cb, classname, id, value, type, blurs, isTA) {
+	"smartField": function(cb, classname, id, value, type, blurs, isTA, noBreak) {
 		if (arguments.length == 1 && typeof arguments[0] != "function") {
 			var obj = arguments[0];
 			cb = obj.cb;
@@ -863,10 +865,11 @@ CT.dom = {
 			type = obj.type;
 			blurs = obj.blurs;
 			isTA = obj.isTA;
+			noBreak = obj.noBreak;
 		}
 		id = id || ("sf" + Math.floor((Math.random() * 100000)));
 		var f = CT.dom.inputEnterCallback(CT.dom[isTA ? "textArea" : "field"](id,
-			value, classname, type), cb, id);
+			value, classname, type), cb, id, noBreak);
 		if (blurs)
 			CT.dom.blurField(f, blurs);
 		return f;
