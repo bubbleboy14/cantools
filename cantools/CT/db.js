@@ -309,6 +309,7 @@ CT.db.edit = {
 	_d: {
 		"string": "",
 		"text": "",
+		"json": "",
 		"integer": 0,
 		"float": 0.0,
 		"boolean": false,
@@ -359,6 +360,8 @@ CT.db.edit = {
 				return f.data.key;
 			if (["datetime", "list", "keylist"].indexOf(ptype) != -1)
 				return typeof f.value == "string" ? f.value : f.value();
+			if (ptype == "json")
+				return JSON.parse(f.value);
 			return f.value; // string/text/list/keylist
 		};
 	},
@@ -372,6 +375,8 @@ CT.db.edit = {
 				valcell = CT.dom.field(null, val);
 		} else if (ptype == "text")
 			valcell = CT.dom.textArea(null, val);
+		else if (ptype == "json")
+			valcell = CT.dom.textArea(null, JSON.stringify(val));
 		else if (ptype == "boolean") {
 			if (opts.label)
 				valcell = CT.dom.checkboxAndLabel(k, val);
