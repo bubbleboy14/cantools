@@ -111,7 +111,7 @@ CT.admin.db = {
 
 CT.admin.db.Editor = CT.Class({
 	"CLASSNAME": "CT.admin.db.Editor",
-	"_order": ["string", "text", "integer", "float", "datetime", "boolean", "list", "keylist", "key", "blob"],
+	"_order": ["string", "text", "integer", "float", "datetime", "boolean", "list", "keylist", "key", "blob", "json"],
 	"_submit": function() {
 		var data = this.data, blobs = this.blobs, n = this.node,
 			delnode = this._delete, changes = {};
