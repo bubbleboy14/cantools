@@ -38,6 +38,8 @@ def _col(colClass, *args, **kwargs):
 		col._ct_type = "string"
 	elif colClass is Key:
 		col._kinds = typeInstance.kinds
+	elif colClass is JSONType:
+		col._ct_type = "json"
 	if not hasattr(col, "_ct_type"):
 		col._ct_type = colClass.__name__.lower()
 	col._default = default
