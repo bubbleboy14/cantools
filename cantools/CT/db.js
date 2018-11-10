@@ -362,7 +362,7 @@ CT.db.edit = {
 				return typeof f.value == "string" ? f.value : f.value();
 			if (ptype == "json")
 				return JSON.parse(f.value);
-			return f.value; // string/text/list/keylist
+			return f.value; // string/text
 		};
 	},
 	input: function(k, ptype, val, modelName, opts) {
@@ -428,7 +428,7 @@ CT.db.edit = {
 					modelName: modelName
 				})).node;
 		}
-		if (opts.label && ptype == "string" || ptype == "text")
+		if (opts.label && (ptype == "string" || ptype == "text"))
 			CT.dom.blurField(valcell, [k]);
 		valcell.getValue = CT.db.edit._val(valcell, ptype);
 		valcell.rowKey = k;
