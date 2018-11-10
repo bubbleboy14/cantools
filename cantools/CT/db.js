@@ -376,7 +376,7 @@ CT.db.edit = {
 		} else if (ptype == "text")
 			valcell = CT.dom.textArea(null, val);
 		else if (ptype == "json")
-			valcell = CT.dom.textArea(null, JSON.stringify(val));
+			valcell = CT.dom.textArea(null, val && JSON.stringify(val));
 		else if (ptype == "boolean") {
 			if (opts.label)
 				valcell = CT.dom.checkboxAndLabel(k, val);
