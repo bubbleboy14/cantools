@@ -383,7 +383,7 @@ var CT = {
 		}
 	},
 	"require": function(modname, lazy) { // lazy only matters compile-time
-		if (modname.slice(0, 4) == "http") {
+		if (modname.slice(0, 4) == "http" || modname.startsWith("/")) {
 			if (!(modname in CT._.extReqs)) {
 				CT._.extReqs[modname] = true;
 				eval(CT.net.get(modname));
