@@ -361,7 +361,7 @@ CT.db.edit = {
 			if (["datetime", "list", "keylist"].indexOf(ptype) != -1)
 				return typeof f.value == "string" ? f.value : f.value();
 			if (ptype == "json")
-				return JSON.parse(f.value);
+				return f.value ? JSON.parse(f.value) : null;
 			return f.value; // string/text
 		};
 	},
