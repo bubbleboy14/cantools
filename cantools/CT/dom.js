@@ -189,11 +189,12 @@ CT.dom = {
 		return CT.dom.field(id, null, classname,
 			"file", { onchange: cb, multiple: multiple });
 	},
-	"fieldList": function(vals, maker, style) {
+	"fieldList": function(vals, maker, style, onadd, onremove) {
 		var input = function(v) { return maker ? maker(v) : CT.dom.field(null, v); },
 			row = function(v) {
 				var butt = CT.dom.button("remove", function() {
 					CT.dom.remove(butt.parentNode);
+					onremove && onremove(v);
 				});
 				return CT.dom.node([ butt, input(v) ]);
 			}, n = CT.dom.node(vals && vals.map(row), null, null, null, null, style);
@@ -201,6 +202,7 @@ CT.dom = {
 		n.addButton = CT.dom.button("add", function() {
 			if (n.empty.value) {
 				n.insertBefore(row(n.empty.value), n.firstChild);
+				onadd && onadd(n.empty.value);
 				if (n.empty.fill)
 					n.empty.fill()
 				else
