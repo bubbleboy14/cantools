@@ -201,8 +201,9 @@ CT.dom = {
 		n.empty = input();
 		n.addButton = CT.dom.button("add", function() {
 			if (n.empty.value) {
-				n.insertBefore(row(n.empty.value), n.firstChild);
-				onadd && onadd(n.empty.value);
+				var newRow = row(n.empty.value);
+				n.insertBefore(newRow, n.firstChild);
+				onadd && onadd(newRow.lastElementChild);
 				if (n.empty.fill)
 					n.empty.fill()
 				else
