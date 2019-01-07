@@ -14,7 +14,9 @@ def read(fname="_tmp", lines=False, isjson=False, default=None, binary=False):
     else:
         text = f.read()
     f.close()
-    return isjson and json.loads(text) or text
+    if isjson:
+        return json.loads(text)
+    return text
 
 def write(data, fname="_tmp", isjson=False, ispretty=False, binary=False, append=False, newline=False):
     f = open(fname, append and "a" or binary and "wb" or "w")
