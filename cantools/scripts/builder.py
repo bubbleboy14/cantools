@@ -66,9 +66,12 @@ fragz = set()
 def frag(path):
     if '"' in path:
         path = path.split('"')[0]
-        for sub in os.listdir(path):
-            if sub.endswith(".js"):
-                fragz.add(os.path.join(path, sub))
+        for root, dirs, files in os.walk(path, followlinks=True):
+            for sub in files:
+                if sub.endswith(".js"):
+                    fp = os.path.join(root, sub)
+                    log("fragment identified: %s"%(fp,), 1)
+                    fragz.add(fp)
     else:
         fragz.add(path)
 
