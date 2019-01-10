@@ -193,6 +193,10 @@
     bottom: 10px;
     left: 10px;
 }
+.t0i { top: 0px !important; }
+.b0i { bottom: 0px !important; }
+.l0i { left: 0px !important; }
+.r0i { right: 0px !important; }
 .t0, .top0 { top: 0px; }
 .b0, .bottom0 { bottom: 0px; }
 .l0, .left0 { left: 0px; }
