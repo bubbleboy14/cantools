@@ -82,6 +82,7 @@ def include_plugins():
 	try:
 		plugs = {}
 		def loadp(plugin):
+			plugin = plugin.split("/")[-1]
 			if plugin not in plugs:
 				mod = plugs[plugin] = __import__(plugin)
 				if hasattr(mod.init, "requires"):
