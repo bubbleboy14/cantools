@@ -476,6 +476,10 @@
     background: white;
     border: 1px solid black;
 }
+.noframe {
+    background: none;
+    border: none;
+}
 .bb {
     box-sizing: border-box;
 }
