@@ -226,7 +226,7 @@ CT.dom = {
 		if (arguments.length == 1 && typeof arguments[0] != "string") {
 			var obj = arguments[0];
 			src = obj.src;
-			imgclass = obj.imgclass;
+			imgclass = obj.imgclass || obj.className;
 			onclick = obj.onclick;
 			href = obj.href;
 			target = obj.target;
@@ -367,7 +367,7 @@ CT.dom = {
 		attrs.preload = attrs.preload || preload || "none";
 		return CT.dom.node("", "audio", className, id, attrs);
 	},
-	"video": function(src, className, id, attrs, style, oncanplay, onended, onplay, onpause, poster) {
+	"video": function(src, className, id, attrs, style, oncanplay, onended, onplay, onpause, poster, controls, autoplay) {
 		if (arguments.length == 1 && typeof arguments[0] != "string") {
 			var obj = arguments[0];
 			src = obj.src;
@@ -380,6 +380,8 @@ CT.dom = {
 			onplay = obj.onplay;
 			onpause = obj.onpause;
 			poster = obj.poster;
+			controls = obj.controls;
+			autoplay = obj.autoplay;
 		}
 		attrs = attrs || {};
 		var multisrc = false;
@@ -387,6 +389,10 @@ CT.dom = {
 			multisrc = true;
 		else
 			attrs.src = src;
+		if (controls)
+			attrs.controls = "true";
+		if (autoplay)
+			attrs.autoplay = "true";
 		if (onplay)
 			attrs.onplay = onplay;
 		if (onpause)
