@@ -9,7 +9,7 @@ CT.mobile = {
     "options": { // true/false for ALLNODE._mobile
         "mobile": ["mobile", "stretched"],
         "normal": ["normal", "stretched"],
-        "tablet": ["stretched", "normal"]
+        "tablet": ["stretched", "mobile"]
     },
     "fitNode": function(n, t, o, cb) {
         var tline, w = CT.align.width() - 10,
