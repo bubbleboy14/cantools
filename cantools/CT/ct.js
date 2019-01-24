@@ -510,6 +510,7 @@ CT.info.mobile = /android.+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine
 CT.info.iPhone = CT.info.userAgent.indexOf("iPhone") != -1;
 CT.info.iPad = CT.info.userAgent.indexOf("iPad") != -1;
 CT.info.androidTablet = CT.info.android && !CT.info.mobile;
+CT.info.tablet = CT.info.iPad || CT.info.androidTablet;
 CT.info.isStockAndroid = (CT.info.userAgent.indexOf("Mozilla/5.0") != -1)
 	&& (CT.info.userAgent.indexOf("Android ") != -1)
 	&& (CT.info.userAgent.indexOf("AppleWebKit") != -1)
