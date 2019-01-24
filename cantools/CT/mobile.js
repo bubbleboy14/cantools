@@ -7,8 +7,9 @@ between components.
 
 CT.mobile = {
     "options": { // true/false for ALLNODE._mobile
-        "true": ["mobile", "stretched"],
-        "false": ["normal", "stretched"]
+        "mobile": ["mobile", "stretched"],
+        "normal": ["normal", "stretched"],
+        "tablet": ["stretched", "normal"]
     },
     "fitNode": function(n, t, o, cb) {
         var tline, w = CT.align.width() - 10,
@@ -87,8 +88,14 @@ CT.mobile = {
         document.body.appendChild(mmbtn.bottoms);
     },
     "_mset": function() {
-        var _a = CT.dom.ALLNODE;
-        return CT.mobile.options[(!!(_a._mobile && _a._mobileDefault)).toString()];
+        var _a = CT.dom.ALLNODE, i, m,
+            modes = ["mobile", "tablet"];
+        for (i = 0; i < modes.length; i++) {
+            m = modes[i];
+            if (_a["_" + m])
+                return CT.mobile.options[m];
+        }
+        return CT.mobile.options.normal;
     },
     "isMobile": function() {
         return CT.dom.ALLNODE._mobile;
@@ -164,6 +171,7 @@ CT.mobile = {
             null, null, "Mobile Menu", "mobile_menu_btn", "round bordered padded");
         _a.resize = function() {
             _a._mobile = CT.info.mobile || CT.align.width() <= 720;
+            _a._tablet = CT.info.tablet || CT.align.width() <= 980;
             _a._mode = zMode();
             if (_a._mode == "normal")
                 CT.mobile.fitNode(null, "scale(1)", "50% 0%");
