@@ -414,10 +414,18 @@ CT.dom = {
 		};
 		return n;
 	},
-	"iframe": function(src, className, id, attrs) {
+	"iframe": function(src, className, id, attrs, style) {
+		if (arguments.length == 1 && typeof arguments[0] != "string") {
+			var obj = arguments[0];
+			src = obj.src;
+			className = obj.className;
+			id = obj.id;
+			attrs = obj.attrs;
+			style = obj.style;
+		}
 		var iframe = CT.dom.node("", "iframe", className, id, CT.merge({
 			"src": src
-		}, attrs));
+		}, attrs), style);
 		iframe.setHash = function(txt) {
 			CT.dom.getLoc(iframe).hash = txt;
 		};
