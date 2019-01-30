@@ -38,6 +38,7 @@ This module provides functions that generate common UI elements. These include:
 
 ### tree(opts) - defaults:
 	path: ""
+	nameCb: null // generates name node content, falls back to name
 	branches: {}
 	cb: function() {}
 	name: opts.title || "root"
@@ -201,6 +202,7 @@ CT.layout = {
 	tree: function(opts) {
 		opts = CT.merge(opts, {
 			path: "",
+			nameCb: null,
 			branches: {},
 			cb: function() {},
 			name: opts.title || "root",
@@ -213,13 +215,14 @@ CT.layout = {
 			};
 		};
 		opts.path = !opts.path ? opts.name : (opts.path + "_" + opts.name);
+		opts.id = "ctl_" + opts.path;
 		var node = CT.dom.div([
-			opts.name,
+			opts.nameCb ? opts.nameCb(opts) : opts.name,
 			Object.keys(opts.branches).map(function(branch) {
 				var obb = opts.branches[branch].branches;
 				if (!obb) {
 					var d = CT.dom.div(branch, opts.className,
-						"ctl_" + opts.path + "_" + branch);
+						opts.id + "_" + branch);
 					d.onclick = onclick(d);
 					return d;
 				}
@@ -228,7 +231,7 @@ CT.layout = {
 					branches: obb
 				}, opts));
 			})
-		], opts.className, "ctl_" + opts.path);
+		], opts.className, opts.id);
 		node.onclick = onclick(node);
 		return node;
 	}
