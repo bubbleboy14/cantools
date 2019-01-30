@@ -212,14 +212,14 @@ CT.layout = {
 				e.stopPropagation();
 			};
 		};
-		opts.path = opts.path + opts.name;
+		opts.path = !opts.path ? opts.name : (opts.path + "_" + opts.name);
 		var node = CT.dom.div([
 			opts.name,
 			Object.keys(opts.branches).map(function(branch) {
 				var obb = opts.branches[branch].branches;
 				if (!obb) {
 					var d = CT.dom.div(branch, opts.className,
-						"ctl_" + opts.path + branch);
+						"ctl_" + opts.path + "_" + branch);
 					d.onclick = onclick(d);
 					return d;
 				}
