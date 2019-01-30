@@ -36,9 +36,10 @@ This module provides functions that generate common UI elements. These include:
 	fallback: null
 	hashcheck: null
 
-### tree(opts, name, className) - defaults:
+### tree(opts, name, className, path) - defaults:
 	opts: { branches: {} }
 	name: opts.name || opts.title
+	path: "" -> becomes path + name
 	className: "m5 p5 vtop centered pointer inline-block"
 
 */
@@ -196,12 +197,14 @@ CT.layout = {
 		}
 		return tl;
 	},
-	tree: function(opts, name, className) {
+	tree: function(opts, name, className, path) {
+		name = name || opts.name || opts.title;
+		path = (path || "") + name;
 		return CT.dom.div([
-			name || opts.name || opts.title,
+			name,
 			Object.keys(opts.branches || {}).map(function(branch) {
-				return CT.layout.tree(opts.branches[branch], branch, className);
+				return CT.layout.tree(opts.branches[branch], branch, className, path);
 			})
-		], className || "m5 p5 vtop centered pointer inline-block");
+		], className || "m5 p5 vtop centered pointer inline-block", "ctl_" + path);
 	}
 };
