@@ -36,10 +36,11 @@ This module provides functions that generate common UI elements. These include:
 	fallback: null
 	hashcheck: null
 
-### tree(opts, name, className, path) - defaults:
-	opts: { branches: {} }
-	name: opts.name || opts.title
-	path: "" -> becomes path + name
+### tree(opts) - defaults:
+	path: ""
+	branches: {}
+	cb: function() {}
+	name: opts.title || "root"
 	className: "m5 p5 vtop centered pointer inline-block"
 
 */
@@ -197,14 +198,38 @@ CT.layout = {
 		}
 		return tl;
 	},
-	tree: function(opts, name, className, path) {
-		name = name || opts.name || opts.title;
-		path = (path || "") + name;
-		return CT.dom.div([
-			name,
-			Object.keys(opts.branches || {}).map(function(branch) {
-				return CT.layout.tree(opts.branches[branch], branch, className, path);
+	tree: function(opts) {
+		opts = CT.merge(opts, {
+			path: "",
+			branches: {},
+			cb: function() {},
+			name: opts.title || "root",
+			className: "m5 p5 vtop centered pointer inline-block"
+		});
+		var onclick = function(n) {
+			return function(e) {
+				opts.cb(n);
+				e.stopPropagation();
+			};
+		};
+		opts.path = opts.path + opts.name;
+		var node = CT.dom.div([
+			opts.name,
+			Object.keys(opts.branches).map(function(branch) {
+				var obb = opts.branches[branch].branches;
+				if (!obb) {
+					var d = CT.dom.div(branch, opts.className,
+						"ctl_" + opts.path + branch);
+					d.onclick = onclick(d);
+					return d;
+				}
+				return CT.layout.tree(CT.merge({
+					name: branch,
+					branches: obb
+				}, opts));
 			})
-		], className || "m5 p5 vtop centered pointer inline-block", "ctl_" + path);
+		], opts.className, "ctl_" + opts.path);
+		node.onclick = onclick(node);
+		return node;
 	}
 };
