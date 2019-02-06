@@ -1,4 +1,4 @@
-# cantools 0.10.8.16
+# cantools 0.10.8.17
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
  - Docs: http://ct.mkult.co
@@ -658,6 +658,7 @@ This module provides functions that generate common UI elements. These include:
 
 ### tree(opts) - defaults:
 	path: ""
+	nameCb: null // generates name node content, falls back to name
 	branches: {}
 	cb: function() {}
 	name: opts.title || "root"
