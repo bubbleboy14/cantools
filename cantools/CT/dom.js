@@ -304,7 +304,7 @@ CT.dom = {
 				else
 					s.other.style.display = "none";
 			}
-			onchange && onchange();
+			onchange && onchange(s.value);
 		};
 		setTimeout(s.onchange);
 		return s.container || s;
