@@ -190,13 +190,13 @@ CT.dom = {
 			"file", { onchange: cb, multiple: multiple });
 	},
 	"fieldList": function(vals, maker, style, onadd, onremove) {
-		var input = function(v) { return maker ? maker(v) : CT.dom.field(null, v); },
-			row = function(v) {
+		var input = function(v, i) { return maker ? maker(v, i) : CT.dom.field(null, v); },
+			row = function(v, i) {
 				var butt = CT.dom.button("remove", function() {
 					CT.dom.remove(butt.parentNode);
 					onremove && onremove(v);
 				});
-				return CT.dom.node([ butt, input(v) ]);
+				return CT.dom.node([ butt, input(v, i) ]);
 			}, n = CT.dom.node(vals && vals.map(row), null, null, null, null, style);
 		n.empty = input();
 		n.addButton = CT.dom.button("add", function() {
