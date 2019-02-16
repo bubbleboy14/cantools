@@ -216,6 +216,8 @@ CT.modal.Modal = CT.Class({
 		this.on.show();
 	},
 	show: function(n, cb) {
+		if (typeof n == "string")
+			n = CT.dom.id(n);
 		setTimeout(this._show, 0, n); // wait a tick for initialization
 		cb && setTimeout(cb, 200);
 	},
