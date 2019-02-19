@@ -353,6 +353,8 @@ CT.modal.Prompt = CT.Class({
 	_nodify: function(data) {
 		if (typeof data[0] == "string")
 			return data.map(function(d) { return CT.dom.node(d); } );
+		if (!(data[0] instanceof Node))
+			return data.map(function(d) { return CT.dom.node(d.name || d.title); });
 		return data;
 	},
 	build: function() {
