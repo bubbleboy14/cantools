@@ -58,6 +58,7 @@
 .w50p { width: 50px; }
 .w80p { width: 80px; }
 .w100p { width: 100px; }
+.w160p { width: 160px; }
 .w195p { width: 195px; }
 .w200p { width: 200px; }
 .w300p { width: 300px; }
@@ -272,18 +273,14 @@
 .ml20 {
     margin-left: 20px;
 }
-.mt100 {
-    margin-top: 100px;
-}
-.mr100 {
-    margin-right: 100px;
-}
-.mb100 {
-    margin-bottom: 100px;
-}
-.ml100 {
-    margin-left: 100px;
-}
+.mt100 { margin-top: 100px; }
+.mr100 { margin-right: 100px; }
+.mb100 { margin-bottom: 100px; }
+.ml100 { margin-left: 100px; }
+.mt160 { margin-top: 160px; }
+.mr160 { margin-right: 160px; }
+.mb160 { margin-bottom: 160px; }
+.ml160 { margin-left: 160px; }
 
 .pt1-2 { padding-top: 50%; }
 .p0 { padding: 0px !important; }
