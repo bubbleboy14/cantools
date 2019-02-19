@@ -415,7 +415,7 @@
 .notouch { pointer-events: none; }
 .pointer { cursor: pointer; }
 .scroller { overflow: auto; }
-.noflow { overflow: hidden; }
+.noflow { overflow: hidden !important; }
 .scrollx { overflow-x: auto !important; overflow-y: hidden; }
 .scrolly { overflow-y: auto !important; overflow-x: hidden; }
 .hoverglow:hover {
