@@ -272,6 +272,18 @@
 .ml20 {
     margin-left: 20px;
 }
+.mt100 {
+    margin-top: 100px;
+}
+.mr100 {
+    margin-right: 100px;
+}
+.mb100 {
+    margin-bottom: 100px;
+}
+.ml100 {
+    margin-left: 100px;
+}
 
 .pt1-2 { padding-top: 50%; }
 .p0 { padding: 0px !important; }
