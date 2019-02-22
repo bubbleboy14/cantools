@@ -688,6 +688,12 @@
 .shiftall {
     margin: -15px;
 }
+.shift5 {
+    margin: -5px;
+}
+.shift10 {
+    margin: -10px;
+}
 .tooltip {
     position: absolute;
     border: 1px solid gray;
