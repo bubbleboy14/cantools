@@ -312,7 +312,10 @@ CT.modal.Prompt = CT.Class({
 				null, null, null, "password");
 		},
 		"single-choice": function(data) {
-			return CT.dom.choices(this._nodify(data));
+			var cz = CT.dom.choices(this._nodify(data));
+			if ("defaultIndex" in this.opts)
+				cz.childNodes[this.opts.defaultIndex].onclick();
+			return cz;
 		},
 		"multiple-choice": function(data) {
 			return CT.dom.choices(this._nodify(data), true);
