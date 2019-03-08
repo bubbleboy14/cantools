@@ -20,7 +20,7 @@ class Response(object):
             obj = {}
             splitter, body = b.rsplit("\r\n", 2)[0].split("\r\n", 1)
             for chunk in body.split("\r\n%s\r\n"%(splitter,)):
-                nameline, data = chunk.split("\r\n\r\n")
+                nameline, data = chunk.split("\r\n\r\n", 1)
                 name = nameline.split("; filename=")[0][:-1].split('name="')[1]
                 if "filename=" in nameline:
                     signature = "%s%s"%(self.id, name)
