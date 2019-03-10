@@ -54,9 +54,11 @@ CT.parse = {
 	"_linkProcessor": null,
 	"_NUMS": '0123456789',
 	"imgTypes": [
+	    ".png", ".PNG",
 	    ".jpg", ".JPG",
 	    ".gif", ".GIF",
-	    ".png", ".PNG",
+	    ".img": ".IMG",
+	    ".bmp": ".BMP",
 	    "jpeg", "JPEG"
 	],
 
