@@ -57,8 +57,8 @@ CT.parse = {
 	    ".png", ".PNG",
 	    ".jpg", ".JPG",
 	    ".gif", ".GIF",
-	    ".img": ".IMG",
-	    ".bmp": ".BMP",
+	    ".img", ".IMG",
+	    ".bmp", ".BMP",
 	    "jpeg", "JPEG"
 	],
 
