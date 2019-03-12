@@ -94,11 +94,11 @@ CT.modal.Modal = CT.Class({
 			val -= this.node.clientWidth;
 			return val / 2;
 		},
-		_fallbacks: function(parent) {
+		_fallbacks: function(parent, force) {
 			var n = this.node;
-			if (!n.style.top && !n.style.bottom)
+			if (force || (!n.style.top && !n.style.bottom))
 				n.style.top = this.setup._centerv(parent) + "px";
-			if (!n.style.left && !n.style.right)
+			if (force || (!n.style.left && !n.style.right))
 				n.style.left = this.setup._centerh(parent) + "px";
 		},
 		_add: function(parent, nocenter) {
@@ -147,7 +147,7 @@ CT.modal.Modal = CT.Class({
 				fallbacks = this.setup._fallbacks,
 				ver = false, hor = false;
 
-			var _refresh = function(parent) {
+			var _refresh = function(parent, force) {
 				parent = (parent instanceof Node) ? parent : document.body;
 				["top", "bottom"].forEach(function(side, sideIndex) {
 					if (origin.startsWith(side)) {
@@ -181,16 +181,12 @@ CT.modal.Modal = CT.Class({
 						hor = true;
 					}
 				});
-				fallbacks(parent);
+				fallbacks(parent, force);
 			};
 
 			n.show = function(parent) {
 				add(parent, true);
-				_refresh(parent);
-				setTimeout(function() {
-					ver && CT.trans.trans(n._vin);
-					hor && CT.trans.trans(n._hin);
-				}, 100);
+				n.recenter(parent, true);
 			};
 			n.hide = function() {
 				ver && CT.trans.trans(n._vout);
@@ -198,6 +194,13 @@ CT.modal.Modal = CT.Class({
 				CT.trans.trans({ cb: function() {
 					CT.dom.remove(n);
 				}});
+			};
+			n.recenter = function(parent, noforce) {
+				_refresh(parent, !noforce);
+				setTimeout(function() {
+					ver && CT.trans.trans(n._vin);
+					hor && CT.trans.trans(n._hin);
+				}, 100);
 			};
 		}
 	},
