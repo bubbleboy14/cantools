@@ -25,6 +25,7 @@ CT.key = {
 		null, null, null, null, null, null, null, null, null, null, "OPEN_BRACKET",
 		"BACK_SLASH", "CLOSE_BRACKET", "QUOTE"],
 	_cbs: {},
+	_downcbs: {},
 	_downs: [],
 	_init: function() {
 		if (!CT.key._initialized) {
@@ -38,6 +39,7 @@ CT.key = {
 		var code = e.keyCode || e.which,
 			character = CT.key._codes[code];
 		CT.data.append(CT.key._downs, character);
+		CT.key._downcbs[character] && CT.key._downcbs[character]();
 	},
 	_onUp: function(e) {
 		e = e || window.event;
@@ -50,8 +52,10 @@ CT.key = {
 		CT.key._init();
 		return CT.key._downs.indexOf(character) != -1;
 	},
-	on: function(character, cb) {
+	on: function(character, onup, ondown) {
 		CT.key._init();
-		CT.key._cbs[character] = cb;
+		CT.key._cbs[character] = onup;
+		if (ondown)
+			CT.key._downcbs[character] = ondown;
 	}
 };
