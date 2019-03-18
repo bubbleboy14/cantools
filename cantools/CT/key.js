@@ -48,6 +48,15 @@ CT.key = {
 		CT.data.remove(CT.key._downs, character);
 		CT.key._cbs[character] && CT.key._cbs[character]();
 	},
+	clear: function(character) {
+		if (character) {
+			delete CT.key._cbs[character];
+			delete CT.key._downcbs[character];
+		} else {
+			CT.key._cbs = {};
+			CT.key._downcbs = {};
+		}
+	},
 	down: function(character) {
 		CT.key._init();
 		return CT.key._downs.indexOf(character) != -1;
