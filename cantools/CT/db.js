@@ -164,7 +164,7 @@ CT.db = {
 			dz[0] ? cb(dz[0]) : nothingcb();
 		}, 1, 0, null, { index: index });
 	},
-	multi: function(keys, cb) {
+	multi: function(keys, cb, exporter) {
 		var needed = keys.filter(function(k) {
 			return !CT.data.get(k);
 		});
@@ -175,7 +175,8 @@ CT.db = {
 		}
 		CT.net.post("/_db", {
 			action: "get",
-			keys: needed
+			keys: needed,
+			exporter: exporter || "export"
 		}, null, function(dlist) {
 			CT.data.addSet(dlist);
 			cb && cb(keys.map(function(k) {
@@ -183,12 +184,13 @@ CT.db = {
 			}));
 		});
 	},
-	one: function(key, cb) {
+	one: function(key, cb, exporter) {
 		if (CT.data.has(key))
 			return cb && cb(CT.data.get(key));
 		CT.net.post("/_db", {
 			action: "get",
-			key: key
+			key: key,
+			exporter: exporter || "export"
 		}, null, function(d) {
 			CT.data.add(d);
 			cb && cb(d);
