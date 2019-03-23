@@ -44,6 +44,7 @@ def response():
 		if not res:
 			mname = cgi_get("modelName", required=False)
 			keys = cgi_get("keys", required=False)
+			exporter = cgi_get("exporter", default="export")
 			if mname:
 				order = cgi_get("order", default="index")
 				if config.web.server == "gae":
@@ -51,9 +52,9 @@ def response():
 				res = get_page(mname, int(cgi_get("limit")), int(cgi_get("offset")),
 					order, cgi_get("filters", default={}), count=cgi_get("count", required=False))
 			elif keys:
-				res = [d.export() for d in get_multi(keys)]
+				res = [getattr(d, exporter)() for d in get_multi(keys)]
 			else:
-				res = get(cgi_get("key")).export()
+				res = getattr(get(cgi_get("key")), exporter)()
 			if config.memcache.db and config.web.server == "dez":
 				setmem(sig, res, False)
 		succeed(res)
@@ -88,7 +89,7 @@ def response():
 					blob = blob.get()
 				send_file(blob, detect=True)
 	elif action == "edit":
-		succeed(edit(cgi_get("data")).data())
+		succeed(getattr(edit(cgi_get("data")), cgi_get("exporter", default="data"))())
 	elif action == "put":
 		put_multi([get_model(d["modelName"])(**dprep(d)) for d in cgi_get("data")])
 	elif action == "delete":
