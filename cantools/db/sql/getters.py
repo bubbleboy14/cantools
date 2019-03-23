@@ -50,7 +50,7 @@ def _join(modelName, altname, joinz, query):
             break
     query.join(get_model(altname), mod1.key == mod2attr)
 
-def get_page(modelName, limit, offset, order='index', filters={}, session=session, count=False):
+def get_page(modelName, limit, offset, order='index', filters={}, session=session, count=False, exporter="export"):
     query = get_model(modelName).query(session=session)
     joinz = set()
     for key, obj in filters.items():
@@ -69,7 +69,7 @@ def get_page(modelName, limit, offset, order='index', filters={}, session=sessio
     query.order(order)
     if count:
         return query.count()
-    return [d.export() for d in query.fetch(limit, offset)]
+    return [getattr(d, exporter)() for d in query.fetch(limit, offset)]
 
 def getall(entity=None, query=None, keys_only=False, session=session):
     if query:
