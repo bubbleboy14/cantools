@@ -49,8 +49,8 @@ def response():
 				order = cgi_get("order", default="index")
 				if config.web.server == "gae":
 					order = getattr(get_model(mname), order)
-				res = get_page(mname, int(cgi_get("limit")), int(cgi_get("offset")),
-					order, cgi_get("filters", default={}), count=cgi_get("count", required=False))
+				res = get_page(mname, int(cgi_get("limit")), int(cgi_get("offset")), order,
+					cgi_get("filters", default={}), count=cgi_get("count", required=False), exporter=exporter)
 			elif keys:
 				res = [getattr(d, exporter)() for d in get_multi(keys)]
 			else:
