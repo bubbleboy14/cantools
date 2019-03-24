@@ -24,7 +24,7 @@ LIMIT = 500
 
 def load(host, port, session, filters={}, protocol="http"):
 	pw = getpass.getpass("admin password? ")
-	log("loading database into %s://%s:%s"%(host, port), important=True)
+	log("loading database into %s://%s:%s"%(protocol, host, port), important=True)
 	for model in db.get_schema():
 		load_model(model, host, port, session, filters=filters, protocol=protocol, pw=pw)
 	log("finished loading data from sqlite dump file")
