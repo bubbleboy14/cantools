@@ -855,20 +855,20 @@ CT.dom = {
 		n.appendChild(CT.dom.node("", "div", "clearnode"));
 	},
 	"inputEnterCallback": function(n, cb, fid, noBreak) {
-		n.onenter = function() {
+		n.onenter = function(e) {
 			if (noBreak)
 				n.value = n.value.replace("\n", "").replace("\r", "");
 			// can prevent annoying repeating alert on enter scenarios
 			if (fid)
 				document.getElementById(fid).focus();
-			if (cb && (cb(n.value) == "clear"))
+			if (cb && (cb(n.value, e) == "clear"))
 				n.value = "";
 		};
 		n.addEventListener("keyup", function(e) {
 			e = e || window.event;
 			var code = e.keyCode || e.which;
 			if (code == 13 || code == 3)
-				n.onenter();
+				n.onenter(e);
 		});
 		return n;
 	},
