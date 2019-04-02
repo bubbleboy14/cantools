@@ -554,6 +554,20 @@ CT.dom = {
 				cb, stripname, stripnum, lnames[i] == stripval);
 		pnode.appendChild(rtable);
 	},
+	"options": function(data, cb) {
+		var fid, n = CT.dom.div(data.map(function(d, i) {
+			fid = "rs" + i + d.name;
+			return [
+				CT.dom.field(fid, null, null, "radio", {
+					onclick: function() {
+						cb(d);
+					}
+				}),
+				CT.dom.label(d.name, fid)
+			];
+		}));
+		return n;
+	},
 	"linkWithIcon": function(icon, lname, laddr, lonclick) {
 		var n = CT.dom.node("", "span");
 		n.appendChild(CT.dom.img(icon, "vmiddle rpaddedsmall nodecoration", lonclick, laddr));
