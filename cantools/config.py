@@ -130,7 +130,7 @@ for key, val in items:
 			config.update("customscrambler", True)
 		target = key.lower()
 		c = config
-		if target in ["pubsub_botnames", "log_allow", "geo_user_geonames", "geo_user_google", "admin_contacts", "web_rollz", "admin_monitor_geo", "build_exclude"]:
+		if target in ["pubsub_botnames", "log_allow", "geo_user_geonames", "geo_user_google", "admin_contacts", "web_rollz", "admin_monitor_geo", "build_exclude", "build_include"]: # TODO: use default list detection instead
 			val = val.split("|")
 			if target == "web_rollz":
 				rollz = {}

@@ -86,6 +86,7 @@ cfg = {
 	},
 	"parse_error_segment_length": 100,
 	"build": {
+		"include": [],
 		"exclude": [],
 		"web": {
 			"dynamic": "html",
