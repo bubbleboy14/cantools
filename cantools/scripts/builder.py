@@ -148,6 +148,11 @@ def remerge(txt, js):
 def build_frags(mode="web", admin_ct_path=None):
     log("Compiling Dynamically-Referenced Fragments", important=True)
     base = config.build[mode].compiled.production
+    if config.build.include:
+        log("Including Config-Specified Modules")
+        for p in config.build.include:
+            log("include: %s"%(p,), 1)
+            fragz.add(p)
     fcopy = set()
     def build_frag(frag):
         log("processing: %s"%(frag,), 1)
