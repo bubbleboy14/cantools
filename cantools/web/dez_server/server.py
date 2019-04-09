@@ -52,7 +52,10 @@ def respond(*args, **kwargs):
 	getController().register_handler(args, kwargs)
 
 def _ctjson(result):
-	if result[0] == "3":
+	if result[0] in "02":
+		from cantools.util import log
+		log("request failed!! : %s"%(result,), important=True)
+	elif result[0] == "3":
 		return rec_conv(json.loads(result[1:]), True)
 	else:
 		return json.loads(result[1:])
