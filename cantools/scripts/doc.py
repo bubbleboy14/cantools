@@ -5,6 +5,7 @@
     -h, --help  show this help message and exit
     -w, --web   build web docs
     -a, --auto  use auto mode (even with a plugin)
+    -o, --omit  omit any files from autodoc?
 
 Run from cantools root (contains setup.py, cantools/, README.md, etc), from root
 of a CT plugin, or from within a custom project. In cantools, builds docs for all
@@ -154,6 +155,7 @@ def sethead(curdir, data):
         WEB.append(wobj)
     return WEB[-1]["children"]
 
+OMIT = ""
 def autodoc(data, curdir, contents):
     about = os.path.join(curdir, "about.txt")
     if os.path.isfile(about):
@@ -165,6 +167,8 @@ def autodoc(data, curdir, contents):
             "content": adata
         })
     for fname in contents:
+        if fname in OMIT:
+            continue
         for flag, rule in frules.items():
             if fname.endswith(flag):
                 fdata = read(os.path.join(curdir, fname))
@@ -179,15 +183,19 @@ def autodoc(data, curdir, contents):
                     })
 
 def build():
+    global OMIT
     parser = OptionParser("ctdoc [-w]")
     parser.add_option("-w", "--web", action="store_true",
         dest="web", default=False, help="build web docs")
     parser.add_option("-a", "--auto", action="store_true",
         dest="auto", default=False, help="use auto mode (even with a plugin)")
+    parser.add_option("-o", "--omit", dest="omit", default="",
+        help="omit any files from autodoc?")
     options, args = parser.parse_args()
     log("building docs")
     ds = []
     if AUTO or options.auto:
+        OMIT = options.omit
         os.path.walk(HERE, autodoc, ds)
     else:
         abdata = (ISPLUGIN or CUSTOM) and "# %s\n%s"%(HERE, read("about.txt")) or config.about%(__version__,)
