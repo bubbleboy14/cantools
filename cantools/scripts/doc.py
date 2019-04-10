@@ -147,8 +147,8 @@ frules = {
 
 hashead = set()
 def sethead(curdir, data):
-    if curdir not in hashead:
-        dirname = curdir.rsplit(os.path.sep, 1)[-1]
+    dirname = curdir.rsplit(os.path.sep, 1)[-1]
+    if dirname not in hashead:
         hashead.add(dirname)
         data.append("%s %s"%("#" * len(curdir.split(os.path.sep)), dirname))
         wobj = { "name": dirname, "children": [] }
