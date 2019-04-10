@@ -157,7 +157,9 @@ def sethead(curdir, data):
 
 OMIT = ""
 def autodoc(data, curdir, contents):
-    about = os.path.join(curdir, "about.txt")
+    about = "about.txt"
+    if curdir != HERE: # probs revise this...
+        about = os.path.join(curdir, about)
     if os.path.isfile(about):
         kids = sethead(curdir, data)
         adata = read(about)
