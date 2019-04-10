@@ -4,6 +4,7 @@
 ### Options:
     -h, --help  show this help message and exit
     -w, --web   build web docs
+    -a, --auto  use auto mode (even with a plugin)
 
 Run from cantools root (contains setup.py, cantools/, README.md, etc), from root
 of a CT plugin, or from within a custom project. In cantools, builds docs for all
@@ -181,10 +182,12 @@ def build():
     parser = OptionParser("ctdoc [-w]")
     parser.add_option("-w", "--web", action="store_true",
         dest="web", default=False, help="build web docs")
+    parser.add_option("-a", "--auto", action="store_true",
+        dest="auto", default=False, help="use auto mode (even with a plugin)")
     options, args = parser.parse_args()
     log("building docs")
     ds = []
-    if AUTO:
+    if AUTO or options.auto:
         os.path.walk(HERE, autodoc, ds)
     else:
         abdata = (ISPLUGIN or CUSTOM) and "# %s\n%s"%(HERE, read("about.txt")) or config.about%(__version__,)
