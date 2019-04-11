@@ -76,6 +76,8 @@ CT.layout = {
 				m.className || "abs ctl mosthigh", m.direction, m.noresize));
 		}
 		CT.dom.setContent(CT.dom.id("ctheader"), CT.dom.node(content, "div", "h1 w1"));
+		if (opts.title)
+			document.title = opts.title;
 	},
 	footer: function(opts) {
 		opts = CT.merge(opts, {
