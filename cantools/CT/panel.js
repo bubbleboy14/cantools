@@ -156,7 +156,7 @@ CT.panel = {
 		data.forEach(node.postAdd);
 		return node;
 	},
-	"slider": function(data, triggerNode, parentNode, ricon, activeClass, content) {
+	"slider": function(data, triggerNode, parentNode, ricon, activeClass, content, resize) {
 		var node = CT.dom.div(null, "abs w1 hmin1 t0 l0 r0");
 		if (typeof triggerNode == "string")
 			triggerNode = CT.dom.id(triggerNode);
@@ -165,6 +165,7 @@ CT.panel = {
 		(parentNode || document.body).appendChild(node);
 		node._subs = [];
 		node.slide = function(d) {
+			node._cur = d;
 			CT.trans.translate(node, {
 				y: -node.clientHeight * node._subs.indexOf(d)
 			});
@@ -182,6 +183,12 @@ CT.panel = {
 			return n;
 		};
 		data.forEach(node.add);
+		resize && CT.on("resize", function() {
+			CT.dom.each(node, function(n, i) {
+				n.style.top = (node.clientHeight * i) + "px";
+			});
+			node._cur && node.slide(node._cur);
+		});
 		return node;
 	},
 	"swap": function(key, trysidepanel, keystring, noitem) {
