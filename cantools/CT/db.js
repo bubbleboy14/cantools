@@ -184,8 +184,8 @@ CT.db = {
 			}));
 		});
 	},
-	one: function(key, cb, exporter) {
-		if (CT.data.has(key))
+	one: function(key, cb, exporter, nocache) {
+		if (CT.data.has(key) && !nocache)
 			return cb && cb(CT.data.get(key));
 		CT.net.post("/_db", {
 			action: "get",
