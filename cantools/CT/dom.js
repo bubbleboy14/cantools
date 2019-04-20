@@ -1153,7 +1153,7 @@ CT.dom = {
 	},
 	"each": function(p, f) {
 		for (var i = 0; i < p.childNodes.length; i++)
-			f(p.childNodes[i]);
+			f(p.childNodes[i], i);
 	},
 	"map": function(p, f) {
 		var vals = [];
