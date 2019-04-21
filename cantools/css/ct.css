@@ -648,6 +648,9 @@
 .subpadded5 div {
     padding: 5px;
 }
+.kidvp div {
+    padding-bottom: 5px;
+}
 .tabbed {
     padding-left: 20px;
 }
