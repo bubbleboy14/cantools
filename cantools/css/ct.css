@@ -208,6 +208,10 @@
 .b0, .bottom0 { bottom: 0px; }
 .l0, .left0 { left: 0px; }
 .r0, .right0 { right: 0px; }
+.t5, .top5 { top: 5px; }
+.b5, .bottom5 { bottom: 5px; }
+.l5, .left5 { left: 5px; }
+.r5, .right5 { right: 5px; }
 .t10, .top10 { top: 10px; }
 .b10, .bottom10 { bottom: 10px; }
 .l10, .left10 { left: 10px; }
