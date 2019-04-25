@@ -221,18 +221,10 @@ CT.layout = {
 		var node = CT.dom.div([
 			opts.nameCb ? opts.nameCb(opts) : opts.name,
 			Object.keys(opts.branches).map(function(branch) {
-				var obb = opts.branches[branch].branches,
-					neopts = CT.merge({
+				return CT.layout.tree(CT.merge({
 						name: branch,
-						branches: obb
-					}, opts);
-				if (!obb) {
-					var d = CT.dom.div(opts.nameCb ? opts.nameCb(neopts) : branch,
-						opts.className, opts.id + "_" + branch);
-					d.onclick = onclick(d);
-					return d;
-				}
-				return CT.layout.tree(neopts);
+						branches: opts.branches[branch].branches || {}
+					}, opts));
 			})
 		], opts.className, opts.id);
 		node.onclick = onclick(node);
