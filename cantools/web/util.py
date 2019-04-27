@@ -124,7 +124,11 @@ def cgi_load(force=False):
     localvars.request_string = cgi_read()
     data = config.encode and dec(localvars.request_string) or localvars.request_string
     try:
-        localvars.request = rec_conv(json.loads(data), True)
+        jdata = json.loads(data)
+        try:
+            localvars.request = rec_conv(jdata, True)
+        except:
+            localvars.request = jdata
     except:
         import cgi
         localvars.request = cgi.FieldStorage()
