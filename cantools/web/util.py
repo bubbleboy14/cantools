@@ -124,7 +124,10 @@ def cgi_load(force=False):
     localvars.request_string = cgi_read()
     data = config.encode and dec(localvars.request_string) or localvars.request_string
     try:
-        jdata = json.loads(data)
+        try:
+            jdata = json.loads(data)
+        except:
+            jdata = ast.literal_eval(data)
         try:
             localvars.request = rec_conv(jdata, True)
         except:
