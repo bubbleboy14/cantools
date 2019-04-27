@@ -1,4 +1,4 @@
-import re, sys, json, time, threading
+import re, sys, ast, json, time, threading
 from urllib import quote, unquote
 from base64 import b64encode, b64decode
 from cantools import config
