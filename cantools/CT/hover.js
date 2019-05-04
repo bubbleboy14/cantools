@@ -5,10 +5,14 @@ Well, use this module.
 
 CT.hover = {
 	_: {},
-	_pos: function(n, recursive) {
+	_pos: function(n, recursive, auto) {
+		if (auto) {
+			var rect = n.getBoundingClientRect();
+			return [rect.left, rect.top];
+		}
 		if (recursive) {
 			var left = 0, top = 0;
-			while (!isNaN(n.offsetLeft)) {
+			while (!isNaN(n.offsetLeft) && n != CT.dom.ALLNODE) {
 				left += n.offsetLeft;
 				top += n.offsetTop;
 				n = n.parentNode;
@@ -23,7 +27,7 @@ CT.hover = {
 			!_.nodeOn && !_.hoverOn && CT.dom.hide(_.infoBubble);
 		}, 1000);
 	},
-	set: function(node, content, poptop, stayopen, recursive) {
+	set: function(node, content, poptop, stayopen, recursive, auto) {
 		if (arguments.length == 1 && !(node instanceof Node)) {
 			var obj = arguments[0];
 			node = obj.node;
@@ -31,6 +35,7 @@ CT.hover = {
 			poptop = obj.poptop;
 			stayopen = obj.stayopen;
 			recursive = obj.recursive;
+			auto = obj.auto;
 		}
 		var _ = CT.hover._;
 		if (!_.infoBubble) {
@@ -43,7 +48,7 @@ CT.hover = {
 		}
 		node.onmouseover = function(e) {
 			_.nodeOn = true;
-			var npos = CT.hover._pos(node, recursive); // recheck every time in case target moves
+			var npos = CT.hover._pos(node, recursive, auto); // recheck every time in case target moves
 			CT.dom.ALLNODE.appendChild(_.infoBubble);
 			CT.dom.setContent(_.infoBubble, content);
 			CT.dom.show(_.infoBubble);
