@@ -59,6 +59,7 @@ CT.hover = {
 			_.infoBubble.style.left = Math.min(_.bubbleBounds.right - 10,
 				Math.max(10, npos[0] - (_.infoBubble.clientWidth - (node.clientWidth || node.offsetWidth)) / 2)) + "px";
 			_.infoBubble.style.top = (npos[1] + voffset) + "px";
+			auto && e.stopPropagation();
 		};
 		node.onmouseout = function() {
 			_.nodeOn = false;
