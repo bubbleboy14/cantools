@@ -25,6 +25,7 @@
 .wm0 { max-width: 0px !important; }
 .hm20p { max-height: 20px !important; }
 .wm20p { max-width: 20px !important; }
+.hm50p { max-height: 50px !important; }
 .hm100p { max-height: 100px !important; }
 .wm100p { max-width: 100px !important; }
 .hm200p { max-height: 200px !important; }
@@ -47,6 +48,7 @@
 .h80p { height: 80px; }
 .h100p { height: 100px; }
 .h120p { height: 120px; }
+.h170p { height: 170px; }
 .h200p { height: 200px; }
 .h250p { height: 250px; }
 .h300p { height: 300px; }
@@ -145,23 +147,23 @@
 .vmiddle { vertical-align: middle; }
 .vbottom { vertical-align: bottom; }
 .up5 { margin-top: -5px; }
-.down5 { margin-bottom: -5px; }
+.down5 { margin-top: 5px; }
 .left5 { margin-left: -5px; }
 .right5 { margin-right: -5px; }
 .up10 { margin-top: -10px; }
-.down10 { margin-bottom: -10px; }
+.down10 { margin-top: 10px; }
 .left10 { margin-left: -10px; }
 .right10 { margin-right: -10px; }
 .up15 { margin-top: -15px; }
-.down15 { margin-bottom: -15px; }
+.down15 { margin-top: 15px; }
 .left15 { margin-left: -15px; }
 .right15 { margin-right: -15px; }
 .up20 { margin-top: -20px; }
-.down20 { margin-bottom: -20px; }
+.down20 { margin-top: 20px; }
 .left20 { margin-left: -20px; }
 .right20 { margin-right: -20px; }
 .up30 { margin-top: -30px; }
-.down30 { margin-bottom: -30px; }
+.down30 { margin-top: 30px; }
 .left30 { margin-left: -30px; }
 .right30 { margin-right: -30px; }
 
@@ -283,6 +285,7 @@
 .ml20 {
     margin-left: 20px;
 }
+.mt40 { margin-top: 40px; }
 .mt100 { margin-top: 100px; }
 .mr100 { margin-right: 100px; }
 .mb100 { margin-bottom: 100px; }
