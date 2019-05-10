@@ -554,15 +554,17 @@ CT.dom = {
 				cb, stripname, stripnum, lnames[i] == stripval);
 		pnode.appendChild(rtable);
 	},
-	"options": function(data, cb) {
+	"options": function(data, cb, selected) {
 		var fid, n = CT.dom.div(data.map(function(d, i) {
-			fid = "rs" + i + d.name;
+			fid = "rs" + i + d.name, fopts = {
+				onclick: function() {
+					cb(d);
+				}
+			};
+			if ((selected == d) || (selected == d.key))
+				fopts.checked = true;
 			return [
-				CT.dom.field(fid, null, null, "radio", {
-					onclick: function() {
-						cb(d);
-					}
-				}),
+				CT.dom.field(fid, null, null, "radio", fopts),
 				CT.dom.label(d.name, fid)
 			];
 		}));
