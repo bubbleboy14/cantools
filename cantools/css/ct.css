@@ -30,6 +30,10 @@
 .wm100p { max-width: 100px !important; }
 .hm200p { max-height: 200px !important; }
 .wm200p { max-width: 200px !important; }
+.hm300p { max-height: 300px; }
+.wm300p { max-width: 300px; }
+.hm400p { max-height: 400px; }
+.wm400p { max-width: 400px; }
 .hm1 { max-height: 100%; }
 .wm1 { max-width: 100%; }
 .hm1-2 { max-height: 50%; }
@@ -70,10 +74,6 @@
 .w600p { width: 600px; }
 .w700p { width: 700px; }
 .w800p { width: 800px; }
-.hm200p { max-height: 200px; }
-.wm200p { max-width: 200px; }
-.hm400p { max-height: 400px; }
-.wm400p { max-width: 400px; }
 .h1 { height: 100%; }
 .h1-2 { height: 50%; }
 .h1-3 { height: 33%; }
