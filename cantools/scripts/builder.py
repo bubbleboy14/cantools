@@ -79,7 +79,8 @@ def require(line, jspaths, block, inits, admin_ct_path=None):
     dynamic = False
     if line.startswith("CT.scriptImport("):
         rline = line[17:].split(line[16])[0]
-        if rline.startswith("http"):
+        if line[16] not in "'\"" or rline.startswith("http"):
+            log("skipping scriptImport: %s"%(line,), important=True)
             return block
         dynamic = True
     else:
