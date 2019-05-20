@@ -329,6 +329,16 @@ CT.modal.Prompt = CT.Class({
 				if (ctf.opts.path)
 					this.continueButton.disabled = false;
 			}.bind(this));
+		},
+		"number": function() {
+			var o = this.opts, d = o.default || 1, shower = CT.dom.div(d), r = CT.dom.range(function(val) {
+				CT.dom.setContent(shower, val);
+			}, o.min || 0.25, o.max || 5, d, o.step || 0.25),
+				n = CT.dom.div([shower, r]);
+			n.value = function() {
+				return r.value;
+			};
+			return n;
 		}
 	},
 	on: {
