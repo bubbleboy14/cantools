@@ -21,7 +21,8 @@ def add_edit_transformation(ptype, func):
 
 def edit(data, session=session):
     from cantools.db import get, get_model
-    ent = "key" in data and get(data["key"], session) or get_model(data["modelName"])()
+    haskey = "key" in data
+    ent = haskey and get(data["key"], session) or get_model(data["modelName"])()
     for propname, val in data.items():
         if propname in ent._schema:
             if val:
@@ -31,5 +32,7 @@ def edit(data, session=session):
                 if hasattr(ent, "_trans_%s"%(propname,)):
                     val = getattr(ent, "_trans_%s"%(propname,))(val)
             setattr(ent, propname, val)
+    if not haskey and hasattr(ent, "oncreate"):
+        ent.oncreate()
     ent.put()
     return ent
