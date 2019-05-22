@@ -49,3 +49,9 @@ def send_mail(to=None, sender=None, subject=None, body=None, html=None, bcc=None
 		return log("failed to send email -- no MAILER specified in ct.cfg!")
 	to, subject, body, html = _prep(to, subject, body, html)
 	_send(to, subject, html or body, bcc) # ignore sender -- same every time
+
+def email_admins(subject, body):
+	log("emailing admins: %s"%(subject,), important=True)
+	log(body)
+	for admin in config.admin.contacts:
+		send_mail(to=admin, subject=subject, body=body)

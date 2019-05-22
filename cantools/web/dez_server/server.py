@@ -2,7 +2,7 @@ import os, rel, ssl, sys, json, requests
 from dez.http import fetch as dfetch
 from ..util import *
 from ...util import set_log, set_error
-from mail import send_mail
+from mail import send_mail, email_admins
 from controller import getController
 from cantools import config
 
