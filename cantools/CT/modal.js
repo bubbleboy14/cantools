@@ -372,7 +372,7 @@ CT.modal.Prompt = CT.Class({
 			if (typeof d == "string")
 				return CT.dom.node(d);
 			else if (!(d instanceof Node))
-				return CT.dom.node(d.name || d.title);
+				return CT.dom.node(d.name || d.title || d.label);
 			return d;
 		});
 	},
