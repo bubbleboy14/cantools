@@ -171,7 +171,7 @@ CT.panel = {
 			});
 		};
 		node.add = function(d, trigger) {
-			var n = CT.dom.div(null, "abs full l0 r0"),
+			var n = CT.dom.div(null, "abs full l0 r0 scrolly"),
 				t = CT.panel.trigger(d, node.slide, activeClass, content, null, null, ricon);
 			n.style.top = (node.clientHeight * node._subs.length) + "px";
 			if (ricon)
