@@ -147,18 +147,21 @@ CT.layout = {
 		});
 		var img = CT.dom.panImg(opts),
 			buttons = CT.dom.node(null, "div", "centered");
-		for (var b in opts.buttons)
-			buttons.appendChild(CT.dom.button(b, opts.buttons[b], "round padded margined"));
 		if (!opts.name && opts.firstName && opts.lastName)
 			opts.name = opts.firstName + " " + opts.lastName;
-		return [
-			CT.dom.node([
-				CT.dom.node(opts.name, "div", "biggest"),
-				CT.dom.node(opts.description || opts.blurb),
-				buttons
-			], "div", "right w1-3 ctprofile"),
-			img
+		for (var b in opts.buttons)
+			buttons.appendChild(CT.dom.button(b,
+				opts.buttons[b], "round padded margined",
+				"ctb_" + (opts.key || opts.name) + "_" + b));
+		var content = [
+			CT.dom.div(opts.name, "biggest"),
+			CT.dom.div(opts.description || opts.blurb),
+			buttons
 		];
+		return opts.img ? [
+			CT.dom.div(content, "right w1-3 ctprofile"),
+			img
+		] : content;
 	},
 	listView: function(opts) {
 		opts = CT.merge(opts, {
