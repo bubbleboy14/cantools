@@ -490,6 +490,7 @@ CT.slider.Frame = CT.Class({
 			CT.key.on("SPACE", pauseResume);
 			if (oz.deepLink)
 				document.location.hash = encodeURI(oz.album + "|" + oz.song);
+			oz.onplay && oz.onplay(oz.album, oz.song);
 		};
 		CT.dom.addContent(this.node, CT.dom.div([
 			CT.dom.div(this.opts.song, "gigantic"),
