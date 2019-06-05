@@ -80,7 +80,7 @@ class JSONType(BasicString):
 		return json.dumps(value)
 
 	def process_result_value(self, value, dialect):
-		return json.loads(value)
+		return json.loads(value or "{}")
 
 JSON = sqlColumn(JSONType)
 
