@@ -162,13 +162,13 @@ CT.data = {
 	    });
 	    return isready;
 	},
-	"require": function(key, cb, plist, getpath, getparams) {
+	"require": function(key, cb, plist, getpath, getparams, getprop) {
 		CT.data.requirePrep(key);
 	    if (CT.data.itemReady(key, plist))
 	        cb(CT.data.get(key));
 	    else {
 	    	getparams = getparams || {"gtype": "user", "chat": 1};
-	    	getparams.uid = key;
+	    	getparams[getprop || "uid"] = key;
 	        CT.net.post(getpath || "/get", getparams,
 	            "error retrieving data", function(rawdata) {
 	                CT.data.add(rawdata);
@@ -176,7 +176,7 @@ CT.data = {
 	            });
 	    }
 	},
-	"requireAll": function(keys, cb, uid, plist, getpath, getparams) {
+	"requireAll": function(keys, cb, uid, plist, getpath, getparams, getprop) {
 		keys.forEach(CT.data.requirePrep);
 	    var needed = [];
 	    for (var i = 0; i < keys.length; i++) {
@@ -187,8 +187,8 @@ CT.data = {
 	        cb(keys);
 	    else {
 	    	getparams = getparams || {"gtype": "user", "chat": 1};
-	    	getparams.uids = needed;
-	        CT.net.post("/get", getparams,
+	    	getparams[getprop || "uids"] = needed;
+	        CT.net.post(getpath || "/get", getparams,
 	            "error retrieving data", function(rawdata) {
 	            	CT.data.addSet(rawdata);
 	                cb(keys);
