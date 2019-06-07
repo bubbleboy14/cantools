@@ -7,6 +7,7 @@ This loader imports almost every CT module.
     - CT.align
     - CT.autocomplete
     - CT.canvas
+    - CT.chat
     - CT.data
     - CT.db *
     - CT.drag
@@ -41,6 +42,7 @@ CT.require("CT.Pager");
 CT.require("CT.align");
 CT.require("CT.autocomplete");
 CT.require("CT.canvas");
+CT.require("CT.chat");
 CT.require("CT.data");
 CT.require("CT.db");
 CT.require("CT.drag");
