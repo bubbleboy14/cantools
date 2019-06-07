@@ -1,4 +1,4 @@
-# cantools 0.10.8.32
+# cantools 0.10.8.33
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
  - Docs: http://ct.mkult.co
@@ -293,6 +293,7 @@ This loader imports almost every CT module.
     - CT.align
     - CT.autocomplete
     - CT.canvas
+    - CT.chat
     - CT.data
     - CT.db *
     - CT.drag
@@ -361,6 +362,11 @@ This module contains classes that simplify use of the HTML5 canvas element:
     - CT.canvas.Controller
     - CT.canvas.Node
     - CT.canvas.Text
+
+## CT.chat
+### Import line: 'CT.require("CT.chat");'
+This module contains a chat widget that communicates with a
+ctpubsub backend via CT.pubsub.
 
 ## CT.ct
 ### Import line: '&lt;script src="/js/CT/ct.js"&gt;&lt;/script&gt;'
