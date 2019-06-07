@@ -37,6 +37,14 @@ CT.chat = {
 			"host": location.hostname,
 			"port": 8888
 		},
+		"data": {
+			"path": "/_db",
+			"prop": "key",
+			"props": "keys",
+			"params": {
+				"action": "get"
+			}
+		},
 		"on": {
 			"roomSelect": function(room) {}
 		}
@@ -113,7 +121,8 @@ CT.chat = {
 	},
 
 	"udata": function(key, cb) {
-		CT.data.require(key, cb, CT.chat.settings.require);
+		var s = CT.chat.settings;
+		CT.data.require(key, cb, s.require, s.data.path, s.data.params, s.data.prop);
 	},
 
 	"userSpotlight": function(key, uspot, isWidget, noFocus) {
@@ -195,6 +204,7 @@ CT.chat = {
 	"loadChatWidget": function(uid, roomname, outie, innie, presence, uspot, isWidget) {
 		CT.chat.rooms[roomname] = {"outie": outie, "innie": innie, "presence": presence};
 		if (!CT.pubsub.isInitialized()) {
+			var setz = CT.chat.settings;
 			var onMessage = function(frame) {
 				if (frame.channel != CT.chat.currentRoom && frame.user != uid) {
 					var rd = CT.chat.roomData[frame.channel];
@@ -208,7 +218,7 @@ CT.chat = {
 					else
 						CT.dom.id(rd.key).firstChild.innerHTML = newStr;
 				}
-				CT.data.require(frame.user, function(frameUser) {
+				CT.chat.udata(frame.user, function(frameUser) {
 					var flasher = frameUser.firstName + " says...";
 					if (!CT.chat.windowIsActive && frame.user != uid) {
 						if (isWidget) {
@@ -221,10 +231,10 @@ CT.chat = {
 					CT.chat.userSpotlight(frame.user, uspot, isWidget, true);
 					CT.chat.say(frame.user, frame.message,
 						frame.datetime, CT.chat.rooms[frame.channel].outie);
-				}, CT.chat.settings.require);
+				});
 			};
 			CT.pubsub.connect(location.hostname == "localhost" ? "localhost"
-				: CT.chat.settings.location.host, CT.chat.settings.location.port, uid);
+				: setz.location.host, setz.location.port, uid);
 			CT.pubsub.set_cb("open", function() {
 				for (var r in CT.chat.rooms)
 					CT.chat.rooms[r].outie.appendChild(CT.dom.node("connected"));
@@ -252,13 +262,13 @@ CT.chat = {
 						channel_name.replace(uid, "") : s.presence[0],
 						uspot, isWidget, true);
 					s.history.forEach(onMessage);
-				}, uid, CT.chat.settings.require);
+				}, uid, setz.require, setz.data.path, setz.data.params, setz.data.props);
 			});
 			CT.pubsub.set_cb("join", function(channel, uname) {
-				CT.data.require(uname, function() {
+				CT.chat.udata(uname, function() {
 					if (!CT.chat.roomData[channel].presence[uname])
 						CT.chat.addUser(uname, channel, uspot, isWidget, uid);
-				}, CT.chat.settings.require);
+				});
 			});
 			CT.pubsub.set_cb("leave", function(channel, uname) {
 				var pnode = CT.chat.rooms[channel].presence;
