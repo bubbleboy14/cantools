@@ -1256,7 +1256,23 @@ button, a, label, input[type='checkbox'], .pointer {
     position: absolute;
     right: 0;
     bottom: 0;
+    width: 111px;
+    height: 17px;
+    overflow: hidden;
+    background: white;
+    transition: all 1s;
+}
+
+.ct_chat_widget > div {
+    opacity: 0;
+    transition: opacity 1s;
+}
+
+.ct_chat_widget.expanded {
     width: 558px;
     height: 257px;
-    background: white;
+}
+
+.ct_chat_widget.expanded > div {
+    opacity: 1;
 }
