@@ -402,6 +402,9 @@ CT.chat = {
 		return full;
 	},
 	init: function() {
+		var cfg = core && core.config && core.config.chat;
+		if (cfg && cfg.port)
+			CT.chat.settings.location.port = cfg.port;
 		CT.data.requirePrep = CT.chat.guestCheck;
 		// is window active?
 		window.onfocus = function() {
