@@ -360,6 +360,14 @@ CT.chat = {
 		CT.chat._[which || "main"] = n;
 		return n;
 	},
+	"expander": function(widget) {
+		var exp = CT.dom.link("expand chat", function() {
+			exp._expanded = !exp._expanded;
+			CT.dom.setContent(exp, (exp._expanded ? "shrink" : "expand") + " chat");
+			widget.classList[exp._expanded ? "add" : "remove"]("expanded");
+		}, null, "abs r0 b0 big bold above");
+		CT.dom.addContent("ctmain", exp);
+	},
 	"widget": function(uid, rooms, channels_name) {
 		var peeps = CT.chat.setNode(CT.dom.button("People"), "pbutt"),
 			places = CT.dom.button(channels_name || "Places"),
@@ -390,6 +398,7 @@ CT.chat = {
 			CT.panel.swap(rooms[0], true, "ch");
 			CT.chat._.cbs[rooms[0]]();
 		});
+		CT.chat.expander(full);
 		return full;
 	},
 	init: function() {
