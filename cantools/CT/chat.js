@@ -45,9 +45,15 @@ CT.chat = {
 				"action": "get"
 			}
 		},
+		"classes": {
+			"presence": "bold bottompadded"
+		},
 		"on": {
 			"roomSelect": function(room) {}
 		}
+	},
+	_: {
+		cbs: {}
 	},
 
 	// focus input
@@ -127,7 +133,12 @@ CT.chat = {
 
 	"userSpotlight": function(key, uspot, isWidget, noFocus) {
 		CT.chat.udata(key, function(u) {
-			CT.dom.setContent(uspot, u.firstName + " " + u.lastName);
+			var content = [CT.dom.div(u.firstName + " " + u.lastName, "bold")];
+			if (u.img)
+				content.unshift(CT.dom.img(u.img, "right hm1 wm1-2"));
+			if (u.blurb)
+				content.push(CT.parse.shortened(u.blurb, 100, 15, true));
+			CT.dom.setContent(uspot, content);
 			!noFocus && CT.chat.focusChatInput();
 		});
 	},
@@ -154,7 +165,8 @@ CT.chat = {
 			} else
 				CT.dom.id(rd.key).firstChild.innerHTML = rd.name;
 			CT.chat.currentRoom = room;
-			isWidget ? CT.dom.id("peopleButton").onclick()
+			var pbutt = CT.chat._.pbutt;
+			(pbutt || isWidget) ? (pbutt || CT.dom.id("peopleButton")).onclick()
 				: CT.chat.settings.on.roomSelect(room);
 			CT.chat.scrollOutie();
 			CT.chat.focusChatInput();
@@ -169,8 +181,9 @@ CT.chat = {
 
 		if (!u.fullName) {
 			u.fullName = u.firstName + " " + u.lastName;
-			CT.chat.loadChatRoom(uid, u.fullName, CT.dom.id(isWidget
-				? "presence" : "chsides"), uspot, isWidget, key);
+			CT.chat.loadChatRoom(uid, u.fullName, CT.chat._.presence
+				|| CT.dom.id(isWidget ? "presence" : "chsides"),
+					uspot, isWidget, key);
 		}
 
 		var cp = CT.chat.rooms[channel_name].presence;
@@ -311,15 +324,15 @@ CT.chat = {
 		var cin = CT.dom.field("chatin" + cname, "", "chatin");
 		thispanel.appendChild(cout);
 		thispanel.appendChild(cin);
-		chpanels.appendChild(thispanel);
+		CT.chat._.main.appendChild(thispanel);
 		var thisside = CT.dom.node("", "div",
 			"chpanel hidden", "chpanel" + nospace + "Side");
 		if (userKey)
 			thisside.appendChild(CT.dom.node(CT.parse.process(CT.data.map[userKey].blurb,
 				true) || (cappedname + CT.chat.settings.NO_INFO_MSG), "div", "small gray scrollsmall"));
 		else {
-			thisside.appendChild(CT.dom.node("Chatting Users",
-				"div", "bold blue bottompadded"));
+			thisside.appendChild(CT.dom.div("Chatting Users",
+				CT.chat.settings.classes.presence));
 			var cpresence = CT.dom.node("", "div", "small");
 			thisside.appendChild(cpresence);
 		}
@@ -328,17 +341,65 @@ CT.chat = {
 		return cappedname;
 	},
 	"loadChatGroup": function(uid, rooms, pnode, noclear, chsides, uspot, isWidget) {
+		var _ = CT.chat._;
 		var cappedrooms = [];
 		var cbs = [];
 		for (var i = 0; i < rooms.length; i++) {
 			var cr = CT.chat.loadChatRoom(uid, rooms[i], chsides, uspot, isWidget);
 			CT.chat.groups[rooms[i]] = cr;
 			cappedrooms.push(cr);
-			cbs.push(CT.chat.selectRoomCb(rooms[i], isWidget));
+			var cb = CT.chat.selectRoomCb(rooms[i], isWidget);
+			_.cbs[rooms[i]] = cb;
+			cbs.push(cb);
 		}
 		CT.chat.currentRoom = rooms[0];
 		CT.panel.load(cappedrooms, true, "ch", pnode,
-			null, null, null, noclear, null, cbs);
+			_.main, null, null, noclear, null, cbs);
+	},
+	"setNode": function(n, which) {
+		CT.chat._[which || "main"] = n;
+		return n;
+	},
+	"expander": function(widget) {
+		var exp = CT.dom.link("expand chat", function() {
+			exp._expanded = !exp._expanded;
+			CT.dom.setContent(exp, (exp._expanded ? "shrink" : "expand") + " chat");
+			widget.classList[exp._expanded ? "add" : "remove"]("expanded");
+		}, null, "abs r0 b0 big bold above");
+		CT.dom.addContent("ctmain", exp);
+	},
+	"widget": function(uid, rooms, channels_name) {
+		var peeps = CT.chat.setNode(CT.dom.button("People"), "pbutt"),
+			places = CT.dom.button(channels_name || "Places"),
+			buttons = CT.dom.div([peeps, places], "ct_chat_buttons"),
+			channels = CT.dom.div(null, "ct_chat_channels"),
+			presence = CT.chat.setNode(CT.dom.div(null,
+				"ct_chat_presence"), "presence"),
+			spot = CT.dom.div(null, "ct_chat_spot"),
+			people = CT.dom.div([presence, spot], "ct_chat_people hidden"),
+			side = CT.dom.div([buttons, people, channels], "ct_chat_side"),
+			main = CT.chat.setNode(CT.dom.div(null, "ct_chat_main")),
+			full = CT.dom.div([
+				side, main
+			], "ct_chat_widget");
+		CT.chat.init();
+		CT.chat.loadChatGroup(uid, rooms, channels, true, presence, spot);
+		peeps.onclick = function() {
+			CT.dom.show(people);
+			CT.dom.hide(channels);
+			CT.chat.focusChatInput();
+		};
+		places.onclick = function() {
+			CT.dom.hide(people);
+			CT.dom.show(channels);
+			CT.chat.focusChatInput();
+		};
+		setTimeout(function() {
+			CT.panel.swap(rooms[0], true, "ch");
+			CT.chat._.cbs[rooms[0]]();
+		});
+		CT.chat.expander(full);
+		return full;
 	},
 	init: function() {
 		CT.data.requirePrep = CT.chat.guestCheck;

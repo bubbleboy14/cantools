@@ -1195,3 +1195,84 @@ button, a, label, input[type='checkbox'], .pointer {
             -webkit-transform: rotate(360deg);
     }
 }
+
+.ct_chat_buttons {
+    height: 30px;
+    text-align: center;
+}
+
+.ct_chat_presence {
+    width: 150px;
+    height: 150px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.ct_chat_spot {
+    height: 75px;
+    width: 150px;
+}
+
+.ct_chat_people {
+    width: 150px;
+    height: 225px;
+}
+
+.ct_chat_channels {
+    width: 150px;
+    height: 225px;
+    overflow-y: auto;
+}
+
+.ct_chat_side {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 150px;
+}
+
+.ct_chat_main {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 150px;
+}
+
+.ct_chat_main .chatout {
+    width: 402px;
+    height: 200px;
+    border: 1px solid gray;
+    overflow-y: auto;
+    overflow-x: hidden;
+    font-size: 80%;
+}
+.ct_chat_main .chatin {
+    width: 400px;
+}
+
+.ct_chat_widget {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 111px;
+    height: 17px;
+    overflow: hidden;
+    background: white;
+    transition: all 1s;
+}
+
+.ct_chat_widget > div {
+    opacity: 0;
+    transition: opacity 1s;
+}
+
+.ct_chat_widget.expanded {
+    width: 558px;
+    height: 257px;
+}
+
+.ct_chat_widget.expanded > div {
+    opacity: 1;
+}
