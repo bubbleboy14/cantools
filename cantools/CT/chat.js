@@ -320,7 +320,7 @@ CT.chat = {
 		var thispanel = CT.dom.node("", "div",
 			"chpanel hidden", "chpanel"+nospace);
 		var titler = CT.chat._.titler;
-		thispanel.appendChild(CT.dom.node(titler ? titler(cappedname) : cappedname,//+" Chat",
+		thispanel.appendChild(CT.dom.node(titler ? titler(cappedname, userKey) : cappedname,//+" Chat",
 			"div", "bigger bold bottompadded nowrap " + CT.chat.settings.CHAT_TITLE_STYLE));
 		var cout = CT.dom.node("", "div", "chatout", "chatout" + cname);
 		var cin = CT.dom.field("chatin" + cname, "", "chatin");
