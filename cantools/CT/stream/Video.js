@@ -133,9 +133,8 @@ CT.stream.Video = CT.Class({
 		this.video._lastct = this.video.currentTime;
 	},
 	setVideo: function() {
-		this.video = this.opts.video || CT.dom.video(this.opts.stream
-			&& URL.createObjectURL(this.opts.stream), this.opts.videoClass,
-			this.opts.videoId, this.opts.attrs);
+		this.video = this.opts.video || CT.dom.video(this.opts.stream,
+			this.opts.videoClass, this.opts.videoId, this.opts.attrs);
 		this.video.on("canplay", this.start);
 		this.video.on("pause", this.start);
 		this.video.on("error", this._error);
@@ -208,7 +207,7 @@ CT.stream.Video = CT.Class({
 			}
 		});
 		if (opts.stream)
-			opts.attrs.mozSrcObject = opts.stream;
+			opts.attrs.srcObject = opts.stream;
 		this.setVideo();
 		this.audio = new CT.stream.Audio(opts.activeAudio, this);
 		this._fullscreenButton = CT.dom.img("/img/fullscreen.png",
