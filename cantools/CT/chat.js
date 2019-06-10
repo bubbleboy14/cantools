@@ -33,6 +33,7 @@ CT.chat = {
 		"NO_INFO_MSG": " is a mystery!",
 		"defaults": {},
 		"require": [],
+		"timezone_offset": 0,
 		"location": {
 			"host": location.hostname,
 			"port": 8888
@@ -415,5 +416,6 @@ CT.chat = {
 		window.onblur = function() {
 			CT.chat.windowIsActive = false;
 		};
+		CT.parse.set_ts_server_offset(cfg && cfg.timezone_offset || CT.chat.settings.timezone_offset);
 	}
 };
