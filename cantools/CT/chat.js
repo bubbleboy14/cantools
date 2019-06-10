@@ -318,7 +318,8 @@ CT.chat = {
 		};
 		var thispanel = CT.dom.node("", "div",
 			"chpanel hidden", "chpanel"+nospace);
-		thispanel.appendChild(CT.dom.node(cappedname,//+" Chat",
+		var titler = CT.chat._.titler;
+		thispanel.appendChild(CT.dom.node(titler ? titler(cappedname) : cappedname,//+" Chat",
 			"div", "bigger bold bottompadded nowrap " + CT.chat.settings.CHAT_TITLE_STYLE));
 		var cout = CT.dom.node("", "div", "chatout", "chatout" + cname);
 		var cin = CT.dom.field("chatin" + cname, "", "chatin");
@@ -368,7 +369,7 @@ CT.chat = {
 		}, null, "abs r0 b0 big bold above");
 		CT.dom.addContent("ctmain", exp);
 	},
-	"widget": function(uid, rooms, channels_name) {
+	"widget": function(uid, rooms, channels_name, title_cb) {
 		var peeps = CT.chat.setNode(CT.dom.button("People"), "pbutt"),
 			places = CT.dom.button(channels_name || "Places"),
 			buttons = CT.dom.div([peeps, places], "ct_chat_buttons"),
@@ -382,6 +383,7 @@ CT.chat = {
 			full = CT.dom.div([
 				side, main
 			], "ct_chat_widget");
+		CT.chat._.titler = title_cb;
 		CT.chat.init();
 		CT.chat.loadChatGroup(uid, rooms, channels, true, presence, spot);
 		peeps.onclick = function() {
