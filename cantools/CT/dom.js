@@ -127,7 +127,7 @@ CT.dom = {
 			for (var attr in attrs) {
 				if (attrs[attr] == null)
 					continue;
-				if (attr == "value" || attr == "onclick")
+				if (["value", "onclick", "srcObject"].indexOf(attr) != -1)
 					d[attr] = attrs[attr];
 				else if (attr.slice(0, 2) == "on")
 					d.on(attr.slice(2), attrs[attr]);
@@ -385,8 +385,10 @@ CT.dom = {
 		}
 		attrs = attrs || {};
 		var multisrc = false;
-		if (src && src.length && typeof src != "string") // must be array
+		if (Array.isArray(src))
 			multisrc = true;
+		else if (typeof src == "object")
+			attrs.srcObject = src;
 		else
 			attrs.src = src;
 		if (controls)
@@ -409,7 +411,7 @@ CT.dom = {
 			});
 		}), "video", className, id, attrs, style);
 		n.stream = function(stream) {
-			n.src = window.URL.createObjectURL(stream);
+			n.srcObject = stream;
 			n.play();
 		};
 		return n;
