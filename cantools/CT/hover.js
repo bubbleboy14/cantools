@@ -46,6 +46,8 @@ CT.hover = {
 				'top': 0
 			};
 		}
+		if (typeof node == "string")
+			node = CT.dom.id(node, true);
 		node.onmouseover = function(e) {
 			_.nodeOn = true;
 			var npos = CT.hover._pos(node, recursive, auto); // recheck every time in case target moves
