@@ -30,12 +30,14 @@ To use the CC api, do something like this:
 
 	CT.pay.init({
 		mode: "cc",
-		membership: "YOUR_MEMBERSHIP_KEY",
 		cb: function() {
 			new CT.pay.Form({
 				parent: pnode,
-				amount: 1.2,
-				notes: "these are some notes"
+				item: {
+					amount: 1.2,
+					notes: "these are some notes",
+					membership: "YOUR_MEMBERSHIP_KEY"
+				}
 			});
 		}
 	});
@@ -79,11 +81,7 @@ CT.pay.Form = CT.Class({
 	cc: function() {
 		var oz = this.opts, n = CT.dom.div();
 		CT.dom.addContent(oz.parent, n);
-		CC.payer(n, CT.pay.paid, {
-			membership: CT.pay.opts.membership,
-			amount: oz.amount,
-			notes: oz.notes
-		});
+		CC.payer(n, CT.pay.paid, oz.item);
 	},
 	init: function(opts) {
 		this.id = CT.pay.Form._id;
