@@ -120,7 +120,7 @@ CT.layout = {
 		var className = "w1-" + (columns || 3) + " h1-" + (rows || 4)
 			+ " noflow inline-block hoverglow pointer", data2cell = function(d) {
 				var nstyle = {
-					backgroundImage: "url(" + d.img + ")",
+					backgroundImage: 'url("' + d.img + '")',
 					backgroundPosition: "center",
 					backgroundSize: "cover"
 				};
