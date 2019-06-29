@@ -90,7 +90,7 @@ CT.pay.Form = CT.Class({
 			parent: document.body,
 			buttonText: "Purchase"
 		});
-		this[CT.pay._.mode](CT.pay._.token);
+		this[CT.pay.opts.mode](CT.pay._.token);
 	}
 });
 CT.pay.Form._id = 0;
