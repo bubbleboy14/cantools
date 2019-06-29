@@ -1,4 +1,4 @@
-# cantools 0.10.8.36
+# cantools 0.10.8.37
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
  - Docs: http://ct.mkult.co
@@ -862,9 +862,13 @@ making timestamps meaningful to humans.
 
 ## CT.pay
 ### Import line: 'CT.require("CT.pay");'
-This module contains a class, CT.pay.Form, that, in conjunction
-with a tightly-coupled backend component (_pay.py), provide
-integration with the Braintree payment platform, which supports:
+This module contains a class, CT.pay.Form, and an initialization
+function, CT.pay.init(). The module can function in two ways.
+
+### braintree
+In conjunction with a tightly-coupled backend component (_pay.py),
+this module provides integration with the Braintree payment platform,
+which supports:
 
 	- PayPal
 	- Credit Cards
@@ -872,6 +876,34 @@ integration with the Braintree payment platform, which supports:
 	- Apple Pay
 	- Android Pay
 	- Bitcoin?
+
+Use it like this:
+
+	CT.pay.init({
+		mode: "braintree",
+		cb: function() {
+			new CT.pay.Form({
+				parent: pnode
+			});
+		}
+	});
+
+### carecoin
+To use the CC api, do something like this:
+
+	CT.pay.init({
+		mode: "cc",
+		cb: function() {
+			new CT.pay.Form({
+				parent: pnode,
+				item: {
+					amount: 1.2,
+					notes: "these are some notes",
+					membership: "VENDOR_MEMBERSHIP_KEY"
+				}
+			});
+		}
+	});
 
 ## CT.pubsub
 ### Import line: 'CT.require("CT.pubsub");'
