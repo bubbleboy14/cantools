@@ -36,7 +36,7 @@ To use the CC api, do something like this:
 				item: {
 					amount: 1.2,
 					notes: "these are some notes",
-					membership: "YOUR_MEMBERSHIP_KEY"
+					membership: "VENDOR_MEMBERSHIP_KEY"
 				}
 			});
 		}
