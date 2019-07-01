@@ -15,6 +15,7 @@ This module provides a direct interface with the ctpubsub backend. Here's how to
 CT.pubsub = {
 	"_": {
 		"ws": null,
+		"b64": false,
 		"args": null,
 		"open": false,
 		"initialized": false,
@@ -124,17 +125,18 @@ CT.pubsub = {
 				CT.pubsub._.cb.wserror();
 			},
 			"message": function(msg) {
-				var d = JSON.parse(atob(msg.data));
-				CT.pubsub._.process[d.action](d.data);
+				var _ = CT.pubsub._,
+					d = JSON.parse(_.b64 ? atob(msg.data) : msg.data);
+				_.process[d.action](d.data);
 			}
 		},
 		"write": function(data) {
-			if (CT.pubsub._.open) {
-				var dstring = JSON.stringify(data),
-					b64str = btoa(dstring);
-				CT.pubsub._.ws.send(b64str);
+			var _ = CT.pubsub._;
+			if (_.open) {
+				var dstring = JSON.stringify(data);
+				_.ws.send(_.b64 ? btoa(dstring) : dstring);
 			} else
-				CT.pubsub._.queue.push(data);
+				_.queue.push(data);
 		},
 		"try_reconnect": function() {
 			var r_int = CT.pubsub._.reconnect_interval;
@@ -147,6 +149,9 @@ CT.pubsub = {
 	},
 	"isInitialized": function() {
 		return CT.pubsub._.initialized;
+	},
+	"set_b64": function(bool) {
+		CT.pubsub._.b64 = bool;
 	},
 	"set_protocol": function(protocol) {
 		CT.pubsub._.protocol = protocol;
