@@ -82,7 +82,8 @@ cfg = {
 		"bots": {},
 		"echo": True,
 		"log": None,
-		"meta": False
+		"meta": False,
+		"b64": False
 	},
 	"parse_error_segment_length": 100,
 	"build": {
