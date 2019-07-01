@@ -10,7 +10,7 @@ class PubSub(WebSocketDaemon):
     def __init__(self, *args, **kwargs):
         if config.pubsub.log:
             set_log(os.path.join("logs", config.pubsub.log))
-        kwargs["b64"] = True
+        kwargs["b64"] = config.pubsub.b64
         kwargs["isJSON"] = True
         kwargs["report_cb"] = self._log
         kwargs["cb"] = self.connect
