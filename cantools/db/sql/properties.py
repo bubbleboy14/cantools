@@ -92,7 +92,10 @@ class BlobWrapper(object):
 		else:
 			self._set_path(value)
 
-	def __bool__(self):
+	def __nonzero__(self): # py2
+		return bool(self.value)
+
+	def __bool__(self): # py3
 		return bool(self.value)
 
 	def get(self):
@@ -191,7 +194,10 @@ class KeyWrapper(object):
 	def __init__(self, urlsafe=None):
 		self.value = urlsafe
 
-	def __bool__(self):
+	def __nonzero__(self): # py2
+		return bool(self.value)
+
+	def __bool__(self): # py3
 		return bool(self.value)
 
 	def __eq__(self, other):
