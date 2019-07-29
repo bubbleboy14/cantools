@@ -82,7 +82,7 @@ def back():
         fdata = [dsBack("init")]
     else:
         wobj["name"] = "Back (CLI)"
-        fdata = map(dsBack, ["init", "start", "deploy", "pubsub", "migrate", "index", "doc"])
+        fdata = list(map(dsBack, ["init", "start", "deploy", "pubsub", "migrate", "index", "doc"]))
     f.append("# %s"%(wobj["name"],))
     f += fdata
     return f
@@ -96,7 +96,7 @@ def front():
         wobj["name"] = "Front (JS Library)"
         plist = os.listdir(JSPATH)
         plist.sort()
-        fdata = map(dsFront, filter(lambda i : i.endswith("js"), plist))
+        fdata = list(map(dsFront, [i for i in plist if i.endswith("js")]))
     elif os.path.isfile(os.path.join(JSPATH, "config.js")):
         wobj["name"] = "Front (JS Config)"
         fdata = [dsFront("config.js", "core.config.%s"%(ISPLUGIN,), 'CT.require("core.config");')]
@@ -171,7 +171,7 @@ def autodoc(data, curdir, contents):
     for fname in contents:
         if fname in OMIT:
             continue
-        for flag, rule in frules.items():
+        for flag, rule in list(frules.items()):
             if fname.endswith(flag):
                 fdata = read(os.path.join(curdir, fname))
                 if fdata.startswith(rule["top"]):

@@ -1,15 +1,15 @@
 __version__ = "0.10.8.38"
 
-import util, hooks
-import config as cfgmod
+from . import util, hooks
+from . import config as cfgmod
 config = cfgmod.config
 include_plugin = cfgmod.include_plugin
 mods_and_repos = cfgmod.mods_and_repos
 
 if config.web.server == "gae":
 	util.init_gae()
-import geo
-from scripts import builder, deploy, init, pubsub, start, index, migrate, doc
+from . import geo
+from .scripts import builder, deploy, init, pubsub, start, index, migrate, doc
 
 ctstart = start.go
 ctdeploy = deploy.run

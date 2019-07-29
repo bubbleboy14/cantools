@@ -2,11 +2,11 @@ import json
 from base64 import b64decode
 from datetime import datetime
 from sqlalchemy import func
-from session import session
+from .session import session
 from ..shared import *
 
 def _apply_filter(query, key, obj, modelName, joinz):
-    from properties import KeyWrapper
+    from .properties import KeyWrapper
     val = obj["value"]
     comp = obj["comparator"]
     if "." in key:
@@ -53,7 +53,7 @@ def _join(modelName, altname, joinz, query):
 def get_page(modelName, limit, offset, order='index', filters={}, session=session, count=False, exporter="export"):
     query = get_model(modelName).query(session=session)
     joinz = set()
-    for key, obj in filters.items():
+    for key, obj in list(filters.items()):
         _apply_filter(query, key, obj, modelName, joinz)
     if "." in order:
         mod, attr = order.split(".")[-2:]
@@ -85,7 +85,7 @@ def b64d(compkey):
     return b64decode(pad_key(compkey))
 
 def key2data(b64compkey):
-    if not isinstance(b64compkey, basestring):
+    if not isinstance(b64compkey, str):
         b64compkey = b64compkey.urlsafe()
     return json.loads(b64d(b64compkey))
 
@@ -99,7 +99,7 @@ def get(b64compkey, session=session):
 
 def get_multi(b64keys, session=session):
     # b64keys can be Key instances or b64 key strings
-    if b64keys and not isinstance(b64keys[0], basestring):
+    if b64keys and not isinstance(b64keys[0], str):
         b64keys = [k.urlsafe() for k in b64keys]
     keys = [json.loads(b64d(k)) for k in b64keys]
     ents = {}
@@ -112,7 +112,7 @@ def get_multi(b64keys, session=session):
                 "indices": []
             }
         ents[mod]["indices"].append(k["index"])
-    for key, val in ents.items():
+    for key, val in list(ents.items()):
         mod = val["model"]
         for r in mod.query(session=session).filter(mod.index.in_(val["indices"])).all():
             res[r.id()] = r

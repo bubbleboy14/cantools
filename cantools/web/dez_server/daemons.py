@@ -1,11 +1,11 @@
 import sys, json, gc, os
 try:
     import psutil
-except ImportError, e:
+except ImportError as e:
     pass # google crap engine (get it if you need it!)
 from dez.memcache import get_memcache
 from dez.http.application import HTTPApplication
-from routes import static, cb
+from .routes import static, cb
 from cantools import config
 sys.path.insert(0, ".") # for dynamically loading modules
 
@@ -23,9 +23,9 @@ class CTWebBase(HTTPApplication):
             config.mode == "production", config.web.rollz)
         self.memcache = get_memcache()
         self.handlers = {}
-        for key, val in static.items():
+        for key, val in list(static.items()):
             self.add_static_rule(key, val)
-        for key, val in cb.items():
+        for key, val in list(cb.items()):
             self.add_cb_rule(key, self._handler(key, val))
 
     def _handler(self, rule, target):

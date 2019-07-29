@@ -3,8 +3,8 @@ from base64 import b64encode
 from dez.network.websocket import WebSocketDaemon
 from cantools import config
 from cantools.util import log, set_log
-from user import PubSubUser
-from channel import PubSubChannel
+from .user import PubSubUser
+from .channel import PubSubChannel
 
 class PubSub(WebSocketDaemon):
     def __init__(self, *args, **kwargs):
@@ -55,10 +55,10 @@ class PubSub(WebSocketDaemon):
         admin.write({
             "action": "snapshot",
             "data": {
-                "bots": [b.data() for b in self.bots.values()],
-                "users": [u.data() for u in self.users.values()],
-                "admins": [a.data() for a in self.admins.values()],
-                "channels": [c.data() for c in self.channels.values()]
+                "bots": [b.data() for b in list(self.bots.values())],
+                "users": [u.data() for u in list(self.users.values())],
+                "admins": [a.data() for a in list(self.admins.values())],
+                "channels": [c.data() for c in list(self.channels.values())]
             }
         })
 

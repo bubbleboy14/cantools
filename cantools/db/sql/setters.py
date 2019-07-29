@@ -1,9 +1,9 @@
 from cantools.util import batch, log
-from edit import *
+from .edit import *
 from ..shared import ct_key
 
 def _init_entity(instance, session=session, preserve_timestamps=False):
-    from lookup import inc_counter, dec_counter
+    from .lookup import inc_counter, dec_counter
     puts = []
     now = datetime.now()
     cls = instance.__class__
@@ -11,7 +11,7 @@ def _init_entity(instance, session=session, preserve_timestamps=False):
     if tname != "ctrefcount":
         if hasattr(instance, "_pre_put"):
             instance._pre_put()
-        for key, val in cls.__dict__.items():
+        for key, val in list(cls.__dict__.items()):
             if not preserve_timestamps and getattr(val, "is_dt_autostamper", False) and val.should_stamp(not instance.index):
                 setattr(instance, key, now)
             if key in instance._orig_fkeys:

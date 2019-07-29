@@ -1,9 +1,9 @@
 from sqlalchemy.sql import func, elements
 from cantools.util import start_timer, end_timer, log, error
-from properties import *
-from getters import *
-from setters import *
-from session import session, testSession, metadata, Session
+from .properties import *
+from .getters import *
+from .setters import *
+from .session import session, testSession, metadata, Session
 
 _passthru = ["count", "all"]
 _qmod = ["filter", "limit", "offset", "join"]
@@ -25,14 +25,14 @@ class Query(object):
     def order(self, prop):
         if type(prop) == elements.UnaryExpression and "count" not in prop.element.description:
             prop = "-%s"%(prop.element.description,)
-        if isinstance(prop, basestring):
+        if isinstance(prop, str):
             asc = False
             if prop.startswith("-"):
                 prop = prop[1:]
             else:
                 asc = True
             if "." in prop: # foreignkey reference from another table
-                from lookup import refcount_subq
+                from .lookup import refcount_subq
                 sub = refcount_subq(prop, self.session)
                 order = sub.c.count
                 if not asc:
@@ -51,7 +51,7 @@ class Query(object):
                 start_timer(qkey)
             try:
                 res = getattr(self.query, fname)(*args, **kwargs)
-            except Exception, e:
+            except Exception as e:
                 log("Query operation failed: %s"%(e,), important=True)
                 raise_anyway = True
                 flag = " no such column: "
@@ -61,7 +61,7 @@ class Query(object):
                     log("Missing column: %s"%(target,), important=True)
                     if config.db.alter:
                         tmod, tcol = target.split(".")
-                        if config.db.alter == "auto" or not raw_input("Add missing column '%s' to table '%s' (sqlite-only!)? [Y/n] "%(tcol, tmod)).lower().startswith("n"):
+                        if config.db.alter == "auto" or not input("Add missing column '%s' to table '%s' (sqlite-only!)? [Y/n] "%(tcol, tmod)).lower().startswith("n"):
                             raise_anyway = False
                             log("adding '%s' to '%s'"%(tcol, tmod))
                             self.session.engine.execute("ALTER TABLE %s ADD COLUMN %s"%(tmod, tcol))

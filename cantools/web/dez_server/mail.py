@@ -14,7 +14,7 @@ def _refresh():
 	yag.send_unsent()
 
 def _prep(*args):
-	return [(a and type(a) == unicode and a.encode("utf-8") or a) for a in args]
+	return [(a and type(a) == str and a.encode("utf-8") or a) for a in args]
 
 status = {
 	"queue": [],

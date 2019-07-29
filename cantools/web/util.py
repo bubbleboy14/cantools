@@ -1,5 +1,10 @@
 import re, sys, ast, json, time, threading
-from urllib import quote, unquote
+try:
+    from urllib.parse import quote, unquote, urlencode # py3
+    from urllib.request import urlopen, Request
+except:
+    from urllib import quote, unquote, urlencode # py2.7
+    from urllib2 import urlopen, Request
 from base64 import b64encode, b64decode
 from cantools import config
 
@@ -36,7 +41,7 @@ def set_clearmem(f):
 
 # logging -- overwrite with setlog if ya want
 def log(*args, **kwargs):
-    print args, kwargs
+    print(args, kwargs)
 
 # encoding, decoding -- may overwrite with setenc/setdec, but not _that_ necessary
 _c = config.scrambler
@@ -105,10 +110,10 @@ def rb64(data, de=False): # depped
     return rec_conv(data, de)
 
 def rec_conv(data, de=False):
-    if isinstance(data, basestring):
+    if isinstance(data, str):
         return (de and rdec or renc)(data)
     elif isinstance(data, dict):
-        for k, v in data.items():
+        for k, v in list(data.items()):
             data[str(k)] = rec_conv(v, de)
     elif isinstance(data, list):
         return [rec_conv(d, de) for d in data]
@@ -157,7 +162,7 @@ def _send(data):
     if send:
         send(data)
     else:
-        print data
+        print(data)
 
 def set_send(f):
     localvars.send = f
@@ -190,7 +195,7 @@ def _write(data, exit=True, savename=None):
         setmem(savename, data, False)
     try:
         data = data.decode('ascii', 'replace').encode('utf-8')
-    except Exception, e:
+    except Exception as e:
         data = data.encode('utf-8')
     _send(data)
     if exit:
@@ -208,12 +213,12 @@ def dez_wrap(resp, failure):
     def f():
         try:
             resp()
-        except AbortBranch, e:
+        except AbortBranch as e:
             session.generator.remove()
             raise AbortBranch() # handled in rel
         except SystemExit:
             pass
-        except Exception, e:
+        except Exception as e:
             failure(e)
     return f
 
@@ -223,7 +228,7 @@ def gae_wrap(resp, failure):
             resp()
         except SystemExit:
             pass
-        except Exception, e:
+        except Exception as e:
             failure(e)
     return f
 
@@ -316,7 +321,7 @@ def fail(data="failed", html=False, err=None, noenc=False, exit=True):
     _write(_env(html)%(dstring,), exit)
 
 def _headers(headers):
-    for k, v in headers.items():
+    for k, v in list(headers.items()):
         _header(k, v)
     if config.web.server == "gae":
         _send("")
@@ -360,10 +365,10 @@ def send_xml(data):
 
 # misc
 def verify_recaptcha(cresponse, pkey):
-    import os, urllib, urllib2
-    verification_result = urllib2.urlopen(urllib2.Request(
+    import os
+    verification_result = urlopen(Request(
         url = "https://www.google.com/recaptcha/api/siteverify",
-        data = urllib.urlencode({
+        data = urlencode({
             'secret': pkey,
             'remoteip': os.environ.get('REMOTE_ADDR', os.environ.get('REMOTE_HOST')),
             'response': cresponse

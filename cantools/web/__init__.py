@@ -1,7 +1,7 @@
-from util import config
+from .util import config
 
 if config.web.server == "gae":
-	from gae_server import *
+	from .gae_server import *
 elif config.web.server == "dez":
 	from cantools.web.dez_server import *
 else:

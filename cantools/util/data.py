@@ -39,7 +39,7 @@ def getcsv(fname):
 def flatten(obj):
 	keys = []
 	vals = []
-	for key, val in obj.items():
+	for key, val in list(obj.items()):
 		if isinstance(val, dict):
 			subkeys, subvals = flatten(val)
 			for subkey in subkeys:

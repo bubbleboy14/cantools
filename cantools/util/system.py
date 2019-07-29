@@ -1,6 +1,6 @@
-import commands, os, subprocess, platform
-from reporting import log
-from io import write
+import subprocess, os, subprocess, platform
+from .reporting import log
+from .io import write
 
 def cp(content, fname): # more write than copy, buuuut...
 	log("writing %s"%(fname,), 2)
@@ -18,7 +18,7 @@ def sym(src, dest, safe=False):
 		_init_win_sym()
 	try:
 		os.symlink(src, dest)
-	except Exception, e:
+	except Exception as e:
 		log("symlinking failed (%s) - file exists: %s"%(e, dest), 3)
 		if not safe:
 			try:
@@ -55,4 +55,4 @@ def cmd(cline, sudo=False):
 
 def output(cline, silent=False):
 	silent or log('getting output for: "%s"'%(cline,), 2)
-	return commands.getoutput(cline)
+	return subprocess.getoutput(cline)

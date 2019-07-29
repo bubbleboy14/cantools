@@ -77,8 +77,8 @@ def get_keys(kind, reference):
 def refmap():
 	log("compiling back reference map")
 	rmap = {}
-	for tname, schema in get_schema().items():
-		for pname, kinds in schema["_kinds"].items():
+	for tname, schema in list(get_schema().items()):
+		for pname, kinds in list(schema["_kinds"].items()):
 			reference = "%s.%s"%(tname, pname)
 			counts[reference] = 0
 			for kind in [k for k in kinds if k != "*"]: # skip wildcard for now
@@ -106,9 +106,9 @@ def do_batch(chunk, reference):
 def refcount():
 	log("indexing foreignkey references throughout database", important=True)
 	import model # load schema
-	for kind, references in refmap().items():
+	for kind, references in list(refmap().items()):
 		log("processing table: %s"%(kind,), important=True)
-		for reference, keys in references.items():
+		for reference, keys in list(references.items()):
 			batch(keys, do_batch, reference)
 	tcount = sum(counts.values()) - counts["_counters"]
 	log("refreshed %s rows and updated %s counters"%(tcount, counts["_counters"]), important=True)
@@ -169,7 +169,7 @@ def urlsafe():
 	log("saving records")
 	put_multi(puts)
 	log("updated %s keys"%(len(puts),), important=True)
-	if raw_input("want to prune zero-count reference counters? (y/N)").lower().startswith("y"):
+	if input("want to prune zero-count reference counters? (y/N)").lower().startswith("y"):
 		cleanup()
 
 def cleanup():

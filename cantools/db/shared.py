@@ -16,11 +16,11 @@ def get_model(modelName):
 
 def get_schema(modname=None):
     if modname:
-        if not isinstance(modname, basestring):
+        if not isinstance(modname, str):
             modname = modname.__name__
         return modelsubs[modname.lower()]._schema
     s = {}
-    for key, val in modelsubs.items():
+    for key, val in list(modelsubs.items()):
         if key not in ["modelbase", "ctrefcount"]:
             s[key] = val._schema
     return s
@@ -28,11 +28,11 @@ def get_schema(modname=None):
 def dprep(obj, schema=None): # prepares data object for model
     schema = schema or get_schema(obj["modelName"])
     o = {}
-    for key, prop in schema.items():
+    for key, prop in list(schema.items()):
         if key in obj:
             if prop == "datetime" and obj[key]:
                 o[key] = datetime.strptime(obj[key].replace("T", " ").replace("Z", ""), "%Y-%m-%d %X")
-            elif prop == "string" and isinstance(obj[key], unicode):
+            elif prop == "string" and isinstance(obj[key], str):
                 o[key] = obj[key].encode("utf-8")
             elif key != "_label":
                 o[key] = obj[key]

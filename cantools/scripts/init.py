@@ -40,14 +40,14 @@ import os, sys
 from optparse import OptionParser
 from cantools import config, include_plugin, mods_and_repos
 from cantools.util import log, error, cp, sym, mkdir, rm, cmd, read
-from builder import build_all
+from .builder import build_all
 
 CTP = __file__.rsplit(os.path.sep, 2)[0]
 
 class Builder(object):
 	def __init__(self, pname=None, cantools_path=CTP, web_backend="dez", refresh_symlinks=False):
 		if not pname and not refresh_symlinks:
-			pname = raw_input("project name? ")
+			pname = input("project name? ")
 		log("Initializing %s Project: %s"%(web_backend, pname or "(refresh)"))
 		self.pname = pname
 		self.ctroot = cantools_path
@@ -106,12 +106,12 @@ class Builder(object):
 		if hasattr(init, "model"):
 			log("adding %s imports to model"%(len(init.model),), 3)
 			self._update(config.init, "model", ["from %s import %s"%(m,
-				", ".join(k)) for (m, k) in init.model.items()])
+				", ".join(k)) for (m, k) in list(init.model.items())])
 		if hasattr(init, "routes"):
 			log("adding %s routes to app.yaml"%(len(init.routes),), 3)
 			self._update(config.init.yaml, "core", ["- url: %s\r\n  %s: %s"%(u,
 				s.endswith(".py") and "script" or "static_dir", s) for (u,
-				s) in init.routes.items()])
+				s) in list(init.routes.items())])
 		if hasattr(init, "requires"):
 			log("installing %s ct dependencies"%(len(init.requires),), 3)
 			self._getplugs(*mods_and_repos(init.requires))
@@ -141,8 +141,8 @@ class Builder(object):
 		jsc = os.path.join(config.js.path, "core")
 		mkdir(jsc)
 		if self.plugins:
-			log("Building Directories for %s Plugins"%(len(self.plugins.keys()),), important=True)
-			for mod in self.plugins.values():
+			log("Building Directories for %s Plugins"%(len(list(self.plugins.keys())),), important=True)
+			for mod in list(self.plugins.values()):
 				if hasattr(mod.init, "dirs"):
 					for d in mod.init.dirs:
 						mkdir(d)
@@ -153,7 +153,7 @@ class Builder(object):
 			config.init.yaml.core)%(self.pname,) or config.init.yaml.core, "app.yaml")
 		cfg = config.init.ctcfg%(self.web_backend,)
 		if self.plugins:
-			cfg = os.linesep.join([cfg, "PLUGIN_MODULES = %s"%("|".join(map(lambda r : r.replace("%s/"%(config.plugin.base,), ""), config.plugin.repos)),)])
+			cfg = os.linesep.join([cfg, "PLUGIN_MODULES = %s"%("|".join([r.replace("%s/"%(config.plugin.base,), "") for r in config.plugin.repos]),)])
 		cp(cfg, "ct.cfg")
 		log("demo index page", 1)
 		cp(config.init.html%(self.pname,), os.path.join("html", "index.html"))
@@ -166,9 +166,9 @@ class Builder(object):
 		cp(os.linesep.join(config.init.core), jsc)
 		cp("core.config = %s;"%(config.init.config.json(),), jscc)
 		cp(config.init.util.template%(config.init.util.main.json(), config.init.util.post), jscu)
-		for plugin, mod in self.plugins.items():
+		for plugin, mod in list(self.plugins.items()):
 			if hasattr(mod.init, "copies"):
-				for dname, fnames in mod.init.copies.items():
+				for dname, fnames in list(mod.init.copies.items()):
 					dp = os.path.join(mod.__ct_mod_path__, dname)
 					if fnames == "*":
 						log("copying contents of %s/%s to %s"%(plugin, dname, dname), 1)
@@ -195,38 +195,38 @@ class Builder(object):
 		sym(os.path.join(self.ctroot, "_db.py"), "_db.py")
 		sym(os.path.join(self.ctroot, "_memcache.py"), "_memcache.py")
 		sym(os.path.join(self.ctroot, "_pay.py"), "_pay.py")
-		for mod in self.plugins.values():
+		for mod in list(self.plugins.values()):
 			if hasattr(mod.init, "syms"):
-				for dname, fnames in mod.init.syms.items():
+				for dname, fnames in list(mod.init.syms.items()):
 					for fname in fnames:
 						sym(os.path.join(mod.__ct_mod_path__, dname, fname),
 							os.path.join(dname, fname))
 
 	def vcignore(self):
 		log("configuring version control path exclusion", 1)
-		for plugin, mod in self.plugins.items():
+		for plugin, mod in list(self.plugins.items()):
 			if hasattr(mod.init, "syms"):
 				log("loading rules for plugin: %s"%(plugin,), 2)
-				for dname, fnames in mod.init.syms.items():
+				for dname, fnames in list(mod.init.syms.items()):
 					for fname in fnames:
 						if not config.init.vcignore[dname]:
 							config.init.vcignore.update(dname, [])
 						config.init.vcignore[dname].append(fname)
 			else:
 				log("no symlinks - skipping plugin: %s"%(plugin,), 2)
-		itype = raw_input("would you like to generate exclusion rules for symlinks and dot files (if you select svn, we will add the project to your repository first)? [NO/git/svn] ")
+		itype = input("would you like to generate exclusion rules for symlinks and dot files (if you select svn, we will add the project to your repository first)? [NO/git/svn] ")
 		config.init.vcignore.update(config.js.path, config.init.vcignore.js)
 		if itype == "git":
 			log("configuring git", 2)
 			cfg = config.init.vcignore["."]
-			for path in [p for p in config.init.vcignore.keys() if p != "."]:
+			for path in [p for p in list(config.init.vcignore.keys()) if p != "."]:
 				for fname in config.init.vcignore[path]:
 					cfg.append(os.path.join(path, fname))
 			cp("\n".join(cfg), ".gitignore")
 		elif itype == "svn":
 			log("configuring svn", 2)
 			cmd("svn add .")
-			for root, files in config.init.vcignore.items():
+			for root, files in list(config.init.vcignore.items()):
 				cp("\n".join(files), "_tmp")
 				cmd("svn propset svn:ignore -F _tmp %s"%(root,))
 				rm("_tmp")
@@ -237,14 +237,14 @@ def update():
 	log("retrieving latest cantools", 1)
 	cmd("git pull")
 	if os.path.isdir(config.plugin.path):
-		dname, dirs, files = os.walk(config.plugin.path).next()
+		dname, dirs, files = next(os.walk(config.plugin.path))
 		log("updating %s managed plugins"%(len(dirs),), 1)
 		for d in dirs:
 			os.chdir(os.path.join(config.plugin.path, d))
 			log("retrieving latest %s"%(d,), 2)
 			cmd("git pull")
 	log("finished updates", 1)
-	if raw_input("update cantools dependencies? [N/y] ").lower().startswith("y"):
+	if input("update cantools dependencies? [N/y] ").lower().startswith("y"):
 		os.chdir("%s/.."%(CTP,))
 		log("updating dependencies", important=True)
 		cmd("python setup.py install", True)

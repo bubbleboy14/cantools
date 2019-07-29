@@ -42,10 +42,10 @@
 Generates fresh 'static' and 'production' files (from 'development' source files in 'html' on every run, unless -n [or --no_build] flag is used). Mode is established in the app.yaml file, which routes requests to the appropriate directory, and the ct.cfg file, which determines backend behavior, especially regarding encryption.
 """
 
-import subprocess, commands, os
+import subprocess, os
 from cantools import config, __version__
 from cantools.util import log, error, read, write, cmd
-from builder import build_all
+from .builder import build_all
 
 def doyaml(mode):
     log("switching to %s mode"%(mode,))
@@ -91,9 +91,9 @@ def vpush():
     log("Major ('M' - %s)"%(major,), 1)
     log("Minor ('m' - %s)"%(minor,), 1)
     log("Custom ('c')", 1)
-    selection = raw_input("So? (M/m/c - default: m): ")
+    selection = input("So? (M/m/c - default: m): ")
     if selection == "c":
-        version = raw_input("ok, then. what's the new version #? ")
+        version = input("ok, then. what's the new version #? ")
     elif selection == "M":
         version = major
     else: # default (minor)
@@ -110,7 +110,7 @@ def vpush():
     cmd("git add -u")
     cmd('git commit -m "vpush %s"'%(version,))
     cmd("git push")
-    if raw_input("push to cheese shop? [N/y] ").lower().startswith("y"):
+    if input("push to cheese shop? [N/y] ").lower().startswith("y"):
         log("laying egg", important=True)
         cmd("sudo python setup.py install")
         log("pushing to cheese shop", important=True)

@@ -19,7 +19,7 @@ class PubSubChannel(object):
         for user in self.users:
             if config.pubsub.echo or user.name != obj["data"]["user"]:
                 user.write(obj)
-        for user in self.server.admins.values():
+        for user in list(self.server.admins.values()):
             user.write(obj)
 
     def meta(self, subobj):

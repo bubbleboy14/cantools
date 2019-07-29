@@ -1,5 +1,5 @@
 from datetime import datetime
-from actor import Actor
+from .actor import Actor
 
 class PubSubUser(Actor):
     id = 0

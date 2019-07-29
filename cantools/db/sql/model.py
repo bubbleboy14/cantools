@@ -1,7 +1,8 @@
 from sqlalchemy import orm
 from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
-from query import *
+from .query import *
 from cantools import util
+from future.utils import with_metaclass
 
 def choice_validator(choices):
     def cval(s, k, v):
@@ -28,7 +29,7 @@ class CTMeta(DeclarativeMeta):
                         attrs["label"] = label
                         break
             schema = attrs["_schema"] = merge_schemas(bases, attrs.get("label"))
-            for key, val in attrs.items():
+            for key, val in list(attrs.items()):
                 if getattr(val, "_ct_type", None):
                     schema[key] = val._ct_type
                     if val._ct_type.startswith("key"):
@@ -41,11 +42,10 @@ class CTMeta(DeclarativeMeta):
 
 sa_dbase = declarative_base(metadata=metadata)
 
-class ModelBase(sa_dbase):
+class ModelBase(with_metaclass(CTMeta, sa_dbase)):
     index = Integer(primary_key=True)
     polytype = String()
     key = CompositeKey()
-    __metaclass__ = CTMeta
     __mapper_args__ = {
         "polymorphic_on": polytype,
         "polymorphic_identity": "modelbase",
@@ -75,7 +75,7 @@ class ModelBase(sa_dbase):
                     val = KeyWrapper()
                 setattr(self, prop, val)
         self.key = KeyWrapper()
-        for key, val in self.__class__.__dict__.items():
+        for key, val in list(self.__class__.__dict__.items()):
             if getattr(self, key, None) is None and getattr(val, "_default", None) is not None:
                 setattr(self, key, val._default)
 
@@ -94,7 +94,7 @@ class ModelBase(sa_dbase):
             session.commit()
 
     def collection(self, entity_model, property_name=None, fetch=True, keys_only=False, data=False):
-        if isinstance(entity_model, basestring):
+        if isinstance(entity_model, str):
             entity_model = get_model(entity_model)
         q = entity_model.query(getattr(entity_model, property_name or self.polytype) == self.key)
         if not fetch:
@@ -114,7 +114,7 @@ class ModelBase(sa_dbase):
 
     def mydata(self, isexport=False):
         cols = {}
-        for key, prop in self._schema.items():
+        for key, prop in list(self._schema.items()):
             if not isexport and key in self._data_omit:
                 continue
             if not key.startswith("_"):
