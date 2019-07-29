@@ -100,17 +100,19 @@ def set_read(f):
     localvars.read = f
 
 def rdec(data):
-    return unquote(b64decode(data)).decode('utf-8')
+#    return unquote(b64decode(data)).decode('utf-8')
+    return unquote(b64decode(data))
 
 def renc(data):
-    return b64encode(quote(data.encode('utf-8')))
+#    return b64encode(quote(data.encode('utf-8')))
+    return b64encode(quote(data))
 
 def rb64(data, de=False): # depped
     log("[DEPRECATION WARNING] Something just called rb64(), which is depped -- use rec_conv()")
     return rec_conv(data, de)
 
 def rec_conv(data, de=False):
-    if isinstance(data, str):
+    if isinstance(data, basestring):
         return (de and rdec or renc)(data)
     elif isinstance(data, dict):
         for k, v in list(data.items()):
@@ -193,10 +195,10 @@ def set_header(f):
 def _write(data, exit=True, savename=None):
     if savename:
         setmem(savename, data, False)
-    try:
-        data = data.decode('ascii', 'replace').encode('utf-8')
-    except Exception as e:
-        data = data.encode('utf-8')
+#    try:
+#        data = data.decode('ascii', 'replace').encode('utf-8')
+#    except Exception as e:
+#        data = data.encode('utf-8')
     _send(data)
     if exit:
         _pre_close()
