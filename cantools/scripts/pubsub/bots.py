@@ -7,7 +7,7 @@ try:
 	import psutil
 except ImportError as e:
 	pass # google crap engine (get it if you need it!)
-from future.utils import with_metaclass
+from six import with_metaclass
 
 class BotMeta(type):
 	def __new__(cls, name, bases, attrs):

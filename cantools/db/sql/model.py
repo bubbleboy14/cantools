@@ -2,7 +2,7 @@ from sqlalchemy import orm
 from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
 from .query import *
 from cantools import util
-from future.utils import with_metaclass
+from six import with_metaclass
 
 def choice_validator(choices):
     def cval(s, k, v):
