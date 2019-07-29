@@ -69,8 +69,8 @@ DateTime = sqlColumn(DateTimeAutoStamper)
 # strings, arrays, keys
 class BasicString(basicType(sqlalchemy.UnicodeText, StringType)):
 	def process_bind_param(self, data, dialect):
-		if data and type(data) is not str:
-			data = data.decode('utf-8')
+#		if data and type(data) is not str:
+#			data = data.decode('utf-8')
 		return data
 
 String = sqlColumn(BasicString)
