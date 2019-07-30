@@ -7,6 +7,7 @@ except:
     from urllib2 import urlopen, Request
 from base64 import b64encode, b64decode
 from cantools import config
+from six import string_types
 
 DEBUG = True
 
@@ -100,23 +101,21 @@ def set_read(f):
     localvars.read = f
 
 def rdec(data):
-#    return unquote(b64decode(data)).decode('utf-8')
-    return unquote(b64decode(data))
+    return unquote(b64decode(data.encode()).decode())
 
 def renc(data):
-#    return b64encode(quote(data.encode('utf-8')))
-    return b64encode(quote(data))
+    return b64encode(quote(data.encode())).decode()
 
 def rb64(data, de=False): # depped
     log("[DEPRECATION WARNING] Something just called rb64(), which is depped -- use rec_conv()")
     return rec_conv(data, de)
 
 def rec_conv(data, de=False):
-    if isinstance(data, basestring):
+    if isinstance(data, string_types):
         return (de and rdec or renc)(data)
     elif isinstance(data, dict):
         for k, v in list(data.items()):
-            data[str(k)] = rec_conv(v, de)
+            data[k] = rec_conv(v, de)
     elif isinstance(data, list):
         return [rec_conv(d, de) for d in data]
     return data
