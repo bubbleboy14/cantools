@@ -4,6 +4,7 @@ from datetime import datetime
 from sqlalchemy import func
 from .session import session
 from ..shared import *
+from six import string_types
 
 def _apply_filter(query, key, obj, modelName, joinz):
     from .properties import KeyWrapper
@@ -82,10 +83,10 @@ def getall(entity=None, query=None, keys_only=False, session=session):
 
 def b64d(compkey):
     from cantools.db import pad_key
-    return b64decode(pad_key(compkey))
+    return b64decode(pad_key(compkey)).decode()
 
 def key2data(b64compkey):
-    if not isinstance(b64compkey, str):
+    if not isinstance(b64compkey, string_types):
         b64compkey = b64compkey.urlsafe()
     return json.loads(b64d(b64compkey))
 
