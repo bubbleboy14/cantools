@@ -1,5 +1,6 @@
 import operator, base64, json, hashlib
 from datetime import datetime
+from six import string_types
 
 modelsubs = {}
 operators = {
@@ -16,7 +17,7 @@ def get_model(modelName):
 
 def get_schema(modname=None):
     if modname:
-        if not isinstance(modname, str):
+        if not isinstance(modname, string_types):
             modname = modname.__name__
         return modelsubs[modname.lower()]._schema
     s = {}
