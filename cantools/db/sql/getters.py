@@ -100,7 +100,7 @@ def get(b64compkey, session=session):
 
 def get_multi(b64keys, session=session):
     # b64keys can be Key instances or b64 key strings
-    if b64keys and not isinstance(b64keys[0], str):
+    if b64keys and not isinstance(b64keys[0], string_types):
         b64keys = [k.urlsafe() for k in b64keys]
     keys = [json.loads(b64d(k)) for k in b64keys]
     ents = {}
