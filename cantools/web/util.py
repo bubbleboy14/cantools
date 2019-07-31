@@ -111,6 +111,11 @@ def rb64(data, de=False): # depped
     return rec_conv(data, de)
 
 def rec_conv(data, de=False):
+    if isinstance(data, bytes):
+        try:
+            data = data.decode()
+        except:
+            pass
     if isinstance(data, string_types):
         return (de and rdec or renc)(data)
     elif isinstance(data, dict):
