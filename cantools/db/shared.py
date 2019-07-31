@@ -54,7 +54,7 @@ def ct_key(modelName, index):
     return unpad_key(base64.b64encode(json.dumps({
         "index": index,
         "model": modelName
-    })))
+    }).encode()).decode())
 
 def merge_schemas(bases, label=None):
     kinds = {}
