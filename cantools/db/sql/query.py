@@ -4,6 +4,7 @@ from .properties import *
 from .getters import *
 from .setters import *
 from .session import session, testSession, metadata, Session
+from six import string_types
 
 _passthru = ["count", "all"]
 _qmod = ["filter", "limit", "offset", "join"]
@@ -25,7 +26,7 @@ class Query(object):
     def order(self, prop):
         if type(prop) == elements.UnaryExpression and "count" not in prop.element.description:
             prop = "-%s"%(prop.element.description,)
-        if isinstance(prop, str):
+        if isinstance(prop, string_types):
             asc = False
             if prop.startswith("-"):
                 prop = prop[1:]
