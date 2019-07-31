@@ -18,9 +18,10 @@ class Response(object):
         ctype = self.request.headers.get("content-type")
         if ctype and ctype.startswith("multipart/form-data"):
             obj = {}
-            splitter, body = b.rsplit("\r\n", 2)[0].split("\r\n", 1)
-            for chunk in body.split("\r\n%s\r\n"%(splitter,)):
-                nameline, data = chunk.split("\r\n\r\n", 1)
+            splitter, body = b.rsplit(b"\r\n", 2)[0].split(b"\r\n", 1)
+            for chunk in body.split(b"\r\n%s\r\n"%(splitter,)):
+                nameline, data = chunk.split(b"\r\n\r\n", 1)
+                nameline = nameline.decode()
                 name = nameline.split("; filename=")[0][:-1].split('name="')[1]
                 if "filename=" in nameline:
                     signature = "%s%s"%(self.id, name)
