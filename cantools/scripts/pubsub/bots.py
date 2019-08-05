@@ -2,11 +2,12 @@ import datetime, json, os
 from cantools import config
 from cantools.util import log, write
 from cantools.web import fetch, send_mail
-from actor import Actor
+from .actor import Actor
 try:
 	import psutil
-except ImportError, e:
+except ImportError as e:
 	pass # google crap engine (get it if you need it!)
+from six import with_metaclass
 
 class BotMeta(type):
 	def __new__(cls, name, bases, attrs):
@@ -16,9 +17,8 @@ class BotMeta(type):
 			config.pubsub.bots.update(name.lower(), bc)
 		return bc
 
-class Bot(Actor):
+class Bot(with_metaclass(BotMeta, Actor)):
 	num = 0
-	__metaclass__ = BotMeta
 	def __init__(self, server, channel, name=None):
 		Bot.num += 1
 		self.name = name or (self.__class__.__name__ + str(Bot.num))

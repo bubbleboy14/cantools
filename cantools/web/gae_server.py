@@ -1,6 +1,6 @@
 from google.appengine.runtime.apiproxy_errors import RequestTooLargeError
 from google.appengine.api import mail
-from util import *
+from .util import *
 
 envelope = {
     'plain': "\n%s",

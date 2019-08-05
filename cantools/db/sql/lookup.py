@@ -1,5 +1,5 @@
 from sqlalchemy import func
-from model import session, get_model, put_multi, ForeignKey, String, Integer, ModelBase
+from .model import session, get_model, put_multi, ForeignKey, String, Integer, ModelBase
 
 class CTRefCount(ModelBase):
     target = ForeignKey()      # instance pointed at

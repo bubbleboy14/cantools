@@ -1,7 +1,13 @@
 import re, sys, ast, json, time, threading
-from urllib import quote, unquote
+try:
+    from urllib.parse import quote, unquote, urlencode # py3
+    from urllib.request import urlopen, Request
+except:
+    from urllib import quote, unquote, urlencode # py2.7
+    from urllib2 import urlopen, Request
 from base64 import b64encode, b64decode
 from cantools import config
+from six import string_types
 
 DEBUG = True
 
@@ -36,7 +42,7 @@ def set_clearmem(f):
 
 # logging -- overwrite with setlog if ya want
 def log(*args, **kwargs):
-    print args, kwargs
+    print(args, kwargs)
 
 # encoding, decoding -- may overwrite with setenc/setdec, but not _that_ necessary
 _c = config.scrambler
@@ -95,21 +101,26 @@ def set_read(f):
     localvars.read = f
 
 def rdec(data):
-    return unquote(b64decode(data)).decode('utf-8')
+    return unquote(b64decode(data.encode()).decode())
 
 def renc(data):
-    return b64encode(quote(data.encode('utf-8')))
+    return b64encode(quote(data).encode()).decode()
 
 def rb64(data, de=False): # depped
     log("[DEPRECATION WARNING] Something just called rb64(), which is depped -- use rec_conv()")
     return rec_conv(data, de)
 
 def rec_conv(data, de=False):
-    if isinstance(data, basestring):
+    if isinstance(data, bytes):
+        try:
+            data = data.decode()
+        except:
+            pass
+    if isinstance(data, string_types):
         return (de and rdec or renc)(data)
     elif isinstance(data, dict):
-        for k, v in data.items():
-            data[str(k)] = rec_conv(v, de)
+        for k, v in list(data.items()):
+            data[k] = rec_conv(v, de)
     elif isinstance(data, list):
         return [rec_conv(d, de) for d in data]
     return data
@@ -157,7 +168,7 @@ def _send(data):
     if send:
         send(data)
     else:
-        print data
+        print(data)
 
 def set_send(f):
     localvars.send = f
@@ -188,10 +199,10 @@ def set_header(f):
 def _write(data, exit=True, savename=None):
     if savename:
         setmem(savename, data, False)
-    try:
-        data = data.decode('ascii', 'replace').encode('utf-8')
-    except Exception, e:
-        data = data.encode('utf-8')
+#    try:
+#        data = data.decode('ascii', 'replace').encode('utf-8')
+#    except Exception as e:
+#        data = data.encode('utf-8')
     _send(data)
     if exit:
         _pre_close()
@@ -208,12 +219,12 @@ def dez_wrap(resp, failure):
     def f():
         try:
             resp()
-        except AbortBranch, e:
+        except AbortBranch as e:
             session.generator.remove()
             raise AbortBranch() # handled in rel
         except SystemExit:
             pass
-        except Exception, e:
+        except Exception as e:
             failure(e)
     return f
 
@@ -223,7 +234,7 @@ def gae_wrap(resp, failure):
             resp()
         except SystemExit:
             pass
-        except Exception, e:
+        except Exception as e:
             failure(e)
     return f
 
@@ -316,7 +327,7 @@ def fail(data="failed", html=False, err=None, noenc=False, exit=True):
     _write(_env(html)%(dstring,), exit)
 
 def _headers(headers):
-    for k, v in headers.items():
+    for k, v in list(headers.items()):
         _header(k, v)
     if config.web.server == "gae":
         _send("")
@@ -360,10 +371,10 @@ def send_xml(data):
 
 # misc
 def verify_recaptcha(cresponse, pkey):
-    import os, urllib, urllib2
-    verification_result = urllib2.urlopen(urllib2.Request(
+    import os
+    verification_result = urlopen(Request(
         url = "https://www.google.com/recaptcha/api/siteverify",
-        data = urllib.urlencode({
+        data = urlencode({
             'secret': pkey,
             'remoteip': os.environ.get('REMOTE_ADDR', os.environ.get('REMOTE_HOST')),
             'response': cresponse

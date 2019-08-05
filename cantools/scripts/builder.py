@@ -168,7 +168,7 @@ def build_frags(mode="web", admin_ct_path=None):
         write(block, path)
     while len(fcopy) is not len(fragz):
         fcopy = fragz.difference(fcopy)
-        map(build_frag, fcopy)
+        list(map(build_frag, fcopy))
 
 def build(admin_ct_path, dirname, fnames):
     """

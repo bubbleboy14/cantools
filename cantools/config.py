@@ -1,12 +1,12 @@
 import json, getpass
 from base64 import b64encode, b64decode
-from util import read, write
-from cfg import cfg
+from .util import read, write
+from .cfg import cfg
 
 class Config(object):
 	def __init__(self, cfg):
 		self._cfg = {}
-		for key, val in cfg.items():
+		for key, val in list(cfg.items()):
 			self.update(key, val)
 
 	def __getattr__(self, key):
@@ -20,7 +20,7 @@ class Config(object):
 
 	def obj(self):
 		obj = {}
-		for k, v in self.items():
+		for k, v in list(self.items()):
 			if v.__class__ == Config:
 				obj[k] = v.obj()
 			else:
@@ -35,13 +35,13 @@ class Config(object):
 		return self._cfg.get(key, fallback)
 
 	def values(self):
-		return self._cfg.values()
+		return list(self._cfg.values())
 
 	def items(self):
-		return self._cfg.items()
+		return list(self._cfg.items())
 
 	def keys(self):
-		return self._cfg.keys()
+		return list(self._cfg.keys())
 
 	def update(self, key, val={}):
 		self._cfg[key] = isinstance(val, dict) and Config(val) or val
@@ -54,18 +54,18 @@ class Config(object):
 class PCache(object):
 	def __init__(self, cfg):
 		self.fname = cfg
-		self._cache = json.loads(b64decode(read(cfg, default="")) or "{}")
+		self._cache = json.loads(b64decode(read(cfg, default="")).decode() or "{}")
 
 	def _save(self):
-		write(b64encode(json.dumps(self._cache)), self.fname)
+		write(b64encode(json.dumps(self._cache).encode()).decode(), self.fname)
 
 	def __call__(self, key, password=True, overwrite=False):
-		dk = b64encode(key)
+		dk = b64encode(key.encode()).decode()
 		if overwrite or dk not in self._cache:
 			p = (password and getpass.getpass or raw_input)(key)
-			if raw_input("store %s? [Y/n]: "%(password and "password" or "value")).lower().startswith("n"):
+			if input("store %s? [Y/n]: "%(password and "password" or "value")).lower().startswith("n"):
 				return p
-			self._cache[dk] = b64encode(p)
+			self._cache[dk] = b64encode(p.encode()).decode()
 			self._save()
 		return b64decode(self._cache[dk])
 
@@ -105,8 +105,8 @@ for line in read("ct.cfg", True):
 	key, val = [term.strip() for term in line.split(" = ")]
 	if key == "PLUGIN_MODULES":
 		mods = val.split("|")
-		config.plugin.update("modules", map(lambda p : p.split("/")[-1], mods))
-		config.plugin.update("repos", map(lambda p : "/" in p and p or "%s/%s"%(config.plugin.base, p), mods))
+		config.plugin.update("modules", [p.split("/")[-1] for p in mods])
+		config.plugin.update("repos", ["/" in p and p or "%s/%s"%(config.plugin.base, p) for p in mods])
 		include_plugins()
 	else:
 		items.append([key, val])

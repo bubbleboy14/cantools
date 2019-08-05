@@ -1,5 +1,5 @@
 from datetime import datetime
-from properties import *
+from .properties import *
 
 class CTMeta(ndb.MetaModel):
     def __new__(cls, name, bases, attrs):
@@ -13,7 +13,7 @@ class CTMeta(ndb.MetaModel):
                 if "label" not in attrs:
                     attrs["label"] = "key"
             schema = attrs["_schema"] = merge_schemas(bases, attrs["label"])
-            for key, val in attrs.items():
+            for key, val in list(attrs.items()):
                 if getattr(val, "_ct_type", None):
                     schema[key] = val._ct_type
                     if val._ct_type == "key":
@@ -21,8 +21,7 @@ class CTMeta(ndb.MetaModel):
         modelsubs[lname] = super(CTMeta, cls).__new__(cls, name, bases, attrs)
         return modelsubs[lname]
 
-class ModelBase(ndb.Model):
-    __metaclass__ = CTMeta
+class ModelBase(ndb.Model, metaclass=CTMeta):
     index = Integer()
 
     def __eq__(self, other):
@@ -65,7 +64,7 @@ class ModelBase(ndb.Model):
         cols["index"] = self.index
         cols["modelName"] = mt
         cols["_label"] = self.label
-        for cname, prop in self._schema.items():
+        for cname, prop in list(self._schema.items()):
             if not cname.startswith("_"):
                 val = getattr(self, cname)
                 if prop.startswith("key"):
@@ -99,7 +98,7 @@ def get_page(modelName, limit, offset, order='index', filters={}):
     schema = get_schema(modelName)
     mod = get_model(modelName)
     query = mod.query()
-    for key, obj in filters.items():
+    for key, obj in list(filters.items()):
         val = obj["value"]
         comp = obj["comparator"]
         prop = getattr(mod, key)
@@ -115,7 +114,7 @@ def get_page(modelName, limit, offset, order='index', filters={}):
 
 def edit(data):
     ent = "key" in data and get(data["key"]) or get_model(data["modelName"])()
-    for propname, val in data.items():
+    for propname, val in list(data.items()):
         if propname in ent._schema:
             if val:
                 if propname in ent._schema["_kinds"]: # foreignkey

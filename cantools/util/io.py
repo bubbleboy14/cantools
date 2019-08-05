@@ -3,7 +3,7 @@ import json, pprint
 def read(fname="_tmp", lines=False, isjson=False, default=None, binary=False):
     try:
         f = open(fname, binary and "rb" or "r")
-    except Exception, e:
+    except Exception as e:
         if default is not None:
             return default
         if lines:

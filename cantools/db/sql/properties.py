@@ -69,8 +69,8 @@ DateTime = sqlColumn(DateTimeAutoStamper)
 # strings, arrays, keys
 class BasicString(basicType(sqlalchemy.UnicodeText, StringType)):
 	def process_bind_param(self, data, dialect):
-		if data and type(data) is not unicode:
-			data = data.decode('utf-8')
+#		if data and type(data) is not str:
+#			data = data.decode('utf-8')
 		return data
 
 String = sqlColumn(BasicString)
@@ -92,7 +92,10 @@ class BlobWrapper(object):
 		else:
 			self._set_path(value)
 
-	def __nonzero__(self):
+	def __nonzero__(self): # py2
+		return bool(self.value)
+
+	def __bool__(self): # py3
 		return bool(self.value)
 
 	def get(self):
@@ -106,7 +109,7 @@ class BlobWrapper(object):
 		if data:
 			from cantools import config
 			if not self.value:
-				p, d, f = os.walk(config.db.blob).next()
+				p, d, f = next(os.walk(config.db.blob))
 				self.value = len(f) + 1
 			self.path = os.path.join(config.db.blob, str(self.value))
 		else:
@@ -166,7 +169,7 @@ class ArrayType(BasicString):
 		if self.isKey:
 			self.kinds = kwargs.pop("kinds", [kwargs.pop("kind", "*")])
 			for i in range(len(self.kinds)):
-				if not isinstance(self.kinds[i], basestring):
+				if not isinstance(self.kinds[i], str):
 					self.kinds[i] = self.kinds[i].__name__.lower()
 		BasicString.__init__(self, *args, **kwargs)
 
@@ -191,7 +194,10 @@ class KeyWrapper(object):
 	def __init__(self, urlsafe=None):
 		self.value = urlsafe
 
-	def __nonzero__(self):
+	def __nonzero__(self): # py2
+		return bool(self.value)
+
+	def __bool__(self): # py3
 		return bool(self.value)
 
 	def __eq__(self, other):
@@ -217,7 +223,7 @@ class Key(BasicString):
 	def __init__(self, *args, **kwargs):
 		self.kinds = kwargs.pop("kinds", [kwargs.pop("kind", "*")])
 		for i in range(len(self.kinds)):
-			if not isinstance(self.kinds[i], basestring):
+			if not isinstance(self.kinds[i], str):
 				self.kinds[i] = self.kinds[i].__name__.lower()
 		BasicString.__init__(self, *args, **kwargs)
 

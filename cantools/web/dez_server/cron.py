@@ -66,5 +66,5 @@ class Cron(object):
 
     def start(self):
         self.logger.info("start")
-        for rule in self.timers.values():
+        for rule in list(self.timers.values()):
             rule.start()

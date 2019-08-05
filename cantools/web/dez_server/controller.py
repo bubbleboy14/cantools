@@ -1,9 +1,9 @@
 from dez.network import SocketController, daemon_wrapper
 from dez.logging import get_logger_getter
 from cantools import config
-from daemons import Web, Admin
-from response import Response
-from cron import Cron
+from .daemons import Web, Admin
+from .response import Response
+from .cron import Cron
 from cantools import config
 from ..util import *
 from ...util import log as syslog

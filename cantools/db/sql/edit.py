@@ -1,6 +1,6 @@
 from datetime import datetime
-from properties import KeyWrapper
-from session import session
+from .properties import KeyWrapper
+from .session import session
 
 def _trans_key(val):
     return KeyWrapper(val)
@@ -23,7 +23,7 @@ def edit(data, session=session):
     from cantools.db import get, get_model
     haskey = "key" in data
     ent = haskey and get(data["key"], session) or get_model(data["modelName"])()
-    for propname, val in data.items():
+    for propname, val in list(data.items()):
         if propname in ent._schema:
             if val:
                 proptype = ent._schema[propname]

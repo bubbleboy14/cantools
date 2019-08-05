@@ -9,10 +9,10 @@
 """
 
 from cantools import config
-from bots import Bot
+from .bots import Bot
 
 def start(host=config.pubsub.host, port=config.pubsub.port):
-    from ps import PubSub
+    from .ps import PubSub
     PubSub(host, port).start()
 
 def get_addr_and_start():

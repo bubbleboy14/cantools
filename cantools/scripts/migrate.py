@@ -60,7 +60,7 @@ indices = set()
 def fixmissing(orig):
 	if orig in missing and orig in keys:
 		for d in missing[orig]:
-			for k, v in d.items():
+			for k, v in list(d.items()):
 				if type(v) is list:
 					for i in range(len(v)):
 						if v[i] == orig:
@@ -108,7 +108,7 @@ def delmissing(badkey):
 	log("deleting references to %s"%(badkey,), important=True)
 	for d in missing[badkey]:
 		log("purging %s"%(d,), important=True)
-		for k, v in d.items():
+		for k, v in list(d.items()):
 			if type(v) is list:
 				d[k] = [val for val in v if val != badkey]
 			elif v == badkey:
@@ -117,19 +117,19 @@ def delmissing(badkey):
 
 def prune():
 	if missing:
-		mlen = len(missing.keys())
+		mlen = len(list(missing.keys()))
 		log("pruning %s missing keys"%(mlen,), important=True)
 		log("searching for matches")
-		for oldkey in missing.keys():
+		for oldkey in list(missing.keys()):
 			fixmissing(oldkey)
-		newlen = len(missing.keys())
+		newlen = len(list(missing.keys()))
 		log("matched %s - %s left over"%(mlen - newlen, newlen))
 		log("deleting stragglers")
-		for oldkey in missing.keys():
+		for oldkey in list(missing.keys()):
 			delmissing(oldkey)
 
 def checkblobs(d, schema):
-	for key, prop in schema.items():
+	for key, prop in list(schema.items()):
 		if prop == "blob" and d[key]:
 			blobs.append(d)
 			break
@@ -137,7 +137,7 @@ def checkblobs(d, schema):
 def getblobs(host, port):
 	log("retrieving binaries stored on %s records"%(len(blobs),), important=True)
 	for d in blobs:
-		for key, prop in db.get_schema(d["modelName"]).items():
+		for key, prop in list(db.get_schema(d["modelName"]).items()):
 			if prop == "blob" and d[key]:
 				entkey = d.get("gaekey", d["key"])
 				log("fetching %s.%s (%s.%s)"%(d["modelName"], key, entkey, d[key]))
@@ -170,7 +170,7 @@ def dump(host, port, session, binary, skip=[]):
 				break
 			log("got %s %s records"%(offset, model), 1)
 		log("found %s %s records"%(len(mods[model]), model))
-	log("%s unmatched keys!"%(len(missing.keys()),), important=True)
+	log("%s unmatched keys!"%(len(list(missing.keys())),), important=True)
 	prune()
 	if binary and blobs:
 		getblobs(host, port)

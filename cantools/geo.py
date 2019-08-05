@@ -1,4 +1,8 @@
-import os, urllib
+import os
+try:
+    from urllib import parse # py3
+except:
+    import urllib as parse # py2.7
 from cantools.web import fetch
 from cantools.util import log, read, write, writejson
 from cantools import config
@@ -52,7 +56,7 @@ class Geo(object):
 		return not (addr in self.cache and self.cache[addr]["lat"] and self.cache[addr]["lng"])
 
 	def _fetch(self, api, *args): # api is latlng/zip
-		path = self.apis[api]["path"].format(*[urllib.quote(str(a).replace(" ", "+")) for a in args])
+		path = self.apis[api]["path"].format(*[parse.quote(str(a).replace(" ", "+")) for a in args])
 		host = self.apis[api]["host"]
 		user = self.apis[api]["user"]
 		prop = self.apis[api]["property"]

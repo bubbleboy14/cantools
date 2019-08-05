@@ -28,7 +28,7 @@ def log(msg, level=0, important=False):
         s = "\n%s"%(s,)
     if LOG_FILE:
         LOG_FILE.write("%s\n"%(s,))
-    print s
+    print(s)
 
 def set_error(f):
     global ERROR_CB

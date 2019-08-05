@@ -41,7 +41,7 @@ def go():
 		import subprocess
 		cmd = 'dev_appserver.py . --host=%s --port=%s --admin_port=%s --datastore_path=%s'%(config.web.host,
 			options.port, options.admin_port, options.datastore)
-		print cmd
+		print(cmd)
 		subprocess.call(cmd, shell=True)
 	elif options.web_backend == "dez":
 		from cantools.web import run_dez_webserver

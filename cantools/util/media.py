@@ -1,7 +1,7 @@
 import os
-from system import cmd, rm, mkdir
-from reporting import log
-from io import read, write
+from .system import cmd, rm, mkdir
+from .reporting import log
+from .io import read, write
 
 #
 # video (ffmpeg)

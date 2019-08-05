@@ -1,5 +1,6 @@
 import operator, base64, json, hashlib
 from datetime import datetime
+from six import string_types
 
 modelsubs = {}
 operators = {
@@ -16,11 +17,11 @@ def get_model(modelName):
 
 def get_schema(modname=None):
     if modname:
-        if not isinstance(modname, basestring):
+        if not isinstance(modname, string_types):
             modname = modname.__name__
         return modelsubs[modname.lower()]._schema
     s = {}
-    for key, val in modelsubs.items():
+    for key, val in list(modelsubs.items()):
         if key not in ["modelbase", "ctrefcount"]:
             s[key] = val._schema
     return s
@@ -28,12 +29,12 @@ def get_schema(modname=None):
 def dprep(obj, schema=None): # prepares data object for model
     schema = schema or get_schema(obj["modelName"])
     o = {}
-    for key, prop in schema.items():
+    for key, prop in list(schema.items()):
         if key in obj:
             if prop == "datetime" and obj[key]:
                 o[key] = datetime.strptime(obj[key].replace("T", " ").replace("Z", ""), "%Y-%m-%d %X")
-            elif prop == "string" and isinstance(obj[key], unicode):
-                o[key] = obj[key].encode("utf-8")
+#            elif prop == "string" and isinstance(obj[key], str):
+#                o[key] = obj[key].encode("utf-8")
             elif key != "_label":
                 o[key] = obj[key]
     return o
@@ -53,7 +54,7 @@ def ct_key(modelName, index):
     return unpad_key(base64.b64encode(json.dumps({
         "index": index,
         "model": modelName
-    })))
+    }).encode()).decode())
 
 def merge_schemas(bases, label=None):
     kinds = {}
