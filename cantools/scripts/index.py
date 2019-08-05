@@ -50,6 +50,11 @@ from cantools import config
 if config.web.server == "dez":
 	from cantools.db import session, func, refresh_counter
 
+try:
+    input = raw_input # py2/3 compatibility
+except NameError:
+    pass
+
 counts = { "_counters": 0 }
 RETRIES = 5
 

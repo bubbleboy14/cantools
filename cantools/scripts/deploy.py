@@ -47,6 +47,11 @@ from cantools import config, __version__
 from cantools.util import log, error, read, write, cmd
 from .builder import build_all
 
+try:
+    input = raw_input # py2/3 compatibility
+except NameError:
+    pass
+
 def doyaml(mode):
     log("switching to %s mode"%(mode,))
     lines = read(config.yaml.path, lines=True)

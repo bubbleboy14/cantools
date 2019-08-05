@@ -3,6 +3,11 @@ from base64 import b64encode, b64decode
 from .util import read, write
 from .cfg import cfg
 
+try:
+    input = raw_input # py2/3 compatibility
+except NameError:
+    pass
+
 class Config(object):
 	def __init__(self, cfg):
 		self._cfg = {}
@@ -62,7 +67,7 @@ class PCache(object):
 	def __call__(self, key, password=True, overwrite=False):
 		dk = b64encode(key.encode()).decode()
 		if overwrite or dk not in self._cache:
-			p = (password and getpass.getpass or raw_input)(key)
+			p = (password and getpass.getpass or input)(key)
 			if input("store %s? [Y/n]: "%(password and "password" or "value")).lower().startswith("n"):
 				return p
 			self._cache[dk] = b64encode(p.encode()).decode()

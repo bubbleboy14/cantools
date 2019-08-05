@@ -42,6 +42,11 @@ from cantools import config, include_plugin, mods_and_repos
 from cantools.util import log, error, cp, sym, mkdir, rm, cmd, read
 from .builder import build_all
 
+try:
+    input = raw_input # py2/3 compatibility
+except NameError:
+    pass
+
 CTP = __file__.rsplit(os.path.sep, 2)[0]
 
 class Builder(object):

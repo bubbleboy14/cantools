@@ -6,6 +6,11 @@ from .setters import *
 from .session import session, testSession, metadata, Session
 from six import string_types
 
+try:
+    input = raw_input # py2/3 compatibility
+except NameError:
+    pass
+
 _passthru = ["count", "all"]
 _qmod = ["filter", "limit", "offset", "join"]
 
