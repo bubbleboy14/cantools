@@ -1,4 +1,4 @@
-# cantools 0.10.8.38
+# cantools 0.10.8.39
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
  - Docs: http://ct.mkult.co
@@ -105,7 +105,6 @@ of cantools and all managed plugins. Thus, plugins are dealt with under the hood
 any need for the developer to know or do anything beyond 'ctinit -r'.
 
 ## ctstart
-
 ### Usage: ctstart [--web_backend=BACKEND] [--port=PORT] [--datastore=DS_PATH]
 
 ### Options:
@@ -230,7 +229,6 @@ database from an older deployment to CT 0.8 or newer).
 Run this in 'index' mode on a database with lots of missing index values.
 
 ## ctdoc
-
 ### Usage: ctdoc [-w]
 
 ### Options:
