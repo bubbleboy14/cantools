@@ -44,7 +44,7 @@ then
     if [ $? -ne 0 ]
     then
         echo "installing python"
-        sudo apt install --yes python2.7 </dev/null
+        sudo apt install --yes python </dev/null
         echo "python installed"
     else
         echo "you got it"
