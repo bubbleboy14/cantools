@@ -337,7 +337,7 @@ CT.modal.Prompt = CT.Class({
 				}, o.min || 0.25, o.max || 5, initial, o.step || 0.25),
 				n = CT.dom.div([shower, r]);
 			n.value = function() {
-				return parseFloat(r.value);
+				return window["parse" + ((o.step == 1) ? "Int" : "Float")](r.value);
 			};
 			return n;
 		}
