@@ -22,7 +22,7 @@ setup(
     zip_safe = False,
     install_requires = [
         "rel >= 0.4.2",
-        "dez >= 0.10.9.15",
+        "dez >= 0.10.9.16",
         "yagmail >= 0.6.161",
         "requests >= 2.3.0",
         "slimit",
