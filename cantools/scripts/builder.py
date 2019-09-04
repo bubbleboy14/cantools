@@ -85,7 +85,10 @@ def require(line, jspaths, block, inits, admin_ct_path=None):
         dynamic = True
     else:
         rline = line.split('require(')[1][1:].split(");")[0].strip(")")
-        if rline.endswith(", true"):
+        if rline.endswith('"skip"'):
+            log("skipping require: %s"%(line,), important=True)
+            return block
+        elif rline.endswith(", true"):
             dynamic = True
             rline = rline.split(", ")[0]
         rline = rline[:-1]
