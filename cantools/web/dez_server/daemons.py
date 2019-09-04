@@ -18,9 +18,10 @@ A_CB = { "/admin": "admin", "/_db": "_db" }
 
 class CTWebBase(HTTPApplication):
     def __init__(self, bind_address, port, logger_getter, static=static, cb=cb):
+        isprod = config.mode == "production"
         HTTPApplication.__init__(self, bind_address, port, logger_getter, "dez/cantools",
             config.ssl.certfile, config.ssl.keyfile, config.ssl.cacerts,
-            config.mode == "production", config.web.rollz)
+            isprod, config.web.rollz, isprod)
         self.memcache = get_memcache()
         self.handlers = {}
         for key, val in list(static.items()):
