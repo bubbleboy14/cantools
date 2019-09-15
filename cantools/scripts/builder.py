@@ -210,7 +210,8 @@ def build(admin_ct_path, dirname, fnames):
         write(data, topath_stat)
         write(data, topath_prod)
     for fname in [f for f in fnames if os.path.isdir(os.path.join(dirname, f))]:
-        os.path.walk(os.path.join(dirname, fname), build, admin_ct_path)
+        for dname, dirnames, filenames in os.walk(os.path.join(dirname, fname)):
+            build(admin_ct_path, dname, filenames + dirnames)
 
 def silence_warnings():
     from ply import yacc, lex
