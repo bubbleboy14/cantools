@@ -62,7 +62,7 @@ def enc(data):
     return scramble(b64encode(hasattr(data, "encode") and data.encode() or data).decode())
 
 def dec(data):
-    return data.startswith("{") and data or b64decode(scramble(data))
+    return data.startswith("{") and data or b64decode(scramble(data)).decode()
 
 # setters (see above)
 def setlog(f):
