@@ -69,4 +69,4 @@ def merge_schemas(bases, label=None):
     return schema
 
 def hashpass(password, date):
-    return hashlib.md5(password + str(date.date()).replace('-','')).hexdigest()
+    return hashlib.md5((password + str(date.date()).replace('-','')).encode()).hexdigest()
