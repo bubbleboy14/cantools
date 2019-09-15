@@ -72,7 +72,7 @@ class PCache(object):
 				return p
 			self._cache[dk] = b64encode(p.encode()).decode()
 			self._save()
-		return b64decode(self._cache[dk])
+		return b64decode(self._cache[dk]).decode()
 
 pc = PCache(".ctp")
 
