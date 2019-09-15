@@ -47,7 +47,7 @@ def log(*args, **kwargs):
 # encoding, decoding -- may overwrite with setenc/setdec, but not _that_ necessary
 _c = config.scrambler
 _cl = len(_c)
-_chl = _cl / 2
+_chl = int(_cl / 2)
 
 def flip(c):
     i = _c.find(c)
@@ -59,7 +59,7 @@ def scramble(s):
     return "".join([flip(c) for c in s])
 
 def enc(data):
-    return scramble(b64encode(data))
+    return scramble(b64encode(hasattr(data, "encode") and data.encode() or data).decode())
 
 def dec(data):
     return data.startswith("{") and data or b64decode(scramble(data))
