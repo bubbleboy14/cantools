@@ -222,7 +222,7 @@ def silence_warnings():
 def build_all(mode="web", admin_ct_path=None):
     silence_warnings()
     for dirname, dirnames, filenames in os.walk(config.build[mode].dynamic):
-        build(admin_ct_path, dirname, filenames)
+        build(admin_ct_path, dirname, filenames + dirnames)
     build_frags(mode, admin_ct_path)
 
 if __name__ == "__main__":
