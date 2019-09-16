@@ -91,7 +91,8 @@ def include_plugins():
 			try:
 				mod = plugs[plugin] = __import__(plugin)
 			except:
-				return print("missing plugin: %s (fine if refreshing project for 1st time)"%(plugin,))
+				print("missing plugin: %s (fine if refreshing project for 1st time)"%(plugin,))
+				return
 			if hasattr(mod.init, "requires"):
 				for p in mod.init.requires:
 					loadp(p)
