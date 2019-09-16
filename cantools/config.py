@@ -84,21 +84,21 @@ def _getpass(val, ptype):
 config = Config(cfg)
 
 def include_plugins():
-	try:
-		plugs = {}
-		def loadp(plugin):
-			plugin = plugin.split("/")[-1]
-			if plugin not in plugs:
+	plugs = {}
+	def loadp(plugin):
+		plugin = plugin.split("/")[-1]
+		if plugin not in plugs:
+			try:
 				mod = plugs[plugin] = __import__(plugin)
-				if hasattr(mod.init, "requires"):
-					for p in mod.init.requires:
-						loadp(p)
-				if hasattr(mod.init, "cfg"):
-					config.update(plugin, mod.init.cfg)
-		for plugin in config.plugin.modules:
-			loadp(plugin)
-	except:
-		pass # plugin import error - fine if refreshing project for 1st time
+			except:
+				return print("missing plugin: %s (fine if refreshing project for 1st time)"%(plugin,))
+			if hasattr(mod.init, "requires"):
+				for p in mod.init.requires:
+					loadp(p)
+			if hasattr(mod.init, "cfg"):
+				config.update(plugin, mod.init.cfg)
+	for plugin in config.plugin.modules:
+		loadp(plugin)
 
 config.plugin.update("modules", [])
 config.plugin.update("repos", [])
