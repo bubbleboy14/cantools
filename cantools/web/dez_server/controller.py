@@ -1,10 +1,11 @@
+import sys, platform
 from dez.network import SocketController, daemon_wrapper
 from dez.logging import get_logger_getter
 from cantools import config
 from .daemons import Web, Admin
 from .response import Response
 from .cron import Cron
-from cantools import config
+from cantools import config, __version__
 from ..util import *
 from ...util import log as syslog
 
@@ -16,6 +17,9 @@ class DController(SocketController):
 		self.logger = logger_getter("Controller")
 		SocketController.__init__(self, *args, **kwargs)
 		self.handlers = {}
+		self.logger.info("cantools: %s"%(__version__,))
+		self.logger.info("Python: %s"%(sys.version.split(' ')[0],))
+		self.logger.info("System: " + " > ".join([part for part in platform.uname() if part]))
 
 	def _respond(self, resp, *args, **kwargs):
 		if resp: # regular request
