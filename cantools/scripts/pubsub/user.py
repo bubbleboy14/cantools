@@ -14,7 +14,7 @@ class PubSubUser(Actor):
         self._log('NEW CONNECTION (%s)'%(self.id,), 1, True)
 
     def write(self, data):
-        data["data"]["datetime"] = str(datetime.now())
+        data["data"]["datetime"] = str(datetime.utcnow())
         self.conn.write(data)
 
     def _read(self, obj):
