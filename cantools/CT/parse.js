@@ -295,12 +295,12 @@ CT.parse = {
 	},
 	"_ts_server_offset": 0,
 	"set_ts_server_offset": function(offset) {
+		CT.log("[DEPRECATION WARNING] CT.parse.set_ts_server_offset() is deprecated. Just stop using it!");
 		CT.parse._ts_server_offset = offset;
 	},
 	"timeStamp": function(datetime) {
-	    var now = new Date();
-	    now.setHours(now.getHours() + (now.getTimezoneOffset() / 60) - CT.parse._ts_server_offset);
-	    var then = new Date(datetime.replace('T', ' ').replace(/-/g, '/')),
+	    var now = new Date(),
+	    	then = new Date(datetime.replace('T', ' ').replace(/-/g, '/') + "Z"),
 	        secs = (now - then) / 1000,
 	        mins = ~~(secs / 60),
 	        hours = ~~(mins / 60),
