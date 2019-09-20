@@ -101,7 +101,11 @@ def set_read(f):
     localvars.read = f
 
 def rdec(data):
-    return unquote(b64decode(data.encode()).decode())
+    bdata = b64decode(data.encode())
+    try: # py2
+        return unquote(bdata).decode()
+    except: #py3
+        return unquote(bdata.decode())
 
 def renc(data):
     return b64encode(quote(data).encode()).decode()
