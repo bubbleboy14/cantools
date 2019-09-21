@@ -1,4 +1,8 @@
-import subprocess, os, subprocess, platform
+import os, subprocess, platform
+try:
+	from commands import getoutput   # py2
+except:
+	from subprocess import getoutput # py3
 from .reporting import log
 from .io import write
 
@@ -55,4 +59,4 @@ def cmd(cline, sudo=False):
 
 def output(cline, silent=False):
 	silent or log('getting output for: "%s"'%(cline,), 2)
-	return subprocess.getoutput(cline)
+	return getoutput(cline)
