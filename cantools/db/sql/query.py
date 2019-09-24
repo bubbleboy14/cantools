@@ -63,7 +63,7 @@ class Query(object):
                 flag = " no such column: "
                 stre = str(e)
                 if flag in stre:
-                    target = stre.split(flag)[1].split(" ", 1)[0]
+                    target = stre.split(flag)[1].split(None, 1)[0]
                     log("Missing column: %s"%(target,), important=True)
                     if config.db.alter:
                         tmod, tcol = target.split(".")
