@@ -18,6 +18,12 @@ CT.cal.Cal = CT.Class({
 		shift: function(diff) {
 			this.opts.now.setMonth(this.opts.now.getMonth() + diff);
 			this.orient();
+		},
+		appointments: {
+			daily: [],
+			weekly: CT.cal.days.map(function(d) { return []; }),
+			once: CT.cal.months.map(function(m) { return {}; }),
+			exception: CT.cal.months.map(function(m) { return {}; })
 		}
 	},
 	days: function() {
@@ -28,7 +34,8 @@ CT.cal.Cal = CT.Class({
 			last = new Date(year, month + 1, 0),
 			offset = first.getDay(),
 			lastday = last.getDate(),
-			prevlast = new Date(year, month, 0).getDate();
+			prevlast = new Date(year, month, 0).getDate(),
+			appz = this._.appointments;
 
 		for (i = offset - 1; i > -1; i--)
 			dayz.push(CT.dom.div(prevlast - i, "other"));
@@ -50,8 +57,27 @@ CT.cal.Cal = CT.Class({
 			CT.dom.button("next", function() { shift(1); })
 		], "centered");
 	},
+	appointments: function() {
+		var appz = this._.appointments,
+			months = CT.cal.months;
+		this.opts.appointments.forEach(function(task) {
+			// TODO: change to CT.db.multi(...)
+			task.timeslots.forEach(function(tslot) {
+				tslot.task = task;
+				tslot.when = new Date(tslot.when);
+				var month = tslot.when.getMonth(),
+					date = tslot.when.getDate(),
+					day = tslot.when.getDay();
+				if (tslot.schedule == "daily")
+					appz.daily.push(tslot);
+				else if (tslot.schedule == "weekly")
+					appz.weekly[day].push(tslot);
+				else
+					appz[tslot.schedule][month][date] = tslot;
+			});
+		});
+	},
 	orient: function() {
-		this.node = this.node || CT.dom.div(null, "cal");
 		CT.dom.setContent(this.node, [
 			CT.dom.div(this.month(), "month"),
 			CT.dom.div(this.days(), "days")
@@ -59,8 +85,12 @@ CT.cal.Cal = CT.Class({
 	},
 	init: function(opts) {
 		this.opts = opts = CT.merge(opts, {
-			now: new Date()
+			now: new Date(),
+			appointments: []
 		});
+		this.node = CT.dom.div(null, "cal");
+		this.node.cal = this;
+		this.appointments();
 		this.orient();
 	}
 });
