@@ -1063,6 +1063,9 @@ CT.dom = {
 		CT.dom.clear(targetNode);
 		CT.dom.addContent(targetNode, content, withClass);
 	},
+	"setBody": function(content) {
+		CT.dom.setContent(document.body, content);
+	},
 	"addEach": function(parent, subs) {
 		subs.forEach(function(node) { // must wrap
 			parent.appendChild(node);
