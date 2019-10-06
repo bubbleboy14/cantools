@@ -1,3 +1,9 @@
+/*
+This module contains a class, Cal, for calendar-based applications. Usage:
+
+	CT.dom.setBody((new CT.cal.Cal()).node);
+*/
+
 CT.cal = {
 	days: ["Sunday", "Monday", "Tuesday", "Wednesday",
 		"Thursday", "Friday", "Saturday"],
