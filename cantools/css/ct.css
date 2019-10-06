@@ -1289,6 +1289,7 @@ button, a, label, input[type='checkbox'], .pointer {
 
 .cal .days > div {
     width: 14%;
+    position: relative;
     border: 1px solid darkgray;
 }
 
@@ -1303,4 +1304,15 @@ button, a, label, input[type='checkbox'], .pointer {
 .cal .days .other {
     color: white;
     background: gray;
+}
+
+.cal .days .appointment {
+    cursor: pointer;
+    font-weight: bold;
+    border-radius: 8px;
+    border: 1px solid lightblue;
+}
+
+.cal .days .appointment:hover {
+    background: lightblue;
 }
