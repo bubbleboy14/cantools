@@ -98,18 +98,16 @@ CT.cal.Cal = CT.Class({
 	},
 	days: function() {
 		var _ = this._, dayz = CT.cal.days.slice(),
-			i, now = this.opts.now, today = now.getDate(),
+			i, now = this.opts.now,
 			year = now.getFullYear(), month = now.getMonth(),
-			first = new Date(year, month),
-			last = new Date(year, month + 1, 0),
-			offset = first.getDay(),
-			lastday = last.getDate(),
+			offset = new Date(year, month).getDay(),
+			last = new Date(year, month + 1, 0).getDate(),
 			prevlast = new Date(year, month, 0).getDate();
 
 		for (i = offset - 1; i > -1; i--)
 			dayz.push(CT.dom.div(prevlast - i, "other"));
 
-		for (i = 1; i <= lastday; i++)
+		for (i = 1; i <= last; i++)
 			dayz.push(this.day(i, month, year));
 
 		i = 0;
