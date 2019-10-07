@@ -2,6 +2,7 @@
 This module contains a class, Cal, for calendar-based applications. Usage:
 
 	CT.dom.setBody((new CT.cal.Cal({
+		timeslots: "data", // or "key" (the default, for use w/ databases)
 		appointments: [{
 			name: "app 1",
 			description: "the first appointment",
@@ -156,14 +157,35 @@ CT.cal.Cal = CT.Class({
 			CT.dom.div(this.days(), "days")
 		]);
 	},
+	_build: function() {
+		this.appointments();
+		this.orient();
+	},
+	build: function() {
+		var opts = this.opts, tasks = opts.appointments,
+			slots = [], builder = this._build;
+		if (opts.timeslots == "data")
+			return builder();
+		tasks.forEach(function(task) {
+			slots = slots.concat(task.timeslots);
+		});
+		CT.db.multi(slots, function(tslots) {
+			tasks.forEach(function(task) {
+				task.timeslots = task.timeslots.map(function(tskey) {
+					return CT.data.get(tskey);
+				});
+			});
+			builder();
+		});
+	},
 	init: function(opts) {
 		this.opts = opts = CT.merge(opts, {
 			now: new Date(),
+			timeslots: "key",
 			appointments: []
 		});
 		this.node = CT.dom.div(null, "cal");
 		this.node.cal = this;
-		this.appointments();
-		this.orient();
+		this.build();
 	}
 });
