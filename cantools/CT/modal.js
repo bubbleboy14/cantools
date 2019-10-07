@@ -36,7 +36,6 @@ defaults:
 		outerClose: true
 	}
 
-
 ### CT.modal.Prompt (Modal subclass)
 Includes interface elements for obtaining user input, such as
 a string, a password, or one or more selections from a list.
@@ -49,7 +48,47 @@ defaults:
 		clear: false, // string/password only
 		data: [] // only applies to choice styles
 	}
+
+Additionally, CT.modal includes several convenience functions:
+
+### Four options:
+    - prompt: prompt the user for a string
+    - choice: offer several options
+    - modal: basic popup
+    - img: slide in an image
 */
+
+CT.modal = {
+	prompt: function(opts) {
+		(new CT.modal.Prompt(CT.merge(opts, {
+			transition: "slide"
+		}))).show();
+	},
+	choice: function(opts) {
+		CT.modal.prompt(CT.merge(opts, {
+			noClose: true,
+			defaultIndex: 0,
+			style: "single-choice"
+		}));
+	},
+	modal: function(content, onhide) {
+		var mod = new CT.modal.Modal({
+			noClose: true,
+			className: "basicpopup noframe",
+			transition: "slide",
+			slide: {
+				origin: "right"
+			},
+			content: content
+		});
+		mod.on.hide = onhide;
+		mod.show();
+		return mod;
+	},
+	img: function(src, onhide) {
+		return CT.modal.modal(CT.dom.img(src, "wm200p hm200p"), onhide);
+	}
+};
 
 CT.modal._defaults = {
 	Modal: {
