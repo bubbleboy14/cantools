@@ -1293,6 +1293,10 @@ button, a, label, input[type='checkbox'], .pointer {
     border: 1px solid darkgray;
 }
 
+.cal .days > div:hover {
+    background: lightgoldenrodyellow;
+}
+
 .cal .days > div:nth-child(n+8) {
     padding-bottom: 14%;
 }
