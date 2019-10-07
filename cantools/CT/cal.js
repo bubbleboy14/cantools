@@ -86,15 +86,13 @@ CT.cal.Cal = CT.Class({
 			}).map(function(slot) {
 				return CT.dom.div(slot.when.toTimeString().slice(0, 5) + " " + slot.task.name,
 					"appointment", null, {
-						onclick: function() {
-							(new CT.modal.Modal({
-								transition: "slide",
-								content: [
-									CT.dom.div(slot.task.name, "bigger"),
-									slot.task.description,
-									slot.duration + " hours"
-								]
-							})).show();
+						onclick: function(e) {
+							CT.modal.modal([
+								CT.dom.div(slot.task.name, "bigger"),
+								slot.task.description,
+								slot.duration + " hours"
+							]);
+							e.stopPropagation();
 						}
 					});
 			}), "abs all0")
