@@ -1,4 +1,4 @@
-# cantools 0.10.8.50
+# cantools 0.10.8.51
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
  - Docs: http://ct.mkult.co
@@ -290,6 +290,7 @@ This loader imports almost every CT module.
     - CT.Pager
     - CT.align
     - CT.autocomplete
+    - CT.cal
     - CT.canvas
     - CT.chat
     - CT.data
@@ -351,6 +352,46 @@ function, which uses the CT.db module to acquire data.
     - modelName: the name of the backend database model to query from
     - property: the property (on specified model) to compare to text input
     - filters (default: {}): filters to apply to database query
+
+## CT.cal
+### Import line: 'CT.require("CT.cal");'
+This module contains a class, Cal, for calendar-based applications. Usage:
+
+	CT.dom.setBody((new CT.cal.Cal({
+		appointments: [{
+			name: "app 1",
+			description: "the first appointment",
+			timeslots: [{
+				schedule: "once",
+				when: "Thu Oct 10 2019 14:15",
+				duration: 1
+			}, {
+				schedule: "weekly",
+				when: "Wed Oct 09 2019 18:45",
+				duration: 2
+			}]
+		}, {
+			name: "lunch",
+			description: "when we eat food",
+			timeslots: [{
+				schedule: "daily",
+				when: "Mon Oct 07 2019 12:00",
+				duration: 1
+			}]
+		}, {
+			name: "number D",
+			description: "another one, blah blah bloo",
+			timeslots: [{
+				schedule: "weekly",
+				when: "Fri Oct 04 2019 15:00",
+				duration: 1
+			}, {
+				schedule: "exception",
+				when: "Fri Oct 11 2019 18:45",
+				duration: 2
+			}]
+		}]
+	})).node);
 
 ## CT.canvas
 ### Import line: 'CT.require("CT.canvas");'
