@@ -70,7 +70,7 @@ CT.cal.Cal = CT.Class({
 			slots = slots.concat(oncers[tname]);
 
 		slots.sort(function(a, b) { // TOD: fix sort!!!
-			return a.when - b.when;
+			return a.when.toTimeString() - b.when.toTimeString();
 		});
 
 		return CT.dom.div([
