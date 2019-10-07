@@ -69,7 +69,7 @@ CT.cal.Cal = CT.Class({
 		for (tname in oncers)
 			slots = slots.concat(oncers[tname]);
 
-		slots.sort(function(a, b) { // TOD: fix sort!!!
+		slots.sort(function(a, b) {
 			return a.when.toTimeString() - b.when.toTimeString();
 		});
 
@@ -130,7 +130,7 @@ CT.cal.Cal = CT.Class({
 		var appz = this._.appointments,
 			months = CT.cal.months;
 		this.opts.appointments.forEach(function(task) {
-			// TODO: change to CT.db.multi(...)
+			// TODO: use CT.db.multi(...) in some cases?
 			task.timeslots.forEach(function(tslot) {
 				tslot.task = task;
 				tslot.when = new Date(tslot.when);
