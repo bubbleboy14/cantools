@@ -62,7 +62,7 @@ CT.cal.Cal = CT.Class({
 		}
 	},
 	day: function(date, month, year) {
-		var appz = this._.appointments,
+		var appz = this._.appointments, opts = this.opts, thiz = this,
 			day = new Date(year, month, date).getDay(),
 			slots = appz.daily.slice().concat(appz.weekly[day].slice()),
 			oncers = appz.once[month][date] || {}, tname;
@@ -74,7 +74,7 @@ CT.cal.Cal = CT.Class({
 			return a.when.toTimeString() - b.when.toTimeString();
 		});
 
-		return CT.dom.div([
+		var n = CT.dom.div([
 			CT.dom.div(date, "right"),
 			CT.dom.div(slots.filter(function(slot) {
 				// TODO: improve this filter
@@ -95,7 +95,14 @@ CT.cal.Cal = CT.Class({
 						}
 					});
 			}), "abs all0")
-		], (date == this.opts.now.getDate()) && "today");
+		], (date == opts.now.getDate()) && "today");
+		if (opts.dayClick) {
+			n.classList.add("pointer");
+			n.onclick = function() {
+				opts.dayClick(n, thiz, date, month, year);
+			};
+		}
+		return n;
 	},
 	days: function() {
 		var _ = this._, dayz = CT.cal.days.slice(),
@@ -125,31 +132,30 @@ CT.cal.Cal = CT.Class({
 			CT.dom.button("next", function() { shift(1); })
 		], "centered");
 	},
-	appointments: function() {
-		var appz = this._.appointments,
-			months = CT.cal.months;
-		this.opts.appointments.forEach(function(task) {
-			// TODO: use CT.db.multi(...) in some cases?
-			task.timeslots.forEach(function(tslot) {
-				tslot.task = task;
-				tslot.when = new Date(tslot.when);
-				var month = tslot.when.getMonth(),
-					date = tslot.when.getDate(),
-					day = tslot.when.getDay();
-				if (tslot.schedule == "daily")
-					appz.daily.push(tslot);
-				else if (tslot.schedule == "weekly")
-					appz.weekly[day].push(tslot);
-				else {
-					var amd = appz[tslot.schedule][month][date];
-					if (!amd)
-						amd = appz[tslot.schedule][month][date] = {};
-					if (!amd[tslot.task.name])
-						amd[tslot.task.name] = [];
-					amd[tslot.task.name].push(tslot);
-				}
-			});
+	appointment: function(task) {
+		var appz = this._.appointments;
+		task.timeslots.forEach(function(tslot) {
+			tslot.task = task;
+			tslot.when = new Date(tslot.when);
+			var month = tslot.when.getMonth(),
+				date = tslot.when.getDate(),
+				day = tslot.when.getDay();
+			if (tslot.schedule == "daily")
+				appz.daily.push(tslot);
+			else if (tslot.schedule == "weekly")
+				appz.weekly[day].push(tslot);
+			else {
+				var amd = appz[tslot.schedule][month][date];
+				if (!amd)
+					amd = appz[tslot.schedule][month][date] = {};
+				if (!amd[tslot.task.name])
+					amd[tslot.task.name] = [];
+				amd[tslot.task.name].push(tslot);
+			}
 		});
+	},
+	appointments: function() {
+		this.opts.appointments.forEach(this.appointment);
 	},
 	orient: function() {
 		CT.dom.setContent(this.node, [
