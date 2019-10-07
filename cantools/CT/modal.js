@@ -59,6 +59,12 @@ Additionally, CT.modal includes several convenience functions:
 */
 
 CT.modal = {
+	_defs: {
+		transition: "slide"
+	},
+	defaults: function(opts) {
+		CT.modal._defs = opts;
+	},
 	prompt: function(opts) {
 		(new CT.modal.Prompt(CT.merge(opts, {
 			transition: "slide"
@@ -71,17 +77,11 @@ CT.modal = {
 			style: "single-choice"
 		}));
 	},
-	modal: function(content, onhide) {
-		var mod = new CT.modal.Modal({
-			noClose: true,
-			className: "basicpopup noframe",
-			transition: "slide",
-			slide: {
-				origin: "right"
-			},
+	modal: function(content, onhide, opts) {
+		var mod = new CT.modal.Modal(CT.merge({
 			content: content
-		});
-		mod.on.hide = onhide;
+		}, opts, CT.modal._defs));
+		if (onhide) mod.on.hide = onhide;
 		mod.show();
 		return mod;
 	},
