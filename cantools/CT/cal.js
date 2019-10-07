@@ -65,7 +65,7 @@ CT.cal.Cal = CT.Class({
 		}
 	},
 	day: function(date, month, year) {
-		var appz = this._.appointments, opts = this.opts, thiz = this,
+		var appz = this._.appointments, opts = this.opts,
 			day = new Date(year, month, date).getDay(),
 			slots = appz.daily.slice().concat(appz.weekly[day].slice()),
 			emoyeda = appz.exception[month][year][date] || {},
@@ -100,7 +100,7 @@ CT.cal.Cal = CT.Class({
 		if (opts.click.date) {
 			n.classList.add("pointer");
 			n.onclick = function() {
-				opts.click.date(n, thiz, day, date, month, year);
+				opts.click.date(date, month, year);
 			};
 		}
 		return n;
