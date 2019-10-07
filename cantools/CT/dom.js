@@ -688,6 +688,15 @@ CT.dom = {
 		"March", "April", "May", "June", "July", "August",
 		"September", "October", "November", "December"],
 	"currentyear": Math.max((new Date()).getFullYear(), 2014),
+	"timeSelector": function(etimes) {
+		etimes = etimes || [];
+		for (var i = 0; i < 24; i++) {
+			var istr = i < 10 ? "0" + i : i;
+			etimes.push(istr + ":" + "00");
+			etimes.push(istr + ":" + "30");
+		}
+		return CT.dom.select(etimes);
+	},
 	"dateSelectors": function(node, d, startdate, enddate, withtime, noday, val) {
 		if (arguments.length == 1 && ! (arguments[0] instanceof Node)) {
 			var obj = arguments[0];
@@ -719,14 +728,7 @@ CT.dom = {
 			node.appendChild(d.day);
 		}
 		if (withtime) {
-			// hour, minute = etime.split(":") server-side
-			var etimes = ["Time"];
-			for (var i = 0; i < 24; i++) {
-				var istr = i < 10 ? "0" + i : i;
-				etimes.push(istr + ":" + "00");
-				etimes.push(istr + ":" + "30");
-			}
-			d.time = CT.dom.select(etimes);
+			d.time = CT.dom.timeSelector(["Time"]);
 			node.appendChild(d.time);
 		}
 		if (val) {
