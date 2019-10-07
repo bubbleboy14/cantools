@@ -99,21 +99,30 @@ CT.cal.Cal = CT.Class({
 					});
 			}), "abs all0")
 		], (date == opts.now.getDate()) && "today");
-		if (opts.dayClick) {
+		if (opts.click.date) {
 			n.classList.add("pointer");
 			n.onclick = function() {
-				opts.dayClick(n, thiz, day, date, month, year);
+				opts.click.date(n, thiz, day, date, month, year);
 			};
 		}
 		return n;
 	},
 	days: function() {
-		var _ = this._, dayz = CT.cal.days.slice(), i,
-			now = this.opts.now, appz = _.appointments,
+		var _ = this._, opts = this.opts, now = opts.now,
 			year = now.getFullYear(), month = now.getMonth(),
 			offset = new Date(year, month).getDay(),
 			last = new Date(year, month + 1, 0).getDate(),
-			prevlast = new Date(year, month, 0).getDate();
+			prevlast = new Date(year, month, 0).getDate(),
+			i, appz = _.appointments, dayz = CT.cal.days.map(function(day) {
+				var daynode = CT.dom.div(day);
+				if (opts.click.day) {
+					daynode.classList.add("pointer");
+					daynode.onclick = function() {
+						opts.click.day(day);
+					};
+				}
+				return daynode;
+			});
 
 		["once", "exception"].forEach(function(variety) {
 			if (!appz[variety][month][year])
@@ -200,7 +209,8 @@ CT.cal.Cal = CT.Class({
 		this.opts = opts = CT.merge(opts, {
 			now: new Date(),
 			timeslots: "key",
-			appointments: []
+			appointments: [],
+			click: {} // day, date
 		});
 		this.node = CT.dom.div(null, "cal");
 		this.node.cal = this;
