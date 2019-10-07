@@ -113,12 +113,12 @@ CT.cal.Cal = CT.Class({
 			offset = new Date(year, month).getDay(),
 			last = new Date(year, month + 1, 0).getDate(),
 			prevlast = new Date(year, month, 0).getDate(),
-			i, appz = _.appointments, dayz = CT.cal.days.map(function(day) {
+			i, appz = _.appointments, dayz = CT.cal.days.map(function(day, di) {
 				var daynode = CT.dom.div(day);
 				if (opts.click.day) {
 					daynode.classList.add("pointer");
 					daynode.onclick = function() {
-						opts.click.day(day);
+						opts.click.day(day, di);
 					};
 				}
 				return daynode;
