@@ -43,7 +43,7 @@ a string, a password, or one or more selections from a list.
 defaults:
 	{
 		className: "basicpopup mosthigh",
-		style: "string", // string|multiple-string|password|single-choice|multiple-choice|file
+		style: "string", // string|multiple-string|password|single-choice|multiple-choice|file|number|time
 		prompt: "",
 		clear: false, // string/password only
 		data: [] // only applies to choice styles
@@ -379,6 +379,9 @@ CT.modal.Prompt = CT.Class({
 				return window["parse" + ((o.step == 1) ? "Int" : "Float")](r.value);
 			};
 			return n;
+		},
+		"time": function() {
+			return CT.dom.timeSelector();
 		}
 	},
 	on: {
