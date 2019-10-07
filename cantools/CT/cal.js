@@ -44,7 +44,10 @@ CT.cal = {
 		"Thursday", "Friday", "Saturday"],
 	months: ["January", "February", "March", "April",
 		"May", "June", "July", "August", "September",
-		"October", "November", "December"]
+		"October", "November", "December"],
+	stamp: function(day, date, month, year) {
+		return CT.cal.days[day] + " " + CT.cal.months[month] + " " + date + " " + year;
+	}
 };
 
 CT.cal.Cal = CT.Class({
@@ -99,7 +102,7 @@ CT.cal.Cal = CT.Class({
 		if (opts.dayClick) {
 			n.classList.add("pointer");
 			n.onclick = function() {
-				opts.dayClick(n, thiz, date, month, year);
+				opts.dayClick(n, thiz, day, date, month, year);
 			};
 		}
 		return n;
