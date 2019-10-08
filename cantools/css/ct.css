@@ -1285,6 +1285,7 @@ button, a, label, input[type='checkbox'], .pointer {
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
+    justify-content: center;
 }
 
 .cal .days > div {
