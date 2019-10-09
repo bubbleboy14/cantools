@@ -69,7 +69,7 @@ CT.cal.Cal = CT.Class({
 			day = new Date(year, month, date).getDay(),
 			slots = appz.daily.slice().concat(appz.weekly[day].slice()),
 			emoyeda = appz.exception[month][year][date] || {},
-			oncers = appz.once[month][year][date] || {}, tname;
+			oncers = appz.once[month][year][date] || {}, tname, n, adata;
 
 		for (tname in oncers)
 			slots = slots.concat(oncers[tname]);
@@ -78,7 +78,7 @@ CT.cal.Cal = CT.Class({
 			return a.when.toTimeString() - b.when.toTimeString();
 		});
 
-		var n = CT.dom.div([
+		n = CT.dom.div([
 			CT.dom.div(date, "right"),
 			CT.dom.div(slots.filter(function(slot) {
 				// TODO: improve this filter
@@ -87,11 +87,14 @@ CT.cal.Cal = CT.Class({
 				return CT.dom.div(slot.when.toTimeString().slice(0, 5) + " " + slot.task.name,
 					"appointment", null, {
 						onclick: function(e) {
-							CT.modal.modal([
+							adata = [
 								CT.dom.div(slot.task.name, "bigger"),
 								slot.task.description,
 								slot.duration + " hours"
-							]);
+							];
+							if (opts.click.appointment)
+								adata.push(opts.click.appointment(slot));
+							CT.modal.modal(adata);
 							e.stopPropagation();
 						}
 					});
@@ -208,7 +211,7 @@ CT.cal.Cal = CT.Class({
 			now: new Date(),
 			timeslots: "key",
 			appointments: [],
-			click: {} // day, date
+			click: {} // day, date, appointment
 		});
 		this.node = CT.dom.div(null, "cal");
 		this.node.cal = this;
