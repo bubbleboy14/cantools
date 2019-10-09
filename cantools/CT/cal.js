@@ -192,8 +192,8 @@ CT.cal.Cal = CT.Class({
 		this.orient();
 	},
 	build: function() {
-		var opts = this.opts, tasks = opts.appointments,
-			slots = [], commitments = [], builder = this._build;
+		var opts = this.opts, tasks = opts.appointments, builder = this._build,
+			slots = [], commitments = [], cslots = [];
 		if (opts.timeslots == "data")
 			return builder();
 		tasks.forEach(function(task) {
@@ -206,10 +206,21 @@ CT.cal.Cal = CT.Class({
 					return CT.data.get(tskey);
 				});
 				task.commitments = task.commitments.map(function(ckey) {
-					return CT.data.get(ckey);
+					var c = CT.data.get(ckey);
+					cslots = cslots.concat(c.timeslots);
+					return c;
 				});
 			});
-			builder();
+			CT.db.multi(cslots, function(objz2) {
+				tasks.forEach(function(task) {
+					task.commitments.forEach(function(commitment) {
+						commitment.timeslots = commitment.timeslots.map(function(tskey) {
+							return CT.data.get(tskey);
+						});
+					});
+				});
+				builder();
+			});
 		});
 	},
 	init: function(opts) {
