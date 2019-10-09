@@ -66,10 +66,10 @@ CT.cal.Cal = CT.Class({
 	},
 	day: function(date, month, year) {
 		var appz = this._.appointments, opts = this.opts,
-			day = new Date(year, month, date).getDay(),
+			dobj = new Date(year, month, date), day = dobj.getDay(),
 			slots = appz.daily.slice().concat(appz.weekly[day].slice()),
 			emoyeda = appz.exception[month][year][date] || {},
-			oncers = appz.once[month][year][date] || {}, tname, n, adata;
+			oncers = appz.once[month][year][date] || {}, tname, n, adata, amod;
 
 		for (tname in oncers)
 			slots = slots.concat(oncers[tname]);
@@ -93,8 +93,10 @@ CT.cal.Cal = CT.Class({
 								slot.duration + " hours"
 							];
 							if (opts.click.appointment)
-								adata.push(opts.click.appointment(slot));
-							CT.modal.modal(adata);
+								adata.push(opts.click.appointment(slot, dobj));
+							amod = CT.modal.modal(adata, null, {
+								onclick: function() { amod.hide(); }
+							});
 							e.stopPropagation();
 						}
 					});
