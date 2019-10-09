@@ -155,7 +155,7 @@ CT.cal.Cal = CT.Class({
 				// TODO: improve this filter
 				return !(slot.taskname in emoyeda);
 			}).map(function(slot) {
-				return _.slot(slot, dobj, slot.task.commitments.filter(function(c) {
+				return _.slot(slot, new Date(dobj.getTime()), slot.task.commitments.filter(function(c) {
 					return cslots.includes(c);
 				}).map(function(comm) {
 					return comm.steward.firstName;
@@ -215,15 +215,23 @@ CT.cal.Cal = CT.Class({
 			CT.dom.button("next", function() { shift(1); })
 		], "centered");
 	},
-	commitment: function(commitment) {
+	stewardship: function(steward, task, commitment) {
+		steward.commitments = steward.commitments || {};
+		if (commitment) {
+			commitment.task = task;
+			steward.commitments[task.name] = commitment;
+		} else
+			return steward.commitments[task.name];
+	},
+	commitment: function(commitment, task) {
+		this.stewardship(commitment.steward, task, commitment);
 		this._.slots(commitment, this._.commitments);
 	},
 	appointment: function(task) {
 		var thaz = this;
 		this._.slots(task, this._.appointments);
 		task.commitments.forEach(function(comm) {
-			comm.task = task;
-			thaz.commitment(comm);
+			thaz.commitment(comm, task);
 		});
 	},
 	appointments: function() {
