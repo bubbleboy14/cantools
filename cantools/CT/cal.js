@@ -260,7 +260,7 @@ CT.cal.Cal = CT.Class({
 					return c;
 				});
 			});
-			CT.db.multi(cslots, function(objz2) {
+			CT.db.multi(cslots.concat(uslots), function(objz2) {
 				tasks.forEach(function(task) {
 					task.commitments.forEach(function(commitment) {
 						commitment.steward = CT.data.get(commitment.steward);
