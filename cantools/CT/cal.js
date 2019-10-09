@@ -53,15 +53,46 @@ CT.cal = {
 CT.cal.Cal = CT.Class({
 	CLASSNAME: "CT.cal.Cal",
 	_: {
-		shift: function(diff) {
-			this.opts.now.setMonth(this.opts.now.getMonth() + diff);
-			this.orient();
-		},
 		appointments: {
 			daily: [],
 			weekly: CT.cal.days.map(function(d) { return []; }),
 			once: CT.cal.months.map(function(m) { return {}; }),
 			exception: CT.cal.months.map(function(m) { return {}; })
+		},
+		commitments: {
+			daily: [],
+			weekly: CT.cal.days.map(function(d) { return []; }),
+			once: CT.cal.months.map(function(m) { return {}; }),
+			exception: CT.cal.months.map(function(m) { return {}; })
+		},
+		shift: function(diff) {
+			this.opts.now.setMonth(this.opts.now.getMonth() + diff);
+			this.orient();
+		},
+		slots: function(task, appz) {
+			task.timeslots.forEach(function(tslot) {
+				tslot.task = task;
+				tslot.when = new Date(tslot.when);
+				var year = tslot.when.getFullYear(),
+					month = tslot.when.getMonth(),
+					date = tslot.when.getDate(),
+					day = tslot.when.getDay();
+				if (tslot.schedule == "daily")
+					appz.daily.push(tslot);
+				else if (tslot.schedule == "weekly")
+					appz.weekly[day].push(tslot);
+				else { // month year date...
+					var amy = appz[tslot.schedule][month][year];
+					if (!amy)
+						amy = appz[tslot.schedule][month][year] = {};
+					var amyd = appz[tslot.schedule][month][year][date];
+					if (!amyd)
+						amyd = appz[tslot.schedule][month][year][date] = {};
+					if (!amyd[tslot.task.name])
+						amyd[tslot.task.name] = [];
+					amyd[tslot.task.name].push(tslot);
+				}
+			});
 		}
 	},
 	day: function(date, month, year) {
@@ -152,31 +183,12 @@ CT.cal.Cal = CT.Class({
 			CT.dom.button("next", function() { shift(1); })
 		], "centered");
 	},
+	commitment: function(task) {
+		this._.slots(task, this._.commitments);
+	},
 	appointment: function(task) {
-		var appz = this._.appointments;
-		task.timeslots.forEach(function(tslot) {
-			tslot.task = task;
-			tslot.when = new Date(tslot.when);
-			var year = tslot.when.getFullYear(),
-				month = tslot.when.getMonth(),
-				date = tslot.when.getDate(),
-				day = tslot.when.getDay();
-			if (tslot.schedule == "daily")
-				appz.daily.push(tslot);
-			else if (tslot.schedule == "weekly")
-				appz.weekly[day].push(tslot);
-			else { // month year date...
-				var amy = appz[tslot.schedule][month][year];
-				if (!amy)
-					amy = appz[tslot.schedule][month][year] = {};
-				var amyd = appz[tslot.schedule][month][year][date];
-				if (!amyd)
-					amyd = appz[tslot.schedule][month][year][date] = {};
-				if (!amyd[tslot.task.name])
-					amyd[tslot.task.name] = [];
-				amyd[tslot.task.name].push(tslot);
-			}
-		});
+		this._.slots(task, this._.appointments);
+		task.commitments.forEach(this.commitment);
 	},
 	appointments: function() {
 		this.opts.appointments.forEach(this.appointment);
