@@ -14,7 +14,8 @@ This module contains a class, Cal, for calendar-based applications. Usage:
 				schedule: "weekly",
 				when: "Wed Oct 09 2019 18:45",
 				duration: 2
-			}]
+			}],
+			commitments: []
 		}, {
 			name: "lunch",
 			description: "when we eat food",
@@ -22,7 +23,8 @@ This module contains a class, Cal, for calendar-based applications. Usage:
 				schedule: "daily",
 				when: "Mon Oct 07 2019 12:00",
 				duration: 1
-			}]
+			}],
+			commitments: []
 		}, {
 			name: "number D",
 			description: "another one, blah blah bloo",
@@ -34,7 +36,8 @@ This module contains a class, Cal, for calendar-based applications. Usage:
 				schedule: "exception",
 				when: "Fri Oct 11 2019 18:45",
 				duration: 2
-			}]
+			}],
+			commitments: []
 		}]
 	})).node);
 */
