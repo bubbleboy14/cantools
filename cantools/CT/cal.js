@@ -193,16 +193,20 @@ CT.cal.Cal = CT.Class({
 	},
 	build: function() {
 		var opts = this.opts, tasks = opts.appointments,
-			slots = [], builder = this._build;
+			slots = [], commitments = [], builder = this._build;
 		if (opts.timeslots == "data")
 			return builder();
 		tasks.forEach(function(task) {
 			slots = slots.concat(task.timeslots);
+			commitments = commitments.concat(task.commitments);
 		});
-		CT.db.multi(slots, function(tslots) {
+		CT.db.multi(slots.concat(commitments), function(objz) {
 			tasks.forEach(function(task) {
 				task.timeslots = task.timeslots.map(function(tskey) {
 					return CT.data.get(tskey);
+				});
+				task.commitments = task.commitments.map(function(ckey) {
+					return CT.data.get(ckey);
 				});
 			});
 			builder();
