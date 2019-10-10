@@ -98,8 +98,15 @@ CT.cal.Cal = CT.Class({
 				}
 			});
 		},
-		slot: function(slot, dobj, volunteers) {
-			var adata, amod, opts = this.opts;
+		slot: function(slot, dobj, cslots) {
+			var ukey = user.core.get("key"), comms = cslots.map(function(s) {
+				return s.task;
+			}), volunteers = comms.map(function(comm) {
+				var fn = comm.steward.firstName;
+				if (comm.steward.key == ukey)
+					fn += " (you)";
+				return fn;
+			}).join(", "), adata, amod, opts = this.opts;
 			return CT.dom.div([
 				CT.dom.div(slot.when.toTimeString().slice(0, 5) + " " + slot.taskname, "bold"),
 				volunteers
@@ -109,10 +116,13 @@ CT.cal.Cal = CT.Class({
 						CT.dom.div(slot.taskname, "bigger"),
 						slot.task.description,
 						slot.duration + " hours",
-						volunteers
+						"<b>volunteers</b>: " + volunteers
 					];
-					if (opts.click.appointment)
-						adata.push(opts.click.appointment(slot, dobj));
+					if (opts.click.appointment) {
+						adata.push(opts.click.appointment(slot, dobj, cslots.filter(function(c) {
+							return c.task.steward.key == ukey;
+						})));
+					}
 					amod = CT.modal.modal(adata, null, {
 						onclick: function() { amod.hide(); }
 					});
@@ -122,7 +132,7 @@ CT.cal.Cal = CT.Class({
 		}
 	},
 	day: function(date, month, year) {
-		var _ = this._, opts = this.opts, tname, n, ukey = user.core.get("key"),
+		var _ = this._, opts = this.opts, tname, n,
 			appz = _.appointments, commz = _.commitments,
 			dobj = new Date(year, month, date), day = dobj.getDay(),
 			slots = appz.daily.slice().concat(appz.weekly[day].slice()),
@@ -147,8 +157,6 @@ CT.cal.Cal = CT.Class({
 				if (exz[i].task.steward.key == steward)
 					return false;
 			return true;
-		}).map(function(slot) {
-			return slot.task.key;
 		});
 
 		n = CT.dom.div([
@@ -157,14 +165,10 @@ CT.cal.Cal = CT.Class({
 				// TODO: improve this filter
 				return !(slot.taskname in emoyeda);
 			}).map(function(slot) {
-				return _.slot(slot, new Date(dobj.getTime()), slot.task.commitments.filter(function(c) {
-					return cslots.includes(c.key);
-				}).map(function(comm) {
-					var fn = comm.steward.firstName;
-					if (comm.steward.key == ukey)
-						fn += " (you)";
-					return fn;
-				}).join(", "));
+				return _.slot(slot, new Date(dobj.getTime()),
+					cslots.filter(function(s) {
+						return s.task.task.key == slot.task.key; // lol
+					}));
 			}), "abs all0")
 		], (date == opts.now.getDate()) && "today");
 		if (opts.click.date) {
