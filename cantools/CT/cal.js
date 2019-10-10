@@ -161,7 +161,7 @@ CT.cal.Cal = CT.Class({
 		});
 
 		n = CT.dom.div([
-			CT.dom.div(date, "right"),
+			CT.dom.div(date, "right relative mosthigh"),
 			CT.dom.div(slots.filter(function(slot) {
 				// TODO: improve this filter
 				return !(slot.taskname in emoyeda);

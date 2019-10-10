@@ -1312,6 +1312,7 @@ button, a, label, input[type='checkbox'], .pointer {
 }
 
 .cal .days .appointment {
+    margin: 1px;
     cursor: pointer;
     border-radius: 8px;
     border: 1px solid lightblue;
