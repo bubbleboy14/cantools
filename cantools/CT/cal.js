@@ -101,7 +101,7 @@ CT.cal.Cal = CT.Class({
 		slot: function(slot, dobj, volunteers) {
 			var adata, amod, opts = this.opts;
 			return CT.dom.div([
-				slot.when.toTimeString().slice(0, 5) + " " + slot.taskname,
+				CT.dom.div(slot.when.toTimeString().slice(0, 5) + " " + slot.taskname, "bold"),
 				volunteers
 			], "appointment", null, {
 				onclick: function(e) {
@@ -147,6 +147,8 @@ CT.cal.Cal = CT.Class({
 				if (exz[i].task.steward.key == steward)
 					return false;
 			return true;
+		}).map(function(slot) {
+			return slot.task.key;
 		});
 
 		n = CT.dom.div([
@@ -156,7 +158,7 @@ CT.cal.Cal = CT.Class({
 				return !(slot.taskname in emoyeda);
 			}).map(function(slot) {
 				return _.slot(slot, new Date(dobj.getTime()), slot.task.commitments.filter(function(c) {
-					return cslots.includes(c);
+					return cslots.includes(c.key);
 				}).map(function(comm) {
 					return comm.steward.firstName;
 				}).join(", "));
