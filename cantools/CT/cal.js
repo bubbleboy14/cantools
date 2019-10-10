@@ -108,8 +108,8 @@ CT.cal.Cal = CT.Class({
 				return fn;
 			}).join(", "), adata, amod, opts = this.opts;
 			return CT.dom.div([
-				CT.dom.div(slot.when.toTimeString().slice(0, 5) + " " + slot.taskname, "bold"),
-				volunteers
+				slot.when.toTimeString().slice(0, 5) + " " + slot.taskname,
+				CT.dom.div(volunteers, "small")
 			], "appointment", null, {
 				onclick: function(e) {
 					adata = [
@@ -118,13 +118,13 @@ CT.cal.Cal = CT.Class({
 						slot.duration + " hours"
 					];
 					if (volunteers)
-						adata.push("<b>volunteers</b>: " + volunteers);
+						adata.push("volunteers: " + volunteers);
 					if (opts.click.appointment) {
 						adata.push(opts.click.appointment(slot, dobj, cslots.filter(function(c) {
 							return c.task.steward.key == ukey;
 						})));
 					}
-					amod = CT.modal.modal(adata, null, {
+					amod = CT.modal.modal(CT.dom.div(adata, "subpadded5"), null, {
 						onclick: function() { amod.hide(); }
 					});
 					e.stopPropagation();
@@ -161,7 +161,7 @@ CT.cal.Cal = CT.Class({
 		});
 
 		n = CT.dom.div([
-			CT.dom.div(date, "right relative mosthigh"),
+			CT.dom.div(date, "right relative above"),
 			CT.dom.div(slots.filter(function(slot) {
 				// TODO: improve this filter
 				return !(slot.taskname in emoyeda);
