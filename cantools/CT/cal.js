@@ -115,9 +115,10 @@ CT.cal.Cal = CT.Class({
 					adata = [
 						CT.dom.div(slot.taskname, "bigger"),
 						slot.task.description,
-						slot.duration + " hours",
-						"<b>volunteers</b>: " + volunteers
+						slot.duration + " hours"
 					];
+					if (volunteers)
+						adata.push("<b>volunteers</b>: " + volunteers);
 					if (opts.click.appointment) {
 						adata.push(opts.click.appointment(slot, dobj, cslots.filter(function(c) {
 							return c.task.steward.key == ukey;
