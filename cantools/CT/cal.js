@@ -122,7 +122,7 @@ CT.cal.Cal = CT.Class({
 		}
 	},
 	day: function(date, month, year) {
-		var _ = this._, opts = this.opts, tname, n,
+		var _ = this._, opts = this.opts, tname, n, ukey = user.core.get("key"),
 			appz = _.appointments, commz = _.commitments,
 			dobj = new Date(year, month, date), day = dobj.getDay(),
 			slots = appz.daily.slice().concat(appz.weekly[day].slice()),
@@ -160,7 +160,10 @@ CT.cal.Cal = CT.Class({
 				return _.slot(slot, new Date(dobj.getTime()), slot.task.commitments.filter(function(c) {
 					return cslots.includes(c.key);
 				}).map(function(comm) {
-					return comm.steward.firstName;
+					var fn = comm.steward.firstName;
+					if (comm.steward.key == ukey)
+						fn += " (you)";
+					return fn;
 				}).join(", "));
 			}), "abs all0")
 		], (date == opts.now.getDate()) && "today");
