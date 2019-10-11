@@ -6,6 +6,8 @@ This module contains a class, Cal, for calendar-based applications. Usage:
 		appointments: [{
 			name: "app 1",
 			description: "the first appointment",
+			editors: [],
+			commitments: [],
 			timeslots: [{
 				schedule: "once",
 				when: "Thu Oct 10 2019 14:15",
@@ -14,20 +16,22 @@ This module contains a class, Cal, for calendar-based applications. Usage:
 				schedule: "weekly",
 				when: "Wed Oct 09 2019 18:45",
 				duration: 2
-			}],
-			commitments: []
+			}]
 		}, {
 			name: "lunch",
 			description: "when we eat food",
+			editors: [],
+			commitments: [],
 			timeslots: [{
 				schedule: "daily",
 				when: "Mon Oct 07 2019 12:00",
 				duration: 1
-			}],
-			commitments: []
+			}]
 		}, {
 			name: "number D",
 			description: "another one, blah blah bloo",
+			editors: [],
+			commitments: [],
 			timeslots: [{
 				schedule: "weekly",
 				when: "Fri Oct 04 2019 15:00",
@@ -36,8 +40,7 @@ This module contains a class, Cal, for calendar-based applications. Usage:
 				schedule: "exception",
 				when: "Fri Oct 11 2019 18:45",
 				duration: 2
-			}],
-			commitments: []
+			}]
 		}]
 	})).node);
 */
@@ -99,7 +102,9 @@ CT.cal.Cal = CT.Class({
 			});
 		},
 		slot: function(slot, dobj, cslots) {
-			var ukey = user.core.get("key"), comms = cslots.map(function(s) {
+			var ukey = user.core.get("key"), uslots = cslots.filter(function(c) {
+				return c.task.steward.key == ukey;
+			}), comms = cslots.map(function(s) {
 				return s.task;
 			}), volunteers = comms.map(function(comm) {
 				var fn = comm.steward.firstName;
@@ -117,13 +122,15 @@ CT.cal.Cal = CT.Class({
 						slot.task.description,
 						slot.duration + " hours"
 					];
+					if (slot.task.editors.includes(ukey)) {
+						adata.unshift(CT.dom.link("edit", function() {
+							opts.click.edit(slot, dobj, uslots);
+						}, null, "right padded"));
+					}
 					if (volunteers)
 						adata.push("volunteers: " + volunteers);
-					if (opts.click.appointment) {
-						adata.push(opts.click.appointment(slot, dobj, cslots.filter(function(c) {
-							return c.task.steward.key == ukey;
-						})));
-					}
+					if (opts.click.appointment)
+						adata.push(opts.click.appointment(slot, dobj, uslots));
 					amod = CT.modal.modal(CT.dom.div(adata, "subpadded5"), null, {
 						onclick: function() { amod.hide(); }
 					});
@@ -296,7 +303,7 @@ CT.cal.Cal = CT.Class({
 			now: new Date(),
 			timeslots: "key",
 			appointments: [],
-			click: {} // day, date, appointment
+			click: {} // day, date, appointment, edit
 		});
 		this.node = CT.dom.div(null, "cal");
 		this.node.cal = this;
