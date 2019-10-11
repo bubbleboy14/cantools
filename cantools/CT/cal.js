@@ -144,6 +144,12 @@ CT.cal.Cal = CT.Class({
 			});
 		}
 	},
+	slot: function(tslot) {
+		CT.cal.slot(tslot, this._.appointments);
+	},
+	unslot: function(tslot) {
+		CT.cal.slot(tslot, this._.appointments, true);
+	},
 	day: function(date, month, year) {
 		var _ = this._, opts = this.opts, tname, n,
 			appz = _.appointments, commz = _.commitments,
