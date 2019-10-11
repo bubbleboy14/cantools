@@ -53,6 +53,28 @@ CT.cal = {
 		"October", "November", "December"],
 	stamp: function(day, date, month, year) {
 		return CT.cal.days[day] + " " + CT.cal.months[month] + " " + date + " " + year;
+	},
+	slot: function(tslot, appz, unslot) {
+		var year = tslot.when.getFullYear(),
+			month = tslot.when.getMonth(),
+			date = tslot.when.getDate(),
+			day = tslot.when.getDay(),
+			pfunc = CT.data[unslot ? "remove" : "append"];
+		if (tslot.schedule == "daily")
+			pfunc(appz.daily, tslot);
+		else if (tslot.schedule == "weekly")
+			pfunc(appz.weekly[day], tslot);
+		else { // month year date...
+			var amy = appz[tslot.schedule][month][year];
+			if (!amy)
+				amy = appz[tslot.schedule][month][year] = {};
+			var amyd = appz[tslot.schedule][month][year][date];
+			if (!amyd)
+				amyd = appz[tslot.schedule][month][year][date] = {};
+			if (!amyd[tslot.taskkey])
+				amyd[tslot.taskkey] = [];
+			pfunc(amyd[tslot.taskkey], tslot);
+		}
 	}
 };
 
@@ -80,25 +102,7 @@ CT.cal.Cal = CT.Class({
 				tslot.task = task;
 				tslot.taskkey = task.task ? task.task.key : task.key;
 				tslot.when = new Date(tslot.when);
-				var year = tslot.when.getFullYear(),
-					month = tslot.when.getMonth(),
-					date = tslot.when.getDate(),
-					day = tslot.when.getDay();
-				if (tslot.schedule == "daily")
-					appz.daily.push(tslot);
-				else if (tslot.schedule == "weekly")
-					appz.weekly[day].push(tslot);
-				else { // month year date...
-					var amy = appz[tslot.schedule][month][year];
-					if (!amy)
-						amy = appz[tslot.schedule][month][year] = {};
-					var amyd = appz[tslot.schedule][month][year][date];
-					if (!amyd)
-						amyd = appz[tslot.schedule][month][year][date] = {};
-					if (!amyd[tslot.taskkey])
-						amyd[tslot.taskkey] = [];
-					amyd[tslot.taskkey].push(tslot);
-				}
+				CT.cal.slot(tslot, appz);
 			});
 		},
 		slot: function(slot, dobj, cslots) {
