@@ -1289,7 +1289,7 @@ button, a, label, input[type='checkbox'], .pointer {
 }
 
 .cal .days > div {
-    width: 14%;
+    width: 14.285714285714286%;
     position: relative;
     border: 1px solid darkgray;
 }
