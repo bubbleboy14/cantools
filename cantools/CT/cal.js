@@ -150,6 +150,12 @@ CT.cal.Cal = CT.Class({
 	unslot: function(tslot) {
 		CT.cal.slot(tslot, this._.appointments, true);
 	},
+	commit: function(tslot) {
+		CT.cal.slot(tslot, this._.commitments);
+	},
+	uncommit: function(tslot) {
+		CT.cal.slot(tslot, this._.commitments, true);
+	},
 	day: function(date, month, year) {
 		var _ = this._, opts = this.opts, tname, n,
 			appz = _.appointments, commz = _.commitments,
