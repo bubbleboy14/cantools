@@ -53,6 +53,28 @@ CT.cal = {
 		"October", "November", "December"],
 	stamp: function(day, date, month, year) {
 		return CT.cal.days[day] + " " + CT.cal.months[month] + " " + date + " " + year;
+	},
+	slot: function(tslot, appz, unslot) {
+		var year = tslot.when.getFullYear(),
+			month = tslot.when.getMonth(),
+			date = tslot.when.getDate(),
+			day = tslot.when.getDay(),
+			pfunc = CT.data[unslot ? "remove" : "append"];
+		if (tslot.schedule == "daily")
+			pfunc(appz.daily, tslot);
+		else if (tslot.schedule == "weekly")
+			pfunc(appz.weekly[day], tslot);
+		else { // month year date...
+			var amy = appz[tslot.schedule][month][year];
+			if (!amy)
+				amy = appz[tslot.schedule][month][year] = {};
+			var amyd = appz[tslot.schedule][month][year][date];
+			if (!amyd)
+				amyd = appz[tslot.schedule][month][year][date] = {};
+			if (!amyd[tslot.taskkey])
+				amyd[tslot.taskkey] = [];
+			pfunc(amyd[tslot.taskkey], tslot);
+		}
 	}
 };
 
@@ -78,27 +100,9 @@ CT.cal.Cal = CT.Class({
 		slots: function(task, appz) {
 			task.timeslots.forEach(function(tslot) {
 				tslot.task = task;
-				tslot.taskname = task.name || task.task.name;
+				tslot.taskkey = task.task ? task.task.key : task.key;
 				tslot.when = new Date(tslot.when);
-				var year = tslot.when.getFullYear(),
-					month = tslot.when.getMonth(),
-					date = tslot.when.getDate(),
-					day = tslot.when.getDay();
-				if (tslot.schedule == "daily")
-					appz.daily.push(tslot);
-				else if (tslot.schedule == "weekly")
-					appz.weekly[day].push(tslot);
-				else { // month year date...
-					var amy = appz[tslot.schedule][month][year];
-					if (!amy)
-						amy = appz[tslot.schedule][month][year] = {};
-					var amyd = appz[tslot.schedule][month][year][date];
-					if (!amyd)
-						amyd = appz[tslot.schedule][month][year][date] = {};
-					if (!amyd[tslot.taskname])
-						amyd[tslot.taskname] = [];
-					amyd[tslot.taskname].push(tslot);
-				}
+				CT.cal.slot(tslot, appz);
 			});
 		},
 		slot: function(slot, dobj, cslots) {
@@ -111,14 +115,15 @@ CT.cal.Cal = CT.Class({
 				if (comm.steward.key == ukey)
 					fn += " (you)";
 				return fn;
-			}).join(", "), adata, amod, opts = this.opts;
+			}).join(", "), adata, amod, opts = this.opts,
+				taskname = slot.task.name || slot.task.task.name;
 			return CT.dom.div([
-				slot.when.toTimeString().slice(0, 5) + " " + slot.taskname,
+				slot.when.toTimeString().slice(0, 5) + " " + taskname,
 				CT.dom.div(volunteers, "small")
 			], "appointment", null, {
 				onclick: function(e) {
 					adata = [
-						CT.dom.div(slot.taskname, "bigger"),
+						CT.dom.div(taskname, "bigger"),
 						slot.task.description,
 						slot.duration + " hours"
 					];
@@ -139,6 +144,18 @@ CT.cal.Cal = CT.Class({
 			});
 		}
 	},
+	slot: function(tslot) {
+		CT.cal.slot(tslot, this._.appointments);
+	},
+	unslot: function(tslot) {
+		CT.cal.slot(tslot, this._.appointments, true);
+	},
+	commit: function(tslot) {
+		CT.cal.slot(tslot, this._.commitments);
+	},
+	uncommit: function(tslot) {
+		CT.cal.slot(tslot, this._.commitments, true);
+	},
 	day: function(date, month, year) {
 		var _ = this._, opts = this.opts, tname, n,
 			appz = _.appointments, commz = _.commitments,
@@ -156,11 +173,11 @@ CT.cal.Cal = CT.Class({
 			cslots = cslots.concat(concers[tname]);
 
 		slots.sort(function(a, b) {
-			return a.when.toTimeString() - b.when.toTimeString();
+			return a.when.toTimeString() > b.when.toTimeString() ? 1 : -1;
 		});
 		cslots = cslots.filter(function(slot) {
 			var steward = slot.task.steward.key,
-				exz = cemoyeda[slot.taskname] || [];
+				exz = cemoyeda[slot.taskkey] || [];
 			for (var i = 0; i < exz.length; i++)
 				if (exz[i].task.steward.key == steward)
 					return false;
@@ -171,7 +188,7 @@ CT.cal.Cal = CT.Class({
 			CT.dom.div(date, "right relative above"),
 			CT.dom.div(slots.filter(function(slot) {
 				// TODO: improve this filter
-				return !(slot.taskname in emoyeda);
+				return !(slot.taskkey in emoyeda);
 			}).map(function(slot) {
 				return _.slot(slot, new Date(dobj.getTime()),
 					cslots.filter(function(s) {
