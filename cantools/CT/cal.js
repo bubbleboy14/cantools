@@ -157,7 +157,7 @@ CT.cal.Cal = CT.Class({
 			cslots = cslots.concat(concers[tname]);
 
 		slots.sort(function(a, b) {
-			return a.when.toTimeString() - b.when.toTimeString();
+			return a.when.toTimeString() > b.when.toTimeString() ? 1 : -1;
 		});
 		cslots = cslots.filter(function(slot) {
 			var steward = slot.task.steward.key,
