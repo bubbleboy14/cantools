@@ -309,10 +309,11 @@ CT.dom = {
 		noto || setTimeout(s.onchange);
 		return s.container || s;
 	},
-	"range": function(onchange, min, max, value, step, classname, id) {
+	"range": function(oninput, min, max, value, step, classname, id, onchange) {
 		var r = CT.dom.node("", "input", classname, id, {
 			"type": "range",
-			"oninput": onchange && function() { onchange(r.value); },
+			"oninput": oninput && function() { oninput(r.value); },
+			"onchange": onchange && function() { onchange(r.value); },
 			"min": min,
 			"max": max,
 			"value": value,
