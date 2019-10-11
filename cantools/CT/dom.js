@@ -273,7 +273,7 @@ CT.dom = {
 		}
 		return img;
 	},
-	"select": function(onames, ovalues, id, curvalue, defaultvalue, onchange, other) {
+	"select": function(onames, ovalues, id, curvalue, defaultvalue, onchange, other, noto) {
 		ovalues = ovalues || onames;
 		var s = CT.dom.node("", "select", "", id);
 		if (other) {
@@ -306,7 +306,7 @@ CT.dom = {
 			}
 			onchange && onchange(s.value);
 		};
-		setTimeout(s.onchange);
+		noto || setTimeout(s.onchange);
 		return s.container || s;
 	},
 	"range": function(onchange, min, max, value, step, classname, id) {
@@ -688,14 +688,15 @@ CT.dom = {
 		"March", "April", "May", "June", "July", "August",
 		"September", "October", "November", "December"],
 	"currentyear": Math.max((new Date()).getFullYear(), 2014),
-	"timeSelector": function(etimes) {
+	"timeSelector": function(etimes, curvalue, onchange) {
 		etimes = etimes || [];
 		for (var i = 0; i < 24; i++) {
 			var istr = i < 10 ? "0" + i : i;
 			etimes.push(istr + ":" + "00");
 			etimes.push(istr + ":" + "30");
 		}
-		return CT.dom.select(etimes);
+		return CT.dom.select(etimes, null, null,
+			curvalue, null, onchange, null, true);
 	},
 	"dateSelectors": function(node, d, startdate, enddate, withtime, noday, val) {
 		if (arguments.length == 1 && ! (arguments[0] instanceof Node)) {
