@@ -1,4 +1,4 @@
-# cantools 0.10.8.51
+# cantools 0.10.8.52
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
  - Docs: http://ct.mkult.co
@@ -358,9 +358,12 @@ function, which uses the CT.db module to acquire data.
 This module contains a class, Cal, for calendar-based applications. Usage:
 
 	CT.dom.setBody((new CT.cal.Cal({
+		timeslots: "data", // or "key" (the default, for use w/ databases)
 		appointments: [{
 			name: "app 1",
 			description: "the first appointment",
+			editors: [],
+			commitments: [],
 			timeslots: [{
 				schedule: "once",
 				when: "Thu Oct 10 2019 14:15",
@@ -373,6 +376,8 @@ This module contains a class, Cal, for calendar-based applications. Usage:
 		}, {
 			name: "lunch",
 			description: "when we eat food",
+			editors: [],
+			commitments: [],
 			timeslots: [{
 				schedule: "daily",
 				when: "Mon Oct 07 2019 12:00",
@@ -381,6 +386,8 @@ This module contains a class, Cal, for calendar-based applications. Usage:
 		}, {
 			name: "number D",
 			description: "another one, blah blah bloo",
+			editors: [],
+			commitments: [],
 			timeslots: [{
 				schedule: "weekly",
 				when: "Fri Oct 04 2019 15:00",
@@ -798,7 +805,6 @@ defaults:
 		outerClose: true
 	}
 
-
 ### CT.modal.Prompt (Modal subclass)
 Includes interface elements for obtaining user input, such as
 a string, a password, or one or more selections from a list.
@@ -806,11 +812,19 @@ a string, a password, or one or more selections from a list.
 defaults:
 	{
 		className: "basicpopup mosthigh",
-		style: "string", // string|multiple-string|password|single-choice|multiple-choice|file
+		style: "string", // string|multiple-string|password|single-choice|multiple-choice|file|number|time
 		prompt: "",
 		clear: false, // string/password only
 		data: [] // only applies to choice styles
 	}
+
+Additionally, CT.modal includes several convenience functions:
+
+### Four options:
+    - prompt: prompt the user for a string
+    - choice: offer several options
+    - modal: basic popup
+    - img: slide in an image
 
 ## CT.panel
 ### Import line: 'CT.require("CT.panel");'
