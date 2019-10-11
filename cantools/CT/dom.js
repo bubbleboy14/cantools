@@ -274,6 +274,17 @@ CT.dom = {
 		return img;
 	},
 	"select": function(onames, ovalues, id, curvalue, defaultvalue, onchange, other, noto) {
+		if (arguments.length == 1 && !Array.isArray(onames)) {
+			var obj = onames;
+			onames = obj.names;
+			ovalues = obj.values;
+			id = obj.id;
+			curvalue = obj.curvalue;
+			defaultvalue = obj.defaultvalue;
+			onchange = obj.onchange;
+			other = obj.other;
+			noto = noto in obj ? obj.noto : true; // better default
+		}
 		ovalues = ovalues || onames;
 		var s = CT.dom.node("", "select", "", id);
 		if (other) {
