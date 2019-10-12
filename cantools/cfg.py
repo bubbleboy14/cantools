@@ -138,6 +138,7 @@ cfg = {
 				"logo": "Your Logo",
 				"right": []
 			},
+			"borderbox": True,
 			"css": [],
 			"mobile": {
 				"scale": False
