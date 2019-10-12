@@ -81,18 +81,6 @@ CT.cal = {
 CT.cal.Cal = CT.Class({
 	CLASSNAME: "CT.cal.Cal",
 	_: {
-		appointments: {
-			daily: [],
-			weekly: CT.cal.days.map(function(d) { return []; }),
-			once: CT.cal.months.map(function(m) { return {}; }),
-			exception: CT.cal.months.map(function(m) { return {}; })
-		},
-		commitments: {
-			daily: [],
-			weekly: CT.cal.days.map(function(d) { return []; }),
-			once: CT.cal.months.map(function(m) { return {}; }),
-			exception: CT.cal.months.map(function(m) { return {}; })
-		},
 		shift: function(diff) {
 			this.opts.now.setMonth(this.opts.now.getMonth() + diff);
 			this.orient();
@@ -321,6 +309,14 @@ CT.cal.Cal = CT.Class({
 			timeslots: "key",
 			appointments: [],
 			click: {} // day, date, appointment, edit
+		});
+		var _ = this._, appz;
+		["appointments", "commitments"].forEach(function(aname) {
+			appz = _[aname] = {};
+			appz.daily = [];
+			appz.weekly = CT.cal.days.map(function(d) { return []; });
+			appz.once = CT.cal.months.map(function(m) { return {}; });
+			appz.exception = CT.cal.months.map(function(m) { return {}; });
 		});
 		this.node = CT.dom.div(null, "cal");
 		this.node.cal = this;
