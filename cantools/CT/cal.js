@@ -128,8 +128,10 @@ CT.cal.Cal = CT.Class({
 							]);
 						}
 					});
-					adata.push(CT.dom.div("Volunteer", "big"));
-					volunteers && adata.push(volunteers);
+					adata.push([
+						CT.dom.div("Volunteer", "big"),
+						volunteers || "no volunteers yet!"
+					]);
 					if (opts.click.appointment)
 						adata.push(opts.click.appointment(slot, dobj, uslots));
 					amod = CT.modal.modal(CT.dom.div(adata, "subpadded5"), null, {
