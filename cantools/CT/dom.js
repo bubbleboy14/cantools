@@ -189,12 +189,23 @@ CT.dom = {
 		return CT.dom.field(id, null, classname,
 			"file", { onchange: cb, multiple: multiple });
 	},
-	"fieldList": function(vals, maker, style, onadd, onremove) {
+	"fieldList": function(vals, maker, style, onadd, onremove, onchange, bottomadd) {
+		if (arguments.length == 1 && vals && !Array.isArray(vals)) {
+			var obj = vals;
+			vals = obj.vals;
+			maker = obj.maker;
+			style = obj.style;
+			onadd = obj.onadd;
+			onremove = obj.onremove;
+			onchange = obj.onchange;
+			bottomadd = obj.bottomadd;
+		}
 		var input = function(v, i) { return maker ? maker(v, i) : CT.dom.field(null, v); },
 			row = function(v, i) {
 				var butt = CT.dom.button("remove", function() {
 					CT.dom.remove(butt.parentNode);
 					onremove && onremove(v);
+					onchange && onchange(n.value());
 				});
 				return CT.dom.node([ butt, input(v, i) ]);
 			}, n = CT.dom.node(vals && vals.map(row), null, null, null, null, style);
@@ -202,8 +213,9 @@ CT.dom = {
 		n.addButton = CT.dom.button("add", function() {
 			if (n.empty.value) {
 				var newRow = row(n.empty.value);
-				n.insertBefore(newRow, n.firstChild);
+				bottomadd ? n.appendChild(newRow) : n.insertBefore(newRow, n.firstChild);
 				onadd && onadd(newRow.lastElementChild);
+				onchange && onchange(n.value());
 				if (n.empty.fill)
 					n.empty.fill()
 				else
