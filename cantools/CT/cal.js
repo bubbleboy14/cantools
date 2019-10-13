@@ -103,8 +103,8 @@ CT.cal.Cal = CT.Class({
 				if (comm.steward.key == ukey)
 					fn += " (you)";
 				return fn;
-			}).join(", "), adata, amod, opts = this.opts,
-				taskname = slot.task.name || slot.task.task.name;
+			}).join(", "), opts = this.opts, task = slot.task,
+				adata, amod, taskname = task.name || task.task.name;
 			return CT.dom.div([
 				slot.when.toTimeString().slice(0, 5) + " " + taskname,
 				CT.dom.div(volunteers, "small")
@@ -112,16 +112,24 @@ CT.cal.Cal = CT.Class({
 				onclick: function(e) {
 					adata = [
 						CT.dom.div(taskname, "bigger"),
-						slot.task.description,
+						task.description,
 						slot.duration + " hours"
 					];
-					if (slot.task.editors.includes(ukey)) {
+					if (task.editors.includes(ukey)) {
 						adata.unshift(CT.dom.link("edit", function() {
 							opts.click.edit(slot, dobj, uslots);
 						}, null, "right padded"));
 					}
-					if (volunteers)
-						adata.push("volunteers: " + volunteers);
+					["steps", "requirements"].forEach(function(slist) {
+						if (task[slist] && task[slist].length) {
+							adata.push([
+								CT.dom.div(slist, "big"),
+								task[slist]
+							]);
+						}
+					});
+					adata.push(CT.dom.div("Volunteer", "big"));
+					volunteers && adata.push(volunteers);
 					if (opts.click.appointment)
 						adata.push(opts.click.appointment(slot, dobj, uslots));
 					amod = CT.modal.modal(CT.dom.div(adata, "subpadded5"), null, {
