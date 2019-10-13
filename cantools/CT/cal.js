@@ -104,7 +104,8 @@ CT.cal.Cal = CT.Class({
 					fn += " (you)";
 				return fn;
 			}).join(", "), opts = this.opts, task = slot.task,
-				adata, amod, taskname = task.name || task.task.name;
+				taskname = task.name || task.task.name, adata,
+				iseditor = task.editors.includes(ukey), amod;
 			return CT.dom.div([
 				slot.when.toTimeString().slice(0, 5) + " " + taskname,
 				CT.dom.div(volunteers, "small")
@@ -115,7 +116,7 @@ CT.cal.Cal = CT.Class({
 						task.description,
 						slot.duration + " hours"
 					];
-					if (task.editors.includes(ukey)) {
+					if (iseditor) {
 						adata.unshift(CT.dom.link("edit", function() {
 							opts.click.edit(slot, dobj, uslots);
 						}, null, "right padded"));
@@ -134,6 +135,8 @@ CT.cal.Cal = CT.Class({
 					]);
 					if (opts.click.appointment)
 						adata.push(opts.click.appointment(slot, dobj, uslots));
+					if (iseditor && opts.click.exception && (slot.schedule != "once"))
+						adata.push(opts.click.exception(slot, dobj, uslots));
 					amod = CT.modal.modal(CT.dom.div(adata, "subpadded5"), null, {
 						onclick: function() { amod.hide(); }
 					});
@@ -318,7 +321,7 @@ CT.cal.Cal = CT.Class({
 			now: new Date(),
 			timeslots: "key",
 			appointments: [],
-			click: {} // day, date, appointment, edit
+			click: {} // day, date, appointment, edit, exception
 		});
 		var _ = this._, appz;
 		["appointments", "commitments"].forEach(function(aname) {
