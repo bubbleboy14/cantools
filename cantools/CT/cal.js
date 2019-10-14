@@ -266,6 +266,9 @@ CT.cal.Cal = CT.Class({
 		} else
 			return steward.commitments[task.name];
 	},
+	unsteward: function(steward, task, commitment) {
+		delete steward.commitments[task.name];
+	},
 	commitment: function(commitment, task) {
 		this.stewardship(commitment.steward, task, commitment);
 		this._.slots(commitment, this._.commitments);
