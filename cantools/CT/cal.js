@@ -123,7 +123,7 @@ CT.cal.Cal = CT.Class({
 					];
 					if (iseditor) {
 						adata.unshift(CT.dom.link("edit", function() {
-							opts.click.edit(slot, dobj, uslots);
+							opts.click.edit(slot, dobj);
 						}, null, "right padded"));
 					}
 					["steps", "requirements"].forEach(function(slist) {
@@ -138,10 +138,10 @@ CT.cal.Cal = CT.Class({
 						CT.dom.div("Volunteer", "big"),
 						volunteers || "no volunteers yet!"
 					]);
-					if (opts.click.appointment)
-						adata.push(opts.click.appointment(slot, dobj, uslots));
+					if (opts.click.volunteer)
+						adata.push(opts.click.volunteer(slot, dobj, uslots));
 					if (iseditor && opts.click.exception && (slot.schedule != "once"))
-						adata.push(opts.click.exception(slot, dobj, uslots));
+						adata.push(opts.click.exception(slot, dobj));
 					amod = CT.modal.modal(CT.dom.div(adata, "subpadded5"), null, {
 						onclick: function() { amod.hide(); }
 					});
@@ -332,7 +332,7 @@ CT.cal.Cal = CT.Class({
 			now: new Date(),
 			timeslots: "key",
 			appointments: [],
-			click: {} // day, date, appointment, edit, exception, offday
+			click: {} // day, date, volunteer, edit, exception, offday
 		});
 		var _ = this._, appz;
 		["appointments", "commitments"].forEach(function(aname) {
