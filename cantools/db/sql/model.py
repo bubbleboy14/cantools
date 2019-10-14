@@ -88,10 +88,18 @@ class ModelBase(with_metaclass(CTMeta, sa_dbase)):
     def put(self, session=session):
         put_multi([self], session)
 
+    def beforeremove(self, session):
+        pass
+
+    def afterremove(self, session):
+        pass
+
     def rm(self, commit=True, session=session):
+        self.beforeremove(session)
         session.delete(self)
         if commit:
             session.commit()
+        self.afterremove(session)
 
     def collection(self, entity_model, property_name=None, fetch=True, keys_only=False, data=False):
         if isinstance(entity_model, str):
