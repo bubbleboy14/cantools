@@ -58,17 +58,22 @@ CT.cal = {
 		var year = tslot.when.getFullYear(),
 			month = tslot.when.getMonth(),
 			date = tslot.when.getDate(),
-			day = tslot.when.getDay(),
+			day = tslot.when.getDay(), aod, amy, amyd,
 			pfunc = CT.data[unslot ? "remove" : "append"];
 		if (tslot.schedule == "daily")
 			pfunc(appz.daily, tslot);
 		else if (tslot.schedule == "weekly")
 			pfunc(appz.weekly[day], tslot);
-		else { // month year date...
-			var amy = appz[tslot.schedule][month][year];
+		else if (tslot.schedule == "offday") {
+			aod = appz.offday[day];
+			if (!aod[tslot.taskkey])
+				aod[tslot.taskkey] = [];
+			pfunc(aod[tslot.taskkey], tslot);
+		} else { // month year date... once, exception
+			amy = appz[tslot.schedule][month][year];
 			if (!amy)
 				amy = appz[tslot.schedule][month][year] = {};
-			var amyd = appz[tslot.schedule][month][year][date];
+			amyd = appz[tslot.schedule][month][year][date];
 			if (!amyd)
 				amyd = appz[tslot.schedule][month][year][date] = {};
 			if (!amyd[tslot.taskkey])
@@ -166,7 +171,8 @@ CT.cal.Cal = CT.Class({
 			emoyeda = appz.exception[month][year][date] || {},
 			cemoyeda = commz.exception[month][year][date] || {},
 			oncers = appz.once[month][year][date] || {},
-			concers = commz.once[month][year][date] || {};
+			concers = commz.once[month][year][date] || {},
+			offday = appz.offday[day], tk;
 
 		for (tname in oncers)
 			slots = slots.concat(oncers[tname]);
@@ -189,7 +195,9 @@ CT.cal.Cal = CT.Class({
 			CT.dom.div(date, "right relative above"),
 			CT.dom.div(slots.filter(function(slot) {
 				// TODO: improve this filter
-				return !(slot.taskkey in emoyeda);
+				tk = slot.taskkey;
+				return (!emoyeda[tk] || !emoyeda[tk].length)
+					&& (!offday[tk] || !offday[tk].length);
 			}).map(function(slot) {
 				return _.slot(slot, new Date(dobj.getTime()),
 					cslots.filter(function(s) {
@@ -278,12 +286,12 @@ CT.cal.Cal = CT.Class({
 			CT.dom.div(this.days(), "days")
 		]);
 	},
-	_build: function() {
+	build: function() {
 		this.appointments();
 		this.orient();
 	},
-	build: function() {
-		var opts = this.opts, tasks = opts.appointments, builder = this._build,
+	load: function() {
+		var opts = this.opts, tasks = opts.appointments, builder = this.build,
 			slots = [], commitments = [], cslots = [], uslots = [];
 		if (opts.timeslots == "data")
 			return builder();
@@ -321,18 +329,19 @@ CT.cal.Cal = CT.Class({
 			now: new Date(),
 			timeslots: "key",
 			appointments: [],
-			click: {} // day, date, appointment, edit, exception
+			click: {} // day, date, appointment, edit, exception, offday
 		});
 		var _ = this._, appz;
 		["appointments", "commitments"].forEach(function(aname) {
 			appz = _[aname] = {};
 			appz.daily = [];
 			appz.weekly = CT.cal.days.map(function(d) { return []; });
+			appz.offday = CT.cal.days.map(function(d) { return {}; });
 			appz.once = CT.cal.months.map(function(m) { return {}; });
 			appz.exception = CT.cal.months.map(function(m) { return {}; });
 		});
 		this.node = CT.dom.div(null, "cal");
 		this.node.cal = this;
-		this.build();
+		this.load();
 	}
 });
