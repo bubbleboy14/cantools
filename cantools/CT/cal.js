@@ -90,6 +90,13 @@ CT.cal.Cal = CT.Class({
 			this.opts.now.setMonth(this.opts.now.getMonth() + diff);
 			this.orient();
 		},
+		update: function(dobj) { // get it? up date?
+			var thaz = this;
+			return function() {
+				thaz.opts.now = dobj;
+				thaz.orient();
+			};
+		},
 		slots: function(task, appz) {
 			task.timeslots.forEach(function(tslot) {
 				tslot.task = task;
@@ -210,7 +217,8 @@ CT.cal.Cal = CT.Class({
 			n.onclick = function() {
 				opts.click.date(date, month, year);
 			};
-		}
+		} else if (opts.update)
+			n.onclick = _.update(dobj);
 		return n;
 	},
 	days: function() {
@@ -327,11 +335,20 @@ CT.cal.Cal = CT.Class({
 			});
 		});
 	},
+	setNode: function() {
+		var oz = this.opts;
+		this.node = CT.dom.div(null, "cal");
+		this.node.cal = this;
+		this.node.value = function() {
+			return oz.now.toDateString();
+		};
+	},
 	init: function(opts) {
 		this.opts = opts = CT.merge(opts, {
 			now: new Date(),
 			timeslots: "key",
 			appointments: [],
+			update: false, // if true, date shifts on date click
 			click: {} // day, date, volunteer, edit, exception, offday
 		});
 		var _ = this._, appz;
@@ -343,8 +360,7 @@ CT.cal.Cal = CT.Class({
 			appz.once = CT.cal.months.map(function(m) { return {}; });
 			appz.exception = CT.cal.months.map(function(m) { return {}; });
 		});
-		this.node = CT.dom.div(null, "cal");
-		this.node.cal = this;
+		this.setNode();
 		this.load();
 	}
 });
