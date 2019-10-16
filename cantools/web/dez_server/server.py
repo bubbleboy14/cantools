@@ -53,6 +53,7 @@ def respond(*args, **kwargs):
 	getController().register_handler(args, kwargs)
 
 def _ctjson(result):
+	result = result.decode()
 	if result[0] in "02":
 		from cantools.util import log
 		log("request failed!! : %s"%(result,), important=True)
