@@ -383,10 +383,10 @@ CT.modal.Prompt = CT.Class({
 		"time": function() {
 			return CT.dom.timeSelector();
 		},
-		"date": function() {
-			return (new CT.cal.Cal({
-				update: true
-			})).node;
+		"date": function(data) {
+			var oz = { update: true };
+			if (data) oz.now = data;
+			return (new CT.cal.Cal(oz)).node;
 		}
 	},
 	on: {
