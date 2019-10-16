@@ -23,6 +23,7 @@ def edit(data, session=session):
     from cantools.db import get, get_model
     haskey = "key" in data
     ent = haskey and get(data["key"], session) or get_model(data["modelName"])()
+    haskey and ent.beforeedit(data)
     for propname, val in list(data.items()):
         if propname in ent._schema:
             if val:

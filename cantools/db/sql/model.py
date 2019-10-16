@@ -88,6 +88,9 @@ class ModelBase(with_metaclass(CTMeta, sa_dbase)):
     def put(self, session=session):
         put_multi([self], session)
 
+    def beforeedit(self, edits):
+        pass
+
     def beforeremove(self, session):
         pass
 
