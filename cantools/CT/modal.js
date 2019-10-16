@@ -43,7 +43,7 @@ a string, a password, or one or more selections from a list.
 defaults:
 	{
 		className: "basicpopup mosthigh",
-		style: "string", // string|multiple-string|password|single-choice|multiple-choice|file|number|time
+		style: "string", // string|multiple-string|password|single-choice|multiple-choice|file|number|time|date
 		prompt: "",
 		clear: false, // string/password only
 		data: [] // only applies to choice styles
@@ -382,6 +382,11 @@ CT.modal.Prompt = CT.Class({
 		},
 		"time": function() {
 			return CT.dom.timeSelector();
+		},
+		"date": function() {
+			return (new CT.cal.Cal({
+				update: true
+			})).node;
 		}
 	},
 	on: {
