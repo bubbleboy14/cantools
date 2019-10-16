@@ -19,10 +19,11 @@ class Mailer(object):
 			log('no email address configured')
 		elif "gmail.com" in addr:
 			import yagmail
-			mailer = self.addr
 			if self.name:
 				mailer = {}
 				mailer[self.addr] = self.name
+			else:
+				mailer = self.addr.split("@")[0]
 			self._yag = yagmail.SMTP(mailer, config.cache("email password? "))
 		else:
 			self._smtp = smtplib.SMTP('localhost')
