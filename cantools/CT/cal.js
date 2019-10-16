@@ -90,11 +90,13 @@ CT.cal.Cal = CT.Class({
 			this.opts.now.setMonth(this.opts.now.getMonth() + diff);
 			this.orient();
 		},
-		update: function(dobj) { // get it? up date?
-			var thaz = this;
+		update: function(d) { // get it? up date?
+			var n = this.opts.now, orient = this.orient;
 			return function() {
-				thaz.opts.now = dobj;
-				thaz.orient();
+				n.setFullYear(d.getFullYear());
+				n.setMonth(d.getMonth());
+				n.setDate(d.getDate());
+				orient();
 			};
 		},
 		slots: function(task, appz) {
