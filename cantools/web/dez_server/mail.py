@@ -41,7 +41,9 @@ class Mailer(object):
 			self._refresh()
 
 	def _prep(self, *args):
-		return [(a and type(a) == str and a.encode("utf-8") or a) for a in args]
+		if str == bytes: # is python 2.7
+			return [(a and type(a) == unicode and a.encode("utf-8") or a) for a in args]
+		return args
 
 	def _emit(self, to, subject, body, bcc):
 		log('emailing "%s" to %s'%(subject, to))
