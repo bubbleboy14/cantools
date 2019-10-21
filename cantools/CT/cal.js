@@ -143,10 +143,8 @@ CT.cal.Cal = CT.Class({
 							]);
 						}
 					});
-					adata.push([
-						CT.dom.div("Volunteer", "big"),
-						volunteers || "no volunteers yet!"
-					]);
+					adata.push(CT.dom.div("Participate", "big"));
+					adata.push(volunteers || "no participants yet!");
 					if (opts.click.volunteer)
 						adata.push(opts.click.volunteer(slot, dobj, uslots));
 					if (iseditor && opts.click.exception && (slot.schedule != "once"))
