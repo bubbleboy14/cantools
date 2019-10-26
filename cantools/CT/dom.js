@@ -932,6 +932,9 @@ CT.dom = {
 		id = id || ("sf" + Math.floor((Math.random() * 100000)));
 		var f = CT.dom.inputEnterCallback(CT.dom[isTA ? "textArea" : "field"](id,
 			value, classname, type), cb, id, noBreak);
+		f.fieldValue = function() { // accounts for blur
+			return CT.dom.getFieldValue(f);
+		};
 		if (blurs)
 			CT.dom.blurField(f, blurs);
 		return f;
