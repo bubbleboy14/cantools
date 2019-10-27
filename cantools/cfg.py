@@ -140,6 +140,7 @@ cfg = {
 			},
 			"borderbox": True,
 			"css": [],
+			"keys": {},
 			"mobile": {
 				"scale": False
 			}
