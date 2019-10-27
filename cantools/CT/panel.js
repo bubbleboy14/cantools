@@ -100,10 +100,11 @@ CT.panel = {
 		});
 		return n;
 	},
-	"trigger": function(data, cb, activeClass, content, condition, rmbutton, ricon, noactive) {
+	"trigger": function(data, cb, activeClass, content, condition, rmbutton, ricon, noactive, hovs) {
 		var label = data.label || data.title || data.name || data.topic || data,
-			key = data.key || label,
+			key = data.key || label, hovcon = hovs && hovs[label],
 			n = CT.dom.node(null, "div", "tlitem", key && ("tl" + key.replace(/ /g, "")));
+		hovcon && CT.hover.set({ node: n, content: hovcon, auto: true });
 		activeClass = activeClass || "activetab";
 		n.data = data;
 		data.node = n;
@@ -138,15 +139,15 @@ CT.panel = {
 		n.appendChild(n.nameNode);
 		return n;
 	},
-	"triggerList": function(data, cb, node, activeClass, content, condition, rmbutton, ricon, noactive) {
+	"triggerList": function(data, cb, node, activeClass, content, condition, rmbutton, ricon, noactive, hovs) {
 		node = node || CT.dom.node();
 		node.postAdd = function(d, trigger) {
-			var t = CT.panel.trigger(d, cb, activeClass, content, condition, rmbutton, ricon, noactive);
+			var t = CT.panel.trigger(d, cb, activeClass, content, condition, rmbutton, ricon, noactive, hovs);
 			node.appendChild(t);
 			(trigger === true) && t.trigger();
 		};
 		node.preAdd = function(d, trigger) {
-			var t = CT.panel.trigger(d, cb, activeClass, content, condition, rmbutton, ricon, noactive);
+			var t = CT.panel.trigger(d, cb, activeClass, content, condition, rmbutton, ricon, noactive, hovs);
 			if (node.childNodes.length)
 				node.insertBefore(t, node.firstChild);
 			else
@@ -156,7 +157,7 @@ CT.panel = {
 		data.forEach(node.postAdd);
 		return node;
 	},
-	"slider": function(data, triggerNode, parentNode, ricon, activeClass, content, resize) {
+	"slider": function(data, triggerNode, parentNode, ricon, activeClass, content, resize, hovs) {
 		var node = CT.dom.div(null, "abs w1 hmin1 t0 l0 r0");
 		if (typeof triggerNode == "string")
 			triggerNode = CT.dom.id(triggerNode);
@@ -172,7 +173,7 @@ CT.panel = {
 		};
 		node.add = function(d, trigger) {
 			var n = CT.dom.div(null, "abs full l0 r0 scrolly"),
-				t = CT.panel.trigger(d, node.slide, activeClass, content, null, null, ricon);
+				t = CT.panel.trigger(d, node.slide, activeClass, content, null, null, ricon, null, hovs);
 			n.style.top = (node.clientHeight * node._subs.length) + "px";
 			if (ricon)
 				t.appendChild(CT.dom.div(null, "clearnode"));
