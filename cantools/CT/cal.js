@@ -119,41 +119,49 @@ CT.cal.Cal = CT.Class({
 				return fn;
 			}).join(", "), opts = this.opts, task = slot.task,
 				taskname = task.name || task.task.name, adata,
-				iseditor = task.editors.includes(ukey), amod;
-			return CT.dom.div([
-				slot.when.toTimeString().slice(0, 5) + " " + taskname,
-				CT.dom.div(volunteers, "small")
-			], "appointment", null, {
-				onclick: function(e) {
-					adata = [
-						CT.dom.div(taskname, "bigger"),
-						task.description,
-						slot.duration + " hours"
-					];
-					if (iseditor) {
-						adata.unshift(CT.dom.link("edit", function() {
-							opts.click.edit(slot, dobj);
-						}, null, "right padded"));
-					}
-					["steps", "requirements"].forEach(function(slist) {
-						if (task[slist] && task[slist].length) {
-							adata.push([
-								CT.dom.div(slist, "big"),
-								task[slist]
-							]);
+				iseditor = task.editors.includes(ukey), amod,
+				hmsg = "volunteer for ";
+			if (iseditor)
+				hmsg = "edit or " + hmsg;
+			hmsg += taskname;
+			return CT.hover.set({
+				auto: true,
+				content: hmsg,
+				node: CT.dom.div([
+					slot.when.toTimeString().slice(0, 5) + " " + taskname,
+					CT.dom.div(volunteers, "small")
+				], "appointment", null, {
+					onclick: function(e) {
+						adata = [
+							CT.dom.div(taskname, "bigger"),
+							task.description,
+							slot.duration + " hours"
+						];
+						if (iseditor) {
+							adata.unshift(CT.dom.link("edit", function() {
+								opts.click.edit(slot, dobj);
+							}, null, "right padded"));
 						}
-					});
-					adata.push(CT.dom.div("Participate", "big"));
-					adata.push(volunteers || "no participants yet!");
-					if (opts.click.volunteer)
-						adata.push(opts.click.volunteer(slot, dobj, uslots));
-					if (iseditor && opts.click.exception && (slot.schedule != "once"))
-						adata.push(opts.click.exception(slot, dobj));
-					amod = CT.modal.modal(CT.dom.div(adata, "subpadded5"), null, {
-						onclick: function() { amod.hide(); }
-					});
-					e.stopPropagation();
-				}
+						["steps", "requirements"].forEach(function(slist) {
+							if (task[slist] && task[slist].length) {
+								adata.push([
+									CT.dom.div(slist, "big"),
+									task[slist]
+								]);
+							}
+						});
+						adata.push(CT.dom.div("Participate", "big"));
+						adata.push(volunteers || "no participants yet!");
+						if (opts.click.volunteer)
+							adata.push(opts.click.volunteer(slot, dobj, uslots));
+						if (iseditor && opts.click.exception && (slot.schedule != "once"))
+							adata.push(opts.click.exception(slot, dobj));
+						amod = CT.modal.modal(CT.dom.div(adata, "subpadded5"), null, {
+							onclick: function() { amod.hide(); }
+						});
+						e.stopPropagation();
+					}
+				})
 			});
 		}
 	},
@@ -217,6 +225,11 @@ CT.cal.Cal = CT.Class({
 			n.onclick = function() {
 				opts.click.date(date, month, year);
 			};
+			CT.hover.set({
+				auto: true,
+				node: n,
+				content: "register a task for " + CT.cal.months[month] + " " + date
+			});
 		} else if (opts.update)
 			n.onclick = _.update(dobj);
 		return n;
@@ -235,6 +248,11 @@ CT.cal.Cal = CT.Class({
 					daynode.onclick = function() {
 						opts.click.day(day, di);
 					};
+					CT.hover.set({
+						auto: true,
+						node: daynode,
+						content: "register a weekly task for " + day
+					});
 				}
 				return daynode;
 			});
