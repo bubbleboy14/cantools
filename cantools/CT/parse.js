@@ -210,7 +210,7 @@ CT.parse = {
 	"shortened": function(txt, len, wlen, nolink) {
 		if (wlen) {
 			if (nolink)
-				txt = txt.split(" http")[0];
+				txt = txt.replace(/\n/g, " ").split(" http")[0];
 			txt = txt.split(" ").slice(0, wlen).join(" ");
 		}
 		len = len || 500;
