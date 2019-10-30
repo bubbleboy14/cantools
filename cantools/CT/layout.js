@@ -152,7 +152,7 @@ CT.layout = {
 		for (var b in opts.buttons)
 			buttons.appendChild(CT.dom.button(b,
 				opts.buttons[b], "round padded margined",
-				"ctb_" + (opts.key || opts.name) + "_" + b));
+				"ctb_" + (opts.key || opts.name) + "_" + b.replace(/ /g, "_")));
 		var content = [
 			CT.dom.div(opts.name, "biggest"),
 			CT.dom.div(opts.description || opts.blurb),
