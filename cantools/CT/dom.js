@@ -1066,9 +1066,12 @@ CT.dom = {
 		n && n.parentNode && n.parentNode.removeChild(n);
 	},
 	"replace": function(target, replacement) {
+		if (typeof target == "string")
+			target = CT.dom.id(target);
+		if (typeof replacement == "string")
+			replacement = CT.dom.div(replacement);
 		if (target.parentNode) {
-			target.parentNode.insertBefore(typeof replacement == "string"
-				? CT.dom.node(replacement) : replacement, target);
+			target.parentNode.insertBefore(replacement, target);
 			target.parentNode.removeChild(target);
 		}
 	},
