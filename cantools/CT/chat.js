@@ -367,7 +367,7 @@ CT.chat = {
 			exp._expanded = !exp._expanded;
 			CT.dom.setContent(exp, (exp._expanded ? "shrink" : "expand") + " chat");
 			widget.classList[exp._expanded ? "add" : "remove"]("expanded");
-		}, null, "abs r0 b0 big bold above");
+		}, null, "abs r0 b0 big bold abover");
 		CT.dom.addContent("ctmain", exp);
 	},
 	"widget": function(uid, rooms, channels_name, title_cb) {
