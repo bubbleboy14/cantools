@@ -138,6 +138,8 @@
 .clearnode { clear: both; }
 .justified { text-align: justify; }
 .centered { text-align: center; }
+.righted { text-align: right; }
+.lefted { text-align: left; }
 .automarg,
 .centered > div {
     margin-left: auto;
