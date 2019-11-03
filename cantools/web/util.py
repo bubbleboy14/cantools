@@ -382,12 +382,11 @@ def verify_recaptcha(cresponse, pkey):
             'secret': pkey,
             'remoteip': os.environ.get('REMOTE_ADDR', os.environ.get('REMOTE_HOST')),
             'response': cresponse
-            }),
+        }).encode(),
         headers = {
             "Content-type": "application/x-www-form-urlencoded"
-            }
-        ))
-    vdata = verification_result.read()
+        }))
+    vdata = verification_result.read().decode()
     verification_result.close()
     if "true" not in vdata:
         fail(vdata)
