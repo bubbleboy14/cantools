@@ -1,4 +1,4 @@
-# cantools 0.10.8.59
+# cantools 0.10.8.60
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
  - Docs: http://ct.mkult.co
@@ -720,6 +720,9 @@ This module provides functions that generate common UI elements. These include:
 	name: opts.title || "root"
 	className: "m5 p5 vtop centered pointer inline-block"
 
+### form(opts) - defaults:
+	className: "ctform"
+	items: []
 
 ## CT.map
 ### Import line: 'CT.require("CT.map");'
@@ -812,7 +815,7 @@ a string, a password, or one or more selections from a list.
 defaults:
 	{
 		className: "basicpopup mosthigh",
-		style: "string", // string|multiple-string|password|single-choice|multiple-choice|file|number|time|date
+		style: "string", // string|multiple-string|password|single-choice|multiple-choice|file|number|time|date|form
 		prompt: "",
 		clear: false, // string/password only
 		data: [] // only applies to choice styles
