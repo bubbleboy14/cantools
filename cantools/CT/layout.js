@@ -44,6 +44,9 @@ This module provides functions that generate common UI elements. These include:
 	name: opts.title || "root"
 	className: "m5 p5 vtop centered pointer inline-block"
 
+### form(opts) - defaults:
+	className: "ctform"
+	items: []
 */
 
 CT.layout = {
@@ -231,6 +234,32 @@ CT.layout = {
 			})
 		], opts.className, opts.id);
 		node.onclick = onclick(node);
+		return node;
+	},
+	form: function(opts) {
+		opts = CT.merge(opts, {
+			className: "ctform",
+			items: []
+		});
+		var f, fields = [], node = CT.dom.div(opts.items.map(function(item) {
+			f = CT.dom.smartField(item);
+			fields.push(f);
+			return f;
+		}), opts.className), i, val, name, vals = {};
+		node.value = function() {
+			for (i = 0; i < fields.length; i++) {
+				f = fields[i];
+				val = f.fieldValue();
+				name = opts.items[i].name;
+				if (!val)
+					return alert("please provide a " + name);
+				vals[name] = val;
+			}
+			opts.cb && opts.cb(vals);
+			return vals;
+		};
+		if (opts.button)
+			node.appendChild(CT.dom.button("continue", node.value));
 		return node;
 	}
 };
