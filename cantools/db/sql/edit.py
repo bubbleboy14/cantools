@@ -28,6 +28,8 @@ def edit(data, session=session):
         if propname in ent._schema:
             if val:
                 proptype = ent._schema[propname]
+                if hasattr(ent, "_pre_trans_%s"%(propname,)):
+                    val = getattr(ent, "_pre_trans_%s"%(propname,))(val)
                 if proptype in ETRANS:
                     val = ETRANS[proptype](val)
                 if hasattr(ent, "_trans_%s"%(propname,)):
