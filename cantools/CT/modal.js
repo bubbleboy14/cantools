@@ -43,7 +43,7 @@ a string, a password, or one or more selections from a list.
 defaults:
 	{
 		className: "basicpopup mosthigh",
-		style: "string", // string|multiple-string|password|single-choice|multiple-choice|file|number|time|date
+		style: "string", // string|multiple-string|password|single-choice|multiple-choice|file|number|time|date|form
 		prompt: "",
 		clear: false, // string/password only
 		data: [] // only applies to choice styles
@@ -387,6 +387,9 @@ CT.modal.Prompt = CT.Class({
 			var oz = { update: true };
 			if (data) oz.now = data;
 			return (new CT.cal.Cal(oz)).node;
+		},
+		"form": function(data) {
+			return CT.layout.form({ items: data });
 		}
 	},
 	on: {
