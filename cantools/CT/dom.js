@@ -940,6 +940,24 @@ CT.dom = {
 		return f;
 	},
 
+	"iconSelector": function(items, selectFirst) {
+		var cur, n = CT.dom.div(items.map(function(i) {
+			var img = CT.dom.img(i, "padded margined round", function() {
+				if (cur)
+					cur.firstChild.classList.remove("bordered");
+				cur = img;
+				cur.firstChild.classList.add("bordered");
+			});
+			img._icon = i;
+			return img;
+		}));
+		n.value = function() {
+			return cur && cur._icon;
+		};
+		selectFirst && n.firstChild.onclick();
+		return n;
+	},
+
 	// resizers
 	"_isVerticalOrientation": function(node) {
 		if (node.clientHeight == 0 || node.clientWidth == 0)
