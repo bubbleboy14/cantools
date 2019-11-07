@@ -43,7 +43,7 @@ a string, a password, or one or more selections from a list.
 defaults:
 	{
 		className: "basicpopup mosthigh",
-		style: "string", // string|multiple-string|password|single-choice|multiple-choice|file|number|time|date|form
+		style: "string", // string|multiple-string|password|single-choice|multiple-choice|file|number|time|date|form|icon
 		prompt: "",
 		clear: false, // string/password only
 		data: [] // only applies to choice styles
@@ -390,6 +390,9 @@ CT.modal.Prompt = CT.Class({
 		},
 		"form": function(data) {
 			return CT.layout.form({ items: data });
+		},
+		"icon": function(data) {
+			return CT.dom.iconSelector(data, true);
 		}
 	},
 	on: {
