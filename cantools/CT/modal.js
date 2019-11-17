@@ -370,15 +370,7 @@ CT.modal.Prompt = CT.Class({
 			}.bind(this));
 		},
 		"number": function() {
-			var o = this.opts, initial = o.initial || 1, shower = CT.dom.div(initial),
-				r = CT.dom.range(function(val) {
-					CT.dom.setContent(shower, val);
-				}, o.min || 0.25, o.max || 5, initial, o.step || 0.25),
-				n = CT.dom.div([shower, r]);
-			n.value = function() {
-				return window["parse" + ((o.step == 1) ? "Int" : "Float")](r.value);
-			};
-			return n;
+			return CT.dom.numberSelector(this.opts);
 		},
 		"time": function() {
 			return CT.dom.timeSelector();
