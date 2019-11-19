@@ -74,6 +74,7 @@ cfg = {
 	"scrambler": "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/=_",
 	"encode": False,
 	"mailer": None, # (override w/ MAILER)
+	"mailhtml": True,
 	"pubsub": {
 		"host": "localhost",
 		"port": 8888,
