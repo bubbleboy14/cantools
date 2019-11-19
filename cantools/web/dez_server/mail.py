@@ -1,5 +1,7 @@
 import rel, smtplib
-from ..util import config, log
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from ..util import config, log, strip_html
 
 TMP = """From: %s
 To: %s
@@ -45,6 +47,18 @@ class Mailer(object):
 			return [(a and type(a) == unicode and a.encode("utf-8") or a) for a in args]
 		return args
 
+	def _body(self, sender, to, subject, body):
+		if config.mailhtml:
+			mpmsg = MIMEMultipart('alternative')
+			mpmsg['Subject'] = subject
+			mpmsg['From'] = sender
+			mpmsg['To'] = to
+			mpmsg.attach(MIMEText(strip_html(body), 'plain'))
+			mpmsg.attach(MIMEText(body, 'html'))
+			return mpmsg.as_string()
+		else:
+			return TMP%(sender, to, subject, body)
+
 	def _emit(self, to, subject, body, bcc):
 		log('emailing "%s" to %s'%(subject, to))
 		if self._yag: # bcc yagmail only!
@@ -53,7 +67,7 @@ class Mailer(object):
 				self._refresh()
 		elif self._smtp:
 			sender = self.name and "%s <%s>"%(self.name, self.addr) or self.addr
-			self._smtp.sendmail(self.addr, [to], TMP%(sender, to, subject, body))
+			self._smtp.sendmail(self.addr, to, self._body(sender, to, subject, body))
 
 	def _sender(self):
 		while len(self.queue):
