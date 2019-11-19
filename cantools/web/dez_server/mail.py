@@ -54,7 +54,7 @@ class Mailer(object):
 			mpmsg['From'] = sender
 			mpmsg['To'] = to
 			mpmsg.attach(MIMEText(strip_html(body), 'plain'))
-			mpmsg.attach(MIMEText(body, 'html'))
+			mpmsg.attach(MIMEText(body.replace("\n", "<br>"), 'html'))
 			return mpmsg.as_string()
 		else:
 			return TMP%(sender, to, subject, body)
