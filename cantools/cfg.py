@@ -27,6 +27,7 @@ cfg = {
 		"protocol": "http",
 		"log": None,
 		"contacts": [],
+		"whitelist": [],
 		"monitor": {
 			"interval": 5,
 			"log": False,
@@ -46,7 +47,8 @@ cfg = {
 		"xorigin": False,
 		"log": None,
 		"errlog": None,
-		"rollz": {}
+		"rollz": {},
+		"whitelist": []
 	},
 	"ssl": {
 		"verify": True,
