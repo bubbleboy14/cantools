@@ -146,6 +146,12 @@ cfg = {
 			"keys": {},
 			"mobile": {
 				"scale": False
+			},
+			"CC": {
+				"gateway": "https://care-coin.net/comp/api.js",
+				"membership": None,
+				"agent": None,
+				"pod": None
 			}
 		},
 		"util": {
