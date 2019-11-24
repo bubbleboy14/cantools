@@ -1,4 +1,4 @@
-# cantools 0.10.8.63
+# cantools 0.10.8.64
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
  - Docs: http://ct.mkult.co
@@ -319,7 +319,8 @@ This loader imports almost every CT module.
 
 ### This excludes:
     - CT.map, CT.pay, and CT.rte, which require large script imports
-    - CT.admin, which is not for typical use.
+    - CT.admin, which is not for typical use
+    - CT.cc, which should be imported after core (for config)
 
 ## CT.autocomplete
 ### Import line: 'CT.require("CT.autocomplete");'
@@ -408,6 +409,17 @@ This module contains classes that simplify use of the HTML5 canvas element:
     - CT.canvas.Controller
     - CT.canvas.Node
     - CT.canvas.Text
+
+## CT.cc
+### Import line: 'CT.require("CT.cc");'
+This module supports carecoin integration. Main ingredients:
+
+### CT.cc.view(content)
+Notify compensation platform of content view.
+
+### CT.cc.Switcher
+Class for generating interface elements for associating a
+user with a carecoin membership.
 
 ## CT.chat
 ### Import line: 'CT.require("CT.chat");'
