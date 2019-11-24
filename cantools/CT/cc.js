@@ -1,3 +1,14 @@
+/*
+This module supports carecoin integration. Main ingredients:
+
+### CT.cc.view(content)
+Notify compensation platform of content view.
+
+### CT.cc.Switcher
+Class for generating interface elements for associating a
+user with a carecoin membership.
+*/
+
 var ccfg = core.config.CC;
 if (ccfg && ccfg.agent)
 	CT.scriptImport(ccfg.gateway);
