@@ -35,7 +35,8 @@ This loader imports almost every CT module.
 
 ### This excludes:
     - CT.map, CT.pay, and CT.rte, which require large script imports
-    - CT.admin, which is not for typical use.
+    - CT.admin, which is not for typical use
+    - CT.cc, which should be imported after core (for config)
 */
 
 CT.require("CT.Drop");
