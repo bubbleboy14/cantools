@@ -94,7 +94,7 @@ CT.cc.Switcher = CT.Class({
 		var _ = this._;
 		_.switcheroo = CT.dom.div(null, "h1 centered");
 		_.setSwitcher();
-		CT.dom.setContent(node || "ctmain", CT.dom.div([
+		CT.dom.setContent(opts.node, CT.dom.div([
 			CT.dom.div("Your <b>carecoin</b> Membership", "bigger centered"),
 			CT.dom.div(_.switcheroo, "h170p p0 noflow")
 		], "bordered padded margined round"));
