@@ -85,16 +85,10 @@ def fetch(host, path="/", port=80, asjson=False, cb=None, timeout=1, async=False
 	return asjson and json.loads(result) or result
 
 def post(host, path="/", port=80, data=None, protocol="http", asjson=False, ctjson=False):
-	if "://" in host:
-		protocol, host = host.split("://")
-		host, path = host.split("/", 1)
-		path = "/" + path
-	if ":" in host:
-		host, port = host.split(":")
-		port = int(port)
 	if ctjson:
 		data = rec_conv(data)
-	result = requests.post("%s://%s:%s%s"%(protocol, host, port, path), json=data).content
+	result = requests.post("://" in host and host or "%s://%s:%s%s"%(protocol, host, port, path),
+		json=data).content
 	if ctjson:
 		return _ctjson(result)
 	return asjson and json.loads(result) or result
