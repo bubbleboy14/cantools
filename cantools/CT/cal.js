@@ -107,7 +107,7 @@ CT.cal.Cal = CT.Class({
 				CT.cal.slot(tslot, appz);
 			});
 		},
-		slot: function(slot, dobj, cslots) {
+		slot: function(slot, dobj, cslots, isov) {
 			var ukey = window.user && user.core.get("key"), uslots = cslots.filter(function(c) {
 				return c.task.steward.key == ukey;
 			}), comms = cslots.map(function(s) {
@@ -120,20 +120,28 @@ CT.cal.Cal = CT.Class({
 			}).join(", "), opts = this.opts, task = slot.task,
 				taskname = task.name || task.task.name, adata,
 				iseditor = task.editors.includes(ukey), amod,
-				hmsg = "volunteer for ";
+				hmsg = "volunteer for ",
+				oflo = this._.oflo(slot),
+				duration = slot.duration + " hours",
+				time = slot.when.toTimeString().slice(0, 5);
 			if (iseditor)
 				hmsg = "edit or " + hmsg;
 			hmsg += taskname;
+			if (isov) {
+				duration = oflo + " hours (" + duration + " total)";
+				time = "00:00";
+			} else if (oflo)
+				duration = (slot.duration - oflo) + " hours (" + duration + " total)";
 			return CT.hover.set({
 				auto: true,
 				content: hmsg,
 				node: CT.dom.div([
 					[
-						CT.dom.span(slot.when.toTimeString().slice(0, 5)),
+						CT.dom.span(time),
 						CT.dom.pad(),
 						CT.dom.span(taskname),
 						CT.dom.pad(),
-						CT.dom.span("(" + slot.duration + "hrs)", "small")
+						CT.dom.span(duration, "small")
 					],
 					CT.dom.div(volunteers, "small")
 				], "appointment", null, {
@@ -169,6 +177,10 @@ CT.cal.Cal = CT.Class({
 					}
 				})
 			});
+		},
+		oflo: function(s) {
+			var w = s.when;
+			return Math.max(0, w.getHours() + w.getMinutes() / 60 + s.duration - 24);
 		}
 	},
 	slot: function(tslot) {
@@ -193,7 +205,7 @@ CT.cal.Cal = CT.Class({
 			cemoyeda = commz.exception[month][year][date] || {},
 			oncers = appz.once[month][year][date] || {},
 			concers = commz.once[month][year][date] || {},
-			offday = appz.offday[day], tk;
+			offday = appz.offday[day], tk, dayslots, overflow = _.overflow;
 
 		for (tname in oncers)
 			slots = slots.concat(oncers[tname]);
@@ -212,18 +224,21 @@ CT.cal.Cal = CT.Class({
 			return true;
 		});
 
+		dayslots = slots.filter(function(slot) {
+			// TODO: improve this filter
+			tk = slot.taskkey;
+			return (!emoyeda[tk] || !emoyeda[tk].length)
+				&& (!offday[tk] || !offday[tk].length);
+		});
+		_.overflow = dayslots.filter(_.oflo);
+
 		n = CT.dom.div([
 			CT.dom.div(date, "right relative above"),
-			CT.dom.div(slots.filter(function(slot) {
-				// TODO: improve this filter
-				tk = slot.taskkey;
-				return (!emoyeda[tk] || !emoyeda[tk].length)
-					&& (!offday[tk] || !offday[tk].length);
-			}).map(function(slot) {
+			CT.dom.div(overflow.concat(dayslots).map(function(slot, i) {
 				return _.slot(slot, new Date(dobj.getTime()),
 					cslots.filter(function(s) {
 						return s.task.task.key == slot.task.key; // lol
-					}));
+					}), i < overflow.length);
 			}), "abs all0")
 		], (date == opts.now.getDate()) && "today");
 		if (opts.click.date) {
@@ -263,6 +278,7 @@ CT.cal.Cal = CT.Class({
 				return daynode;
 			});
 
+		_.overflow = [];
 		["once", "exception"].forEach(function(variety) {
 			[appz, commz].forEach(function(section) {
 				if (!section[variety][month][year])
