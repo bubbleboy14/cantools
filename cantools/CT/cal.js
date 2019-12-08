@@ -128,7 +128,13 @@ CT.cal.Cal = CT.Class({
 				auto: true,
 				content: hmsg,
 				node: CT.dom.div([
-					slot.when.toTimeString().slice(0, 5) + " " + taskname,
+					[
+						CT.dom.span(slot.when.toTimeString().slice(0, 5)),
+						CT.dom.pad(),
+						CT.dom.span(taskname),
+						CT.dom.pad(),
+						CT.dom.span("(" + slot.duration + "hrs)", "small")
+					],
 					CT.dom.div(volunteers, "small")
 				], "appointment", null, {
 					onclick: function(e) {
