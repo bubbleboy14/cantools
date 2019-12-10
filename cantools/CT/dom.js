@@ -1183,8 +1183,9 @@ CT.dom = {
 
 	// defer function until node exists in dom
 	"doWhenNodeExists": function(id, cb) {
-		if (document.getElementById(id))
-			return cb();
+		var n = CT.dom.id(id);
+		if (n)
+			return cb(n);
 		setTimeout(CT.dom.doWhenNodeExists, 500, id, cb);
 	},
 
