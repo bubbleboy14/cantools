@@ -122,7 +122,7 @@ CT.db = {
 			property: CT.db._schema[t]._label
 		};
 	},
-	get: function(modelName, cb, limit, offset, order, filters, sync, count) {
+	get: function(modelName, cb, limit, offset, order, filters, sync, count, exporter) {
 		var f, v, qdata = {
 			"action": "get",
 			"modelName": modelName,
@@ -132,6 +132,8 @@ CT.db = {
 		};
 		if (order)
 			qdata.order = order;
+		if (exporter)
+			qdata.exporter = exporter;
 		if (filters) {
 			for (f in filters) {
 				v = filters[f];
