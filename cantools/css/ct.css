@@ -925,6 +925,9 @@ a.whitelink, .whitelink a {
 .sb-bottom {
     bottom: 90px;
 }
+.sb-bottomer {
+    bottom: 10px;
+}
 .fullbottom {
     left: 10px;
     right: 10px;
