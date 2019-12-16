@@ -149,7 +149,7 @@ CT.layout = {
 			buttons: []
 		});
 		var img = CT.dom.panImg(opts),
-			buttons = CT.dom.node(null, "div", "centered");
+			buttons = CT.dom.div(null, "probutts");
 		if (!opts.name && opts.firstName && opts.lastName)
 			opts.name = opts.firstName + " " + opts.lastName;
 		for (var b in opts.buttons)
