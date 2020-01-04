@@ -157,7 +157,7 @@ CT.panel = {
 		data.forEach(node.postAdd);
 		return node;
 	},
-	"slider": function(data, triggerNode, parentNode, ricon, activeClass, content, resize, hovs, clearz) {
+	"slider": function(data, triggerNode, parentNode, ricon, activeClass, content, resize, hovs, clearz, ngen) {
 		var node = CT.dom.div(null, "abs w1 hmin1 t0 l0 r0");
 		if (typeof triggerNode == "string")
 			triggerNode = CT.dom.id(triggerNode);
@@ -183,6 +183,7 @@ CT.panel = {
 				t.appendChild(CT.dom.div(null, "clearnode"));
 			node._subs.push(d);
 			node.appendChild(n);
+			ngen && CT.dom.setContent(n, ngen(d));
 			triggerNode.appendChild(t);
 			(trigger === true) && t.trigger();
 			return n;
