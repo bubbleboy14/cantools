@@ -157,12 +157,16 @@ CT.panel = {
 		data.forEach(node.postAdd);
 		return node;
 	},
-	"slider": function(data, triggerNode, parentNode, ricon, activeClass, content, resize, hovs) {
+	"slider": function(data, triggerNode, parentNode, ricon, activeClass, content, resize, hovs, clearz) {
 		var node = CT.dom.div(null, "abs w1 hmin1 t0 l0 r0");
 		if (typeof triggerNode == "string")
 			triggerNode = CT.dom.id(triggerNode);
 		if (typeof parentNode == "string")
 			parentNode = CT.dom.id(parentNode);
+		if (clearz) {
+			CT.dom.clear(parentNode);
+			CT.dom.clear(triggerNode);
+		}
 		(parentNode || document.body).appendChild(node);
 		node._subs = [];
 		node.slide = function(d) {
