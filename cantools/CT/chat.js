@@ -416,6 +416,7 @@ CT.chat = {
 		window.onblur = function() {
 			CT.chat.windowIsActive = false;
 		};
-		CT.parse.set_ts_server_offset(cfg && cfg.timezone_offset || CT.chat.settings.timezone_offset);
+		// skip (depped!)
+		//CT.parse.set_ts_server_offset(cfg && cfg.timezone_offset || CT.chat.settings.timezone_offset);
 	}
 };
