@@ -360,7 +360,13 @@ CT.modal.Prompt = CT.Class({
 			return cz;
 		},
 		"multiple-choice": function(data) {
-			return CT.dom.choices(this._nodify(data), true);
+			var cz = CT.dom.choices(this._nodify(data), true),
+				selz = this.opts.selections;
+			selz && CT.dom.each(cz, function(sel) {
+				if (selz.includes(sel.innerHTML))
+					sel.onclick();
+			});
+			return cz;
 		},
 		"file": function() {
 			this.continueButton.disabled = true;
