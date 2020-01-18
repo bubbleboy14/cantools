@@ -58,7 +58,7 @@ CT.cal = {
 		var year = tslot.when.getFullYear(),
 			month = tslot.when.getMonth(),
 			date = tslot.when.getDate(),
-			day = tslot.when.getDay(), aod, amy, amyd,
+			day = tslot.when.getDay(), aod, amy, amyd, mdate,
 			pfunc = CT.data[unslot ? "remove" : "append"];
 		if (tslot.schedule == "daily")
 			pfunc(appz.daily, tslot);
@@ -69,7 +69,12 @@ CT.cal = {
 			if (!aod[tslot.taskkey])
 				aod[tslot.taskkey] = [];
 			pfunc(aod[tslot.taskkey], tslot);
-		} else { // month year date... once, exception
+		} else if (tslot.schedule == "monthly (date)") {
+			mdate = appz.monthly_date[date] = appz.monthly_date[date] || [];
+			pfunc(mdate, tslot);
+		} else if (tslot.schedule == "monthly (day)")
+			pfunc(appz.monthly_day[day], tslot);
+		else { // month year date... once, exception
 			amy = appz[tslot.schedule][month][year];
 			if (!amy)
 				amy = appz[tslot.schedule][month][year] = {};
@@ -196,21 +201,28 @@ CT.cal.Cal = CT.Class({
 		CT.cal.slot(tslot, this._.commitments, true);
 	},
 	day: function(date, month, year) {
-		var _ = this._, opts = this.opts, tname, n,
-			appz = _.appointments, commz = _.commitments,
-			dobj = new Date(year, month, date), day = dobj.getDay(),
-			slots = appz.daily.slice().concat(appz.weekly[day].slice()),
-			cslots = commz.daily.slice().concat(commz.weekly[day].slice()),
+		var _ = this._, opts = this.opts, tname, n, tk, dayslots, appz = _.appointments, commz = _.commitments,
+			dobj = new Date(year, month, date), day = dobj.getDay(), week = Math.ceil(date / 7);
+			slots = appz.daily.slice().concat(appz.weekly[day].slice()).concat((appz.monthly_date[date] || []).slice()),
+			cslots = commz.daily.slice().concat(commz.weekly[day].slice()).concat((commz.monthly_date[date] || []).slice()),
 			emoyeda = appz.exception[month][year][date] || {},
 			cemoyeda = commz.exception[month][year][date] || {},
 			oncers = appz.once[month][year][date] || {},
 			concers = commz.once[month][year][date] || {},
-			offday = appz.offday[day], tk, dayslots, overflow = _.overflow;
+			mday = appz.monthly_day[day], cmday = commz.monthly_day[day],
+			offday = appz.offday[day], overflow = _.overflow;
 
 		for (tname in oncers)
 			slots = slots.concat(oncers[tname]);
 		for (tname in concers)
 			cslots = cslots.concat(concers[tname]);
+
+		slots = slots.concat(mday.filter(function(slot) {
+			return Math.ceil(slot.when.getDate() / 7) == week;
+		}));
+		cslots = cslots.concat(cmday.filter(function(slot) {
+			return Math.ceil(slot.when.getDate() / 7) == week;
+		}));
 
 		slots.sort(function(a, b) {
 			return a.when.toTimeString() > b.when.toTimeString() ? 1 : -1;
@@ -399,6 +411,8 @@ CT.cal.Cal = CT.Class({
 			appz.offday = CT.cal.days.map(function(d) { return {}; });
 			appz.once = CT.cal.months.map(function(m) { return {}; });
 			appz.exception = CT.cal.months.map(function(m) { return {}; });
+			appz.monthly_day = CT.cal.days.map(function(d) { return []; });
+			appz.monthly_date = [];
 		});
 		this.setNode();
 		this.load();
