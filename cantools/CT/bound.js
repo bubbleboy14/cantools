@@ -1,3 +1,33 @@
+/*
+This module contains functions for binding DOM nodes and constructor
+functions to data objects (by key). When the data changes, the bound
+nodes are updated according to their constructor functions. Supports
+two modes, storage and db.
+
+### Primary functions:
+	- CT.bound.register(key, node, constructor)
+	- CT.bound.mutate(data)
+
+### Usage:
+
+	CT.onload(function() {
+		var n = CT.dom.div(),
+			b = CT.dom.div(null, "abs cbr biggest");
+		CT.dom.setBody([n, b]);
+		CT.bound.register("main", n, function(data) {
+			return JSON.stringify(data);
+		});
+		CT.bound.register("main", b, function(data) {
+			return data.anything;
+		});
+		CT.bound.mutate({
+			key: "main",
+			something: "whatever",
+			anything: "nothing"
+		});
+	});
+*/
+
 CT.bound = {
 	_: {
 		keys: {},
