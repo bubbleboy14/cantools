@@ -10,21 +10,19 @@ two modes, storage and db.
 
 ### Usage:
 
-	CT.onload(function() {
-		var n = CT.dom.div(),
-			b = CT.dom.div(null, "abs cbr biggest");
-		CT.dom.setBody([n, b]);
-		CT.bound.register("main", n, function(data) {
-			return JSON.stringify(data);
-		});
-		CT.bound.register("main", b, function(data) {
-			return data.anything;
-		});
-		CT.bound.mutate({
-			key: "main",
-			something: "whatever",
-			anything: "nothing"
-		});
+	var n = CT.dom.div(),
+		b = CT.dom.div(null, "abs cbr biggest");
+	CT.dom.setBody([n, b]);
+	CT.bound.register("main", n, function(data) {
+		return JSON.stringify(data);
+	});
+	CT.bound.register("main", b, function(data) {
+		return data.anything;
+	});
+	CT.bound.mutate({
+		key: "main",
+		something: "whatever",
+		anything: "nothing"
 	});
 */
 
