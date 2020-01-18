@@ -27,13 +27,26 @@ CT.bound = {
 				});
 			}
 			return fulld;
+		},
+		load: function(key) {
+			var _ = CT.bound._, oz = _.opts, dboz = oz.db;
+			if (!CT.data.get(key)) {
+				if (oz.storage)
+					CT.data.add(CT.storage.get(key) || { key: key });
+				else if (dboz.auto || dboz.pw) {
+					
+				}
+			}
 		}
 	},
 	register: function(key, node, constructor) {
-		var _ = CT.bound._, kz = _.keys,
-			kzk = kz[key] = kz[key] || [];
+		var _ = CT.bound._, kz = _.keys;
 		node._constructor = constructor;
-		kzk.push(node);
+		if (!kz[key]) {
+			kz[key] = [];
+			_.load(key);
+		}
+		kz[key].push(node);
 	},
 	mutate: function(data) {
 		var _ = CT.bound._, fulld = _.set(data);
