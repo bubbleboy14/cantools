@@ -2,19 +2,17 @@ CT.bound = {
 	_: {
 		keys: {},
 		opts: {
-			db: {
-				pw: null,
-				auto: false
-			},
-			storage: {} // set to false or null to disable
+			mode: "storage",
+			storage: {},
+			db: {}
 		},
 		set: function(data) {
 			var _ = CT.bound._, oz = _.opts, dboz = oz.db, params, fulld;
 			CT.data.add(data);
 			fulld = CT.data.get(data.key);
-			if (oz.storage)
+			if (oz.mode == "storage")
 				CT.storage.set(data.key, fulld);
-			if (dboz.auto || dboz.pw) {
+			else {
 				params = {
 					action: "edit",
 					data: data
@@ -31,11 +29,10 @@ CT.bound = {
 		load: function(key) {
 			var _ = CT.bound._, oz = _.opts, dboz = oz.db;
 			if (!CT.data.get(key)) {
-				if (oz.storage)
+				if (oz.mode == "storage")
 					CT.data.add(CT.storage.get(key) || { key: key });
-				else if (dboz.auto || dboz.pw) {
-					
-				}
+				else
+					CT.db.one(key);
 			}
 		}
 	},
@@ -54,11 +51,9 @@ CT.bound = {
 			CT.dom.setContent(node, node._constructor(fulld));
 		});
 	},
-	init: function(opts) {
+	init: function(opts) { // only necessary for custom opts{}
 		var _ = CT.bound._, opts = _.opts = CT.merge(opts, _.opts);
-		if (opts.storage) {
+		if (opts.mode == "storage")
 			CT.storage.init(opts.storage);
-			// acquire/load initial stored objects?
-		}
 	}
 };
