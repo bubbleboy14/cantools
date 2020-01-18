@@ -55,9 +55,8 @@ CT.bound = {
 			return fulld;
 		},
 		load: function(key) {
-			var _ = CT.bound._, oz = _.opts, dboz = oz.db;
 			if (!CT.data.get(key)) {
-				if (oz.mode == "storage")
+				if (CT.bound._.opts.mode == "storage")
 					CT.data.add(CT.storage.get(key) || { key: key });
 				else
 					CT.db.one(key);
