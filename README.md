@@ -1,4 +1,4 @@
-# cantools 0.10.8.70
+# cantools 0.10.8.71
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
  - Docs: http://ct.mkult.co
@@ -290,6 +290,7 @@ This loader imports almost every CT module.
     - CT.Pager
     - CT.align
     - CT.autocomplete
+    - CT.bound
     - CT.cal
     - CT.canvas
     - CT.chat
@@ -353,6 +354,34 @@ function, which uses the CT.db module to acquire data.
     - modelName: the name of the backend database model to query from
     - property: the property (on specified model) to compare to text input
     - filters (default: {}): filters to apply to database query
+
+## CT.bound
+### Import line: 'CT.require("CT.bound");'
+This module contains functions for binding DOM nodes and constructor
+functions to data objects (by key). When the data changes, the bound
+nodes are updated according to their constructor functions. Supports
+two modes, storage and db.
+
+### Primary functions:
+	- CT.bound.register(key, node, constructor)
+	- CT.bound.mutate(data)
+
+### Usage:
+
+	var n = CT.dom.div(),
+		b = CT.dom.div(null, "abs cbr biggest");
+	CT.dom.setBody([n, b]);
+	CT.bound.register("main", n, function(data) {
+		return JSON.stringify(data);
+	});
+	CT.bound.register("main", b, function(data) {
+		return data.anything;
+	});
+	CT.bound.mutate({
+		key: "main",
+		something: "whatever",
+		anything: "nothing"
+	});
 
 ## CT.cal
 ### Import line: 'CT.require("CT.cal");'
