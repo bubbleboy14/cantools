@@ -18,7 +18,8 @@ CT.cc = {
 	view: function(content) {
 		var _ = CT.cc._, name = content.title || content.name || content.label,
 			identifier = (content.mtype || content.modelName) + ": " + name,
-			author = CT.data.get(content.uid || content.user || content.owner),
+			ukey = content.uid || content.user || content.owner,
+			author = ukey && CT.data.get(ukey),
 			memship = author && author.cc.membership;
 		CT.log("viewing: " + identifier);
 		if (!memship) return CT.log("(no mem)");
