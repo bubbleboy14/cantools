@@ -26,7 +26,10 @@ class Mailer(object):
 				mailer[self.addr] = self.name
 			else:
 				mailer = self.addr.split("@")[0]
-			self._yag = yagmail.SMTP(mailer, config.cache("email password? "))
+			try:
+				self._yag = yagmail.SMTP(mailer, config.cache("email password? "))
+			except:
+				self._yag = yagmail.SMTP(mailer, config.cache("email password? ", overwrite=True))
 		else:
 			self._smtp = smtplib.SMTP('localhost')
 
