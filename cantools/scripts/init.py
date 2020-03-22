@@ -66,6 +66,7 @@ class Builder(object):
 		self.web_backend = web_backend
 		self.refresh_symlinks = refresh_symlinks
 		self.plugins = {}
+		self.installed = set()
 		self.install_plugins()
 		if not refresh_symlinks:
 			self.build_dirs()
@@ -102,9 +103,13 @@ class Builder(object):
 		mod.__ct_mod_path__ = mod.__file__.rsplit(os.path.sep, 1)[0]
 		init = mod.init
 		jscc = os.path.join(mod.__ct_mod_path__, "js", "config.js")
+		ctab = os.path.join(mod.__ct_mod_path__, "cron.yaml")
 		if os.path.isfile(jscc):
 			log("adding custom config entries to core.config (js)", 3)
 			config.init.config.update(plugin, read(jscc, isjson=True))
+		if os.path.isfile(ctab):
+			log("adding custom cron schedule", 3)
+			config.init.update("cron", "%s\n\n%s"%(config.init.cron, read(ctab)))
 		if hasattr(init, "util"):
 			log("adding post instructions to core.util (js)", 3)
 			self._update(config.init.util, "post", [init.util])
@@ -125,11 +130,15 @@ class Builder(object):
 		for i in range(len(plugs)):
 			plugin = plugs[i]
 			log("Plugin: %s"%(plugin,), 2)
+			if plugin in self.installed:
+				log("already installed :)", 3)
+				continue
 			try:
 				self._getplug(plugin)
 			except ImportError:
 				log("plugin '%s' not found! attempting install."%(plugin,), important=True)
 				self._install((repos or config.plugin.repos)[i])
+			self.installed.add(plugin)
 
 	def install_plugins(self):
 		pil = len(config.plugin.modules)
@@ -164,6 +173,8 @@ class Builder(object):
 		cp(config.init.html%(self.pname,), os.path.join("html", "index.html"))
 		log("model", 1)
 		cp(config.init.model, "model.py")
+		log("cron", 1)
+		cp(config.init.cron, "cron.yaml")
 		jsc = os.path.join(config.js.path, "core.js")
 		jscc = os.path.join(config.js.path, "core", "config.js")
 		jscu = os.path.join(config.js.path, "core", "util.js")

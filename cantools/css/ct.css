@@ -946,7 +946,7 @@ a.whitelink, .whitelink a {
     left: 0px;
     right: 0px;
     top: 0px;
-    height: 45px;
+    height: 105px; /* was 45 before default (but config-specified) border-box */
     padding: 30px;
     border-radius: 0px 0px 7px 7px;
     overflow: hidden;

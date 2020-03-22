@@ -213,6 +213,7 @@ handlers:
 #  static_dir: html-production
 # END mode: production"""
 		},
+		"cron": "cron:",
 		"html": """<!doctype html>
 <html>
   <head>
