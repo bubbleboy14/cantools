@@ -66,6 +66,7 @@ class Builder(object):
 		self.web_backend = web_backend
 		self.refresh_symlinks = refresh_symlinks
 		self.plugins = {}
+		self.installed = set()
 		self.install_plugins()
 		if not refresh_symlinks:
 			self.build_dirs()
@@ -129,11 +130,15 @@ class Builder(object):
 		for i in range(len(plugs)):
 			plugin = plugs[i]
 			log("Plugin: %s"%(plugin,), 2)
+			if plugin in self.installed:
+				log("already installed :)", 3)
+				continue
 			try:
 				self._getplug(plugin)
 			except ImportError:
 				log("plugin '%s' not found! attempting install."%(plugin,), important=True)
 				self._install((repos or config.plugin.repos)[i])
+			self.installed.add(plugin)
 
 	def install_plugins(self):
 		pil = len(config.plugin.modules)
