@@ -8,6 +8,8 @@ mods_and_repos = cfgmod.mods_and_repos
 
 if config.web.server == "gae":
 	util.init_gae()
+else:
+	util.init_basic()
 from . import geo
 from .scripts import builder, deploy, init, pubsub, start, index, migrate, doc
 
