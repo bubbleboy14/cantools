@@ -154,6 +154,7 @@ class Builder(object):
 			mkdir(d)
 		jsc = os.path.join(config.js.path, "core")
 		mkdir(jsc)
+		mkdir("emails")
 		if self.plugins:
 			log("Building Directories for %s Plugins"%(len(list(self.plugins.keys())),), important=True)
 			for mod in list(self.plugins.values()):
@@ -182,7 +183,12 @@ class Builder(object):
 		cp(os.linesep.join(config.init.core), jsc)
 		cp("core.config = %s;"%(config.init.config.json(),), jscc)
 		cp(config.init.util.template%(config.init.util.main.json(), config.init.util.post), jscu)
+		log("Copying files from plugins", important=True)
 		for plugin, mod in list(self.plugins.items()):
+			if hasattr(mod.init, "templates"):
+				log("email templates [%s]: %s"%(plugin, mod.init.templates), 1, important=True)
+				cp(read(os.path.join(mod.__ct_mod_path__, mod.init.templates)),
+					os.path.join("emails", mod.init.templates))
 			if hasattr(mod.init, "copies"):
 				for dname, fnames in list(mod.init.copies.items()):
 					dp = os.path.join(mod.__ct_mod_path__, dname)
