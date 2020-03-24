@@ -13,6 +13,10 @@ a:hover {
 	text-decoration: overline;
 }
 
+#ctheader {
+	height: 45px;
+}
+
 #ctheader, #ctfooter {
 	border-top: 2px solid black;
 	border-bottom: 1px solid black;
