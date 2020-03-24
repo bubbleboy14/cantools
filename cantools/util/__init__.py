@@ -1,14 +1,17 @@
+import os, sys
 from .io import read, write, writejson
 from .reporting import set_log, close_log, log, set_error, error, start_timer, end_timer
 from .system import cp, sym, mkdir, rm, cmd, output
 from .data import getxls, gettsv, getcsv, getcsv_from_data, flatten, arr2csv, batch, token
 from .media import transcode, segment, hlsify, crop
 
+def init_basic():
+    os.path.isdir("emails") and sys.path.append("emails")
+
 def init_gae():
     try:
         from google import appengine
     except: # running outside of dev_appserver
-        import os, sys
         gae_p = None
         for p in os.environ["PATH"].split(":"):
             if p.endswith("google_appengine"):
@@ -52,7 +55,6 @@ def init_ndb_cloud(url=None):
     remote_api_stub.ConfigureRemoteApiForOAuth(url, "/_ah/remote_api")
 
 def init_ndb_depped(datastore_file="/dev/null"):
-    import os
     from google.appengine.api import apiproxy_stub_map, datastore_file_stub
     app_id = read("app.yaml", True)[0].split(": ")[1].strip()
     os.environ['APPLICATION_ID'] = app_id
