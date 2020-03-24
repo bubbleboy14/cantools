@@ -154,6 +154,7 @@ class Builder(object):
 			mkdir(d)
 		jsc = os.path.join(config.js.path, "core")
 		mkdir(jsc)
+		mkdir("emails")
 		if self.plugins:
 			log("Building Directories for %s Plugins"%(len(list(self.plugins.keys())),), important=True)
 			for mod in list(self.plugins.values()):
@@ -194,6 +195,10 @@ class Builder(object):
 							log("%s [%s]"%(fname, plugin), 1)
 							cp(read(os.path.join(dp, fname)),
 								os.path.join(dname, fname))
+			if hasattr(mod.init, "templates"):
+				log("%s email templates: %s"%(plugin, mod.init.templates), important=True)
+				cp(read(os.path.join(mod.__ct_mod_path__, mod.init.templates)),
+					os.path.join("emails", mod.init.templates))
 
 	def generate_symlinks(self):
 		log("creating symlinks", 1)
