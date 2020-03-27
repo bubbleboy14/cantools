@@ -31,6 +31,10 @@ def _apply_filter(query, key, obj, modelName, joinz):
         query.filter(prop.contains(val))
     elif comp == "lacks":
         query.filter(~prop.contains(val))
+    elif comp == "near": # lat/lng
+        rad = 10 / 69.11 # about ten miles
+        query.filter(prop > val - rad)
+        query.filter(prop < val + rad)
     else:
         query.filter(operators[comp](prop, val))
 
