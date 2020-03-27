@@ -144,9 +144,25 @@ class Geo(object):
 		else:
 			write(self.cache, "%s.json"%(zcpath,), True)
 
+	def distance(self, lat1, lng1, lat2, lng2):
+		log("approximating distance between [%s %s] and [%s %s]"%(lat1, lng1, lat2, lng2))
+		latd = lat1 - lat2
+		lngd = lng1 - lng2
+		latsq = latd ** 2
+		lngsq = lngd ** 2
+		tsq = latsq + lngsq
+		hypot = tsq**(1.0/2)
+		miles = hypot * 69.11;
+		log("lat diff: %s square: %s"%(latd, latsq))
+		log("lng diff: %s square: %s"%(lngd, lngsq))
+		log("sum of squares: %s hypotenuse: %s"%(tsq, hypot))
+		log("about %s miles"%(miles,))
+		return miles
+
 geo = Geo()
 where = geo.where
 address2latlng = geo.address2latlng
 latlng2zip = geo.latlng2zip
 addr2zip = geo.addr2zip
 savecache = geo.savecache
+distance = geo.distance
