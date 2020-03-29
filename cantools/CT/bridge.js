@@ -2,6 +2,16 @@
 This module provides a postMessage bridge between a vanilla
 javascript application and a generic CT-style widget.
 */
+
+var merge = function() { // CT.merge()
+	var i, k, o = {};
+	for (i = arguments.length - 1; i > -1; i--)
+		if (arguments[i])
+			for (k in arguments[i])
+				o[k] = arguments[i][k];
+	return o;
+};
+
 window.PMB = {
 	_: {
 		bridges: [],
@@ -62,7 +72,7 @@ window.PMB = {
 	},
 	bridge: function(opts) {
 		PMB.init();
-		opts = CT.merge(opts, {
+		opts = merge(opts, {
 			senders: ["send"],     // sending functions (to attach to bridge)
 			receivers: {},         // callbacks functions
 			hash: null,            // if widget pays attention to hashes
