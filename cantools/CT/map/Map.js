@@ -54,28 +54,58 @@ CT.map.Map = CT.Class({
 	geoJson: function(gj) { // path or json obj (right?)
 		this.map.data.loadGeoJSON(gj);
 	},
+	fit: function(lat1, lng1, lat2, lng2) {
+		this.map.fitBounds(CT.map.util.bounds({
+			lat: lat1,
+			lng: lng1
+		}, {
+			lat: lat2,
+			lng: lng2
+		}));
+	},
 	frame: function(m1, m2) {
 		var p1 = m1.getPosition(),
 			p2 = m2.getPosition();
-		this.map.fitBounds(CT.map.util.bounds({
-			latitude: Math.min(p1.lat(), p2.lat()),
-			longitude: Math.min(p1.lng(), p2.lng())
-		}, {
-			latitude: Math.max(p1.lat(), p2.lat()),
-			longitude: Math.max(p1.lng(), p2.lng())
-		}));
+		this.fit(Math.min(p1.lat(), p2.lat()), Math.min(p1.lng(), p2.lng()),
+			Math.max(p1.lat(), p2.lat()), Math.max(p1.lng(), p2.lng()));
+	},
+	autoBounds: function() {
+		var mz = Object.values(this.opts.markers),
+			las = mz.map(m => m.position.lat),
+			los = mz.map(m => m.position.lng),
+			minla = Math.min.apply(null, las),
+			minlo = Math.min.apply(null, los),
+			maxla = Math.max.apply(null, las),
+			maxlo = Math.max.apply(null, los),
+			midla = (minla + maxla) / 2,
+			midlo = (minlo + maxlo) / 2;
+		this.log("min", minla, minlo);
+		this.log("max", maxla, maxlo);
+		this.log("mid", midla, midlo);
+		this.opts.center = {
+			lat: midla,
+			lng: midlo
+		};
+		return {
+			min: { lat: minla, lng: minlo },
+			max: { lat: maxla, lng: maxlo }
+		};
 	},
 	_build: function() {
-		var k;
+		var k, oz = this.opts,
+			bounds = oz.autoFrame && this.autoBounds(),
+			bmin = bounds && bounds.min,
+			bmax = bounds && bounds.max;
 		this.opts.center = CT.map.util.latlng(this.opts.center);
 		this.map = new google.maps.Map(this.opts.node, this.opts);
 		for (k in this.opts.markers)
 			this.addMarker(this.opts.markers[k]);
 		if (this.opts.geojson)
 			this.geoJson(this.opts.geojson);
-		// following two lines for firefox, basically
+		// following two lines for firefox, basically -- maybe wrap in if(CT.info.isFirefox)?
 		this.refresh();
 		this.map.setCenter(this.opts.center);
+		bounds && this.fit(bmin.lat, bmin.lng, bmax.lat, bmax.lng);
 		for (k in this.opts.listeners)
 			this.listen(k, this.opts.listeners[k]);
 		this.opts.onload && this.opts.onload();
@@ -105,10 +135,12 @@ CT.map.Map = CT.Class({
 			zoom: 12,
 			disableDefaultUI: true,
 			zoomControl: true,
+			autoFrame: false,
 			markers: {},
 			listeners: {}
 		});
-		if (opts.center)
+
+		if (opts.center || opts.autoFrame)
 			this._build();
 		else
 			navigator.geolocation.getCurrentPosition(this._geoSucceed, this._geoFail);
