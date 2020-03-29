@@ -71,8 +71,8 @@ CT.map.Map = CT.Class({
 	},
 	autoBounds: function() {
 		var mz = Object.values(this.opts.markers),
-			las = mz.map(m => m.position.lat),
-			los = mz.map(m => m.position.lng),
+			las = mz.map(function(m) { return m.position.lat; }),
+			los = mz.map(function(m) { return m.position.lng; }),
 			minla = Math.min.apply(null, las),
 			minlo = Math.min.apply(null, los),
 			maxla = Math.max.apply(null, las),
