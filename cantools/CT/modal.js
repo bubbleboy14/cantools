@@ -43,7 +43,7 @@ a string, a password, or one or more selections from a list.
 defaults:
 	{
 		className: "basicpopup mosthigh",
-		style: "string", // string|multiple-string|password|single-choice|multiple-choice|file|number|time|date|form|icon
+		style: "string", // string|multiple-string|password|single-choice|multiple-choice|file|number|time|date|form|icon|phone|email
 		prompt: "",
 		clear: false, // string/password only
 		data: [] // only applies to choice styles
@@ -353,6 +353,12 @@ CT.modal.Prompt = CT.Class({
 			return CT.dom.smartField(this.submit,
 				null, null, null, "password");
 		},
+		phone: function() {
+			return CT.parse.numOnly(CT.dom.smartField(this.submit), false, true);
+		},
+		email: function() {
+			return CT.dom.smartField(this.submit);
+		},
 		"single-choice": function(data) {
 			var cz = CT.dom.choices(this._nodify(data));
 			if ("defaultIndex" in this.opts)
@@ -412,6 +418,10 @@ CT.modal.Prompt = CT.Class({
 				return that.opts.data[val];
 			}));
 		} else {
+			if (this.opts.style == "phone" && this.input.value.length != 10)
+				return alert("please use a 10-digit phone number");
+			else if (this.opts.style == "email" && !CT.parse.validEmail(this.input.value))
+				return alert("please enter a valid email address");
 			this.opts.cb(this.input && (this.input.ctfile
 				|| ((typeof this.input.value == "function") && this.input.value())
 				|| this.opts.data[this.input.value] || this.input.value));
