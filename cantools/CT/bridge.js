@@ -43,7 +43,7 @@ window.PMB = {
 		puller: function(event) {
 			var d = event.data,
 				bridge = PMB._.sourceBridge(event);
-			d.action && bridge.opts.receivers[d.action](d.data);
+			bridge && (d.action in bridge.opts.receivers) && bridge.opts.receivers[d.action](d.data);
 		},
 		iframe: function(opts) {
 			var ifr = document.createElement("iframe"),
