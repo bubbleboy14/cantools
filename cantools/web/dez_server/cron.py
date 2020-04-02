@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from rel import timeout
 from cantools import config
 from cantools.util import read
@@ -16,6 +17,7 @@ class Rule(object):
         self.controller = controller
         self.url = url
         self.rule = rule
+        self.exact = len(rule) == 5 # 17:00
         self.words = rule.split(" ")
         self.timer = timeout(None, self.trigger)
         self.parse()
@@ -29,10 +31,17 @@ class Rule(object):
         if self.rule != "on start":
             self.logger.info("start (%s seconds)"%(self.seconds,))
             self.timer.add(self.seconds)
+            if self.exact:
+                self.timer.delay = 60 * 60 * 24
 
     def parse(self):
         self.logger.info("parse")
-        if self.rule == "on start":
+        if self.exact:
+            hours, mins = self.rule.split(":")
+            n = datetime.now()
+            t = datetime(n.year, n.month, n.day, int(hours), int(mins))
+            self.seconds = (t - n).seconds
+        elif self.rule == "on start":
             self.logger.info("triggering start script")
             self.trigger()
         elif len(self.words) == 3 and self.words[0] == "every": # every [NUMBER] [UNIT]
