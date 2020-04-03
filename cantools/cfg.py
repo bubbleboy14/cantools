@@ -19,7 +19,7 @@ cfg = {
 	},
 	"memcache": {
 		"request": False,
-		"db": True
+		"db": False
 	},
 	"admin": {
 		"host": "localhost",
