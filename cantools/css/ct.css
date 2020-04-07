@@ -499,10 +499,10 @@
     overflow-y: auto;
 }
 .basicpopup {
-    z-index: 1000;
+    z-index: 10001;
     position: fixed;
     padding: 10px;
-    max-height: 60%;
+    max-height: 80%;
     max-width: 60%;
     background: white;
     border: 1px solid black;
