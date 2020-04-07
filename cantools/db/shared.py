@@ -2,6 +2,7 @@ import operator, base64, json, hashlib
 from datetime import datetime
 from six import string_types
 
+modbulkers = {}
 modelsubs = {}
 operators = {
     "==": operator.__eq__,
@@ -11,6 +12,12 @@ operators = {
     ">": operator.__gt__,
     "<": operator.__lt__
 }
+
+def get_bulker(modelName):
+    return modbulkers.get(modelName.lower(), None)
+
+def reg_bulker(modelName, func):
+    modbulkers[modelName.lower()] = func
 
 def get_model(modelName):
     return modelsubs.get(modelName.lower(), None)
