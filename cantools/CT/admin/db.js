@@ -1,6 +1,7 @@
 CT.admin.db = {
-	"init": function(failpath, exclusions) {
+	"init": function(failpath, exclusions, custobulos) {
 		CT.admin.db.starred = CT.dom.id("dbstarred");
+		CT.admin.db._custobulos = custobulos || [];
 		var stog = CT.dom.id("dbstarredtoggle");
 		stog.onclick = function() {
 			if (stog.innerHTML == "-") {
@@ -34,9 +35,27 @@ CT.admin.db = {
 			});
 		}, true, failpath);
 	},
+	"_bulk_up": function(modelName) {
+		return function() {
+			(new CT.modal.Prompt({
+				noClose: true,
+				style: "file",
+				transition: "slide",
+				cb: function(ctfile) {
+					ctfile.upload("/_db", function() {
+						if (confirm("Nice work! Reload for new stuff?"))
+							location.reload();
+					}, {
+						action: "bulk",
+						modelName: modelName,
+						pw: CT.admin.core._pw
+					});
+				}
+			})).show();
+		};
+	},
 	"_post_pager": function(key, modelName, startYear) {
-		var pnode = CT.dom.id("dbpanel" + key);
-		pnode.insertBefore(CT.dom.node([
+		var pnode = CT.dom.id("dbpanel" + key), butts = [
 			CT.dom.button("new query", function() {
 				CT.db.query({
 					modelName: modelName,
@@ -48,24 +67,12 @@ CT.admin.db = {
 				CT.admin.db.starLink(CT.db.edit.getDefaults(modelName,
 					{ "label": "new " + modelName }), modelName).onclick();
 			}),
-			CT.dom.button("bulk upload", function() {
-				(new CT.modal.Prompt({
-					noClose: true,
-					style: "file",
-					transition: "slide",
-					cb: function(ctfile) {
-						ctfile.upload("/_db", function() {
-							if (confirm("Nice work! Reload for new stuff?"))
-								location.reload();
-						}, {
-							action: "bulk",
-							modelName: modelName,
-							pw: CT.admin.core._pw
-						});
-					}
-				})).show();
-			})
-		], "div", "right"), pnode.firstChild);
+			CT.dom.button("bulk upload", CT.admin.db._bulk_up(modelName))
+		];
+		CT.admin.db._custobulos.forEach(function(c) {
+			butts.push(CT.dom.button("bulk " + c, CT.admin.db._bulk_up(c)));
+		});
+		pnode.insertBefore(CT.dom.node(butts, "div", "right"), pnode.firstChild);
 	},
 	"_build": function(modelName) {
 		return function(obj) {
