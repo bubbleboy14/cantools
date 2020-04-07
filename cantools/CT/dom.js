@@ -150,6 +150,9 @@ CT.dom = {
 	"div": function(content, classname, id, attrs, style) {
 		return CT.dom.node(content, "div", classname, id, attrs, style);
 	},
+	"flex": function(content, classname, id, attrs, style) {
+		return CT.dom.div(content, "flex " + classname, id, attrs, style);
+	},
 	"span": function(content, classname, id, attrs, style) {
 		return CT.dom.node(content, "span", classname, id, attrs, style);
 	},
