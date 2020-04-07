@@ -1,5 +1,5 @@
 from cantools.web import respond, succeed, fail, send_file, cgi_get, cgi_dump, read_file, getmem, setmem, clearmem
-from cantools.db import get, get_model, get_schema, get_page, get_multi, put_multi, edit, dprep, admin, BlobWrapper
+from cantools.db import get, get_model, get_schema, get_page, get_bulker, get_multi, put_multi, edit, dprep, admin, BlobWrapper
 from cantools.util import getxls
 from cantools import config
 import model # load up all models (for schema)
@@ -21,23 +21,28 @@ def response():
 	if action == "schema":
 		succeed(get_schema())
 	elif action == "bulk":
+		rawd = read_file(cgi_get("data"))
 		mname = cgi_get("modelName")
-		data = getxls(read_file(cgi_get("data"))) # add: csv, etc
-		schema = get_schema(mname)
 		mod = get_model(mname)
-		smap = {}
-		headers = data.pop(0)
-		puts = []
-		for index in range(len(headers)):
-			header = headers[index]
-			if header in schema:
-				smap[header] = index
-		for properties in data:
-			kwargs = {}
-			for p in smap:
-				kwargs[p] = properties[smap[p]]
-			puts.append(mod(**kwargs))
-		put_multi(puts)
+		bulker = get_bulker(mname)
+		if bulker:
+			bulker(rawd)
+		else:
+			data = getxls(rawd) # add: csv, etc
+			schema = get_schema(mname)
+			smap = {}
+			headers = data.pop(0)
+			puts = []
+			for index in range(len(headers)):
+				header = headers[index]
+				if header in schema:
+					smap[header] = index
+			for properties in data:
+				kwargs = {}
+				for p in smap:
+					kwargs[p] = properties[smap[p]]
+				puts.append(mod(**kwargs))
+			put_multi(puts)
 	elif action == "get":
 		sig = cgi_dump()
 		res = config.memcache.db and getmem(sig, False) or None
