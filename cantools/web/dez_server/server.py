@@ -84,11 +84,16 @@ def fetch(host, path="/", port=80, asjson=False, cb=None, timeout=1, async=False
 		return _ctjson(result)
 	return asjson and json.loads(result) or result
 
-def post(host, path="/", port=80, data=None, protocol="http", asjson=False, ctjson=False):
+def post(host, path="/", port=80, data=None, protocol="http", asjson=False, ctjson=False, text=None):
 	if ctjson:
 		data = rec_conv(data)
-	result = requests.post("://" in host and host or "%s://%s:%s%s"%(protocol, host, port, path),
-		json=data).content
+	url = "://" in host and host or "%s://%s:%s%s"%(protocol, host, port, path)
+	kwargs = {}
+	if data:
+		kwargs["json"] = data
+	elif text:
+		kwargs["data"] = text
+	result = requests.post(url, **kwargs).content
 	if ctjson:
 		return _ctjson(result)
 	return asjson and json.loads(result) or result
