@@ -149,7 +149,10 @@ class ModelBase(with_metaclass(CTMeta, sa_dbase)):
         d["index"] = self.index
         d["modelName"] = self.polytype
         d["_label"] = self.label
-        d["label"] = d[self.label] or "%s %s"%(self.polytype, self.index)
+        if hasattr(self, "labeler"):
+            d["label"] = self.labeler()
+        else:
+            d["label"] = d[self.label] or "%s %s"%(self.polytype, self.index)
         return d
 
     def data(self):
