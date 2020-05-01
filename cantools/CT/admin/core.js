@@ -20,15 +20,20 @@ CT.admin.core = {
 			c.q(c._mode, c._initcb, "failed to initialize " + c._mode);
 	},
 	init: function(mode, cb, skipinit, failpath) {
-		CT.admin.core._mode = mode;
-		CT.admin.core._initcb = cb;
-		CT.admin.core._skipinit = skipinit;
-		CT.admin.core._failpath = failpath;
+		var c = CT.admin.core;
+		if (c._initialized) return cb();
+		c._mode = mode;
+		c._initcb = function() {
+			c._initialized = true;
+			cb();
+		};
+		c._skipinit = skipinit;
+		c._failpath = failpath;
 		CT.modal.Prompt({
 			style: "password",
 			prompt: "password?",
 			transition: "fade",
-			cb: CT.admin.core._init
+			cb: c._init
 		}).show();
 	}
 };
