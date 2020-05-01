@@ -35,6 +35,21 @@ CT.admin.db = {
 			});
 		}, true, failpath);
 	},
+	"multi": function(prop, opts, failpath, exclusions, custobulos) {
+		CT.admin.core.init("db", function() {
+			CT.modal.modal(CT.dom.div([
+				CT.dom.div(prop, "big bottombordered"),
+				CT.panel.triggerList(opts, function(pv) {
+					CT.admin.db.init(failpath, exclusions, custobulos);
+				})
+			], "padded"), null, {
+				center: false,
+				slide: {
+					origin: "left"
+				}
+			});
+		}, true, failpath);
+	},
 	"_bulk_up": function(modelName) {
 		return function() {
 			(new CT.modal.Prompt({
@@ -72,7 +87,11 @@ CT.admin.db = {
 		CT.admin.db._custobulos.forEach(function(c) {
 			butts.push(CT.dom.button("bulk " + c, CT.admin.db._bulk_up(c)));
 		});
-		pnode.insertBefore(CT.dom.node(butts, "div", "right"), pnode.firstChild);
+		if (!pnode._butts) {
+			pnode._butts = CT.dom.div(butts, "right");
+			pnode.insertBefore(pnode._butts, pnode.firstChild);
+		} else
+			CT.dom.setContent(pnode._butts, butts);
 	},
 	"_build": function(modelName) {
 		return function(obj) {
