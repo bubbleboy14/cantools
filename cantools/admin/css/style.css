@@ -65,6 +65,11 @@ a {
 	right: 0px;
 }
 
+.dbpanel .data .lister:not(.dblist) input,
+.dbpanel .data .lister:not(.dblist) textarea {
+	width: calc(100% - 190px);
+}
+
 .rcol {
 	box-sizing: border-box;
 	border: 1px solid black;

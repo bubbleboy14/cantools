@@ -152,8 +152,8 @@ CT.admin.db.Editor = CT.Class({
 	},
 	"_row": function(k) {
 		var val = this.data[k], valcell, ptype,
-			rownode = CT.dom.node("", "div", "lister");
-		rownode.appendChild(CT.dom.node(k + ":", "div", "keycell"));
+			rownode = CT.dom.div("", "lister");
+		rownode.appendChild(CT.dom.div(k + ":", "keycell"));
 		ptype = rownode.ptype = this.schema[k];
 		if (CT.db.edit.isSupported(ptype, k)) {
 			valcell = CT.db.edit.input(k, ptype, val, this.modelName, {
@@ -167,6 +167,7 @@ CT.admin.db.Editor = CT.Class({
 				if (valcell.addButton) { // list, keylist
 					rownode.appendChild(valcell.addButton);
 					rownode.appendChild(valcell.empty);
+					rownode.classList.add("dblist");
 				}
 			}
 		} else
