@@ -1,5 +1,5 @@
 CT.admin.db = {
-	"init": function(failpath, exclusions, custobulos) {
+	"init": function(failpath, exclusions, custobulos, filts) {
 		CT.admin.db.starred = CT.dom.id("dbstarred");
 		CT.admin.db._custobulos = custobulos || [];
 		var stog = CT.dom.id("dbstarredtoggle");
@@ -25,8 +25,9 @@ CT.admin.db = {
 					CT.panel.simple({
 						pnames: skeys,
 						keystring: "db",
+						clearcontent: true,
 						view1: function(modelName) {
-							CT.db.pager(modelName);
+							CT.db.pager(modelName, null, filts);
 						}
 					});
 				},
@@ -40,7 +41,9 @@ CT.admin.db = {
 			CT.modal.modal(CT.dom.div([
 				CT.dom.div(prop, "big bottombordered"),
 				CT.panel.triggerList(opts, function(pv) {
-					CT.admin.db.init(failpath, exclusions, custobulos);
+					var fobj = {};
+					fobj[prop] = pv;
+					CT.admin.db.init(failpath, exclusions, custobulos, fobj);
 				})
 			], "padded"), null, {
 				center: false,
