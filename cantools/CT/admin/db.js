@@ -23,15 +23,16 @@ CT.admin.db = {
 			var pnode = CT.dom.id("dbpanel" + key), _ = CT.admin.db._, butts = [
 				CT.dom.button("new query", function() {
 					CT.db.query({
-						filter: _.filts,
+						filter: _.filt,
 						modelName: modelName,
 						startYear: startYear || 1970, // gotta start somewhere...
 						showHelp: true
 					}, "fade");
 				}),
 				CT.dom.button("new " + modelName, function() {
-					CT.admin.db.starLink(CT.db.edit.getDefaults(modelName,
-						{ "label": "new " + modelName }), modelName).onclick();
+					CT.admin.db.starLink(CT.db.edit.getDefaults(modelName, {
+						"label": "new " + modelName
+					}, _.filt_orig), modelName).onclick();
 				}),
 				CT.dom.button("bulk upload", _.bulk_up(modelName))
 			];
@@ -55,11 +56,12 @@ CT.admin.db = {
 				"")).appendChild(CT.admin.db._.build(modelName)(d));
 		}
 	},
-	"init": function(failpath, exclusions, custobulos, filts) {
+	"init": function(failpath, exclusions, custobulos, filt) {
 		var _ = CT.admin.db._, stog = CT.dom.id("dbstarredtoggle");
 		CT.admin.db.starred = CT.dom.id("dbstarred");
 		_.custobulos = custobulos || [];
-		_.filts = filts;
+		_.filt = filt;
+		_.filt_orig = CT.merge(filt); // filt gets modded by query
 		stog.onclick = function() {
 			if (stog.innerHTML == "-") {
 				stog.innerHTML = "+";
@@ -84,7 +86,7 @@ CT.admin.db = {
 						keystring: "db",
 						clearcontent: true,
 						view1: function(modelName) {
-							CT.db.pager(modelName, null, filts);
+							CT.db.pager(modelName, null, filt);
 						}
 					});
 				},
