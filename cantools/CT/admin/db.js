@@ -1,8 +1,65 @@
 CT.admin.db = {
+	_: {
+		bulk_up: function(modelName) {
+			return function() {
+				(new CT.modal.Prompt({
+					noClose: true,
+					style: "file",
+					transition: "slide",
+					cb: function(ctfile) {
+						ctfile.upload("/_db", function() {
+							if (confirm("Nice work! Reload for new stuff?"))
+								location.reload();
+						}, {
+							action: "bulk",
+							modelName: modelName,
+							pw: CT.admin.core._pw
+						});
+					}
+				})).show();
+			};
+		},
+		post_pager: function(key, modelName, startYear) {
+			var pnode = CT.dom.id("dbpanel" + key), _ = CT.admin.db._, butts = [
+				CT.dom.button("new query", function() {
+					CT.db.query({
+						filter: _.filts,
+						modelName: modelName,
+						startYear: startYear || 1970, // gotta start somewhere...
+						showHelp: true
+					}, "fade");
+				}),
+				CT.dom.button("new " + modelName, function() {
+					CT.admin.db.starLink(CT.db.edit.getDefaults(modelName,
+						{ "label": "new " + modelName }), modelName).onclick();
+				}),
+				CT.dom.button("bulk upload", _.bulk_up(modelName))
+			];
+			_.custobulos.forEach(function(c) {
+				butts.push(CT.dom.button("bulk " + c, _.bulk_up(c)));
+			});
+			if (!pnode._butts) {
+				pnode._butts = CT.dom.div(butts, "right");
+				pnode.insertBefore(pnode._butts, pnode.firstChild);
+			} else
+				CT.dom.setContent(pnode._butts, butts);
+		},
+		build: function(modelName) {
+			return function(obj) {
+				return (new CT.admin.db.Editor(modelName, obj)).node;
+			};
+		},
+		add: function(modelName, d) {
+			CT.panel.add(d.label, false, modelName);
+			CT.dom.id(modelName + "content" + d.label.replace(/ /g,
+				"")).appendChild(CT.admin.db._.build(modelName)(d));
+		}
+	},
 	"init": function(failpath, exclusions, custobulos, filts) {
+		var _ = CT.admin.db._, stog = CT.dom.id("dbstarredtoggle");
 		CT.admin.db.starred = CT.dom.id("dbstarred");
-		CT.admin.db._custobulos = custobulos || [];
-		var stog = CT.dom.id("dbstarredtoggle");
+		_.custobulos = custobulos || [];
+		_.filts = filts;
 		stog.onclick = function() {
 			if (stog.innerHTML == "-") {
 				stog.innerHTML = "+";
@@ -31,8 +88,8 @@ CT.admin.db = {
 						}
 					});
 				},
-				builder: CT.admin.db._build,
-				post_pager: CT.admin.db._post_pager
+				builder: _.build,
+				post_pager: _.post_pager
 			});
 		}, true, failpath);
 	},
@@ -52,59 +109,6 @@ CT.admin.db = {
 				}
 			});
 		}, true, failpath);
-	},
-	"_bulk_up": function(modelName) {
-		return function() {
-			(new CT.modal.Prompt({
-				noClose: true,
-				style: "file",
-				transition: "slide",
-				cb: function(ctfile) {
-					ctfile.upload("/_db", function() {
-						if (confirm("Nice work! Reload for new stuff?"))
-							location.reload();
-					}, {
-						action: "bulk",
-						modelName: modelName,
-						pw: CT.admin.core._pw
-					});
-				}
-			})).show();
-		};
-	},
-	"_post_pager": function(key, modelName, startYear) {
-		var pnode = CT.dom.id("dbpanel" + key), butts = [
-			CT.dom.button("new query", function() {
-				CT.db.query({
-					modelName: modelName,
-					startYear: startYear || 1970, // gotta start somewhere...
-					showHelp: true
-				}, "fade");
-			}),
-			CT.dom.button("new " + modelName, function() {
-				CT.admin.db.starLink(CT.db.edit.getDefaults(modelName,
-					{ "label": "new " + modelName }), modelName).onclick();
-			}),
-			CT.dom.button("bulk upload", CT.admin.db._bulk_up(modelName))
-		];
-		CT.admin.db._custobulos.forEach(function(c) {
-			butts.push(CT.dom.button("bulk " + c, CT.admin.db._bulk_up(c)));
-		});
-		if (!pnode._butts) {
-			pnode._butts = CT.dom.div(butts, "right");
-			pnode.insertBefore(pnode._butts, pnode.firstChild);
-		} else
-			CT.dom.setContent(pnode._butts, butts);
-	},
-	"_build": function(modelName) {
-		return function(obj) {
-			return (new CT.admin.db.Editor(modelName, obj)).node;
-		};
-	},
-	"_add": function(modelName, d) {
-		CT.panel.add(d.label, false, modelName);
-		CT.dom.id(modelName + "content" + d.label.replace(/ /g,
-			"")).appendChild(CT.admin.db._build(modelName)(d));
 	},
 	"star": function(k) {
 		var d = CT.data.get(k), key = "starreditem" + d.label.replace(/ /g, ""),
@@ -129,7 +133,7 @@ CT.admin.db = {
 				dobj.db = modelName || CT.db.key2model(d.key);
 				dobj[dobj.db] = label;
 				if (!CT.dom.id(dobj.db + "panel" + nslabel))
-					CT.admin.db._add(dobj.db, d);
+					CT.admin.db._.add(dobj.db, d);
 				CT.panel.drill(dobj);
 			}), "div", "pointer", k);
 			CT.admin.db.starred.appendChild(slink);
