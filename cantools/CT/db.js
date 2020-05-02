@@ -343,11 +343,14 @@ CT.db.edit = {
 			return false;
 		return ptype in CT.db.edit._d;
 	},
-	getDefaults: function(modelName, extras) {
+	getDefaults: function(modelName, extras, fixed) {
 		var k, d = extras || {},
 			schema = CT.db._schema[modelName];
 		for (k in schema)
 			d[k] = CT.db.edit._d[schema[k]];
+		if (fixed)
+			for (k in fixed)
+				d[k] = fixed[k];
 		return d;
 	},
 	_val: function(f, ptype) {
