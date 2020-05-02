@@ -586,7 +586,8 @@ CT.db.Query = CT.Class({
 		return CT.dom.node([selectcell, dircell]);
 	},
 	_submit: function() {
-		var order = null, filters = {}, osel = this.order.firstChild;
+		var order = null, filters = CT.merge(this.opts.filter),
+			osel = this.order.firstChild;
 		if (osel.value != "None")
 			order = osel.nextSibling.value == "descending"
 				? "-" + osel.value : osel.value;
@@ -614,6 +615,11 @@ CT.db.Query = CT.Class({
 		CT.panel.swap(key, false, "db");
 	},
 	_build: function() {
+		var oz = this.opts, fk, fv;
+		if (oz.filter) {
+			fk = Object.keys(oz.filter)[0];
+			fv = Object.values(oz.filter)[0].value;
+		}
 		this.filters = CT.dom.node();
 		this.order = this._order();
 		this.node = CT.dom.div([
@@ -625,7 +631,8 @@ CT.db.Query = CT.Class({
 				CT.dom.button("add", this._filter)
 			]),
 			CT.dom.div("Select 'like' comparator for values such as 'MO%' (meaning 'starts with MO')",
-				this.opts.showHelp && "italic" || "hidden"),
+				oz.showHelp && "italic" || "hidden"),
+			oz.filter && ("fixed filter: " + fk +  " = " + fv),
 			this.filters,
 			CT.dom.button("submit", this._submit)
 		], "centered");
