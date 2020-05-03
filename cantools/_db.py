@@ -1,3 +1,4 @@
+import json
 from cantools.web import respond, succeed, fail, send_file, cgi_get, cgi_dump, read_file, getmem, setmem, clearmem
 from cantools.db import get, get_model, get_schema, get_page, get_bulker, get_multi, put_multi, edit, dprep, admin, BlobWrapper
 from cantools.util import getxls
@@ -23,10 +24,11 @@ def response():
 	elif action == "bulk":
 		rawd = read_file(cgi_get("data"))
 		mname = cgi_get("modelName")
+		fixed = json.loads(cgi_get("fixed", default="{}"))
 		mod = get_model(mname)
 		bulker = get_bulker(mname)
 		if bulker:
-			bulker(rawd)
+			bulker(rawd, fixed)
 		else:
 			data = getxls(rawd) # add: csv, etc
 			schema = get_schema(mname)
@@ -41,6 +43,8 @@ def response():
 				kwargs = {}
 				for p in smap:
 					kwargs[p] = properties[smap[p]]
+				for p in fixed:
+					kwargs[p] = fixed[p]
 				puts.append(mod(**kwargs))
 			put_multi(puts)
 	elif action == "get":
