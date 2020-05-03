@@ -243,7 +243,7 @@ CT.panel = {
 	        newnode.firstChild.innerHTML = newhtml;
 	    CT.mobile && CT.mobile.mobileSnap();
 	},
-	"add": function(key, trysidepanel, keystring, itemnode, panelnode, nospace, icon, cb, condition, view1) {
+	"add": function(key, trysidepanel, keystring, itemnode, panelnode, nospace, icon, cb, condition, view1, clearcontent) {
 	    nospace = nospace || key.replace(/ /g, "");
 	    keystring = keystring || "sb";
 	    if (!CT.dom.id(keystring + "panel" + nospace)) {
@@ -251,7 +251,8 @@ CT.panel = {
 	        n.appendChild(CT.dom.node(key, "div", "bigger blue bold bottompadded"));
 	        n.appendChild(CT.dom.node("", "div", "", keystring+"content"+nospace));
 	        (panelnode || CT.dom.id(keystring+"panels")).appendChild(n);
-	    }
+	    } else if (clearcontent)
+	    	CT.dom.clear(keystring + "content" + nospace);
 	    var i = CT.dom.id(keystring+"item"+nospace);
 	    if (i)
 	        i.style.display = "block";
@@ -297,18 +298,18 @@ CT.panel = {
 	    var l = CT.dom.id(keystring+"item"+nospace);
 	    if (l) l.style.display = "none";
 	},
-	"load": function(pnames, trysidepanel, keystring, itemnode, panelnode, nospaces, icons, noclear, stillswap, cbs, condition, view1) {
+	"load": function(pnames, trysidepanel, keystring, itemnode, panelnode, nospaces, icons, noclear, stillswap, cbs, condition, view1, clearcontent) {
 	    keystring = keystring || "sb";
 	    if (!noclear)
 	        (itemnode || CT.dom.id(keystring+"items")).innerHTML = "";
 	    for (var i = 0; i < pnames.length; i++)
 	        CT.panel.add(pnames[i], trysidepanel, keystring, itemnode,
-	            panelnode, nospaces && nospaces[i] || null,
-	            icons && icons[i] || null, cbs && cbs[i] || null, condition, view1);
+	            panelnode, nospaces && nospaces[i] || null, icons && icons[i] || null,
+	            cbs && cbs[i] || null, condition, view1, clearcontent);
 	    if (pnames.length && (stillswap || (!itemnode && !noclear)))
 	        CT.panel.swap(pnames[0], trysidepanel, keystring);
 	},
-	"simple": function(pnames, keystring, itemnode, panelnode, cbs, condition, trysidepanel, nospaces, icons, noclear, stillswap, view1) {
+	"simple": function(pnames, keystring, itemnode, panelnode, cbs, condition, trysidepanel, nospaces, icons, noclear, stillswap, view1, clearcontent) {
 		if (arguments.length == 1 && typeof arguments[0] != "string") {
 			var obj = arguments[0];
 			pnames = obj.pnames;
@@ -323,9 +324,10 @@ CT.panel = {
 			noclear = obj.noclear;
 			stillswap = obj.stillswap;
 			view1 = obj.view1;
+			clearcontent = obj.clearcontent;
 		}
 		CT.panel.load(pnames, trysidepanel, keystring, itemnode, panelnode,
-			nospaces, icons, noclear, stillswap != false, cbs, condition, view1);
+			nospaces, icons, noclear, stillswap != false, cbs, condition, view1, clearcontent);
 	},
 	"pager": function(getContent, request, limit, colClass, dataClass, ks) {
 		var keystring = ks || ("p" + CT.Pager._id),
