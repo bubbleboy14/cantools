@@ -1,20 +1,24 @@
 CT.admin.db = {
 	_: {
 		bulk_up: function(modelName) {
+			var _ = CT.admin.db._;
 			return function() {
 				(new CT.modal.Prompt({
 					noClose: true,
 					style: "file",
 					transition: "slide",
 					cb: function(ctfile) {
-						ctfile.upload("/_db", function() {
-							if (confirm("Nice work! Reload for new stuff?"))
-								location.reload();
-						}, {
+						var opts = {
 							action: "bulk",
 							modelName: modelName,
 							pw: CT.admin.core._pw
-						});
+						};
+						if (_.filt_orig)
+							opts.fixed = JSON.stringify(_.filt_orig);
+						ctfile.upload("/_db", function() {
+							if (confirm("Nice work! Reload for new stuff?"))
+								location.reload();
+						}, opts);
 					}
 				})).show();
 			};
@@ -61,7 +65,7 @@ CT.admin.db = {
 		CT.admin.db.starred = CT.dom.id("dbstarred");
 		_.custobulos = custobulos || [];
 		_.filt = filt;
-		_.filt_orig = CT.merge(filt); // filt gets modded by query
+		_.filt_orig = filt && CT.merge(filt); // filt gets modded by query
 		stog.onclick = function() {
 			if (stog.innerHTML == "-") {
 				stog.innerHTML = "+";
