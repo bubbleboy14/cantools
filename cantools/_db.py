@@ -1,15 +1,16 @@
 import json
-from cantools.web import respond, succeed, fail, send_file, cgi_get, cgi_dump, read_file, getmem, setmem, clearmem
+from cantools.web import respond, succeed, fail, send_file, send_text, cgi_get, cgi_dump, read_file, getmem, setmem, clearmem
 from cantools.db import get, get_model, get_schema, get_page, get_bulker, get_multi, put_multi, edit, dprep, admin, BlobWrapper
+from cantools.util.data import props, tsv
 from cantools.util import getxls
 from cantools import config
 import model # load up all models (for schema)
 
 def response():
-	action = cgi_get("action", choices=["schema", "get", "blob", "edit", "delete", "put", "index", "bulk", "credcheck"])
+	action = cgi_get("action", choices=["schema", "get", "blob", "edit", "delete", "put", "index", "bulk", "tsv", "credcheck"])
 
 	# edit/delete/put/index/bulk always require credentials; getters do configurably
-	if not config.db.public or action in ["edit", "delete", "put", "index", "bulk", "credcheck"]:
+	if not config.db.public or action in ["edit", "delete", "put", "index", "bulk", "tsv", "credcheck"]:
 		pw = cgi_get("pw")
 		if pw != config.admin.pw:
 			if not pw or pw != config.apikey:
@@ -47,6 +48,16 @@ def response():
 					kwargs[p] = fixed[p]
 				puts.append(mod(**kwargs))
 			put_multi(puts)
+	elif action == "tsv":
+		mname = cgi_get("modelName")
+		mod = get_model(mname)
+		fkey = cgi_get("fixed_key", required=False)
+		fval = cgi_get("fixed_value", required=False)
+		q = mod.query()
+		if fkey:
+			q.filter(getattr(mod, fkey) == fval)
+			mname = "%s_%s"%(mname, fval)
+		send_text(tsv(q.all(), props(mod)), "tsv", mname)
 	elif action == "get":
 		sig = cgi_dump()
 		res = config.memcache.db and getmem(sig, False) or None
