@@ -110,6 +110,7 @@ CT.admin.db = {
 				})
 			], "padded"), null, {
 				center: false,
+				noClose: true,
 				slide: {
 					origin: "left"
 				}
