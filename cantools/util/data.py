@@ -76,7 +76,7 @@ def props(mod):
 		"key", "keylist"], s.keys())
 
 def drower(e, pz):
-	return map(lambda p : str(getattr(e, p)), pz)
+	return map(lambda p : '"%s"'%(str(getattr(e, p)),), pz)
 
 def tsv(ents, pz, rower=None):
 	rower = rower or drower
