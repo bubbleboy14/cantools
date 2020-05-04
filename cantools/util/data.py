@@ -66,3 +66,19 @@ def batch(dlist, f, *args, **kwargs):
 def token(n=10):
 	import random, string
 	return "".join(random.sample(string.ascii_uppercase + string.digits, n))
+
+# below (props, drower, tsv) for tsv dumping
+def props(mod):
+	from model import db
+	tss = db.get_schema(db.TimeStampedBase)
+	s = db.get_schema(mod)
+	return filter(lambda p : p not in tss and not p.startswith("_") and s[p] not in ["blob",
+		"key", "keylist"], s.keys())
+
+def drower(e, pz):
+	return map(lambda p : str(getattr(e, p)), pz)
+
+def tsv(ents, pz, rower=None):
+	rower = rower or drower
+	rows = [pz] + map(lambda e : rower(e, pz), ents)
+	return "\n".join(map(lambda r : "\t".join(r), rows))
