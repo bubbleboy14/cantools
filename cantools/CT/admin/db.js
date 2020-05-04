@@ -1,5 +1,19 @@
 CT.admin.db = {
 	_: {
+		bulk_down: function(modelName) {
+			var _ = CT.admin.db._,
+				p = "/_db?action=tsv&modelName=" + modelName + "&pw=" + CT.admin.core._pw;
+			if (_.filt_orig) {
+				p += "&fixed_key=" + Object.keys(_.filt_orig)[0];
+				p += "&fixed_value=" + Object.values(_.filt_orig)[0];
+			}
+			return function() {
+				CT.modal.modal(CT.dom.div([
+					"download spreadsheet (.tsv)",
+					CT.dom.link("click here", null, p)
+				], "centered padded"));
+			};
+		},
 		bulk_up: function(modelName) {
 			var _ = CT.admin.db._;
 			return function() {
@@ -43,6 +57,7 @@ CT.admin.db = {
 			_.custobulos.forEach(function(c) {
 				butts.push(CT.dom.button("bulk " + c, _.bulk_up(c)));
 			});
+			butts.push(CT.dom.button("bulk download", _.bulk_down(modelName)));
 			if (!pnode._butts) {
 				pnode._butts = CT.dom.div(butts, "right");
 				pnode.insertBefore(pnode._butts, pnode.firstChild);
