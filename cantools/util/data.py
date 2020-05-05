@@ -72,11 +72,20 @@ def props(mod):
 	from model import db
 	tss = db.get_schema(db.TimeStampedBase)
 	s = db.get_schema(mod)
-	return filter(lambda p : p not in tss and not p.startswith("_") and s[p] not in ["blob",
-		"key", "keylist"], s.keys())
+	return filter(lambda p : p not in tss and not p.startswith("_") and s[p] != "blob", s.keys())
+
+def dcell(e, p):
+	v = getattr(e, p)
+	t = e._schema[p]
+	if t == "key":
+		v = v.get().labeler()
+	elif t == "keylist":
+		from model import db
+		v = [i.labeler() for i in db.get_multi(v)]
+	return '"%s"'%(str(v),)
 
 def drower(e, pz):
-	return map(lambda p : '"%s"'%(str(getattr(e, p)),), pz)
+	return map(lambda p : dcell(e, p), pz)
 
 def tsv(ents, pz, rower=None):
 	rower = rower or drower
