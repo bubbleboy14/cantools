@@ -144,15 +144,17 @@ class ModelBase(with_metaclass(CTMeta, sa_dbase)):
                 cols[key] = val
         return cols
 
+    def labeler(self):
+        if self.label == "key":
+            return self.id()
+        return getattr(self, self.label) or "%s %s"%(self.polytype, self.index)
+
     def _basic(self, d):
         d["key"] = self.id()
         d["index"] = self.index
         d["modelName"] = self.polytype
         d["_label"] = self.label
-        if hasattr(self, "labeler"):
-            d["label"] = self.labeler()
-        else:
-            d["label"] = d[self.label] or "%s %s"%(self.polytype, self.index)
+        d["label"] = self.labeler()
         return d
 
     def data(self):
