@@ -87,7 +87,17 @@ def dcell(e, p):
 def drower(e, pz):
 	return map(lambda p : dcell(e, p), pz)
 
-def tsv(ents, pz, rower=None):
+def rgen(ents, pz, rower=None):
 	rower = rower or drower
-	rows = [pz] + map(lambda e : rower(e, pz), ents)
-	return "\n".join(map(lambda r : "\t".join(r), rows))
+	return [pz] + map(lambda e : rower(e, pz), ents)
+
+def tsv(ents, pz, rower=None):
+	return "\n".join(map(lambda r : "\t".join(r),
+		rgen(ents, pz, rower)))
+
+def ez2csv(ents, pz, rower=None):
+	return "\n".join(map(lambda r : ",".join(r),
+		rgen(ents, pz, rower)))
+
+def spreadsheet(fmat, ents, pz, rower=None):
+	return (fmat == "tsv" and tsv or ez2csv)(ents, pz, rower)
