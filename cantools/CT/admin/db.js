@@ -2,14 +2,14 @@ CT.admin.db = {
 	_: {
 		bulk_down: function(modelName) {
 			var _ = CT.admin.db._,
-				p = "/_db?action=tsv&modelName=" + modelName + "&pw=" + CT.admin.core._pw;
+				p = "/_db?action=spreadsheet&modelName=" + modelName + "&pw=" + CT.admin.core._pw;
 			if (_.filt_orig) {
 				p += "&fixed_key=" + Object.keys(_.filt_orig)[0];
 				p += "&fixed_value=" + Object.values(_.filt_orig)[0];
 			}
 			return function() {
 				CT.modal.modal(CT.dom.div([
-					"download spreadsheet (.tsv)",
+					"download spreadsheet (.csv)",
 					CT.dom.link("click here", null, p)
 				], "centered padded"));
 			};
