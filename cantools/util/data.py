@@ -70,9 +70,9 @@ def token(n=10):
 # below (props, drower, tsv) for tsv dumping
 def props(mod):
 	from model import db
-	tss = db.get_schema(db.TimeStampedBase)
 	s = db.get_schema(mod)
-	return filter(lambda p : p not in tss and not p.startswith("_") and s[p] != "blob", s.keys())
+	return filter(lambda p : p not in ["index",
+		"key"] and not p.startswith("_") and s[p] != "blob", s.keys())
 
 def dcell(e, p):
 	v = getattr(e, p)
