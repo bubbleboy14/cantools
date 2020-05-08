@@ -57,6 +57,9 @@ CT.key = {
 			CT.key._downcbs = {};
 		}
 	},
+	downs: function(chars) {
+		return chars.filter(c => CT.key._downs.includes(c));
+	},
 	down: function(character) {
 		CT.key._init();
 		return CT.key._downs.indexOf(character) != -1;
