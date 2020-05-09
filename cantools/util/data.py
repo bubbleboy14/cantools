@@ -71,7 +71,7 @@ def token(n=10):
 def props(mod):
 	from model import db
 	s = db.get_schema(mod)
-	return filter(lambda p : p not in ["index",
+	return filter(lambda p : p not in mod._data_omit and p not in ["index",
 		"key"] and not p.startswith("_") and s[p] != "blob", s.keys())
 
 def dcell(e, p):
