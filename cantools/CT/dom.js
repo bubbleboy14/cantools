@@ -1232,10 +1232,14 @@ CT.dom = {
 			f(p.childNodes[i], i);
 	},
 	"map": function(p, f) {
-		var vals = [];
-		for (var i = 0; i < p.childNodes.length; i++)
+		var vals = [], i;
+		f = f || function(i) { return i; };
+		for (i = 0; i < p.childNodes.length; i++)
 			vals.push(f(p.childNodes[i]));
 		return vals;
+	},
+	"childNum": function(n) {
+		return CT.dom.map(n.parentNode).indexOf(n);
 	},
 	"mod": function(opts) {
 		var targets = opts.targets ? opts.targets
