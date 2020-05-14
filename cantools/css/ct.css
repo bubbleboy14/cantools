@@ -25,6 +25,10 @@
     margin: 0px !important;
     padding: 0px !important;
 }
+.galimg img {
+    max-width: 100px;
+    max-height: 100px;
+}
 .hminit { max-height: initial !important; }
 .hm0 { max-height: 0px !important; }
 .wm0 { max-width: 0px !important; }
