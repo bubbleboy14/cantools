@@ -1,10 +1,7 @@
 import subprocess, os
 from cantools import config
 from cantools.util import log, error, read, write, mkdir
-try:
-    from slimit import minify
-except ImportError:
-    pass # skipping slimit.minify() import for gae compatibility -- if you need it, install it!
+from jsmin import jsmin
 
 def nextQuote(text, lastIndex=0):
     z = i = text.find('"', lastIndex)
@@ -167,7 +164,7 @@ def build_frags(mode="web", admin_ct_path=None):
             log("path excluded -- skipping compression/obfuscation", 2)
         else:
             log("mangling", 2)
-            block = minify(block, mangle=True)
+            block = jsmin(block)
         write(block, path)
     while len(fcopy) is not len(fragz):
         fcopy = fragz.difference(fcopy)
@@ -203,7 +200,7 @@ def build(admin_ct_path, dirname, fnames):
                 jsb = jsblock.replace('"_encode": false,', '"_encode": true,').replace("CT.log._silent = false;", "CT.log._silent = true;")
                 if config.customscrambler:
                     jsb += '; CT.net.setScrambler("%s");'%(config.scrambler,)
-                write(remerge(compress(txt), "<script>%s</script>"%(minify(jsb, mangle=True),)), topath_prod)
+                write(remerge(compress(txt), "<script>%s</script>"%(jsmin(jsb),)), topath_prod)
                 continue
             else:
                 log('copying to prod/stat unmodified (%s)'%(fname,), important=True)
