@@ -1,1 +1,6 @@
-CT.storage={"init":function(a){if(!CT.storage.opts){CT.storage.opts=CT.merge(a,{"backend":localStorage,"json":true,"compress":true});if(CT.storage.opts.compress)CT.require("CT.lib.lz_string",true);}return CT.storage.opts;},"_jsp":function(a){try{return JSON.parse(a);}catch(b){return null;}},"get":function(a){var b=CT.storage.init(),c=b.backend.getItem(a);if(b.compress)c=LZString.decompress(c);return b.json?CT.storage._jsp(c):c;},"set":function(a,b){var c=CT.storage.init();if(c.json)b=JSON.stringify(b);if(c.compress)b=LZString.compress(b);c.backend.setItem(a,b);},"clear":function(){CT.storage.init().backend.clear();}};;
+CT.storage={"init":function(opts){if(!CT.storage.opts){CT.storage.opts=CT.merge(opts,{"backend":localStorage,"json":true,"compress":true});if(CT.storage.opts.compress)
+CT.require("CT.lib.lz_string",true);}
+return CT.storage.opts;},"_jsp":function(s){try{return JSON.parse(s);}catch(err){return null;}},"get":function(key){var opts=CT.storage.init(),val=opts.backend.getItem(key);if(opts.compress)
+val=LZString.decompress(val);return opts.json?CT.storage._jsp(val):val;},"set":function(key,val){var opts=CT.storage.init();if(opts.json)
+val=JSON.stringify(val);if(opts.compress)
+val=LZString.compress(val);opts.backend.setItem(key,val);},"clear":function(){CT.storage.init().backend.clear();}};;
