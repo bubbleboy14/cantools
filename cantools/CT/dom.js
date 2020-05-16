@@ -984,7 +984,7 @@ CT.dom = {
 					controls: true,
 					className: "w1"
 				})
-			], "padded margined round", null, {
+			], "pointer padded margined round", null, {
 				onclick: function() {
 					if (cur)
 						cur.classList.remove("bordered");
