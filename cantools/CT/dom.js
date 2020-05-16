@@ -959,7 +959,7 @@ CT.dom = {
 
 	"iconSelector": function(items, selectFirst) {
 		var cur, n = CT.dom.div(items.map(function(i) {
-			var img = CT.dom.img(i, "padded margined round", function() {
+			var img = CT.dom.img(i.img || i.url || i.item || i, "padded margined round", function() {
 				if (cur)
 					cur.firstChild.classList.remove("bordered");
 				cur = img;
