@@ -373,7 +373,7 @@ CT.dom = {
 			onended = obj.onended;
 			className = obj.className;
 			id = obj.id;
-			attrs = obj.atts;
+			attrs = obj.attrs;
 			oncanplay = obj.oncanplay;
 			onpause = obj.onpause;
 		}
@@ -970,6 +970,33 @@ CT.dom = {
 		}));
 		n.value = function() {
 			return cur && cur._icon;
+		};
+		selectFirst && n.firstChild.onclick();
+		return n;
+	},
+
+	"soundSelector": function(items, selectFirst) {
+		var cur, n = CT.dom.div(items.map(function(aud) {
+			var src = aud.src || aud.item, wrap = CT.dom.div([
+				aud.label || aud.name,
+				CT.dom.audio({
+					src: src,
+					controls: true,
+					className: "w1"
+				})
+			], "padded margined round", null, {
+				onclick: function() {
+					if (cur)
+						cur.classList.remove("bordered");
+					cur = wrap;
+					cur.classList.add("bordered");
+				}
+			});
+			wrap._data = aud;
+			return wrap;
+		}));
+		n.value = function() {
+			return cur && cur._data;
 		};
 		selectFirst && n.firstChild.onclick();
 		return n;
