@@ -5,6 +5,7 @@ from cantools.util import read
 from ..util import do_respond
 
 secsPerUnit = {
+    "days": 60 * 60 * 24,
     "hours": 60 * 60,
     "minutes": 60,
     "mins": 60,
