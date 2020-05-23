@@ -584,8 +584,8 @@ CT.dom = {
 		pnode.appendChild(rtable);
 	},
 	"options": function(data, cb, selected) {
-		var fid, n = CT.dom.div(data.map(function(d, i) {
-			fid = "rs" + i + d.name, fopts = {
+		var fid, dname, n = CT.dom.div(data.map(function(d, i) {
+			dname = d.name || d, fid = "rs" + i + dname, fopts = {
 				onclick: function() {
 					cb(d);
 				}
@@ -594,7 +594,7 @@ CT.dom = {
 				fopts.checked = true;
 			return [
 				CT.dom.field(fid, null, null, "radio", fopts),
-				CT.dom.label(d.name, fid)
+				CT.dom.label(dname, fid)
 			];
 		}));
 		return n;
