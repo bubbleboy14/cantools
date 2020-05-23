@@ -590,7 +590,7 @@ CT.dom = {
 					cb(d);
 				}
 			};
-			if ((selected == d) || (selected == d.key))
+			if (selected && (selected == d) || (selected == d.key))
 				fopts.checked = true;
 			return [
 				CT.dom.field(fid, null, null, "radio", fopts),
