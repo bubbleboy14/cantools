@@ -458,7 +458,7 @@ var CT = {
 			if (arguments[i]) {
 				for (k in arguments[i]) {
 					v = arguments[i][k];
-					if (typeof v == "object")
+					if (v && typeof v == "object")
 						o[k] = Array.isArray(v) ? v.slice() : CT.dmerge(v);
 					else
 						o[k] = v;
@@ -479,7 +479,7 @@ var CT = {
 		for (var p in obj) {
 			if (typeof obj[p] == "function")
 				obj[p] = obj[p].bind(ctx);
-			else if (typeof obj[p] == "object")
+			else if (obj[p] && typeof obj[p] == "object")
 				CT.bind(ctx, obj[p]);
 		}
 	},
