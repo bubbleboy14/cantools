@@ -23,9 +23,9 @@ CT.admin.core = {
 		var c = CT.admin.core;
 		if (c._initialized) return cb();
 		c._mode = mode;
-		c._initcb = function() {
+		c._initcb = function(data) {
 			c._initialized = true;
-			cb();
+			cb(data);
 		};
 		c._skipinit = skipinit;
 		c._failpath = failpath;
