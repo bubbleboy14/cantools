@@ -397,7 +397,7 @@ CT.modal.Prompt = CT.Class({
 			return (new CT.cal.Cal(oz)).node;
 		},
 		"form": function(data) {
-			return CT.layout.form({ items: data });
+			return CT.layout.form({ items: data, numbers: this.opts.numbers });
 		},
 		"icon": function(data) {
 			return CT.dom.iconSelector(data, true);
