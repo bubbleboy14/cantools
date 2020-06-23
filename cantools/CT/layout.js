@@ -239,13 +239,18 @@ CT.layout = {
 	form: function(opts) {
 		opts = CT.merge(opts, {
 			className: "ctform",
-			items: []
+			items: [],
+			numbers: []
 		});
-		var f, fields = [], node = CT.dom.div(opts.items.map(function(item) {
+		var f, fields = [], nums = [], node = CT.dom.div(opts.items.map(function(item) {
 			f = CT.dom.smartField(item);
 			fields.push(f);
 			return f;
-		}), opts.className), i, val, name, vals = {};
+		}).concat(opts.numbers.map(function(nitem) {
+			f = CT.dom.numberSelector(nitem);
+			nums.push(f);
+			return [ CT.dom.div(nitem.name, "right"), f ];
+		})), opts.className), i, val, name, vals = {};
 		node.value = function() {
 			for (i = 0; i < fields.length; i++) {
 				f = fields[i];
@@ -255,6 +260,8 @@ CT.layout = {
 					return alert("please provide a " + name);
 				vals[name] = val;
 			}
+			for (i = 0; i < nums.length; i++)
+				vals[opts.numbers[i].name] = nums[i].value();
 			opts.cb && opts.cb(vals);
 			return vals;
 		};
