@@ -22,6 +22,9 @@ CT.cc = {
 				agent: ccfg.agent,
 				content: cont
 			});
+		},
+		oz2mz: function(oz) {
+			return oz.filter(o => o.cc.membership).map(o => o.cc.membership);
 		}
 	},
 	view: function(content) {
@@ -38,11 +41,32 @@ CT.cc = {
 			_.view(cont);
 		} else if (content.owners && content.owners.length) {
 			CT.db.multi(content.owners, function(ownz) {
-				cont.memberships = ownz.filter(o => o.cc && o.cc.membership).map(o => o.cc.membership);
-				_.view(cont);
+				cont.memberships = _.oz2mz(ownz);
+				if (cont.memberships.length)
+					_.view(cont);
 			});
 		} else
 			return CT.log("(no mem)");
+	},
+	views: function(contents) { // expects owner or owners[]
+		var _ = CT.cc._, oz = [], cz = [], cont, mz;
+		contents.forEach(function(c) {
+			oz = oz.concat(c.owners || [c.owner]);
+		});
+		CT.db.multi(oz, function() {
+			contents.forEach(function(c) {
+				cont = { identifier: c.modelName + ": " + (c.name || c.title || c.label) };
+				if (c.owners) {
+					mz = _.oz2mz(c.owners.map(CT.data.get));
+					if (mz.length)
+						cont.memberships = mz;
+				} else if (c.owner)
+					cont.membership = CT.data.get(c.owner).cc.membership;
+				if (cont.membership || cont.memberships)
+					cz.push(cont);
+			});
+			_.view(cz);
+		});
 	}
 };
 
