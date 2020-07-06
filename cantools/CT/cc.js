@@ -14,23 +14,35 @@ if (ccfg && ccfg.agent)
 	CT.scriptImport(ccfg.gateway);
 
 CT.cc = {
-	_: {},
+	_: {
+		view: function(cont) {
+			var _ = CT.cc._;
+			_.viewer = _.viewer || CC.viewer();
+			_.viewer.view({
+				agent: ccfg.agent,
+				content: cont
+			});
+		}
+	},
 	view: function(content) {
 		var _ = CT.cc._, name = content.title || content.name || content.label,
 			identifier = (content.mtype || content.modelName) + ": " + name,
 			ukey = content.uid || content.user || content.owner,
 			author = ukey && CT.data.get(ukey),
-			memship = author && author.cc.membership;
-		CT.log("viewing: " + identifier);
-		if (!memship) return CT.log("(no mem)");
-		_.viewer = _.viewer || CC.viewer();
-		_.viewer.view({
-			agent: ccfg.agent,
-			content: {
-				membership: memship,
+			memship = author && author.cc.membership, cont = {
 				identifier: identifier
-			}
-		});
+			};
+		CT.log("viewing: " + identifier);
+		if (memship) {
+			cont.membership = memship;
+			_.view(cont);
+		} else if (content.owners && content.owners.length) {
+			CT.db.multi(content.owners, function(ownz) {
+				cont.memberships = ownz.filter(o => o.cc && o.cc.membership).map(o => o.cc.membership);
+				_.view(cont);
+			});
+		} else
+			return CT.log("(no mem)");
 	}
 };
 
