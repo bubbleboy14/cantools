@@ -55,7 +55,9 @@ CT.cc = {
 		});
 		CT.db.multi(oz, function() {
 			contents.forEach(function(c) {
-				cont = { identifier: c.modelName + ": " + (c.name || c.title || c.label) };
+				cont = {
+					identifier: c.identifier || (c.modelName + ": " + (c.name || c.title || c.label))
+				};
 				if (c.owners) {
 					mz = _.oz2mz(c.owners.map(CT.data.get));
 					if (mz.length)
