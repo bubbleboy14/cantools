@@ -96,6 +96,7 @@ CT.cc.Switcher = CT.Class({
 		},
 		up: function(cc) {
 			(this.opts.up || this._.userup)({ cc: cc });
+			this.opts.user.cc = cc;
 			this._.setSwitcher();
 		},
 		switched: function(data) {
