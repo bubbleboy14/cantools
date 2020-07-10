@@ -29,7 +29,7 @@ CT.cc = {
 	},
 	view: function(content) {
 		var _ = CT.cc._, name = content.title || content.name || content.label,
-			identifier = (content.mtype || content.modelName) + ": " + name,
+			identifier = content.identifier || ((content.mtype || content.modelName) + ": " + name),
 			ukey = content.uid || content.user || content.owner,
 			author = ukey && CT.data.get(ukey),
 			memship = author && author.cc.membership, cont = {
