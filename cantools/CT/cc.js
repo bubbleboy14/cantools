@@ -45,8 +45,7 @@ CT.cc = {
 				if (cont.memberships.length)
 					_.view(cont);
 			});
-		} else
-			return CT.log("(no mem)");
+		}
 	},
 	views: function(contents) { // expects owner or owners[]
 		var _ = CT.cc._, oz = [], cz = [], cont, mz;
