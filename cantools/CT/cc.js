@@ -14,22 +14,59 @@ if (ccfg && ccfg.agent)
 	CT.scriptImport(ccfg.gateway);
 
 CT.cc = {
-	_: {},
+	_: {
+		view: function(cont) {
+			var _ = CT.cc._;
+			_.viewer = _.viewer || CC.viewer();
+			_.viewer.view({
+				agent: ccfg.agent,
+				content: cont
+			});
+		},
+		oz2mz: function(oz) {
+			return oz.filter(o => o.cc.membership).map(o => o.cc.membership);
+		}
+	},
 	view: function(content) {
 		var _ = CT.cc._, name = content.title || content.name || content.label,
-			identifier = (content.mtype || content.modelName) + ": " + name,
+			identifier = content.identifier || ((content.mtype || content.modelName) + ": " + name),
 			ukey = content.uid || content.user || content.owner,
 			author = ukey && CT.data.get(ukey),
-			memship = author && author.cc.membership;
-		CT.log("viewing: " + identifier);
-		if (!memship) return CT.log("(no mem)");
-		_.viewer = _.viewer || CC.viewer();
-		_.viewer.view({
-			agent: ccfg.agent,
-			content: {
-				membership: memship,
+			memship = author && author.cc.membership, cont = {
 				identifier: identifier
-			}
+			};
+		CT.log("viewing: " + identifier);
+		if (memship) {
+			cont.membership = memship;
+			_.view(cont);
+		} else if (content.owners && content.owners.length) {
+			CT.db.multi(content.owners, function(ownz) {
+				cont.memberships = _.oz2mz(ownz);
+				if (cont.memberships.length)
+					_.view(cont);
+			});
+		}
+	},
+	views: function(contents) { // expects owner or owners[]
+		var _ = CT.cc._, oz = [], cz = [], cont, mz;
+		contents.forEach(function(c) {
+			oz = oz.concat(c.owners || [c.owner]);
+		});
+		CT.db.multi(oz, function() {
+			contents.forEach(function(c) {
+				cont = {
+					identifier: c.identifier || (c.modelName + ": " + (c.name || c.title || c.label))
+				};
+				if (c.owners) {
+					mz = _.oz2mz(c.owners.map(CT.data.get));
+					if (mz.length)
+						cont.memberships = mz;
+				} else if (c.owner)
+					cont.membership = CT.data.get(c.owner).cc.membership;
+				if (cont.membership || cont.memberships)
+					cz.push(cont);
+			});
+			_.view(cz);
 		});
 	}
 };
@@ -58,6 +95,7 @@ CT.cc.Switcher = CT.Class({
 		},
 		up: function(cc) {
 			(this.opts.up || this._.userup)({ cc: cc });
+			this.opts.user.cc = cc;
 			this._.setSwitcher();
 		},
 		switched: function(data) {
