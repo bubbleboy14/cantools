@@ -62,7 +62,7 @@ def _ctjson(result):
 	else:
 		return json.loads(result[1:])
 
-def fetch(host, path="/", port=80, asjson=False, cb=None, timeout=1, async=False, protocol="http", ctjson=False, qsp=None):
+def fetch(host, path="/", port=80, asjson=False, cb=None, timeout=1, asyn=False, protocol="http", ctjson=False, qsp=None):
 	if "://" in host:
 		protocol, host = host.split("://")
 		host, path = host.split("/", 1)
@@ -75,7 +75,7 @@ def fetch(host, path="/", port=80, asjson=False, cb=None, timeout=1, async=False
 		for k, v in list(qsp.items()):
 			path += "%s=%s&"%(k, v)
 		path = path[:-1]
-	if async or cb: # async w/o cb works, will just log
+	if asyn or cb: # asyn w/o cb works, will just log
 		return dfetch(host, path, port, cb, timeout, asjson)
 	if protocol == "https":
 		port = 443
