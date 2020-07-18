@@ -1,10 +1,20 @@
 import datetime
-from cantools.web import respond, succeed, cgi_get, getmem, setmem, delmem, read_file, send_file
+from cantools.web import respond, succeed, cgi_get, getmem, setmem, delmem, read_file, send_file, fetch
 from cantools.util import token, transcode
 from cantools.hooks import memhook
 
+def prox():
+	url = cgi_get("url")
+	data = getmem(url, False)
+	if not data:
+		data = fetch(url)
+		setmem(url, data, False)
+	send_file(data, detect=True)
+
 def response():
-	action = cgi_get("action", choices=["get", "set", "forget"])
+	action = cgi_get("action", choices=["get", "set", "forget", "prox"])
+	if action == "prox":
+		return prox()
 	key = cgi_get("key")
 	json = cgi_get("json", default=False)
 	mode = cgi_get("mode", default="normal")
