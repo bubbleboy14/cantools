@@ -303,6 +303,7 @@ CT.modal.Modal = CT.Class({
 		if (opts.content || opts.node) // 'node' is now deprecated :'(
 			this.add(opts.content || opts.node);
 		this.opts.recenter && setTimeout(this.node.recenter, 500);
+		this.opts.resizeRecenter && window.addEventListener("resize", this.node.recenter);
 	},
 	init: function(opts) {
 		this.opts = CT.merge(opts, CT.modal._defaults.Modal);
