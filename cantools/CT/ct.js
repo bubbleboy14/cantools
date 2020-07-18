@@ -532,9 +532,10 @@ CT.log = function(msg, level) {
 	for (var i = 0; i < CT.log.grep._outs.length; i++)
 		if (msg.indexOf(CT.log.grep._outs[i]) != -1)
 			return;
-	var s = Date() + " ::";
-	if (level) for (var i = 0; i < level; i++)
-		s += "  ";
+	var s = (new Date()).toLocaleTimeString().slice(0, -3);
+	if (level)
+		for (var i = 0; i < level; i++)
+			s += " ";
 	console.log(s, msg);
 };
 CT.log.grep = function(ins, outs) {
