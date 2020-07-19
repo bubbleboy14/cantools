@@ -10,7 +10,7 @@ user with a carecoin membership.
 */
 
 var ccfg = core.config.CC;
-if (ccfg && ccfg.agent)
+if (ccfg && ccfg.agent && (ccfg.allowLocal || (location.hostname != "localhost")))
 	CT.scriptImport(ccfg.gateway);
 
 CT.cc = {
