@@ -577,6 +577,26 @@ CT.log.endTimer = function(tname, msg) {
 	CT.log._timer("Completed in", duration, "seconds:", tname, msg);
 };
 
+CT.event = {
+	cbs: {},
+	unsubscribe: function(ename, cb) {
+		var cbs = CT.event.cbs;
+		cbs[ename] && CT.data.remove(cbs[ename], cb);
+	},
+	subscribe: function(ename, cb) {
+		var cbs = CT.event.cbs;
+		if (!cbs[ename])
+			cbs[ename] = [];
+		CT.data.append(cbs[ename], cb);
+	},
+	emit: function(ename, data) {
+		var cbs = CT.event.cbs;
+		if (!cbs[ename])
+			return CT.log("CT.event.emit: " + ename + " - no registered callbacks");
+		cbs[ename].forEach(cb => cb(data));
+	}
+};
+
 // shims (fallbacks for old browsers)
 if (!window.JSON)
 	CT.require("CT.lib.shims.JSON", true);
