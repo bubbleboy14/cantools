@@ -591,9 +591,7 @@ CT.event = {
 	},
 	emit: function(ename, data) {
 		var cbs = CT.event.cbs;
-		if (!cbs[ename])
-			return CT.log("CT.event.emit: " + ename + " - no registered callbacks");
-		cbs[ename].forEach(cb => cb(data));
+		cbs[ename] && cbs[ename].forEach(cb => cb(data));
 	}
 };
 
