@@ -1,3 +1,5 @@
+from __future__ import absolute_import # for io.BytesIO
+from io import BytesIO
 import os
 from .system import cmd, rm, mkdir
 from .reporting import log
@@ -68,3 +70,37 @@ def crop(img, constraint):
 	return img.crop((int(fromx), int(fromy), int(tox),
 		int(toy))).resize((constraint, constraint), Image.ANTIALIAS)
 
+p2 = []
+class ImageResizer(object):
+	def __init__(self, img):
+		self.img = img
+		self.high = max(img.size)
+		[self.width, self.height] = img.size
+		log("loaded with size: %sx%s"%img.size)
+
+	def closest(self, n):
+		for p in p2:
+			if n > p:
+				return p
+
+	def s2p2(self):
+		divisor = self.high / self.closest(self.high)
+		return (self.closest(self.width / divisor), self.closest(self.height / divisor))
+
+	def resize(self):
+		dims = self.s2p2()
+		log("resizing to: %sx%s"%dims)
+		rimg = self.img.resize(dims)
+		with BytesIO() as output:
+			rimg.save(output, format=self.img.format)
+			return output.getvalue()
+
+def resizep2(data):
+	if not p2:
+		n = 16
+		while n <= 1024:
+			p2.append(n)
+			n *= 2
+		p2.reverse()
+	from PIL import Image
+	return ImageResizer(Image.open(BytesIO(data))).resize()
