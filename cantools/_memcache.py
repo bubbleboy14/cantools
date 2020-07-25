@@ -1,6 +1,6 @@
 import datetime
 from cantools.web import respond, succeed, cgi_get, getmem, setmem, delmem, read_file, send_file, fetch
-from cantools.util import token, transcode
+from cantools.util import token, transcode, resizep2
 from cantools.hooks import memhook
 
 def prox():
@@ -8,6 +8,8 @@ def prox():
 	data = getmem(url, False)
 	if not data:
 		data = fetch(url)
+		if cgi_get("p2", default=False):
+			data = resizep2(data)
 		setmem(url, data, False)
 	send_file(data, detect=True)
 
