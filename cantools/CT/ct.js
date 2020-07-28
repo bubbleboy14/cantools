@@ -411,10 +411,24 @@ var CT = {
 		}
 		return eval(modname);
 	},
+	"initCSS": function() {
+		var scfg = core.config.css, sec, sload = function(c) {
+			c.forEach(function(css) {
+				CT.dom.addStyle(null, css);
+			});
+		}, pn = location.pathname;
+		if (Array.isArray(scfg))
+			return sload(scfg);
+		for (sec in scfg) {
+			if (sec.startsWith("!")) {
+				if (!pn.startsWith(sec.slice(1)))
+					sload(scfg[sec])
+			} else if (pn.startsWith(sec))
+				sload(scfg[sec])
+		}
+	},
 	"initCore": function() {
-		core.config.css.forEach(function(css) {
-			CT.dom.addStyle(null, css);
-		});
+		CT.initCSS();
 		if (core.config.autoparse)
 			CT.dom.setAutoparse(core.config.autoparse);
 		CT.layout.header(core.config.header);
