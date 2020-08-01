@@ -243,6 +243,8 @@ CT.layout = {
 			numbers: []
 		});
 		var f, fields = [], nums = [], node = CT.dom.div(opts.items.map(function(item) {
+			if (opts.values && opts.values[item.name] && !item.value)
+				item.value = opts.values[item.name];
 			f = CT.dom.smartField(item);
 			fields.push(f);
 			if (opts.labels)
@@ -268,7 +270,7 @@ CT.layout = {
 			return vals;
 		};
 		if (opts.button)
-			node.appendChild(CT.dom.button("continue", node.value));
+			node.appendChild(CT.dom.button(opts.bname || "continue", node.value));
 		return node;
 	}
 };
