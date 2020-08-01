@@ -245,6 +245,8 @@ CT.layout = {
 		var f, fields = [], nums = [], node = CT.dom.div(opts.items.map(function(item) {
 			f = CT.dom.smartField(item);
 			fields.push(f);
+			if (opts.labels)
+				return [CT.dom.label(item.name, f.id), f];
 			return f;
 		}).concat(opts.numbers.map(function(nitem) {
 			f = CT.dom.numberSelector(nitem);
