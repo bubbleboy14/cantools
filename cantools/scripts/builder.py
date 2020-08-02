@@ -154,7 +154,7 @@ def build_frags(mode="web", admin_ct_path=None):
         for p in config.build.include:
             log("include: %s"%(p,), 1)
             fragz.add(p)
-    fcopy = set()
+    fragged = set()
     def build_frag(frag):
         log("processing: %s"%(frag,), 1)
         block = processjs(frag, admin_ct_path=admin_ct_path)
@@ -166,8 +166,9 @@ def build_frags(mode="web", admin_ct_path=None):
             log("mangling", 2)
             block = jsmin(block)
         write(block, path)
-    while len(fcopy) is not len(fragz):
-        fcopy = fragz.difference(fcopy)
+    while len(fragged) is not len(fragz):
+        fcopy = filter(lambda f : f not in fragged, fragz)
+        fragged.update(fcopy)
         list(map(build_frag, fcopy))
 
 def build(admin_ct_path, dirname, fnames):
