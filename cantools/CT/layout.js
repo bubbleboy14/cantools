@@ -244,7 +244,7 @@ CT.layout = {
 		});
 		var f, fields = [], nums = [], node = CT.dom.div(opts.items.map(function(item) {
 			if (opts.values && opts.values[item.name] && !item.value)
-				item.value = opts.values[item.name];
+				item = CT.merge(item, { value: opts.values[item.name] });
 			f = CT.dom.smartField(item);
 			fields.push(f);
 			if (opts.labels)
