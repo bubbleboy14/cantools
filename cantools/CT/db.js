@@ -122,6 +122,21 @@ CT.db = {
 			property: CT.db._schema[t]._label
 		};
 	},
+	put: function(data, cb, action, pname) {
+		var params = {
+			action: action || "edit",
+			pw: core.config.keys.storage
+		};
+		params[pname || "data"] = data;
+		CT.net.post({
+			path: "/_db",
+			params: params,
+			cb: function(d) {
+				CT.data.add(d);
+				cb && cb(d);
+			}
+		});
+	},
 	get: function(modelName, cb, limit, offset, order, filters, sync, count, exporter) {
 		var f, v, qdata = {
 			"action": "get",
