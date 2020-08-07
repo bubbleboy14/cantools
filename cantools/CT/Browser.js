@@ -6,20 +6,13 @@ CT.Browser = CT.Class({
 	CLASSNAME: "CT.Browser",
 	_: {
 		nodes: {},
-		edit: function(data, cb, action, pname) {
-			var _ = this._, params = {
-				action: action || "edit",
-				pw: core.config.keys.storage
-			}, view = this.view;
-			params[pname || "data"] = data;
-			CT.net.post({
-				path: "/_db",
-				params: params,
-				cb: cb || function(dfull) {
-					if (data.key)
-						return view(dfull);
-					_.tlist.postAdd(dfull, true);
-				}
+		edit: function(data) {
+			var _ = this._, view = this.view;
+			CT.db.put(data, function(dfull) {
+				if (data.key)
+					return view(dfull);
+				_.items.push(dfull);
+				_.tlist.postAdd(dfull, true);
 			});
 		},
 		load: function(d) {
@@ -38,13 +31,14 @@ CT.Browser = CT.Class({
 				})
 			], "margined padded bordered round"));
 		},
-		build: function(docs) {
+		build: function(items) {
 			var _ = this._, oz = this.opts, defs = {
 					modelName: oz.modelName
 				}, defz = this.defaults, ntxt = "new " + oz.modelName;
 			if (oz.owner)
 				defs.owner = user.core.get("key");
-			_.tlist = CT.panel.triggerList([ntxt].concat(docs), function(d) {
+			_.items = items;
+			_.tlist = CT.panel.triggerList([ntxt].concat(items), function(d) {
 				_.load((d == ntxt) ? CT.merge(defs, defz()) : d);
 			});
 			CT.dom.setContent(_.nodes.list, _.tlist);
