@@ -6,15 +6,19 @@ CT.Browser = CT.Class({
 	CLASSNAME: "CT.Browser",
 	_: {
 		edit: function(data, cb, action, pname) {
-			var params = {
+			var _ = this._, params = {
 				action: action || "edit",
 				pw: core.config.keys.storage
-			};
+			}, view = this.view;
 			params[pname || "data"] = data;
 			CT.net.post({
 				path: "/_db",
 				params: params,
-				cb: cb
+				cb: cb || function(dfull) {
+					if (data.key)
+						return view(dfull);
+					_.tlist.postAdd(dfull, true);
+				}
 			});
 		},
 		load: function(d) {
