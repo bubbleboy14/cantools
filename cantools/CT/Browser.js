@@ -39,13 +39,13 @@ CT.Browser = CT.Class({
 			], "margined padded bordered round"));
 		},
 		build: function(docs) {
-			var _ = this._, oz = this.opts,
-				defz = this.defaults, ntxt = "new " + oz.modelName;
+			var _ = this._, oz = this.opts, defs = {
+					modelName: oz.modelName
+				}, defz = this.defaults, ntxt = "new " + oz.modelName;
+			if (oz.owner)
+				defs.owner = user.core.get("key");
 			_.tlist = CT.panel.triggerList([ntxt].concat(docs), function(d) {
-				_.load((d == ntxt) ? CT.merge({
-					modelName: oz.modelName,
-					owner: user.core.get("key")
-				}, defz()) : d);
+				_.load((d == ntxt) ? CT.merge(defs, defz()) : d);
 			});
 			CT.dom.setContent(_.nodes.list, _.tlist);
 			CT.dom.id("tlnew" + oz.modelName).trigger();
@@ -58,7 +58,7 @@ CT.Browser = CT.Class({
 				nz.list,
 				nz.content
 			]);
-			CT.db.get(oz.modelName, _.build, null, null, null, {
+			CT.db.get(oz.modelName, _.build, null, null, null, oz.owner && {
 				owner: user.core.get("key") // requires user module
 			});
 		}
@@ -75,6 +75,7 @@ CT.Browser = CT.Class({
 			parent: "ctmain",
 			modelName: null, // REQUIRED
 			nopts: {},
+			owner: true,
 			blurs: ["name please", "title", "what's it called?"]
 		});
 		setTimeout(this._.setup);
