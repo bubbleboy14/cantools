@@ -1,4 +1,4 @@
-# cantools 0.10.8.83
+# cantools 0.10.8.84
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
  - Docs: http://ct.mkult.co
@@ -250,6 +250,10 @@ any about.txt files, as well as (the top of) any py/js file that starts with a d
 
 # Front (JS Library)
 
+## CT.Browser
+### Import line: 'CT.require("CT.Browser");'
+This module contains a generic data browsing interface.
+
 ## CT.Drop
 ### Import line: 'CT.require("CT.Drop");'
 This class makes a drop-down menu, and can be subclassed
@@ -286,6 +290,7 @@ dimensions of and positioning DOM elements.
 This loader imports almost every CT module.
 
 ### This includes:
+    - CT.Browser
     - CT.Drop
     - CT.Pager
     - CT.align
