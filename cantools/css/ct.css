@@ -214,6 +214,30 @@
     bottom: 10px;
     left: 10px;
 }
+.tophalf {
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    height: 50%;
+}
+.bottomhalf {
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    height: 50%;
+}
+.lefthalf {
+    top: 0px;
+    left: 0px;
+    bottom: 0px;
+    width: 50%;
+}
+.righthalf {
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    width: 50%;
+}
 .t0i { top: 0px !important; }
 .b0i { bottom: 0px !important; }
 .l0i { left: 0px !important; }
