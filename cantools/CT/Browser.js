@@ -5,6 +5,7 @@ This module contains a generic data browsing interface.
 CT.Browser = CT.Class({
 	CLASSNAME: "CT.Browser",
 	_: {
+		nodes: {},
 		edit: function(data, cb, action, pname) {
 			var _ = this._, params = {
 				action: action || "edit",
@@ -25,7 +26,7 @@ CT.Browser = CT.Class({
 			var _ = this._, oz = this.opts, view = this.view;
 			if (d.name)
 				return view(d);
-			CT.dom.setContent(_.content, CT.dom.div([
+			CT.dom.setContent(_.nodes.content, CT.dom.div([
 				CT.dom.div("what's this " + oz.modelName + " called?", "bigger centered"),
 				CT.dom.smartField({
 					classname: "w1",
@@ -46,16 +47,16 @@ CT.Browser = CT.Class({
 					owner: user.core.get("key")
 				}, defz()) : d);
 			});
-			CT.dom.setContent(_.list, _.tlist);
+			CT.dom.setContent(_.nodes.list, _.tlist);
 			CT.dom.id("tlnew" + oz.modelName).trigger();
 		},
 		setup: function() {
-			var _ = this._, oz = this.opts;
-			_.list = CT.dom.div(null, "ctlist");
-			_.content = CT.dom.div(null, "ctcontent");
+			var _ = this._, nz = _.nodes, oz = this.opts;
+			nz.list = CT.dom.div(null, "ctlist");
+			nz.content = CT.dom.div(null, "ctcontent");
 			CT.dom.setContent(oz.parent, [
-				_.list,
-				_.content
+				nz.list,
+				nz.content
 			]);
 			CT.db.get(oz.modelName, _.build, null, null, null, {
 				owner: user.core.get("key") // requires user module
@@ -64,7 +65,7 @@ CT.Browser = CT.Class({
 	},
 	view: function(d) {
 		// override!
-		CT.dom.setContent(_.content, JSON.stringify(d));
+		CT.dom.setContent(_.nodes.content, JSON.stringify(d));
 	},
 	defaults: function() {
 		// override
