@@ -2,6 +2,7 @@
 This loader imports almost every CT module.
 
 ### This includes:
+    - CT.Browser
     - CT.Drop
     - CT.Pager
     - CT.align
@@ -40,6 +41,7 @@ This loader imports almost every CT module.
     - CT.cc, which should be imported after core (for config)
 */
 
+CT.require("CT.Browser");
 CT.require("CT.Drop");
 CT.require("CT.Pager");
 CT.require("CT.align");
