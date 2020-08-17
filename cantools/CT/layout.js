@@ -247,8 +247,12 @@ CT.layout = {
 				item = CT.merge(item, { value: opts.values[item.name] });
 			f = CT.dom.smartField(item);
 			fields.push(f);
-			if (opts.labels)
-				return [CT.dom.label(item.name, f.id), f];
+			if (opts.labels) {
+				var cont = [CT.dom.label(item.name, f.id), f];
+				if (opts.extra && opts.extra[item.name])
+					cont.unshift(opts.extra[item.name](f));
+				return cont;
+			}
 			return f;
 		}).concat(opts.numbers.map(function(nitem) {
 			f = CT.dom.numberSelector(nitem);
