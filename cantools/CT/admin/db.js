@@ -172,8 +172,12 @@ CT.admin.db.Editor = CT.Class({
 			delnode = this._delete, changes = {};
 		if (data.key)
 			changes.key = data.key;
-		else
+		else {
 			changes.modelName = this.modelName;
+			var fo = CT.admin.db._.filt_orig;
+			if (fo)
+				changes[Object.keys(fo)[0]] = Object.values(fo)[0];
+		}
 		this.inputs.forEach(function(ip) {
 			var val = ip.getValue();
 			if (val != data[ip.rowKey])
