@@ -920,7 +920,7 @@ CT.dom = {
 		});
 		return n;
 	},
-	"smartField": function(cb, classname, id, value, type, blurs, isTA, noBreak) {
+	"smartField": function(cb, classname, id, value, type, blurs, isTA, noBreak, wyz) {
 		if (arguments.length == 1 && typeof arguments[0] != "function") {
 			var obj = arguments[0];
 			cb = obj.cb;
@@ -931,13 +931,15 @@ CT.dom = {
 			blurs = obj.blurs;
 			isTA = obj.isTA;
 			noBreak = obj.noBreak;
+			wyz = obj.wyz;
 		}
 		id = id || ("sf" + Math.floor((Math.random() * 100000)));
 		var f = CT.dom.inputEnterCallback(CT.dom[isTA ? "textArea" : "field"](id,
 			value, classname, type), cb, id, noBreak);
 		f.fieldValue = function() { // accounts for blur
-			return CT.dom.getFieldValue(f);
+			return wyz && f.get() || CT.dom.getFieldValue(f);
 		};
+		wyz && CT.rte.qwiz(id, value, wyz != "restricted");
 		if (blurs)
 			CT.dom.blurField(f, blurs);
 		return f;
