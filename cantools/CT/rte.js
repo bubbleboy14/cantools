@@ -70,10 +70,10 @@ CT.rte = {
 			cb && cb();
 		});
 	},
-	"qwiz": function(nodeid, val) {
+	"qwiz": function(nodeid, val, unrestricted) {
 		var n = CT.dom.id(nodeid);
 		if (!n) // wait for node to appear in DOM
-			return setTimeout(CT.rte.qwiz, 500, nodeid, val);
-		!n.get && CT.rte.wysiwygize(nodeid, true, val);
+			return setTimeout(CT.rte.qwiz, 500, nodeid, val, unrestricted);
+		!n.get && CT.rte.wysiwygize(nodeid, !unrestricted, val);
 	}
 };
