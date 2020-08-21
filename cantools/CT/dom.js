@@ -937,7 +937,7 @@ CT.dom = {
 		var f = CT.dom.inputEnterCallback(CT.dom[isTA ? "textArea" : "field"](id,
 			value, classname, type), cb, id, noBreak);
 		f.fieldValue = function() { // accounts for blur
-			return wyz && f.get() || CT.dom.getFieldValue(f);
+			return wyz && f.get(wyz == "nonbsp") || CT.dom.getFieldValue(f);
 		};
 		wyz && CT.rte.qwiz(id, value, wyz != "restricted");
 		if (blurs)
