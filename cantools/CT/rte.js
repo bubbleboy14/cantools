@@ -49,9 +49,7 @@ CT.rte = {
 		};
 		n.get = function(stripnbsp) {
 			var c = n.node.getContent();
-			if (stripnbsp) while (c.slice(-6) == "&nbsp;")
-				c = c.slice(0, -6);
-			return c;
+			return stripnbsp ? c.replace(/&nbsp;/g, " ") : c;
 		};
 		n.dothis = function(f) {
 			f && dothiscbs.push(f);
