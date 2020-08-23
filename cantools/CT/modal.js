@@ -90,6 +90,12 @@ CT.modal = {
 	},
 	img: function(src, onhide) {
 		return CT.modal.modal(CT.dom.img(src, "wm200p hm200p"), onhide);
+	},
+	close: function() {
+		if (CT.modal.latest) {
+			CT.modal.latest.hide();
+			delete CT.modal.latest;
+		}
 	}
 };
 
@@ -308,6 +314,7 @@ CT.modal.Modal = CT.Class({
 	init: function(opts) {
 		this.opts = CT.merge(opts, CT.modal._defaults.Modal);
 		setTimeout(this._buildContent); // wait a tick for all inits to run
+		CT.modal.latest = this;
 	}
 });
 
