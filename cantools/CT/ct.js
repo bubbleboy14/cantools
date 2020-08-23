@@ -435,6 +435,7 @@ var CT = {
 		core.config.footer && CT.layout.footer(core.config.footer);
 		core.config.mobile.scale && CT.dom.meta("viewport", "width=device-width, initial-scale=1");
 		core.config.borderbox && CT.dom.addStyle("* {box-sizing: border-box;}");
+		core.config.escapeModals && CT.key.on("ESCAPE", CT.modal.close);
 	},
 	"setVal": function(k, v) {
 		CT._.vals[k] = v;
