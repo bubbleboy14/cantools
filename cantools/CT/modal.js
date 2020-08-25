@@ -378,8 +378,16 @@ CT.modal.Prompt = CT.Class({
 			return cz;
 		},
 		"multiple-choice": function(data) {
-			var cz = CT.dom.choices(this._nodify(data), true),
-				selz = this.opts.selections;
+			var selz = this.opts.selections, lnkz = this.opts.linkages,
+				cz = CT.dom.choices(this._nodify(data), true, null, null, lnkz && function(i) {
+					var val = data[i], trig;
+					if (cz.value.includes(i) && (val in lnkz)) {
+						for (trig of lnkz[val]) {
+							ti = data.indexOf(trig);
+							cz.value.includes(ti) || cz.childNodes[ti].onclick();
+						}
+					}
+				});
 			selz && CT.dom.each(cz, function(sel) {
 				if (selz.includes(sel.innerHTML))
 					sel.onclick();
