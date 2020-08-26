@@ -697,6 +697,49 @@ CT.dom = {
 		});
 		return n;
 	},
+	"updown": function() {
+		var up = CT.dom.link("up", function() {
+			var pnode = n.parentNode,
+				psib = pnode.previousSibling;
+			pnode.parentNode.insertBefore(pnode, psib);
+			n.update();
+			psib.firstChild.update();
+		}, null, "block"), down = CT.dom.link("down", function() {
+			var pnode = n.parentNode,
+				nsib = pnode.nextSibling,
+				nnsib = nsib.nextSibling;
+			if (nnsib)
+				pnode.parentNode.insertBefore(pnode, nnsib);
+			else
+				pnode.parentNode.appendChild(pnode);
+			nsib.firstChild.update();
+			n.update();
+		}, null, "block"), n = CT.dom.div([up, down], "right small");
+		n.update = function() {
+			CT.dom[n.parentNode.previousSibling ? "show" : "hide"](up);
+			CT.dom[n.parentNode.nextSibling ? "show" : "hide"](down);
+		};
+		setTimeout(n.update);
+		return n;
+	},
+	"shuffler": function(data, rower) {
+		rower = rower || function(d) {
+			return d.label || d.name || d.title || d;
+		};
+		var n = CT.dom.div();
+		data.forEach(function(d, i) {
+			var row = CT.dom.div([
+				CT.dom.updown(),
+				rower(d)
+			], "choice_cell");
+			row.data = d;
+			n.appendChild(row);
+		});
+		n.value = function() {
+			return CT.dom.map(n, r => r.data);
+		};
+		return n;
+	},
 	"form": function(content, action, method, classname, id) {
 		return CT.dom.node(content, "form", classname, id, {
 			method: method || "post",
