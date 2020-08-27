@@ -4,10 +4,11 @@ both convert textareas (identified by id) into rich text editors.
 
 ### CT.rte.wysiwygize(nodeid, isrestricted, val, cb, mismatchcb)
 	- nodeid: id of target textarea (must exist in DOM)
-	- isrestricted: if true, disables tables and images
+	- isrestricted: if true, disables media insertion
 	- val: string value with which to initialize target text area
 	- cb: callback to invoke once textarea is initialized
 	- mismatchcb: callback to invoke if the reformatted text doesn't match val
+	- tables: if true, include stuff for tables
 ### CT.rte.qwiz(nodeid, val)
 	- nodeid: id of target textarea (must exist in DOM)
 	- val: string value with which to initialize target text area
@@ -22,7 +23,7 @@ CT.rte requires the open-source TinyMCE library, pulled in via CT.scriptImport()
 CT.scriptImport("https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.7.13/tinymce.min.js");
 CT.rte = {
 	// wysiwyg editor widget
-	"wysiwygize": function(nodeid, isrestricted, val, cb, mismatchcb) {
+	"wysiwygize": function(nodeid, isrestricted, val, cb, mismatchcb, tables) {
 		if (!("tinyMCE" in window)) // just in case...
 			return CT.scriptImport("https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.7.13/tinymce.min.js", function() {
 				CT.rte.wysiwygize(nodeid, isrestricted, val, cb, mismatchcb);
@@ -39,6 +40,8 @@ CT.rte = {
 		};
 		if (isrestricted)
 			d.toolbar = d.toolbar.slice(9);
+		if (tables)
+			d.toolbar += ' | table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol';
 		tinyMCE.init(d);
 		var n = CT.dom.id(nodeid);
 		var dothiscbs = [];
@@ -68,10 +71,10 @@ CT.rte = {
 			cb && cb();
 		});
 	},
-	"qwiz": function(nodeid, val, unrestricted) {
+	"qwiz": function(nodeid, val, unrestricted, tables) {
 		var n = CT.dom.id(nodeid);
 		if (!n) // wait for node to appear in DOM
-			return setTimeout(CT.rte.qwiz, 500, nodeid, val, unrestricted);
-		!n.get && CT.rte.wysiwygize(nodeid, !unrestricted, val);
+			return setTimeout(CT.rte.qwiz, 500, nodeid, val, unrestricted, tables);
+		!n.get && CT.rte.wysiwygize(nodeid, !unrestricted, val, null, null, tables);
 	}
 };
