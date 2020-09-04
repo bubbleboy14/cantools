@@ -31,6 +31,21 @@ CT.Browser = CT.Class({
 				})
 			], "margined padded bordered round"));
 		},
+		filter: function() {
+			var _ = this._, refresher = function(val) {
+				CT.dom.each(_.tlist, function(n, i) {
+					(i > 1) && n.firstChild && CT.dom[(!val || n.firstChild.innerHTML.includes(val)) ? "show" : "hide"](n);
+				});
+				clearbutt.style.display = val ? "inline" : "none";
+			}, sf = CT.dom.smartField({
+				keyup: refresher
+			}), clearbutt = CT.dom.span("X", "hidden pointer");
+			clearbutt.onclick = function() {
+				sf.value = "";
+				refresher();
+			}
+			return CT.dom.span([sf, clearbutt]);
+		},
 		build: function(items) {
 			var _ = this._, oz = this.opts, defs = {
 					modelName: oz.modelName
@@ -42,7 +57,14 @@ CT.Browser = CT.Class({
 				_.load((d == ntxt) ? CT.merge(defs, defz()) : d);
 			});
 			CT.dom.setContent(_.nodes.list, _.tlist);
-			CT.dom.id("tlnew" + oz.modelName).trigger();
+			var maker = CT.dom.id("tlnew" + oz.modelName);
+			maker.trigger();
+			if (oz.filter) {
+				CT.dom.setContent(maker.firstChild,
+					CT.dom.div("+", "biggest bold shiftup"));
+				maker.style.float = "right";
+				_.tlist.insertBefore(_.filter(), maker);
+			}
 		},
 		setup: function() {
 			var _ = this._, nz = _.nodes, oz = this.opts;
@@ -98,6 +120,7 @@ CT.Browser = CT.Class({
 			modelName: null, // REQUIRED
 			nopts: {},
 			owner: true,
+			filter: true,
 			blurs: ["name please", "title", "what's it called?"]
 		});
 		setTimeout(this._.setup);
