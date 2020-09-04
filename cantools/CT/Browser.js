@@ -57,9 +57,37 @@ CT.Browser = CT.Class({
 			});
 		}
 	},
+	namer: function(d, classes) {
+		var n = CT.dom.div(d.name,
+			"pointer " + (classes || "bigger centered"));
+		n.onclick = function() {
+			var sf = CT.dom.smartField({
+				value: d.name,
+				cb: function(name) {
+					if (name == d.name) return;
+					CT.db.put({
+						key: d.key,
+						name: name
+					}, function(newd) {
+						d.name = newd.name;
+						d.label = newd.label;
+						CT.dom.setContent(n, d.name);
+						CT.dom.setContent(CT.dom.id("tl" + d.key).firstChild,
+							d.label);
+					});
+				}
+			});
+			CT.dom.setContent(n, sf);
+			sf.focus();
+		};
+		return n;
+	},
 	view: function(d) {
 		// override!
-		CT.dom.setContent(_.nodes.content, JSON.stringify(d));
+		CT.dom.setContent(_.nodes.content, [
+			this.namer(d),
+			JSON.stringify(d)
+		]);
 	},
 	defaults: function() {
 		// override
