@@ -945,7 +945,7 @@ CT.dom = {
 		}
 		n.appendChild(CT.dom.node("", "div", "clearnode"));
 	},
-	"inputEnterCallback": function(n, cb, fid, noBreak) {
+	"inputEnterCallback": function(n, cb, fid, noBreak, keyup) {
 		n.onenter = function(e) {
 			if (noBreak)
 				n.value = n.value.replace("\n", "").replace("\r", "");
@@ -958,12 +958,13 @@ CT.dom = {
 		n.addEventListener("keyup", function(e) {
 			e = e || window.event;
 			var code = e.keyCode || e.which;
+			keyup && keyup(n.value);
 			if (code == 13 || code == 3)
 				n.onenter(e);
 		});
 		return n;
 	},
-	"smartField": function(cb, classname, id, value, type, blurs, isTA, noBreak, wyz) {
+	"smartField": function(cb, classname, id, value, type, blurs, isTA, noBreak, wyz, keyup) {
 		if (arguments.length == 1 && typeof arguments[0] != "function") {
 			var obj = arguments[0];
 			cb = obj.cb;
@@ -975,6 +976,7 @@ CT.dom = {
 			isTA = obj.isTA;
 			noBreak = obj.noBreak;
 			wyz = obj.wyz;
+			keyup = obj.keyup;
 		}
 		var nonbsp, restricted, tables;
 		if (wyz && wyz.includes) {
@@ -984,7 +986,7 @@ CT.dom = {
 		}
 		id = id || ("sf" + Math.floor((Math.random() * 100000)));
 		var f = CT.dom.inputEnterCallback(CT.dom[isTA ? "textArea" : "field"](id,
-			value, classname, type), cb, id, noBreak);
+			value, classname, type), cb, id, noBreak, keyup);
 		f.fieldValue = function() { // accounts for blur
 			return wyz ? f.get(nonbsp) : CT.dom.getFieldValue(f);
 		};
