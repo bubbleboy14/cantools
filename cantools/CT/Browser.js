@@ -34,7 +34,7 @@ CT.Browser = CT.Class({
 		filter: function() {
 			var _ = this._, refresher = function(val) {
 				CT.dom.each(_.tlist, function(n, i) {
-					CT.dom[(!val || n.firstChild.innerHTML.includes(val)) ? "show" : "hide"](n);
+					CT.dom[(!val || n.firstChild.innerHTML.toLowerCase().includes(val.toLowerCase())) ? "show" : "hide"](n);
 				});
 				clearbutt.style.display = val ? "inline" : "none";
 			}, sf = CT.dom.smartField({
