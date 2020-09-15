@@ -63,7 +63,10 @@ CT.Browser = CT.Class({
 				CT.dom.setContent(maker.firstChild,
 					CT.dom.div("+", "biggest bold shiftup"));
 				maker.style.float = "right";
-				_.tlist.insertBefore(_.filter(), maker);
+				_.tlist.parentNode.insertBefore(CT.dom.div([
+					_.filter(),
+					maker
+				], "browser_filter"), _.tlist);
 			}
 		},
 		setup: function() {
