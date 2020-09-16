@@ -1,4 +1,4 @@
-# cantools 0.10.8.84
+# cantools 0.10.8.85
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
  - Docs: http://ct.mkult.co
@@ -866,7 +866,7 @@ a string, a password, or one or more selections from a list.
 defaults:
 	{
 		className: "basicpopup mosthigh",
-		style: "string", // string|multiple-string|password|single-choice|multiple-choice|file|number|time|date|form|icon|phone|email|sound
+		style: "string", // string|multiple-string|password|single-choice|multiple-choice|file|number|time|date|form|icon|phone|email|sound|reorder
 		prompt: "",
 		clear: false, // string/password only
 		data: [] // only applies to choice styles
@@ -1043,10 +1043,11 @@ both convert textareas (identified by id) into rich text editors.
 
 ### CT.rte.wysiwygize(nodeid, isrestricted, val, cb, mismatchcb)
 	- nodeid: id of target textarea (must exist in DOM)
-	- isrestricted: if true, disables tables and images
+	- isrestricted: if true, disables media insertion
 	- val: string value with which to initialize target text area
 	- cb: callback to invoke once textarea is initialized
 	- mismatchcb: callback to invoke if the reformatted text doesn't match val
+	- tables: if true, include stuff for tables
 ### CT.rte.qwiz(nodeid, val)
 	- nodeid: id of target textarea (must exist in DOM)
 	- val: string value with which to initialize target text area
