@@ -103,6 +103,9 @@ CT.data = {
 		for (var i = 0; i < dlist.length; i++)
 			CT.data.add(dlist[i]);
 	},
+	"getSet": function(klist) {
+		return klist.map(k => CT.data.get(k));
+	},
 	"uniquify": function(items, exceptions) {
 		exceptions = exceptions || [];
 		items = CT.data.copyList(items); // preserve original list!!
