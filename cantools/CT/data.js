@@ -104,7 +104,7 @@ CT.data = {
 			CT.data.add(dlist[i]);
 	},
 	"getSet": function(klist) {
-		return klist.map(k => CT.data.get(k));
+		return klist.map(CT.data.get);
 	},
 	"uniquify": function(items, exceptions) {
 		exceptions = exceptions || [];
