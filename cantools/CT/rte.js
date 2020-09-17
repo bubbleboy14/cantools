@@ -36,7 +36,7 @@ CT.rte = {
 				'searchreplace visualblocks code fullscreen',
 				'insertdatetime media table contextmenu paste code help wordcount'
 			  ],
-			toolbar: 'insert | undo redo | formatselect | alignleft aligncenter alignright alignjustify | bold italic forecolor backcolor | bullist numlist outdent indent removeformat help',
+			toolbar: 'insert | undo redo | formatselect | alignleft aligncenter alignright alignjustify | bold italic underline | forecolor backcolor | bullist numlist outdent indent removeformat help',
 		};
 		if (isrestricted)
 			d.toolbar = d.toolbar.slice(9);
