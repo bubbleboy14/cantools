@@ -16,9 +16,9 @@ CT.Browser = CT.Class({
 			});
 		},
 		load: function(d) {
-			var _ = this._, oz = this.opts, view = this.view;
+			var _ = this._, oz = this.opts, fview = this.firstview;
 			if (d.name)
-				return view(d);
+				return this.view(d);
 			CT.dom.setContent(_.nodes.content, CT.dom.div([
 				CT.dom.div("what's this " + oz.modelName + " called?", "bigger centered"),
 				CT.dom.smartField({
@@ -26,7 +26,7 @@ CT.Browser = CT.Class({
 					blurs: oz.blurs,
 					cb: function(name) {
 						d.name = name;
-						view(d);
+						fview(d);
 					}
 				})
 			], "margined padded bordered round"));
@@ -113,6 +113,9 @@ CT.Browser = CT.Class({
 			this.namer(d),
 			JSON.stringify(d)
 		]);
+	},
+	firstview: function(d) {
+		this.view(d);
 	},
 	defaults: function() {
 		// override
