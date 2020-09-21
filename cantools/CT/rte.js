@@ -23,7 +23,7 @@ CT.rte requires the open-source TinyMCE library, pulled in via CT.scriptImport()
 CT.scriptImport("https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.7.13/tinymce.min.js");
 CT.rte = {
 	// wysiwyg editor widget
-	"wysiwygize": function(nodeid, isrestricted, val, cb, mismatchcb, tables) {
+	"wysiwygize": function(nodeid, isrestricted, val, cb, mismatchcb, tables, spellcheck) {
 		if (!("tinyMCE" in window)) // just in case...
 			return CT.scriptImport("https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.7.13/tinymce.min.js", function() {
 				CT.rte.wysiwygize(nodeid, isrestricted, val, cb, mismatchcb);
@@ -68,13 +68,19 @@ CT.rte = {
 		};
 		n.dothis(function() {
 			val && n.set(val, mismatchcb);
+			if (spellcheck) {
+				var ifrid = nodeid + "_ifr";
+				CT.dom.doWhenNodeExists(ifrid, function() {
+					CT.dom.id(ifrid).contentDocument.body.spellcheck = true;
+				});
+			}
 			cb && cb();
 		});
 	},
-	"qwiz": function(nodeid, val, unrestricted, tables) {
+	"qwiz": function(nodeid, val, unrestricted, tables, spellcheck) {
 		var n = CT.dom.id(nodeid);
 		if (!n) // wait for node to appear in DOM
-			return setTimeout(CT.rte.qwiz, 500, nodeid, val, unrestricted, tables);
-		!n.get && CT.rte.wysiwygize(nodeid, !unrestricted, val, null, null, tables);
+			return setTimeout(CT.rte.qwiz, 500, nodeid, val, unrestricted, tables, spellcheck);
+		!n.get && CT.rte.wysiwygize(nodeid, !unrestricted, val, null, null, tables, spellcheck);
 	}
 };
