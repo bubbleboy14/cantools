@@ -978,11 +978,12 @@ CT.dom = {
 			wyz = obj.wyz;
 			keyup = obj.keyup;
 		}
-		var nonbsp, restricted, tables;
+		var nonbsp, restricted, tables, spellcheck;
 		if (wyz && wyz.includes) {
 			nonbsp = wyz.includes("nonbsp");
 			restricted = wyz.includes("restricted");
 			tables = wyz.includes("tables");
+			spellcheck = wyz.includes("spellcheck");
 		}
 		id = id || ("sf" + Math.floor((Math.random() * 100000)));
 		var f = CT.dom.inputEnterCallback(CT.dom[isTA ? "textArea" : "field"](id,
@@ -990,7 +991,7 @@ CT.dom = {
 		f.fieldValue = function() { // accounts for blur
 			return wyz ? f.get(nonbsp) : CT.dom.getFieldValue(f);
 		};
-		wyz && CT.rte.qwiz(id, value, !restricted, tables);
+		wyz && CT.rte.qwiz(id, value, !restricted, tables, spellcheck);
 		if (blurs)
 			CT.dom.blurField(f, blurs);
 		return f;
