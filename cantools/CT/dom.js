@@ -740,6 +740,35 @@ CT.dom = {
 		};
 		return n;
 	},
+	"dragListing": function(d, rower) {
+		var nid = "dli_" + (d.key || d.name || d),
+			n = rower ? rower(d) : CT.dom.div(d.name || d, "bordered padded margined round");
+		n.id = nid;
+		n.draggable = true;
+		n.ondragstart = function(ev) {
+			ev.dataTransfer.setData("text/plain", nid);
+		};
+		return n;
+	},
+	"dragList": function(data, rower, onchange) {
+		var pnode = CT.dom.div(data.map(d => CT.dom.dragListing(d, rower)), "bordered", null, {
+			ondrop: function(ev) {
+				var nodeId = ev.dataTransfer.getData("text/plain"), tar = ev.target;
+				while (pnode.contains(tar) && tar.parentNode != pnode)
+					tar = tar.parentNode;
+				pnode.insertBefore(CT.dom.id(nodeId), tar);
+				pnode.data = CT.dom.map(pnode, d => d.id.slice(4));
+				ev.preventDefault();
+				onchange && onchange(pnode.data);
+			},
+			ondragover: function(ev) {
+				ev.dataTransfer.dropEffect = "move";
+				ev.preventDefault();
+			}
+		});
+		pnode.data = data.map(d => d.key || d);
+		return pnode;
+	},
 	"form": function(content, action, method, classname, id) {
 		return CT.dom.node(content, "form", classname, id, {
 			method: method || "post",
