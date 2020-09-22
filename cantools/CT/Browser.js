@@ -47,6 +47,7 @@ CT.Browser = CT.Class({
 			return CT.dom.span([sf, clearbutt]);
 		},
 		build: function(items) {
+			this.items(items);
 			var _ = this._, oz = this.opts, defs = {
 					modelName: oz.modelName
 				}, defz = this.defaults, ntxt = "new " + oz.modelName;
@@ -118,6 +119,9 @@ CT.Browser = CT.Class({
 		this.view(d);
 	},
 	defaults: function() {
+		// override
+	},
+	items: function(items) {
 		// override
 	},
 	init: function(opts) {
