@@ -78,10 +78,10 @@ def dcell(e, p):
 	v = getattr(e, p)
 	t = e._schema[p]
 	if t == "key":
-		v = v.get().labeler()
+		v = v and v.get().labeler() or None
 	elif t == "keylist":
 		from model import db
-		v = [i.labeler() for i in db.get_multi(v)]
+		v = v and [i.labeler() for i in db.get_multi(v)] or []
 	return '"%s"'%(str(v),)
 
 def drower(e, pz):

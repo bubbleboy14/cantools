@@ -131,11 +131,10 @@ class ModelBase(with_metaclass(CTMeta, sa_dbase)):
             if not key.startswith("_"):
                 val = getattr(self, key)
                 if prop.startswith("key"):
-                    if val:
-                        if type(val) is list:
-                            val = [v.urlsafe() for v in val]
-                        elif hasattr(val, "urlsafe"):
-                            val = val.urlsafe()
+                    if type(val) is list:
+                        val = [v.urlsafe() for v in val]
+                    elif hasattr(val, "urlsafe"):
+                        val = val.urlsafe()
                 elif prop == "blob" and hasattr(val, "urlsafe"):
                     val = val.urlsafe()
                 elif val and prop == "datetime":
