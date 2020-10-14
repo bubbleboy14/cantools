@@ -156,10 +156,10 @@ CT.dom = {
 	"span": function(content, classname, id, attrs, style) {
 		return CT.dom.node(content, "span", classname, id, attrs, style);
 	},
-	"script": function(src, content, delay) {
+	"script": function(src, content, delay, onload) {
 		if (delay)
 			content = "setTimeout(function() { " + content + " }, " + delay + ");";
-		return CT.dom.node(content, "script", null, null, { "src": src });
+		return CT.dom.node(content, "script", null, null, { "src": src, onload: onload });
 	},
 	"link": function(content, onclick, href, classname, id, attrs, newtab) {
 		if (attrs == null)
