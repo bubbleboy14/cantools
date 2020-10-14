@@ -9,15 +9,6 @@ CT.stream.Multiplexer = CT.Class({
 			}); // (no echo)
 		});
 	},
-	_update: function(signature, process, requiredInitChunk) {
-		if (requiredInitChunk && !signature.endsWith("init")) {
-			CT.memcache.blob.get(requiredInitChunk, function(d) {
-				process(d);
-				CT.memcache.blob.get(signature, process, CT.stream.opts.codecs.video);
-			}, CT.stream.opts.codecs.video);
-		} else
-			CT.memcache.blob.get(signature, process, CT.stream.opts.codecs.video);
-	},
 	join: function(channel) {
 		if (this.opts.singlechannel) {
 			var ckeys = Object.keys(this.channels);
@@ -100,7 +91,7 @@ CT.stream.Multiplexer = CT.Class({
 		CT.log.startTimer("update", data.channel);
 		if (data.message.action == "clip") {
 			var v = this.getVideo(data.channel, data.user);
-			this._update(data.message.data, v.process, v.requiredInitChunk);
+			CT.stream.util.update(data.message.data, v.process, v.requiredInitChunk);
 			if (v.requiredInitChunk) {
 				v.receivedInitChunk = v.requiredInitChunk;
 				delete v.requiredInitChunk;

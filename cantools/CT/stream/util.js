@@ -54,6 +54,15 @@ var _sutil = CT.stream.util = {
 		};
 		buffer ? fr.readAsArrayBuffer(blob) : fr.readAsDataURL(blob);
 	},
+	update: function(signature, process, requiredInitChunk) {
+		if (requiredInitChunk && !signature.endsWith("init")) {
+			CT.memcache.blob.get(requiredInitChunk, function(d) {
+				process(d);
+				CT.memcache.blob.get(signature, process, CT.stream.opts.codecs.video);
+			}, CT.stream.opts.codecs.video);
+		} else
+			CT.memcache.blob.get(signature, process, CT.stream.opts.codecs.video);
+	},
 	_recorder: function(ondata, onrecorder) {
 		return function(stream) {
 			var segment = 0, recorder = new MediaRecorder(stream, CT.stream.opts.mropts);
