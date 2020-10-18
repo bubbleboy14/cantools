@@ -34,24 +34,25 @@ CT.stream.Video = CT.Class({
 			this.sourceBuffer.addEventListener("error", this._error);
 		}
 	},
-	process: function(blob) {
-		var that = this, v = this.video;
-		this.recorder && this.recorder.remember(blob);
-		CT.stream.util.blob_to_buffer(blob, function(buffer) {
-			that._buffers.push(buffer);
-			that._sourceUpdate();
+	bufferer: function(buffer) {
+		var v = this.video;
+		this._buffers.push(buffer);
+		this._sourceUpdate();
 
-			if (v.duration != Infinity) {
-				var target = v.duration - (CT.stream.opts.chunk / 1000);
-				if (v.currentTime < that._lastTime) {
-					that.log("SKIPPED RESET (backtracking)");
-	//				that.reset();
-				}
-				that._lastTime = v.currentTime;
-				if (!v.paused && v.currentTime < target)
-					v.currentTime = target;
+		if (v.duration != Infinity) {
+			var target = v.duration - (CT.stream.opts.chunk / 1000);
+			if (v.currentTime < this._lastTime) {
+				this.log("SKIPPED RESET (backtracking)");
+//				that.reset();
 			}
-		});
+			this._lastTime = v.currentTime;
+			if (!v.paused && v.currentTime < target)
+				v.currentTime = target;
+		}
+	},
+	process: function(blob) {
+		this.recorder && this.recorder.remember(blob);
+		CT.stream.util.blob_to_buffer(blob, this.bufferer);
 	},
 	start: function() {
 		this.log("start (attempting) - paused:", this.video.paused);
