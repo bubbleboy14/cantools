@@ -88,3 +88,31 @@ var _sutil = CT.stream.util = {
 		});
 	}
 };
+
+CT.stream.util.fzn = {
+	_: { vids: {} },
+	video: function(channel) {
+		var _ = CT.stream.util.fzn._,
+			vid = _.vids[channel] = new CT.stream.Video({ frame: false });
+		CT.stream.util.fzn.init();
+		_.bridge && _.bridge.subscribe(channel);
+		return vid;
+	},
+	init: function() {
+		var _ = CT.stream.util.fzn._, v;
+		if (_.bridge) return;
+		document.head.appendChild(CT.dom.script("https://localhost:5555/js/CT/bridge.js", null, null, function() {
+			_.bridge = PMB.bridge({
+				widget: "/stream/vidsrc.html",
+				senders: ["subscribe"],
+				receivers: {
+					clip: function(data) {
+						_.vids[data.channel].bufferer(data.data);
+					}
+				}
+			});
+			for (v in _.vids)
+				_.bridge.subscribe(v);
+		}));
+	}
+};
