@@ -159,7 +159,7 @@ CT.dom = {
 	"script": function(src, content, delay, onload) {
 		if (delay)
 			content = "setTimeout(function() { " + content + " }, " + delay + ");";
-		return CT.dom.node(content, "script", null, null, { "src": src, onload: onload });
+		return CT.dom.node(content, "script", null, null, { "src": src, "onload": onload });
 	},
 	"link": function(content, onclick, href, classname, id, attrs, newtab) {
 		if (attrs == null)
