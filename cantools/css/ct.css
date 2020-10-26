@@ -1312,6 +1312,10 @@ button, a, label, input[type='checkbox'], .pointer {
     opacity: 1;
 }
 
+div.mce-fullscreen {
+    z-index: 99999;
+}
+
 .cal .month button {
     vertical-align: super;
 }
