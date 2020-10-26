@@ -95,7 +95,10 @@ CT.stream.util.fzn = {
 		var _ = CT.stream.util.fzn._, vid = _.vids[channel] = new CT.stream.Video({
 			frame: false,
 			onreset: function() {
-				_.bridge.error(channel);
+				_.bridge.error({
+					channel: channel,
+					requiredInitChunk: vid.receivedInitChunk
+				});
 			}
 		});
 		CT.stream.util.fzn.init();
