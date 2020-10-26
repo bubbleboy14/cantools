@@ -40,6 +40,9 @@ CT.stream.Video = CT.Class({
 		this._sourceUpdate();
 
 		if (v.duration != Infinity && !isNaN(v.duration)) {
+			if (this._duration == v.duration)
+				this.reset();
+			this._duration = v.duration;
 			var target = v.duration - (CT.stream.opts.chunk / 1000);
 			if (v.currentTime < this._lastTime) {
 				this.log("SKIPPED RESET (backtracking)");
