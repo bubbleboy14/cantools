@@ -91,9 +91,11 @@ var _sutil = CT.stream.util = {
 
 CT.stream.util.fzn = {
 	_: { vids: {} },
-	video: function(channel) {
+	video: function(channel, videoClass, onrefresh) {
 		var _ = CT.stream.util.fzn._, vid = _.vids[channel] = new CT.stream.Video({
 			frame: false,
+			onrefresh: onrefresh,
+			videoClass: videoClass,
 			onreset: function() {
 				_.bridge.error({
 					channel: channel,
