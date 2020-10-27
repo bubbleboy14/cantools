@@ -158,13 +158,14 @@ CT.stream.Video = CT.Class({
 	},
 	reset: function() {
 		if (!this.video.parentNode) return; //  node is removed -- we're done
-		var n = Date.now();
+		var n = Date.now(), chunk = CT.stream.opts.chunk;
 		if (this._lastReset) {
 			var diff = n - this._lastReset;
 			this.log("RESET", diff);
-			if (diff < CT.stream.opts.chunk / 2)
+			if (diff < chunk / 2)
 				return; // wait
-			this.opts.onreset && this.opts.onreset();
+			if (diff < chunk * 8)
+				this.opts.onreset && this.opts.onreset();
 		}
 		this._lastReset = n;
 		this.video.removeEventListener("canplay", this.start);
@@ -183,6 +184,7 @@ CT.stream.Video = CT.Class({
 		this.setMediaSource();
 		this._buffers.shift();
 		this.requiredInitChunk = this.receivedInitChunk;
+		this.opts.onrefresh && this.opts.onrefresh();
 	},
 	init: function(opts) {
 		this.opts = opts = CT.merge(opts, {
