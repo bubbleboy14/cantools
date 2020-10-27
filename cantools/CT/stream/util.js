@@ -110,7 +110,7 @@ CT.stream.util.fzn = {
 	init: function() {
 		var _ = CT.stream.util.fzn._, v;
 		if (_.bridge) return;
-		document.head.appendChild(CT.dom.script("https://localhost:5555/js/CT/bridge.js", null, null, function() {
+		document.head.appendChild(CT.dom.script("https://fzn.party/CT/bridge.js", null, null, function() {
 			_.bridge = PMB.bridge({
 				widget: "/stream/vidsrc.html",
 				senders: ["subscribe", "error"],
