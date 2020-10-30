@@ -94,6 +94,7 @@ CT.stream.util.fzn = {
 	video: function(channel, videoClass, onrefresh) {
 		var _ = CT.stream.util.fzn._, vid = _.vids[channel] = new CT.stream.Video({
 			frame: false,
+			activeAudio: true,
 			onrefresh: onrefresh,
 			videoClass: videoClass,
 			onreset: function() {
