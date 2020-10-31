@@ -58,8 +58,13 @@ CT.Browser = CT.Class({
 				_.load((d == ntxt) ? CT.merge(defs, defz()) : d);
 			});
 			CT.dom.setContent(_.nodes.list, _.tlist);
-			var maker = CT.dom.id("tlnew" + oz.modelName);
-			maker.trigger();
+			var maker = CT.dom.id("tlnew" + oz.modelName),
+				h = document.location.hash.slice(1),
+				hd = h && CT.data.get(h);
+			if (hd && hd.modelName == oz.modelName)
+				setTimeout(CT.dom.id("tl" + h).firstChild.onclick, 200); // wait a tick...
+			else
+				maker.trigger();
 			if (oz.filter) {
 				CT.dom.setContent(maker.firstChild,
 					CT.dom.div("+", "biggest bold shiftup"));
