@@ -18,6 +18,8 @@
 .col { flex-direction: column; }
 .rowrev { flex-direction: row-reverse; }
 .colrev { flex-direction: column-reverse; }
+.jceven { justify-content: space-around; }
+.jccenter { justify-content: center; }
 
 /* dimensions */
 .full { width: 100%; height: 100%; }
