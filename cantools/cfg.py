@@ -147,6 +147,10 @@ cfg = {
 			"mobile": {
 				"scale": False
 			},
+			"modals": {
+				"escape": True,
+				"transition": "slide"
+			},
 			"CC": {
 				"gateway": "https://care-coin.net/comp/api.js",
 				"membership": None,
