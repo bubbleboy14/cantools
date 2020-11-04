@@ -428,14 +428,22 @@ var CT = {
 		}
 	},
 	"initCore": function() {
+		var cfg = core.config;
 		CT.initCSS();
-		if (core.config.autoparse)
-			CT.dom.setAutoparse(core.config.autoparse);
-		CT.layout.header(core.config.header);
-		core.config.footer && CT.layout.footer(core.config.footer);
-		core.config.mobile.scale && CT.dom.meta("viewport", "width=device-width, initial-scale=1");
-		core.config.borderbox && CT.dom.addStyle("* {box-sizing: border-box;}");
-		core.config.escapeModals && CT.key.on("ESCAPE", CT.modal.close);
+		if (cfg.autoparse)
+			CT.dom.setAutoparse(cfg.autoparse);
+		CT.layout.header(cfg.header);
+		cfg.footer && CT.layout.footer(cfg.footer);
+		cfg.mobile.scale && CT.dom.meta("viewport", "width=device-width, initial-scale=1");
+		cfg.borderbox && CT.dom.addStyle("* {box-sizing: border-box;}");
+		if (!cfg.modals) // for legacy projects
+			cfg.modals = {};
+		if (cfg.escapeModals) // old style
+			cfg.modals.escape = true;
+		if (CT.modal) {
+			cfg.modals.escape && CT.key && CT.key.on("ESCAPE", CT.modal.close);
+			CT.modal.defaults(cfg.modals);
+		}
 	},
 	"setVal": function(k, v) {
 		CT._.vals[k] = v;
