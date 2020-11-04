@@ -63,12 +63,13 @@ CT.modal = {
 		transition: "slide"
 	},
 	defaults: function(opts) {
-		CT.modal._defs = opts;
+		CT.modal._defs = CT.merge(opts, CT.modal._defs);
 	},
 	prompt: function(opts) {
-		(new CT.modal.Prompt(CT.merge(opts, {
-			transition: "slide"
-		}))).show();
+		var oz = CT.merge(opts, CT.modal._defs);
+		if (oz.recycle)
+			oz.id = oz.id || oz.prompt;
+		(new CT.modal.Prompt(oz)).show();
 	},
 	choice: function(opts) {
 		CT.modal.prompt(CT.merge(opts, {
@@ -294,13 +295,14 @@ CT.modal.Modal = CT.Class({
 		this.add(node);
 	},
 	_buildContent: function() {
-		var opts = this.opts, nodeStyle = {};
+		var opts = this.opts, nodeStyle = {}, sub = CT.dom.div(null, opts.innerClass);
 		["top", "bottom", "right", "left"].forEach(function(side) {
 			if (side in opts.slide)
 				nodeStyle[side] = opts.slide[side];
 		});
-		this.node = CT.dom.div(CT.dom.div(null, opts.innerClass),
-			opts.className, null, { onclick: opts.onclick }, nodeStyle);
+		this.node = opts.id && CT.dom.id(opts.id) || CT.dom.div(null,
+			opts.className, opts.id, { onclick: opts.onclick }, nodeStyle);
+		CT.dom.setContent(this.node, sub);
 		if (!opts.noClose)
 			this.addClose();
 		this.node.modal = this;
