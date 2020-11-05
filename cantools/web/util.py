@@ -108,7 +108,7 @@ def rdec(data):
         return unquote(bdata.decode())
 
 def renc(data):
-    return b64encode(quote(data).encode()).decode()
+    return b64encode(quote(data.encode())).decode()
 
 def rb64(data, de=False): # depped
     log("[DEPRECATION WARNING] Something just called rb64(), which is depped -- use rec_conv()")
