@@ -2,16 +2,18 @@
 ### Usage: ctmigrate [load|dump] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME] [--skip=SKIP] [-n]
 
 ### Options:
-	-h, --help            show this help message and exit
+	-h, --help                 show this help message and exit
 	-d DOMAIN, --domain=DOMAIN
-	                      domain of target server (default: localhost)
-	-p PORT, --port=PORT  port of target server (default: 8080)
+	                           domain of target server (default: localhost)
+	-p PORT, --port=PORT       port of target server (default: 8080)
 	-f FILENAME, --filename=FILENAME
-	                      name of sqlite data file for dumping/loading to/from
-	                      (default: dump.db)
-	-s SKIP, --skip=SKIP  don't dump these tables - use '|' as separator, such
-	                      as 'table1|table2|table3' (default: none)
-	-n, --no_binary       disable binary download
+	                           name of sqlite data file for dumping/loading to/from
+	                           (default: dump.db)
+	-s SKIP, --skip=SKIP       don't dump these tables - use '|' as separator, such
+	                           as 'table1|table2|table3' (default: none)
+	-t TABLES, --tables=TABLES dump these tables - use '|' as separator, such
+	                           as 'table1|table2|table3' (default: all)
+	-n, --no_binary            disable binary download
 """
 
 import getpass
@@ -22,10 +24,12 @@ from cantools.util import error, log
 
 LIMIT = 500
 
-def load(host, port, session, filters={}, protocol="http"):
+def load(host, port, session, filters={}, protocol="http", tables=None):
 	pw = getpass.getpass("admin password? ")
+	if port == 443:
+		protocol = "https"
 	log("loading database into %s://%s:%s"%(protocol, host, port), important=True)
-	for model in db.get_schema():
+	for model in (tables or db.get_schema()):
 		load_model(model, host, port, session, filters=filters, protocol=protocol, pw=pw)
 	log("finished loading data from sqlite dump file")
 
@@ -145,11 +149,11 @@ def getblobs(host, port):
 					path="/_db?action=blob&key=%s&property=%s"%(entkey, key),
 					protocol = (port == 443) and "https" or "http")
 
-def dump(host, port, session, binary, skip=[]):
+def dump(host, port, session, binary, skip=[], tables=None):
 	log("dumping database at %s:%s"%(host, port), important=True)
 	mods = {}
 	schemas = db.get_schema()
-	for model in schemas:
+	for model in (tables or schemas):
 		if model in skip:
 			log("skipping %s entities"%(model,), important=True)
 			continue
@@ -185,7 +189,7 @@ def dump(host, port, session, binary, skip=[]):
 MODES = { "load": load, "dump": dump }
 
 def go():
-	parser = OptionParser("ctmigrate [load|dump] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME] [--skip=SKIP] [-n]")
+	parser = OptionParser("ctmigrate [load|dump] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME] [--skip=SKIP] [--tables=TABLES] [-n]")
 	parser.add_option("-d", "--domain", dest="domain", default="localhost",
 		help="domain of target server (default: localhost)")
 	parser.add_option("-p", "--port", dest="port", default=8080,
@@ -194,6 +198,8 @@ def go():
 		help="name of sqlite data file for dumping/loading to/from (default: dump.db)")
 	parser.add_option("-s", "--skip", dest="skip", default="",
 		help="don't dump these tables - use '|' as separator, such as 'table1|table2|table3' (default: none)")
+	parser.add_option("-t", "--tables", dest="tables", default="",
+		help="dump these tables - use '|' as separator, such as 'table1|table2|table3' (default: all)")
 	parser.add_option("-n", "--no_binary", dest="binary", action="store_false",
 		default=True, help="disable binary download")
 	options, args = parser.parse_args()
@@ -204,10 +210,12 @@ def go():
 	if mode in MODES:
 		port = int(options.port)
 		session = db.Session("sqlite:///%s"%(options.filename,))
+		tabes = options.tables and options.tables.split("|")
 		if mode == "load":
-			load(options.domain, port, session)
+			load(options.domain, port, session, tables=tabes)
 		elif mode == "dump":
-			dump(options.domain, port, session, options.binary, options.skip and options.skip.split("|"))
+			dump(options.domain, port, session, options.binary,
+				options.skip and options.skip.split("|"), tabes)
 	else:
 		error("invalid mode specified ('%s')"%(mode,),
 			"must be 'ctmigrate load' or ctmigrate dump'")
