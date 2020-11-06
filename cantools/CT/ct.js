@@ -181,7 +181,7 @@ var CT = {
 				: new ActiveXObject("Microsoft.XMLHTTP"),
 				xto = window.core && core.config && core.config.xhr_timeout;
 			xhr.open(method, path, async);
-			if (xto)
+			if (xto && async)
 				xhr.timeout = xto;
 			if (responseType)
 				xhr.responseType = responseType;
