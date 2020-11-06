@@ -26,7 +26,7 @@ CT.require("CT.stream.Streamer");
 CT.require("CT.stream.Multiplexer");
 
 CT.stream.opts = {
-	requiresInput: CT.info.android,
+	requiresInput: true,//CT.info.android,
 	requestedInput: false,
 	segments: 10,
 	chunk: 2000,
