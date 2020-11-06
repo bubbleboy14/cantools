@@ -1,4 +1,4 @@
-# cantools 0.10.8.88
+# cantools 0.10.8.89
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
  - Docs: http://ct.mkult.co
@@ -175,16 +175,18 @@ Generates fresh 'static' and 'production' files (from 'development' source files
 ### Usage: ctmigrate [load|dump] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME] [--skip=SKIP] [-n]
 
 ### Options:
-	-h, --help            show this help message and exit
+	-h, --help                 show this help message and exit
 	-d DOMAIN, --domain=DOMAIN
-	                      domain of target server (default: localhost)
-	-p PORT, --port=PORT  port of target server (default: 8080)
+	                           domain of target server (default: localhost)
+	-p PORT, --port=PORT       port of target server (default: 8080)
 	-f FILENAME, --filename=FILENAME
-	                      name of sqlite data file for dumping/loading to/from
-	                      (default: dump.db)
-	-s SKIP, --skip=SKIP  don't dump these tables - use '|' as separator, such
-	                      as 'table1|table2|table3' (default: none)
-	-n, --no_binary       disable binary download
+	                           name of sqlite data file for dumping/loading to/from
+	                           (default: dump.db)
+	-s SKIP, --skip=SKIP       don't dump these tables - use '|' as separator, such
+	                           as 'table1|table2|table3' (default: none)
+	-t TABLES, --tables=TABLES dump these tables - use '|' as separator, such
+	                           as 'table1|table2|table3' (default: all)
+	-n, --no_binary            disable binary download
 
 ## ctindex
 ### Usage: ctindex [--mode=MODE] [--domain=DOMAIN] [--port=PORT] [--skip=SKIP]
