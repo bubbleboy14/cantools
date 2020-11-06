@@ -178,8 +178,11 @@ var CT = {
 		"xhr": function(path, method, params, async, cb, headers, passthrough, noct, responseType) {
 			var xhr = window.XMLHttpRequest
 				? new XMLHttpRequest()
-				: new ActiveXObject("Microsoft.XMLHTTP");
+				: new ActiveXObject("Microsoft.XMLHTTP"),
+				xto = window.core && core.config && core.config.xhr_timeout;
 			xhr.open(method, path, async);
+			if (xto)
+				xhr.timeout = xto;
 			if (responseType)
 				xhr.responseType = responseType;
 			if ( !(headers && "Content-Type" in headers))
