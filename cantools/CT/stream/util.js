@@ -75,6 +75,11 @@ var _sutil = CT.stream.util = {
 			recorder.onerror = function(e) {
 				CT.log("error! " + e.message);
 			};
+			recorder.reset = function() {
+				CT.log("RESETTING RECORDER");
+				recorder.stop();
+				recorder.start(CT.stream.opts.chunk);
+			};
 			recorder.start(CT.stream.opts.chunk);
 			onrecorder && onrecorder(recorder, stream);
 		};
