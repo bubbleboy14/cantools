@@ -182,7 +182,10 @@ CT.stream.Video = CT.Class({
 		this.mediaSource.removeEventListener("sourceopen", this._sourceOpen);
 		this.mediaSource.removeEventListener("error", this._error);
 		this.setMediaSource();
-		this._buffers.shift();
+		if (this._buffers.length > 10)
+			this._buffers.length = 0;
+		else
+			this._buffers.shift();
 		this.requiredInitChunk = this.receivedInitChunk;
 		this.opts.onrefresh && this.opts.onrefresh();
 	},
