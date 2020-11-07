@@ -48,6 +48,10 @@ CT.stream.opts = {
 		CT.stream.opts.waiting.forEach(function(w) { w.play(); });
 	}
 };
+CT.stream.opts.modes = {
+	camera: CT.stream.opts.codecs.av,
+	screenshare: CT.stream.opts.codecs.video
+};
 CT.stream.opts.mropts = {
 	mimeType: CT.stream.opts.codecs.video, // for OSX
 //	videoBitsPerSecond: 512000,

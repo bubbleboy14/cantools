@@ -87,6 +87,9 @@ CT.stream.Multiplexer = CT.Class({
 			});
 		};
 	},
+	meta: function(data) {
+		this.getVideo(data.channel, data.user).setEncoding(data.meta.mode);
+	},
 	update: function(data) {
 		CT.log.startTimer("update", data.channel);
 		if (data.message.action == "clip") {
@@ -155,6 +158,7 @@ CT.stream.Multiplexer = CT.Class({
 		}
 		this.channels = {}; // each channel can carry multiple video streams
 		CT.pubsub.set_cb("message", this.update);
+		CT.pubsub.set_cb("meta", this.meta);
 		if (opts.closeunsubs)
 			CT.pubsub.set_cb("leave", this.unsub);
 		opts.wserror && CT.pubsub.set_cb("wserror", opts.wserror);

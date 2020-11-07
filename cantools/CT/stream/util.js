@@ -55,13 +55,14 @@ var _sutil = CT.stream.util = {
 		buffer ? fr.readAsArrayBuffer(blob) : fr.readAsDataURL(blob);
 	},
 	update: function(signature, process, requiredInitChunk) {
+		var mt = CT.stream.opts.mropts.mimeType;
 		if (requiredInitChunk && !signature.endsWith("init")) {
 			CT.memcache.blob.get(requiredInitChunk, function(d) {
 				process(d);
-				CT.memcache.blob.get(signature, process, CT.stream.opts.codecs.video);
-			}, CT.stream.opts.codecs.video);
+				CT.memcache.blob.get(signature, process, mt);
+			}, mt);
 		} else
-			CT.memcache.blob.get(signature, process, CT.stream.opts.codecs.video);
+			CT.memcache.blob.get(signature, process, mt);
 	},
 	_recorder: function(ondata, onrecorder) {
 		return function(stream) {
@@ -123,6 +124,9 @@ CT.stream.util.fzn = {
 				receivers: {
 					clip: function(data) {
 						_.vids[data.channel].bufferer(data.data);
+					},
+					mode: function(data) {
+						_.vids[data.channel].setEncoding(data.mode);
 					}
 				}
 			});
