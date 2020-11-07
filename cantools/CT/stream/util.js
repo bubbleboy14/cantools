@@ -124,6 +124,9 @@ CT.stream.util.fzn = {
 				receivers: {
 					clip: function(data) {
 						_.vids[data.channel].bufferer(data.data);
+					},
+					mode: function(data) {
+						_.vids[data.channel].setEncoding(data.mode);
 					}
 				}
 			});
