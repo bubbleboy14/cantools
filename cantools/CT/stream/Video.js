@@ -161,6 +161,15 @@ CT.stream.Video = CT.Class({
 		oz.mimeType = (oz.mimeType == codecs.av) ? codecs.video : codecs.av;
 		this.log("switching encoding to", oz.mimeType);
 	},
+	setEncoding: function(mode) {
+		var oz = this.opts, prev = oz.mimeType;
+		oz.mimeType = CT.stream.opts.modes[mode];
+		this.log(mode, "mode:", oz.mimeType);
+		if (this.sourceBuffer && oz.mimeType != prev) {
+			this.log("mode swap reset!");
+			this.reset();
+		}
+	},
 	reset: function() {
 		if (!this.video.parentNode) return; //  node is removed -- we're done
 		var n = Date.now(), chunk = CT.stream.opts.chunk;
