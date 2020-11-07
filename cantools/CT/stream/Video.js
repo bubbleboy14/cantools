@@ -25,10 +25,10 @@ CT.stream.Video = CT.Class({
 		this.reset();
 	},
 	setSourceBuffer: function() {
-		this.log("setSourceBuffer - exists:", !!this.sourceBuffer);
+		var mt = this.opts.mimeType;
+		this.log("setSourceBuffer - exists:", !!this.sourceBuffer, "mimeType", mt);
 		if (!this.sourceBuffer) {
-			var opts = CT.stream.opts;
-			this.sourceBuffer = this.mediaSource.addSourceBuffer(opts.codecs.av);
+			this.sourceBuffer = this.mediaSource.addSourceBuffer(mt);
 			this.sourceBuffer.mode = 'sequence';
 			this.sourceBuffer.addEventListener("updateend", this._sourceUpdate);
 			this.sourceBuffer.addEventListener("error", this._error);
@@ -156,6 +156,11 @@ CT.stream.Video = CT.Class({
 		else if (v.webkitRequestFullscreen)
 			v.webkitRequestFullscreen();
 	},
+	switchEncoding: function() {
+		var codecs = CT.stream.opts.codecs, oz = this.opts;
+		oz.mimeType = (oz.mimeType == codecs.av) ? codecs.video : codecs.av;
+		this.log("switching encoding to", oz.mimeType);
+	},
 	reset: function() {
 		if (!this.video.parentNode) return; //  node is removed -- we're done
 		var n = Date.now(), chunk = CT.stream.opts.chunk;
@@ -199,6 +204,7 @@ CT.stream.Video = CT.Class({
 			videoClass: null,
 			videoId: null,
 			watermark: null,
+			mimeType: CT.stream.opts.codecs.av,
 			activeAudio: false,
 			onreset: null,
 			buttons: [], // only checked when frame is false
