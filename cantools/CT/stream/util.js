@@ -56,7 +56,6 @@ var _sutil = CT.stream.util = {
 	},
 	update: function(signature, process, requiredInitChunk) {
 		var mt = CT.stream.opts.mropts.mimeType;
-//		var mt = CT.stream.opts.codecs.vp9;
 		if (requiredInitChunk && !signature.endsWith("init")) {
 			CT.memcache.blob.get(requiredInitChunk, function(d) {
 				process(d);
