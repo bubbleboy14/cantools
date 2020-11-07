@@ -4,7 +4,7 @@ s2+=c[(z+chl)%cl];}
 return s2;},"_encoder":function(d){return CT.net._scramble(btoa(d));},"_decoder":function(d){return atob(CT.net._scramble(d));},"_silentFail":true,"setRetry":function(val){CT.net._retry=val;},"setMode":function(mode){if(mode!="ct"&&mode!="basic"&&mode!="passthrough"){CT.log("CT.net.setMode() - illegal mode specified: "+mode);CT.log("mode must be one of: 'ct', 'basic', 'passthrough'");}else
 CT.net._mode=mode;},"setSilentFail":function(bool){CT.net._silentFail=bool;},"setScrambler":function(s){CT.net._scrambler=s;},"setSpinner":function(bool){CT.net._spinner=bool;},"setCache":function(bool){CT.net._cache=bool;},"setEncoder":function(func){CT.net._encoder=func;},"setDecoder":function(func){CT.net._decoder=func;},"fullPath":function(p){if(!CT.net._path){var s=document.getElementsByTagName("script");for(var i=0;i<s.length;i++){if(s[i].src.slice(-8)=="CT/ct.js"){CT.net._path=s[i].src.replace("CT/ct.js","");break;}}
 CT.net._path=CT.net._path||"/";}
-return CT.net._path+p;},"xhr":function(path,method,params,async,cb,headers,passthrough,noct,responseType){var xhr=window.XMLHttpRequest?new XMLHttpRequest():new ActiveXObject("Microsoft.XMLHTTP"),xto=window.core&&core.config&&core.config.xhr_timeout;xhr.open(method,path,async);if(xto)
+return CT.net._path+p;},"xhr":function(path,method,params,async,cb,headers,passthrough,noct,responseType){var xhr=window.XMLHttpRequest?new XMLHttpRequest():new ActiveXObject("Microsoft.XMLHTTP"),xto=window.core&&core.config&&core.config.xhr_timeout;xhr.open(method,path,async);if(xto&&async)
 xhr.timeout=xto;if(responseType)
 xhr.responseType=responseType;if(!(headers&&"Content-Type"in headers))
 xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");for(var header in headers)
