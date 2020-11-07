@@ -40,18 +40,16 @@ CT.stream.opts = {
 		CT.stream.opts.transcoder = cb;
 	},
 	codecs: {
-		av: 'video/webm; codecs="vp8,opus"',  // works for cam
-		av9: 'video/webm; codecs="vp9,opus"', // works for cam
-		video: 'video/webm; codecs="vp8"',    // works for cam
-		audio: 'audio/webm; codecs="opus"',
-		vp9: 'video/webm;codecs=vp9'          // works for screenshare
+		av: 'video/webm; codecs="vp8,opus"',
+		video: 'video/webm; codecs="vp8"',
+		audio: 'audio/webm; codecs="opus"'
 	},
 	startWaiting: function() {
 		CT.stream.opts.waiting.forEach(function(w) { w.play(); });
 	}
 };
 CT.stream.opts.mropts = {
-	mimeType: CT.stream.opts.codecs.av9, // for OSX
+	mimeType: CT.stream.opts.codecs.video, // for OSX
 //	videoBitsPerSecond: 512000,
 //	audioBitsPerSecond: 32000
 };
