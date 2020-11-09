@@ -6,11 +6,11 @@ CT.Browser = CT.Class({
 	CLASSNAME: "CT.Browser",
 	_: {
 		nodes: {},
-		edit: function(data) {
+		edit: function(data, noreview) {
 			var _ = this._, view = this.view;
 			CT.db.put(data, function(dfull) {
 				if (data.key)
-					return view(dfull);
+					return noreview || view(dfull);
 				_.items.push(dfull);
 				_.tlist.postAdd(dfull, true);
 			});
