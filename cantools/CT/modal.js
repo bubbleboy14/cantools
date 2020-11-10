@@ -418,7 +418,11 @@ CT.modal.Prompt = CT.Class({
 			return (new CT.cal.Cal(oz)).node;
 		},
 		"form": function(data) {
-			return CT.layout.form({ items: data, numbers: this.opts.numbers });
+			return CT.layout.form({
+				items: data || [],
+				labels: this.opts.labels,
+				numbers: this.opts.numbers || []
+			});
 		},
 		"icon": function(data) {
 			return CT.dom.iconSelector(data, true);
