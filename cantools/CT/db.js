@@ -181,9 +181,10 @@ CT.db = {
 			dz[0] ? cb(dz[0]) : nothingcb();
 		}, 1, 0, null, { index: index });
 	},
-	multi: function(keys, cb, exporter) {
+	multi: function(keys, cb, exporter, cacheflag) {
 		var needed = keys.filter(function(k) {
-			return !CT.data.get(k);
+			var d = CT.data.get(k);
+			return !(d && (!cacheflag || d[cacheflag]));
 		});
 		if (!needed.length) {
 			return cb(keys.map(function(k) {
