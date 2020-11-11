@@ -12,9 +12,11 @@ gateway = braintree.BraintreeGateway(braintree.Configuration(
 
 def response():
 	nonce = cgi_get("nonce", required=False)
-	ukey = cgi_get("user", required=False)
 	if nonce:
 		amount = cgi_get("amount")
+		user = db.get(cgi_get("user"))
+		onsale = getattr(user, "onsale", None)
+		emsg = None
 		result = gateway.transaction.sale({
 			"amount": amount,
 			"payment_method_nonce": nonce,
@@ -28,11 +30,10 @@ def response():
 			if not msg:
 				msg = "%s: %s"%(result.transaction.processor_settlement_response_code,
 					result.transaction.processor_settlement_response_text)
-			fail("%s (%s)"%(result.message, msg))
-		elif ukey:
-			user = db.get(ukey)
-			if hasattr(user, onsale):
-				succeed(user.onsale(amount))
+			emsg = "%s (%s)"%(result.message, msg)
+			onsale and onsale(amount, emsg)
+			fail(emsg)
+		onsale and succeed(onsale(amount))
 	else:
 		succeed(gateway.client_token.generate())
 
