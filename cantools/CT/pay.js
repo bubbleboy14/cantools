@@ -65,7 +65,7 @@ CT.pay = {
 	init: function(opts) {
 		var _ = CT.pay._;
 		CT.pay.opts = opts;
-		CT.scriptImport(_.gateways[opts.mode], _.setToken);
+		CT.scriptImport(_.gateways[opts.mode], _.setToken, 200);
 	}
 };
 
