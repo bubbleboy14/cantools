@@ -75,6 +75,7 @@ CT.pay.Form = CT.Class({
 			CT.net.post({
 				path: "/_pay",
 				params: {
+					user: user.core.get("key"),
 					nonce: payload.nonce,
 					amount: this.opts.amount
 				},
