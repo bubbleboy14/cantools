@@ -27,8 +27,6 @@ def response():
 					result.transaction.processor_settlement_response_text)
 			fail("%s (%s)"%(result.message, msg))
 	else:
-		succeed(gateway.client_token.generate({
-			"customer_id": cgi_get("user")
-		}))
+		succeed(gateway.client_token.generate())
 
 respond(response)
