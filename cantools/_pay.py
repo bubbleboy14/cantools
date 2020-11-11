@@ -32,7 +32,7 @@ def response():
 		elif ukey:
 			user = db.get(ukey)
 			if hasattr(user, onsale):
-				user.onsale(amount)
+				succeed(user.onsale(amount))
 	else:
 		succeed(gateway.client_token.generate())
 
