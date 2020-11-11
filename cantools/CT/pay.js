@@ -46,13 +46,16 @@ To use the CC api, do something like this:
 CT.pay = {
 	_: {
 		gateways: {
-			braintree: "https://js.braintreegateway.com/js/braintree-2.24.1.min.js",
+			braintree: "https://js.braintreegateway.com/web/dropin/1.25.0/js/dropin.min.js",
 			cc: "https://cc.mkult.co/comp/api.js"
 		},
 		setToken: function() {
 			var opts = CT.pay.opts;
-			if (opts.mode == "braintree")
-				CT.pay._.token = CT.net.get("/_pay", null, null, true);
+			if (opts.mode == "braintree") {
+				CT.pay._.token = CT.net.get("/_pay", {
+					user: user.core.get("key")
+				}, null, true);
+			}
 			opts.cb && opts.cb();
 		}
 	},
@@ -69,14 +72,12 @@ CT.pay = {
 CT.pay.Form = CT.Class({
 	CLASSNAME: "CT.pay.Form",
 	braintree: function(token) {
-		var container = CT.dom.node(null, null, null, "ctpay" + this.id);
-		this.opts.parent.appendChild(CT.dom.form([
-			container,
-			CT.dom.field(null, this.opts.buttonText, null, "submit")
-		], "/checkout"));
-		braintree.setup(token, "dropin", {
-			container: container.id
-		});
+		var container = CT.dom.div();
+		this.opts.parent.appendChild(container);
+		braintree.dropin.create({
+			container: container,
+			authorization: token
+		}, (error, dropInstance) => this.log("error!", error));
 	},
 	cc: function() {
 		var oz = this.opts, n = CT.dom.div();
