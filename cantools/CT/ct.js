@@ -447,6 +447,7 @@ var CT = {
 			cfg.modals.escape && CT.key && CT.key.on("ESCAPE", CT.modal.close);
 			CT.modal.defaults(cfg.modals);
 		}
+		cfg.onload && cfg.onload();
 	},
 	"setVal": function(k, v) {
 		CT._.vals[k] = v;
