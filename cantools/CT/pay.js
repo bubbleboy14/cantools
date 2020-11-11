@@ -51,11 +51,8 @@ CT.pay = {
 		},
 		setToken: function() {
 			var opts = CT.pay.opts;
-			if (opts.mode == "braintree") {
-				CT.pay._.token = CT.net.get("/_pay", {
-					user: user.core.get("key")
-				}, null, true);
-			}
+			if (opts.mode == "braintree")
+				CT.pay._.token = CT.net.get("/_pay", null, null, true);
 			opts.cb && opts.cb();
 		}
 	},
@@ -71,13 +68,39 @@ CT.pay = {
 
 CT.pay.Form = CT.Class({
 	CLASSNAME: "CT.pay.Form",
+	_: {
+		btsubmit: function(error, payload) {
+			if (error)
+				return this.log("error!", error);
+			CT.net.post({
+				path: "/_pay",
+				params: {
+					nonce: payload.nonce,
+					amount: this.opts.amount
+				},
+				cb: this.opts.onpaid
+			});
+		},
+		btpay: function() {
+			this._.btagent.requestPaymentMethod(this._.btsubmit);
+		},
+		btinit: function(error, dropInstance) {
+			if (error)
+				return this.log("error!", error);
+			this._.btagent = dropInstance;
+		}
+	},
 	braintree: function(token) {
-		var container = CT.dom.div();
-		this.opts.parent.appendChild(container);
+		var container = CT.dom.div(), _ = this._;
+		this.opts.parent.appendChild(CT.dom.div([
+			container,
+			this.opts.item + " for " + this.opts.amount,
+			CT.dom.button("Submit", _.btpay)
+		]));
 		braintree.dropin.create({
 			container: container,
 			authorization: token
-		}, (error, dropInstance) => this.log("error!", error));
+		}, _.btinit);
 	},
 	cc: function() {
 		var oz = this.opts, n = CT.dom.div();
