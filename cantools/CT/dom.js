@@ -1243,6 +1243,9 @@ CT.dom = {
 		CT.dom.clear(targetNode);
 		CT.dom.addContent(targetNode, content, withClass);
 	},
+	"setMain": function(content) {
+		CT.dom.setContent("ctmain", content);
+	},
 	"setBody": function(content) {
 		CT.dom.setContent(document.body, content);
 	},
