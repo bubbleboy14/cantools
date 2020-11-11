@@ -2,16 +2,17 @@ import braintree
 from cantools.web import respond, succeed, fail, cgi_get
 from cantools import config, util
 
-braintree.Configuration.configure(braintree.Environment.Sandbox,
+gateway = braintree.BraintreeGateway(braintree.Configuration(
+	environment=braintree.Environment.Sandbox,
 	merchant_id=config.pay.merchant,
 	public_key=config.pay.public,
 	private_key=config.pay.private
-)
+))
 
 def response():
 	nonce = cgi_get("nonce", required=False)
 	if nonce:
-		result = braintree.Transaction.sale({
+		result = gateway.transaction.sale({
 			"amount": cgi_get("amount"),
 			"payment_method_nonce": nonce,
 			"options": {
@@ -26,6 +27,8 @@ def response():
 					result.transaction.processor_settlement_response_text)
 			fail("%s (%s)"%(result.message, msg))
 	else:
-		succeed(braintree.ClientToken.generate())
+		succeed(gateway.client_token.generate({
+			"customer_id": cgi_get("user")
+		}))
 
 respond(response)
