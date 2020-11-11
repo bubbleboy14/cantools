@@ -46,7 +46,7 @@ To use the CC api, do something like this:
 CT.pay = {
 	_: {
 		gateways: {
-			braintree: "https://js.braintreegateway.com/js/braintree-2.24.1.min.js",
+			braintree: "https://js.braintreegateway.com/web/dropin/1.25.0/js/dropin.min.js",
 			cc: "https://cc.mkult.co/comp/api.js"
 		},
 		setToken: function() {
@@ -62,21 +62,46 @@ CT.pay = {
 	init: function(opts) {
 		var _ = CT.pay._;
 		CT.pay.opts = opts;
-		CT.scriptImport(_.gateways[opts.mode], _.setToken);
+		CT.scriptImport(_.gateways[opts.mode], _.setToken, 200);
 	}
 };
 
 CT.pay.Form = CT.Class({
 	CLASSNAME: "CT.pay.Form",
+	_: {
+		btsubmit: function(error, payload) {
+			if (error)
+				return this.log("error!", error);
+			CT.net.post({
+				path: "/_pay",
+				params: {
+					user: user.core.get("key"),
+					nonce: payload.nonce,
+					amount: this.opts.amount
+				},
+				cb: this.opts.onpaid
+			});
+		},
+		btpay: function() {
+			this._.btagent.requestPaymentMethod(this._.btsubmit);
+		},
+		btinit: function(error, dropInstance) {
+			if (error)
+				return this.log("error!", error);
+			this._.btagent = dropInstance;
+		}
+	},
 	braintree: function(token) {
-		var container = CT.dom.node(null, null, null, "ctpay" + this.id);
-		this.opts.parent.appendChild(CT.dom.form([
+		var container = CT.dom.div(), _ = this._;
+		this.opts.parent.appendChild(CT.dom.div([
 			container,
-			CT.dom.field(null, this.opts.buttonText, null, "submit")
-		], "/checkout"));
-		braintree.setup(token, "dropin", {
-			container: container.id
-		});
+			this.opts.item + " for " + this.opts.amount,
+			CT.dom.button("Submit", _.btpay)
+		]));
+		braintree.dropin.create({
+			container: container,
+			authorization: token
+		}, _.btinit);
 	},
 	cc: function() {
 		var oz = this.opts, n = CT.dom.div();
