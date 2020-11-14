@@ -95,12 +95,15 @@ def response():
 		elif data:
 			if config.memcache.db:
 				clearmem()
-			if False:#value: # screw this -- doesn't update entity
-				blob.set(read_file(data))
-			else: # going by key, property -- must update index
+#			if False:#value: # screw this -- doesn't update entity
+#				blob.set(read_file(data))
+#			else: # going by key, property -- must update index
+			if ent and prop:
 				setattr(ent, prop, read_file(data))
 				ent.put()
 				blob = getattr(ent, prop)
+			else:
+				blob = BlobWrapper(data=read_file(data))
 			succeed(blob.urlsafe())
 		else:
 			if not value and hasattr(ent, "getBlob"): # for custom blob construction (such as split up gae blobs)
