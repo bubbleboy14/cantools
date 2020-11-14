@@ -125,3 +125,14 @@ def get_multi(b64keys, session=session):
         for r in mod.query(session=session).filter(mod.index.in_(val["indices"])).all():
             res[r.id()] = r
     return [res[k] for k in b64keys]
+
+def get_blobs(variety):
+    import os, magic
+    from cantools import config
+    bp = config.db.blob
+    bz = []
+    for f in next(os.walk(bp))[-1]:
+        fp = os.path.join(bp, f)
+        if variety in magic.from_file(fp):
+            bz.append("/%s"%(fp,))
+    return bz
