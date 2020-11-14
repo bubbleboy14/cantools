@@ -214,6 +214,17 @@ CT.db = {
 			cb && cb(d);
 		});
 	},
+	blobs: function(variety, cb) {
+		CT.net.post({
+			path: "/_db",
+			params: {
+				action: "blobs",
+				variety: variety,
+				pw: core.config.keys.storage
+			},
+			cb: cb
+		});
+	},
 	withSchema: function(cb) {
 		if (Object.keys(CT.db._schema).length)
 			cb && cb(CT.db._schema);
