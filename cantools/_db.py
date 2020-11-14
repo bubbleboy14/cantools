@@ -1,16 +1,16 @@
 import json
 from cantools.web import respond, succeed, fail, send_file, send_text, cgi_get, cgi_dump, read_file, getmem, setmem, clearmem
-from cantools.db import get, get_model, get_schema, get_page, get_bulker, get_multi, put_multi, edit, dprep, admin, BlobWrapper
+from cantools.db import get, get_model, get_schema, get_blobs, get_page, get_bulker, get_multi, put_multi, edit, dprep, admin, BlobWrapper
 from cantools.util.data import props, spreadsheet
 from cantools.util import getxls
 from cantools import config
 import model # load up all models (for schema)
 
 def response():
-	action = cgi_get("action", choices=["schema", "get", "blob", "edit", "delete", "put", "index", "bulk", "spreadsheet", "credcheck"])
+	action = cgi_get("action", choices=["schema", "blobs", "get", "blob", "edit", "delete", "put", "index", "bulk", "spreadsheet", "credcheck"])
 
 	# edit/delete/put/index/bulk always require credentials; getters do configurably
-	if not config.db.public or action in ["edit", "delete", "put", "index", "bulk", "spreadsheet", "credcheck"]:
+	if not config.db.public or action in ["blobs", "edit", "delete", "put", "index", "bulk", "spreadsheet", "credcheck"]:
 		pw = cgi_get("pw")
 		if pw != config.admin.pw:
 			if not pw or pw != config.apikey:
@@ -22,6 +22,8 @@ def response():
 
 	if action == "schema":
 		succeed(get_schema())
+	elif action == "blobs":
+		succeed(get_blobs(cgi_get("variety")))
 	elif action == "bulk":
 		rawd = read_file(cgi_get("data"))
 		mname = cgi_get("modelName")
