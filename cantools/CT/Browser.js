@@ -7,10 +7,12 @@ CT.Browser = CT.Class({
 	_: {
 		nodes: {},
 		edit: function(data, noreview) {
-			var _ = this._, view = this.view;
+			var _ = this._, oz = this.opts, view = this.view;
 			CT.db.put(data, function(dfull) {
-				if (data.key)
+				if (data.key) {
+					oz.saveMessage && alert(oz.saveMessage);
 					return noreview || view(dfull);
+				}
 				_.items.push(dfull);
 				_.tlist.postAdd(dfull, true);
 			});
