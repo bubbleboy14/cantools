@@ -20,7 +20,7 @@ CT.Browser = CT.Class({
 			if (d.name)
 				return this.view(d);
 			CT.dom.setContent(_.nodes.content, CT.dom.div([
-				CT.dom.div("what's this " + oz.modelName + " called?", "bigger centered"),
+				CT.dom.div(oz.opener || ("what's this " + oz.modelName + " called?"), "bigger centered"),
 				CT.dom.smartField({
 					classname: "w1",
 					blurs: oz.blurs,
