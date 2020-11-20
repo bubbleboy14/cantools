@@ -52,7 +52,7 @@ def rm(pname):
 		log("can't remove file (doesn't exist): %s"%(pname,), 2)
 
 def cmd(cline, sudo=False):
-	if sudo and platform.system() is not "Windows":
+	if sudo and platform.system() != "Windows":
 		cline = "sudo %s"%(cline,)
 	log('issuing command: "%s"'%(cline,), 2)
 	subprocess.call(cline, shell=True)

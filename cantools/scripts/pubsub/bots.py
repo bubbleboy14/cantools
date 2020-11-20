@@ -12,8 +12,8 @@ from six import with_metaclass
 class BotMeta(type):
 	def __new__(cls, name, bases, attrs):
 		bc = type.__new__(cls, name, bases, attrs)
-		if name is not "Bot":
-			name is not "Monitor" and log("Initializing Bot Class: %s"%(name,), important=True)
+		if name != "Bot":
+			name != "Monitor" and log("Initializing Bot Class: %s"%(name,), important=True)
 			config.pubsub.bots.update(name.lower(), bc)
 		return bc
 
