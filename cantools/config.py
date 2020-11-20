@@ -108,7 +108,7 @@ items = []
 for line in read("ct.cfg", True):
 	if line.startswith("#"):
 		continue
-	key, val = [term.strip() for term in line.split(" = ")]
+	key, val = [term.strip() for term in line.split(" = ", 1)]
 	if key == "PLUGIN_MODULES":
 		mods = val.split("|")
 		config.plugin.update("modules", [p.split("/")[-1] for p in mods])

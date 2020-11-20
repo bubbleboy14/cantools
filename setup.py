@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='ct',
-    version="0.10.8.91",
+    version="0.10.8.92",
     author='Mario Balibrera',
     author_email='mario.balibrera@gmail.com',
     license='MIT License',
@@ -22,7 +22,7 @@ setup(
     zip_safe = False,
     install_requires = [
         "rel >= 0.4.2",
-        "dez >= 0.10.9.32",
+        "dez >= 0.10.9.33",
         "yagmail >= 0.6.161",
         "requests >= 2.3.0",
         "jsmin >= 2.2.2",
