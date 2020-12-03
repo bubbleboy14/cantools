@@ -120,6 +120,8 @@ class BlobWrapper(object):
 		self._set_path(data)
 		if data:
 			from cantools.util import write
+			if type(data) != bytes:
+				data = data.encode()
 			write(data, self.path, binary=True)
 
 	def delete(self):
@@ -144,7 +146,7 @@ class Blob(BasicInt):
 				from cantools.util import read, error
 				from cantools import config
 				for f in [os.path.join(config.db.blob, p) for p in os.listdir(config.db.blob)]:
-					if os.path.isfile(f) and data == read(f):
+					if os.path.isfile(f) and data == read(f, binary=True):
 						error("non-unique blob!")
 			data = BlobWrapper(data)
 		return data.value
