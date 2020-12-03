@@ -17,6 +17,8 @@ class Response(object):
         b = self.request.body or json.dumps(rec_conv(self.request.qs_params))
         ctype = self.request.headers.get("content-type")
         if ctype and ctype.startswith("multipart/form-data"):
+            if type(b) != bytes:
+                b = b.encode()
             obj = {}
             splitter, body = b.rsplit(b"\r\n", 2)[0].split(b"\r\n", 1)
             for chunk in body.split(b"\r\n%s\r\n"%(splitter,)):
