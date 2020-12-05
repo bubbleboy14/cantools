@@ -24,7 +24,7 @@ CT.cc = {
 			});
 		},
 		oz2mz: function(oz) {
-			return oz.filter(o => o.cc.membership).map(o => o.cc.membership);
+			return oz.filter(o => o.cc && o.cc.membership).map(o => o.cc.membership);
 		}
 	},
 	view: function(content) {
