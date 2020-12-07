@@ -85,10 +85,11 @@ var _sutil = CT.stream.util = {
 			onrecorder && onrecorder(recorder, stream);
 		};
 	},
-	record: function(ondata, onrecorder, onfail, mediaType) {
+	record: function(ondata, onrecorder, onfail, mediaType, deviceId) {
 		CT.log.startTimer("record", "(attempt)");
+		var vo = deviceId && { deviceId: deviceId } || true;
 		navigator.mediaDevices[mediaType || "getUserMedia"]({
-			video: true, audio: true
+			audio: true, video: vo
 		}).then(_sutil._recorder(ondata, onrecorder))["catch"](onfail || function(err) {
 			CT.log.endTimer("record", "got error: " + err);
 		});
