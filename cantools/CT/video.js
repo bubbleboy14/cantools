@@ -106,7 +106,7 @@ CT.video = {
 		if (video.player == "dtube" || video.player == "bitchute")
 			return '<iframe ' + dims + ' src="' + CT.video.embed_url[video.player] + video.docid + '" frameborder="0" allowfullscreen></iframe>';
 		else if (video.player == "facebook")
-			return '<iframe src="' + CT.video.embed_url[video.player] + video.docid + '&show_text=0&width=' + w + '" ' +  dims + ' style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true" allowFullScreen="true"></iframe>';
+			return '<iframe src="' + CT.video.embed_url[video.player] + video.docid + '&show_text=0&width=' + w + '" ' +  dims + ' style="border:none;overflow:hidden;max-width:100%;" scrolling="no" frameborder="0" allowTransparency="true" allowFullScreen="true"></iframe>';
 		else if (video.player == "google")
 			return "<embed " + dims + " id=VideoPlayback src=" + location.protocol + "//video.google.com/googleplayer.swf?docid=" + video.docid + "&hl=en&fs=true allowFullScreen=true allowScriptAccess=always type=application/x-shockwave-flash> </embed>";
 		else if (video.player == "youtube" || video.player == "vimeo")
