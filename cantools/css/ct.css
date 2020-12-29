@@ -33,6 +33,10 @@
     max-width: 100px;
     max-height: 100px;
 }
+.minigalimg img {
+    max-width: 40px;
+    max-height: 40px;
+}
 .hminit { max-height: initial !important; }
 .hm0 { max-height: 0px !important; }
 .wm0 { max-width: 0px !important; }
