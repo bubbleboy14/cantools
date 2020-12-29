@@ -14,6 +14,7 @@
 
 /* flex */
 .flex { display: flex; }
+.fwrap { flex-wrap: wrap; }
 .row { flex-direction: row; }
 .col { flex-direction: column; }
 .rowrev { flex-direction: row-reverse; }
