@@ -741,7 +741,7 @@ CT.dom = {
 		return n;
 	},
 	"dragListing": function(d, rower) {
-		var nid = "dli_" + (d.key || d.name || d),
+		var nid = "dli_" + (d.key || d.name || d || CT.data.random(1000)),
 			n = rower ? rower(d) : CT.dom.div(d.name || d, "bordered padded margined round");
 		n.id = nid;
 		n.draggable = true;
@@ -767,6 +767,13 @@ CT.dom = {
 			}
 		});
 		pnode.data = data.map(d => d.key || d);
+		return pnode;
+	},
+	"dragListList": function(data, rower) {
+		var pnode = CT.dom.flex(data.map(d => CT.dom.dragList(d, rower)), "row");
+		pnode.value = function() {
+			return CT.dom.map(pnode, n => n.data);
+		};
 		return pnode;
 	},
 	"form": function(content, action, method, classname, id) {
