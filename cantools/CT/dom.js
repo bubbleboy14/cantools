@@ -750,8 +750,8 @@ CT.dom = {
 		};
 		return n;
 	},
-	"dragList": function(data, rower, onchange) {
-		var pnode = CT.dom.div(data.map(d => CT.dom.dragListing(d, rower)), "bordered", null, {
+	"dragList": function(data, rower, onchange, colattrs, colstyle) {
+		var pnode = CT.dom.div(data.map(d => CT.dom.dragListing(d, rower)), "bordered", null, CT.merge({
 			ondrop: function(ev) {
 				var nodeId = ev.dataTransfer.getData("text/plain"),
 					tar = ev.target, dnode = CT.dom.id(nodeId);
@@ -768,14 +768,14 @@ CT.dom = {
 				ev.dataTransfer.dropEffect = "move";
 				ev.preventDefault();
 			}
-		});
+		}, colattrs), colstyle);
 		pnode.data = data.map(d => d.key || d);
 		return pnode;
 	},
-	"dragListList": function(data, rower) {
-		var pnode = CT.dom.flex(data.map(d => CT.dom.dragList(d, rower)), "row");
+	"dragListList": function(data, rower, colattrs, colstyle, dataer, onchange) {
+		var pnode = CT.dom.flex(data.map(d => CT.dom.dragList(d, rower, onchange, colattrs, colstyle)), "row");
 		pnode.value = function() {
-			return CT.dom.map(pnode, n => n.data);
+			return CT.dom.map(pnode, dataer || (n => n.data));
 		};
 		return pnode;
 	},
