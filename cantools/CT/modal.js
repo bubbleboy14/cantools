@@ -43,7 +43,7 @@ a string, a password, or one or more selections from a list.
 defaults:
 	{
 		className: "basicpopup mosthigh",
-		style: "string", // string|multiple-string|password|single-choice|multiple-choice|file|number|time|date|form|icon|phone|email|sound|reorder
+		style: "string", // string|multiple-string|password|single-choice|multiple-choice|file|number|time|date|form|icon|phone|email|sound|reorder|draggers
 		prompt: "",
 		clear: false, // string/password only
 		data: [] // only applies to choice styles
@@ -398,6 +398,9 @@ CT.modal.Prompt = CT.Class({
 		},
 		"reorder": function(data) {
 			return CT.dom.shuffler(data, this.opts.rower);
+		},
+		"draggers": function(data) {
+			return CT.dom.dragListList(data);
 		},
 		"file": function() {
 			this.continueButton.disabled = true;
