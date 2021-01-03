@@ -400,7 +400,8 @@ CT.modal.Prompt = CT.Class({
 			return CT.dom.shuffler(data, this.opts.rower);
 		},
 		"draggers": function(data) {
-			return CT.dom.dragListList(data);
+			var oz = this.opts;
+			return CT.dom.dragListList(data, oz.rower, oz.colattrs, oz.colstyle, oz.dataer);
 		},
 		"file": function() {
 			this.continueButton.disabled = true;
