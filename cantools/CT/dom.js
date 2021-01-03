@@ -753,10 +753,13 @@ CT.dom = {
 	"dragList": function(data, rower, onchange) {
 		var pnode = CT.dom.div(data.map(d => CT.dom.dragListing(d, rower)), "bordered", null, {
 			ondrop: function(ev) {
-				var nodeId = ev.dataTransfer.getData("text/plain"), tar = ev.target;
+				var nodeId = ev.dataTransfer.getData("text/plain"),
+					tar = ev.target, dnode = CT.dom.id(nodeId);
 				while (pnode.contains(tar) && tar.parentNode != pnode)
 					tar = tar.parentNode;
-				pnode.insertBefore(CT.dom.id(nodeId), tar);
+				if (!((tar.parentNode == pnode) && dnode.parentNode == pnode))
+					return CT.log("missed drop");
+				pnode.insertBefore(dnode, tar);
 				pnode.data = CT.dom.map(pnode, d => d.id.slice(4));
 				ev.preventDefault();
 				onchange && onchange(pnode.data);
