@@ -164,7 +164,7 @@ CT.parse = {
 				}
 				ytparts = token.split("?v=");
 				if (ytparts.length == 2)
-					return 'http://img.youtube.com/vi/' + ytparts[1] + '/0.jpg';
+					return 'https://img.youtube.com/vi/' + ytparts[1] + '/0.jpg';
 			}
 		}
 	},
