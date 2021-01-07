@@ -97,11 +97,12 @@ CT.video = {
 		if (h)
 			dims += " height=" + h;
 		if (["facebook", "dtube", "bitchute"].indexOf(video.player) != -1) {
-//			if (typeof w == "number") {
-//				h = w * 315 / 560; // w 560 h 315
-//				dims = "width=" + w + " height=" + h;
-//			} else
-//				w = 254; // maybe?
+			if (typeof w == "number") {
+				h = w * 315 / 560; // w 560 h 315
+				dims = "width=" + w + " height=" + h;
+			} else
+				w = 254; // maybe?
+		} else { // eh ........
 			w = "100%";
 			dims = "width=100% height=auto";
 		}
