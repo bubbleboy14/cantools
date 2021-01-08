@@ -102,28 +102,30 @@ CT.video = {
 				dims = "width=" + w + " height=" + h;
 			} else
 				w = 254; // maybe?
-		} else { // eh ........
-			w = "100%";
-			dims = "width=100% height=auto";
+//		} else { // eh ........
+//			w = "100%";
+//			dims = "width=100% height=auto";
 		}
+		var ifs = ' style="border:none;overflow:hidden;max-width:100%;"';
 		if (video.player == "dtube" || video.player == "bitchute")
-			return '<iframe ' + dims + ' src="' + CT.video.embed_url[video.player] + video.docid + '" frameborder="0" allowfullscreen></iframe>';
+			return '<iframe ' + dims + ifs + ' src="' + CT.video.embed_url[video.player] + video.docid + '" frameborder="0" allowfullscreen></iframe>';
 		else if (video.player == "facebook")
-			return '<iframe src="' + CT.video.embed_url[video.player] + video.docid + '&show_text=0&width=' + w + '" ' +  dims + ' style="border:none;overflow:hidden;max-width:100%;" scrolling="no" frameborder="0" allowTransparency="true" allowFullScreen="true"></iframe>';
+			return '<iframe src="' + CT.video.embed_url[video.player] + video.docid + '&show_text=0&width=' + w + '" ' +  dims + ifs + ' scrolling="no" frameborder="0" allowTransparency="true" allowFullScreen="true"></iframe>';
 		else if (video.player == "google")
 			return "<embed " + dims + " id=VideoPlayback src=" + location.protocol + "//video.google.com/googleplayer.swf?docid=" + video.docid + "&hl=en&fs=true allowFullScreen=true allowScriptAccess=always type=application/x-shockwave-flash> </embed>";
 		else if (video.player == "youtube" || video.player == "vimeo")
-			return "<iframe src=\"" + CT.video.embed_url[video.player] + video.docid + "?html5=1\" " + dims + " frameborder=0 webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>";
+			return "<iframe src=\"" + CT.video.embed_url[video.player] + video.docid + "?html5=1\" " + dims + ifs + " frameborder=0 webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>";
 		else if (video.player == "ustream")
 			return "<object type=application/x-shockwave-flash data=" + location.protocol + "//static-cdn1.ustream.tv/swf/live/viewerqos:21.swf " + dims + "id=utv" + video.docid + " name=utv" + video.docid + "><param name=flashvars value=autoplay=true&locale=en_US&referrer=http%3A%2F%2Fwww.ustream.tv%2Frecorded%2F" + video.docid + "%3Futm_campaign%3Dustre.am%26utm_source%3Dustre.am%2F%3A44gEy%26utm_medium%3Dsocial%26utm_content%3D20150324210416&autoResize=false&enablejsapi=true&sv=6&volume=1&ts=1427256261325&vid=" + video.docid + "&loc=" + video.docid + "&hasticket=false><param name=allowfullscreen value=true><param name=allowscriptaccess value=always><param name=bgcolor value=000000><param name=wmode value=transparent></object>"
 		else if (CT.video.rawVidTypes.indexOf(video.player) != -1)
-			return "<video " + dims + " controls><source src=" + location.protocol + "//" + video.docid + " type=video/" + video.player + "></video>";
+			return "<video " + dims + " controls style='max-width:100%'><source src=" + location.protocol + "//" + video.docid + " type=video/" + video.player + "></video>";
 		else
 			alert("unknown video player: "+video.player);
 	},
 	"embed": function(video, small) {
 		var w = small ? 375 : 400;
-		var h = small ? 315 : 335;
+//		var h = small ? 315 : 335;
+		var h = small ? 180 : 220;
 		return CT.video._embed(video, w, h);
 	},
 	"fit": function(video) {
