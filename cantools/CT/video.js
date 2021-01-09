@@ -29,6 +29,7 @@ CT.video = {
 		"youtube": location.protocol + "//www.youtube.com/embed/",
 		"vimeo": "//player.vimeo.com/video/",
 		"dtube": "https://emb.d.tube/#!/",
+		"rumble": "https://rumble.com/embed/",
 		"bitchute": "https://www.bitchute.com/embed/"
 	},
 	"urlFromData": function(player, docid) {
@@ -48,6 +49,8 @@ CT.video = {
 			return url.split("/v/")[1];
 		else if (url.indexOf("bitchute.com") != -1)
 			return url.split("/video/")[1];
+		else if (url.indexOf("rumble.com") != -1)
+			return url.split("/embed/")[1];
 		else if (url.indexOf("video.google.com") != -1)
 			return CT.video.getQSParam(url, "docid");
 		else if (url.indexOf("youtube.com") != -1)
@@ -67,6 +70,8 @@ CT.video = {
 	"playerFromUrl": function(url) {
 		if (url.indexOf("bitchute.com") != -1)
 			return "bitchute";
+		if (url.indexOf("rumble.com") != -1)
+			return "rumble";
 		if (url.indexOf("d.tube") != -1)
 			return "dtube";
 		if (url.indexOf("facebook.com") != -1 && url.indexOf("video") != -1)
@@ -106,15 +111,18 @@ CT.video = {
 //			w = "100%";
 //			dims = "width=100% height=auto";
 		}
-		var ifs = ' style="border:none;overflow:hidden;max-width:100%;"';
+		var ifs = ' style="border:none;overflow:hidden;max-width:100%;"',
+			iurl = CT.video.embed_url[video.player] + video.docid;
 		if (video.player == "dtube" || video.player == "bitchute")
-			return '<iframe ' + dims + ifs + ' src="' + CT.video.embed_url[video.player] + video.docid + '" frameborder="0" allowfullscreen></iframe>';
+			return '<iframe ' + dims + ifs + ' src="' + iurl + '" frameborder="0" allowfullscreen></iframe>';
+		else if (video.player == "rumble")
+			return '<iframe src="' + iurl + '" ' + dims + ifs + ' allowfullscreen></iframe>';
 		else if (video.player == "facebook")
-			return '<iframe src="' + CT.video.embed_url[video.player] + video.docid + '&show_text=0&width=' + w + '" ' +  dims + ifs + ' scrolling="no" frameborder="0" allowTransparency="true" allowFullScreen="true"></iframe>';
+			return '<iframe src="' + iurl + '&show_text=0&width=' + w + '" ' +  dims + ifs + ' scrolling="no" frameborder="0" allowTransparency="true" allowFullScreen="true"></iframe>';
 		else if (video.player == "google")
 			return "<embed " + dims + " id=VideoPlayback src=" + location.protocol + "//video.google.com/googleplayer.swf?docid=" + video.docid + "&hl=en&fs=true allowFullScreen=true allowScriptAccess=always type=application/x-shockwave-flash> </embed>";
 		else if (video.player == "youtube" || video.player == "vimeo")
-			return "<iframe src=\"" + CT.video.embed_url[video.player] + video.docid + "?html5=1\" " + dims + ifs + " frameborder=0 webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>";
+			return "<iframe src=\"" + iurl + "?html5=1\" " + dims + ifs + " frameborder=0 webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>";
 		else if (video.player == "ustream")
 			return "<object type=application/x-shockwave-flash data=" + location.protocol + "//static-cdn1.ustream.tv/swf/live/viewerqos:21.swf " + dims + "id=utv" + video.docid + " name=utv" + video.docid + "><param name=flashvars value=autoplay=true&locale=en_US&referrer=http%3A%2F%2Fwww.ustream.tv%2Frecorded%2F" + video.docid + "%3Futm_campaign%3Dustre.am%26utm_source%3Dustre.am%2F%3A44gEy%26utm_medium%3Dsocial%26utm_content%3D20150324210416&autoResize=false&enablejsapi=true&sv=6&volume=1&ts=1427256261325&vid=" + video.docid + "&loc=" + video.docid + "&hasticket=false><param name=allowfullscreen value=true><param name=allowscriptaccess value=always><param name=bgcolor value=000000><param name=wmode value=transparent></object>"
 		else if (CT.video.rawVidTypes.indexOf(video.player) != -1)
