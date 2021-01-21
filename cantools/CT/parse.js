@@ -208,13 +208,17 @@ CT.parse = {
 	    return "<a href='tel:+1" + pn + "'>" + pn + "</a>";
 	},
 	"shortened": function(txt, len, wlen, nolink) {
-		if (wlen) {
-			if (nolink)
-				txt = txt.replace(/\n/g, " ").split(" http")[0];
-			txt = txt.split(" ").slice(0, wlen).join(" ");
-		}
+		if (nolink)
+			txt = txt.replace(/\n/g, " ").split(" http")[0];
+		var orig = txt;
 		len = len || 500;
-		return (txt.length < len) ? txt : txt.slice(0, len) + ' ...';
+		if (wlen)
+			txt = txt.split(" ").slice(0, wlen).join(" ");
+		if (txt.length > len)
+			txt = txt.slice(0, len);
+		if (txt != orig)
+			txt += " ...";
+		return txt;
 	},
 	"sanitize": function(b) {
 	    var sstart = "<scr" + "ipt";
