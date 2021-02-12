@@ -141,11 +141,18 @@ CT.dom = {
 		return d;
 	},
 	"table": function(rows, classname, id, attrs, style) {
-		return CT.dom.node(rows.map(function(row) {
+		return CT.dom.node(CT.dom.tableRows(rows), "table", classname, id, attrs, style);
+	},
+	"tableRows": function(rows) {
+		return rows.map(function(row) {
 			return CT.dom.node(row.map(function(cell) {
 				return CT.dom.node(cell, "td");
 			}), "tr");
-		}), "table", classname, id, attrs, style);
+		});
+	},
+	"addRows": function(ptable, rows) {
+		for (var row of CT.dom.tableRows(rows))
+			ptable.appendChild(row);
 	},
 	"div": function(content, classname, id, attrs, style) {
 		return CT.dom.node(content, "div", classname, id, attrs, style);
