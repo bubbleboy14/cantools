@@ -62,7 +62,7 @@ def _ctjson(result):
 	else:
 		return json.loads(result[1:])
 
-def fetch(host, path="/", port=80, asjson=False, cb=None, timeout=1, asyn=False, protocol="http", ctjson=False, qsp=None):
+def fetch(host, path="/", port=80, asjson=False, cb=None, timeout=1, asyn=False, protocol="http", ctjson=False, qsp=None, fakeua=False):
 	if "://" in host:
 		protocol, host = host.split("://")
 		host, path = host.split("/", 1)
@@ -79,7 +79,12 @@ def fetch(host, path="/", port=80, asjson=False, cb=None, timeout=1, asyn=False,
 		return dfetch(host, path, port, cb, timeout, asjson)
 	if protocol == "https":
 		port = 443
-	result = requests.get("%s://%s:%s%s"%(protocol, host, port, path)).content
+	gkwargs = {}
+	if fakeua:
+		gkwargs["headers"] = {
+			'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36'
+		}
+	result = requests.get("%s://%s:%s%s"%(protocol, host, port, path), **gkwargs).content
 	if ctjson: # sync only
 		return _ctjson(result)
 	return asjson and json.loads(result) or result
