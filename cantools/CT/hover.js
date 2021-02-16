@@ -27,6 +27,11 @@ CT.hover = {
 			!_.nodeOn && !_.hoverOn && CT.dom.hide(_.infoBubble);
 		}, 1000);
 	},
+	unset: function(node) {
+		if (typeof node == "string")
+			node = CT.dom.id(node, true);
+		node.onmouseover = null;
+	},
 	set: function(node, content, poptop, stayopen, recursive, auto) {
 		if (arguments.length == 1 && !(node instanceof Node)) {
 			var obj = arguments[0];
