@@ -1,5 +1,14 @@
 from cantools import config
 
+def diffmerge(orig, diff): # move this somewhere else....
+    for k, v in diff.items():
+        if type(v) == dict:
+            if k not in orig:
+                orig[k] = {}
+            diffmerge(orig[k], v)
+        else:
+            orig[k] = v
+
 class PubSubChannel(object):
     def __init__(self, name, server):
         self._log = server._log
@@ -7,6 +16,7 @@ class PubSubChannel(object):
         self.name = name
         self.users = set()
         self.history = []
+        self.metadata = {}
         self._log('NEW CHANNEL: "%s"'%(name,), 1, True)
 
     def data(self):
@@ -24,11 +34,19 @@ class PubSubChannel(object):
 
     def meta(self, subobj):
         subobj["channel"] = self.name
-        obj = {
+        self._broadcast({
             "action": "meta",
             "data": subobj
-        }
-        self._broadcast(obj)
+        })
+
+    def chmeta(self, subobj):
+        subobj["channel"] = self.name # _usually_ unnecessary
+        diffmerge(self.metadata, subobj["meta"])
+#        self.metadata = subobj["meta"]
+        self._broadcast({
+            "action": "chmeta",
+            "data": subobj
+        })
 
     def write(self, subobj):
         subobj["channel"] = self.name
