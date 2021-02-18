@@ -6,6 +6,7 @@ This module provides a direct interface with the ctpubsub backend. Here's how to
 	CT.pubsub.subscribe(channel)
 	CT.pubsub.unsubscribe(channel)
 	CT.pubsub.meta(channel, meta)
+	CT.pubsub.chmeta(channel, meta, nomerge)
 	CT.pubsub.pm(user, message)
 	CT.pubsub.set_cb(action, cb)
 	CT.pubsub.set_reconnect(bool)
@@ -31,6 +32,7 @@ CT.pubsub = {
 			"snapshot": CT.log.getLogger("CT.pubsub|snapshot"),
 			"pm": CT.log.getLogger("CT.pubsub|pm"),
 			"meta": CT.log.getLogger("CT.pubsub|meta"),
+			"chmeta": CT.log.getLogger("CT.pubsub|chmeta"),
 			"message": CT.log.getLogger("CT.pubsub|message"),
 			"subscribe": CT.log.getLogger("CT.pubsub|subscribe"),
 			"join": CT.log.getLogger("CT.pubsub|join"),
@@ -47,7 +49,7 @@ CT.pubsub = {
 				if (data.meta) {
 					data.metamap = {};
 					data.presence.forEach(function(u, i) {
-						data.metamap[u] = data.meta[i];
+						data.metamap[u] = data.meta.users[i];
 					});
 				}
 				_.channels[data.channel] = data;
@@ -59,6 +61,10 @@ CT.pubsub = {
 			"meta": function(data) {
 				CT.pubsub._.channels[data.channel].metamap[data.user] = data.meta;
 				CT.pubsub._.cb.meta(data);
+			},
+			"chmeta": function(data) {
+				CT.diffmerge(CT.pubsub._.channels[data.channel].meta.channel, data.meta);
+				CT.pubsub._.cb.chmeta(data);
 			},
 			"publish": function(data) {
 				CT.pubsub._.cb.message(data);
@@ -171,7 +177,7 @@ CT.pubsub = {
 		}
 	},
 	"set_cb": function(action, cb) {
-		// action: message|subscribe|join|leave|presence|open|close|error|pm|meta
+		// action: message|subscribe|join|leave|presence|open|close|error|pm|meta|chmeta
 		CT.pubsub._.cb[action] = cb;
 	},
 	"presence": function(channel) {
@@ -189,6 +195,20 @@ CT.pubsub = {
 	"meta": function(channel, meta) {
 		CT.pubsub._.write({
 			"action": "meta",
+			"data": {
+				"channel": channel,
+				"meta": meta
+			}
+		});
+	},
+	"chmeta": function(channel, meta, nomerge) {
+		var _ = CT.pubsub._, cmeta = _.channels[channel].meta;
+		if (nomerge)
+			cmeta.channel = meta;
+		else
+			CT.diffmerge(cmeta.channel, meta);
+		_.write({
+			"action": "chmeta",
 			"data": {
 				"channel": channel,
 				"meta": meta
