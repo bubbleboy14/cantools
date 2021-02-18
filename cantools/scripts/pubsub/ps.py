@@ -85,7 +85,10 @@ class PubSub(WebSocketDaemon):
             "history": chan.history
         }
         if config.pubsub.meta:
-            data["meta"] = [u.meta for u in chan.users]
+            data["meta"] = {
+                "channel": chan.metadata,
+                "users": [u.meta for u in chan.users]
+            }
         user.write({
             "action": "channel",
             "data": data
@@ -106,6 +109,11 @@ class PubSub(WebSocketDaemon):
             "meta": user.meta,
             "user": user.name
         })
+
+    def chmeta(self, data, user):
+        channel = data["channel"]
+        self._check_channel(channel)
+        self.channels[channel].chmeta(data)
 
     def publish(self, data, user):
         channel = data["channel"]
