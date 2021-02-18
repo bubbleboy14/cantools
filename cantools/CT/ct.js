@@ -479,6 +479,16 @@ var CT = {
 	"onresize": function(cb, n) {
 		CT.on("resize", cb, n);
 	},
+	"diffmerge": function(orig, diff) {
+		for (var k in diff) {
+			if (typeof(diff[k]) == "object") {
+				if (!orig[k])
+					orig[k] = {};
+				CT.diffmerge(orig[k], diff[k]);
+			} else
+				orig[k] = diff[k];
+		}
+	},
 	"dmerge": function() {
 		var i, k, v, o = {};
 		for (i = arguments.length - 1; i > -1; i--) {
