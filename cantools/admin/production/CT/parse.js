@@ -19,9 +19,11 @@ return[lcs,w];},"stripToNums":function(s){s=s||"";var newStr='';for(var i=0;i<s.
 newStr+=s.charAt(i);}
 return newStr;},"stripToZip":function(s){var newStr=CT.parse.stripToNums(s);if(newStr.length<5)
 return"";return newStr.slice(0,5);},"stripToPhone":function(s){var newStr=CT.parse.stripToNums(s);if(newStr.length<10)
-return"";return newStr.slice(0,10);},"formatPhone":function(s){var pn=CT.parse.stripToPhone(s);return pn.slice(0,3)+"-"+pn.slice(3,6)+"-"+pn.slice(6);},"formatPhoneLink":function(s){var pn=CT.parse.formatPhone(s);return"<a href='tel:+1"+pn+"'>"+pn+"</a>";},"shortened":function(txt,len,wlen,nolink){if(wlen){if(nolink)
-txt=txt.replace(/\n/g," ").split(" http")[0];txt=txt.split(" ").slice(0,wlen).join(" ");}
-len=len||500;return(txt.length<len)?txt:txt.slice(0,len)+' ...';},"sanitize":function(b){var sstart="<scr"+"ipt";var send="</sc"+"ript>";var ssi=b.indexOf(sstart);while(ssi!=-1){var sei=b.indexOf(send,ssi);if(sei==-1)
+return"";return newStr.slice(0,10);},"formatPhone":function(s){var pn=CT.parse.stripToPhone(s);return pn.slice(0,3)+"-"+pn.slice(3,6)+"-"+pn.slice(6);},"formatPhoneLink":function(s){var pn=CT.parse.formatPhone(s);return"<a href='tel:+1"+pn+"'>"+pn+"</a>";},"shortened":function(txt,len,wlen,nolink){if(nolink)
+txt=txt.replace(/\n/g," ").split(" http")[0];var orig=txt;len=len||500;if(wlen)
+txt=txt.split(" ").slice(0,wlen).join(" ");if(txt.length>len)
+txt=txt.slice(0,len);if(txt!=orig)
+txt+=" ...";return txt;},"sanitize":function(b){var sstart="<scr"+"ipt";var send="</sc"+"ript>";var ssi=b.indexOf(sstart);while(ssi!=-1){var sei=b.indexOf(send,ssi);if(sei==-1)
 sei=b.length;b=b.slice(0,ssi)+b.slice(sei+9,b.length);ssi=b.indexOf(sstart);}
 return b.replace(/^\s+|\s+$/g,"");},"niceNum":function(n){if(n<999)return n;var str=n.toString(),pos=str.length-3;while(pos>0){str=str.slice(0,pos)+","+str.slice(pos);pos-=3;}
 return str;},"_countdown":function(secs){var mins,hours,days,parts=[];mins=~~(secs/60);secs-=mins*60;hours=~~(mins/60);mins-=hours*60;days=~~(hours/24);hours-=days*24;if(days)

@@ -1,4 +1,4 @@
-# cantools 0.10.8.96
+# cantools 0.10.8.97
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
  - Docs: http://ct.mkult.co
@@ -1025,6 +1025,7 @@ This module provides a direct interface with the ctpubsub backend. Here's how to
 	CT.pubsub.subscribe(channel)
 	CT.pubsub.unsubscribe(channel)
 	CT.pubsub.meta(channel, meta)
+	CT.pubsub.chmeta(channel, meta, nomerge)
 	CT.pubsub.pm(user, message)
 	CT.pubsub.set_cb(action, cb)
 	CT.pubsub.set_reconnect(bool)
