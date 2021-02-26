@@ -40,8 +40,10 @@ CT.stream.Video = CT.Class({
 		this._sourceUpdate();
 
 		if (v.duration != Infinity && !isNaN(v.duration)) {
-			if (this._duration == v.duration)
+			if (this._duration == v.duration) {
+				this.log("DURATION MATCH RESET!!!");
 				this.reset();
+			}
 			this._duration = v.duration;
 			var target = v.duration - (CT.stream.opts.chunk / 1000);
 			if (v.currentTime < this._lastTime) {
@@ -49,8 +51,14 @@ CT.stream.Video = CT.Class({
 //				that.reset();
 			}
 			this._lastTime = v.currentTime;
-			if (!v.paused && v.currentTime < target)
-				v.currentTime = target;
+			if (!v.paused) {
+				if (v.currentTime > target)
+					v.playbackRate = 0.5;
+				else if (v.currentTime < target - 1)
+					v.playbackRate = 2; // v.currentTime = target;
+				else
+					v.playbackRate = 1;
+			}
 		}
 	},
 	process: function(blob) {
@@ -176,7 +184,7 @@ CT.stream.Video = CT.Class({
 		if (this._lastReset) {
 			var diff = n - this._lastReset;
 			this.log("RESET", diff);
-			if (diff < chunk / 2)
+			if (diff < chunk)
 				return; // wait
 			if (diff < chunk * 8)
 				this.opts.onreset && this.opts.onreset();
