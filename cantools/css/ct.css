@@ -1010,6 +1010,12 @@ a.whitelink, .whitelink a {
 .footered #ctmain {
     bottom: 120px;
 }
+.unheadered #ctheader {
+    display: none;
+}
+.unheadered #ctmain {
+    top: 0;
+}
 .ctlist {
     position: absolute;
     top: 10px;
