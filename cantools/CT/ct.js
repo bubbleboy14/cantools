@@ -635,7 +635,7 @@ CT.event = {
 // shims (fallbacks for old browsers)
 if (!window.JSON)
 	CT.require("CT.lib.shims.JSON", true);
-if (!window.sessionStorage)
+if (!"sessionStorage" in window)
 	CT.require("CT.lib.shims.sessionStorage", true);
 if (!document.createElement("div").classList)
 	CT.require("CT.lib.shims.classList", true);
