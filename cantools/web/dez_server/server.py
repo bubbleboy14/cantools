@@ -65,8 +65,11 @@ def _ctjson(result):
 def fetch(host, path="/", port=80, asjson=False, cb=None, timeout=1, asyn=False, protocol="http", ctjson=False, qsp=None, fakeua=False):
 	if "://" in host:
 		protocol, host = host.split("://")
-		host, path = host.split("/", 1)
-		path = "/" + path
+		if "/" in host:
+			host, path = host.split("/", 1)
+			path = "/" + path
+		else:
+			path = "/"
 	if ":" in host:
 		host, port = host.split(":")
 		port = int(port)
