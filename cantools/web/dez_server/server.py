@@ -83,6 +83,8 @@ def fetch(host, path="/", port=80, asjson=False, cb=None, timeout=1, asyn=False,
 	if protocol == "https":
 		port = 443
 	gkwargs = {}
+	if timeout:
+		gkwargs["timeout"] = timeout
 	if fakeua:
 		gkwargs["headers"] = {
 			'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36'
