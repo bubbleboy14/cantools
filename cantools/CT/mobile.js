@@ -68,10 +68,11 @@ CT.mobile = {
             name, name, "centeredimg", "round bordered padded",
             "centered nowrap small", false, (bdata.id || bdata.firstClass || bdata.clickChild)
                 && function() {
-                    if (bdata.clickChild)
-                        return CT.dom.id(bdata.clickChild).firstElementChild.onclick();
                     CT.dom.ALLNODE.toggleMobileMenu();
-                    CT.mobile.fitAndSnap(CT.mobile.getMobileNode(bdata));
+                    if (bdata.clickChild)
+                        CT.dom.id(bdata.clickChild).firstElementChild.onclick();
+                    else
+                        CT.mobile.fitAndSnap(CT.mobile.getMobileNode(bdata));
                 }, true);
     },
     "initMobileMenus": function(mmbtn, loggedin, searchcb) {
