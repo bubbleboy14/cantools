@@ -59,11 +59,17 @@ CT.mobile = {
         }
     },
     "mobileMenuLink": function(bdata) {
-        return CT.dom.labeledImage("/img/icons/" + bdata.icon + ".png",
-            bdata.page && (bdata.page + ".html"), bdata.name || bdata.page,
-            bdata.name || bdata.page, "centeredimg", "round bordered padded",
-            "centered nowrap small", false, (bdata.id || bdata.firstClass)
+        var pref = "/img/" + (bdata.section && bdata.page || "icons") + "/",
+            name = bdata.name || (bdata.section && bdata.icon) || bdata.page || bdata.icon,
+            url = !bdata.clickChild && bdata.page && (bdata.page + ".html");
+        if (url && bdata.section)
+            url += "#!" + bdata.section;
+        return CT.dom.labeledImage(pref + bdata.icon + ".png", url,
+            name, name, "centeredimg", "round bordered padded",
+            "centered nowrap small", false, (bdata.id || bdata.firstClass || bdata.clickChild)
                 && function() {
+                    if (bdata.clickChild)
+                        return CT.dom.id(bdata.clickChild).firstElementChild.onclick();
                     CT.dom.ALLNODE.toggleMobileMenu();
                     CT.mobile.fitAndSnap(CT.mobile.getMobileNode(bdata));
                 }, true);
@@ -92,6 +98,15 @@ CT.mobile = {
 
         document.body.appendChild(mmbtn.tops);
         document.body.appendChild(mmbtn.bottoms);
+
+        var lefts = CT.mobile.page && CT.mobile.page.left || CT.mobile.menus.left;
+        if (!lefts) return
+        mmbtn.lefts = CT.dom.node(null, null,
+            "button_row_side left_out", "left_buttons");
+        lefts.forEach(function(bdata) {
+            mmbtn.lefts.appendChild(CT.mobile.mobileMenuLink(bdata));
+        });
+        document.body.appendChild(mmbtn.lefts);
     },
     "_mset": function() {
         var _a = CT.dom.ALLNODE, i, m,
@@ -164,9 +179,13 @@ CT.mobile = {
             if (mmbtn._on) {
                 mmbtn.tops.className = "button_row top_out";
                 mmbtn.bottoms.className = "button_row bottom_out";
+                if (mmbtn.lefts)
+                    mmbtn.lefts.className = "button_row_side left_out";
             } else {
                 mmbtn.tops.className = "button_row";
                 mmbtn.bottoms.className = "button_row";
+                if (mmbtn.lefts)
+                    mmbtn.lefts.className = "button_row_side";
             }
             mmbtn._on = !mmbtn._on;
         };
