@@ -612,7 +612,7 @@ CT.dom = {
 		n.appendChild(CT.dom.link(lname, lonclick, laddr));
 		return n;
 	},
-	"labeledImage": function(img, href, label, _alt, _icl, _wcl, _lcl, reverseNodes, onclick) {
+	"labeledImage": function(img, href, label, _alt, _icl, _wcl, _lcl, reverseNodes, onclick, sametarget) {
 		var nlink = CT.dom.link();
 		var imageNode = CT.dom.img(img, _icl);
 		var labelNode = CT.dom.node(label, "div", _lcl);
@@ -627,7 +627,8 @@ CT.dom = {
 		var w = CT.dom.node(nlink, "div", _wcl);
 		if (href) {
 			nlink.href = href;
-			nlink.target = "_blank";
+			if (!sametarget)
+				nlink.target = "_blank";
 		} else if (onclick)
 			w.onclick = onclick;
 		return w;
