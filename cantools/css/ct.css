@@ -571,6 +571,12 @@
 .bottombordered {
     border-bottom: 1px solid black;
 }
+.left_out {
+    left: -150px !important;
+}
+.right_out {
+    right: -150px !important;
+}
 .button_row {
     position: absolute;
     text-align: center;
@@ -582,7 +588,21 @@
     right: 0px;
     left: 0px;
 }
-.button_row div {
+.button_row_side {
+    position: absolute;
+    text-align: center;
+    pointer-events: none;
+    -webkit-transition: left 1s, right 1s;
+    -moz-transition: left 1s, right 1s;
+    -o-transition: left 1s, right 1s;
+    transition: left 1s, right 1s;
+    top: 0px;
+    bottom: 0px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.button_row div, .button_row_side div {
     margin: 2px;
     display: inline-block;
     background: rgba(255, 255, 255, 0.75);
@@ -1074,6 +1094,12 @@ a.whitelink, .whitelink a {
 }
 #bottom_buttons {
     bottom: 30px;
+}
+#left_buttons {
+    left: 10px;
+}
+#right_buttons {
+    right: 10px;
 }
 #resize_btn, #mobile_menu_btn {
     cursor: pointer;
