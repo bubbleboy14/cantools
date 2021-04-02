@@ -30,14 +30,15 @@ CT.mobile = {
             duration: CT.mobile._dur,
             prefix: true,
             cb: function() {
-                n && n.scrollIntoView(true, { "behavior": "smooth" });
+                if (CT.mobile._dur)
+                    n && n.scrollIntoView(true, { "behavior": "smooth" });
+                else
+                    CT.mobile._dur = 1000;
                 cb && cb();
             }
         });
-        if (!CT.mobile._dur) {
-            CT.mobile._dur = 1000;
+        if (!CT.mobile._dur)
             n && n.scrollIntoView(true, { "block": "start", "behavior": "auto" }); // for initial load
-        }
     },
     "fitAndSnap": function(n, cb) {
         if (CT.dom.ALLNODE.mobileNode) // smoothest way once we're loaded
