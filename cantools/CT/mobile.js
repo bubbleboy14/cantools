@@ -11,6 +11,7 @@ CT.mobile = {
         "normal": ["normal", "stretched"],
         "tablet": ["stretched", "mobile"]
     },
+    _dur: 0,
     "fitNode": function(n, t, o, cb) {
         var tline, w = CT.align.width() - 10,
             toff = n && CT.align.offset(n);
@@ -26,13 +27,17 @@ CT.mobile = {
             node: CT.dom.ALLNODE,
             property: "transform",
             value: t && t || tline,
-            duration: 1000,
+            duration: CT.mobile._dur,
             prefix: true,
             cb: function() {
-                n && n.scrollIntoView(true, { "behavior": "smooth" }); // for initial load
+                n && n.scrollIntoView(true, { "behavior": "smooth" });
                 cb && cb();
             }
         });
+        if (!CT.mobile._dur) {
+            CT.mobile._dur = 1000;
+            n && n.scrollIntoView(true, { "block": "start", "behavior": "auto" }); // for initial load
+        }
     },
     "fitAndSnap": function(n, cb) {
         if (CT.dom.ALLNODE.mobileNode) // smoothest way once we're loaded
@@ -60,7 +65,7 @@ CT.mobile = {
                 && function() {
                     CT.dom.ALLNODE.toggleMobileMenu();
                     CT.mobile.fitAndSnap(CT.mobile.getMobileNode(bdata));
-                });
+                }, true);
     },
     "initMobileMenus": function(mmbtn, loggedin, searchcb) {
         mmbtn.tops = CT.dom.node(null, null,
