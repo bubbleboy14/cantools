@@ -14,7 +14,7 @@ CT.mobile = {
     _dur: 0,
     "fitNode": function(n, t, o, cb) {
         var tline, w = CT.align.width() - 10,
-            toff = n && CT.align.offset(n);
+            toff = n && CT.align.offset(n), ready;
         CT.dom.ALLNODE.mobileNode = n;
         if (CT.dom.ALLNODE._mode == "mobile")
             tline = "scale(" + (w / n.clientWidth) + ") translate(-"
@@ -30,15 +30,15 @@ CT.mobile = {
             duration: CT.mobile._dur,
             prefix: true,
             cb: function() {
-                if (CT.mobile._dur)
-                    n && n.scrollIntoView(true, { "behavior": "smooth" });
-                else
-                    CT.mobile._dur = 1000;
+                ready && n && n.scrollIntoView(true, { "behavior": "smooth" });
+                ready = true;
                 cb && cb();
             }
         });
-        if (!CT.mobile._dur)
+        if (!CT.mobile._dur) {
+            CT.mobile._dur = 1000;
             n && n.scrollIntoView(true, { "block": "start", "behavior": "auto" }); // for initial load
+        }
     },
     "fitAndSnap": function(n, cb) {
         if (CT.dom.ALLNODE.mobileNode) // smoothest way once we're loaded
@@ -122,9 +122,9 @@ CT.mobile = {
             };
             window.onscroll = function(e) {
                 setTimeout(_doscroll, 500);
-                setTimeout(_doscroll, 1000);
-                setTimeout(_doscroll, 2000);
-                setTimeout(_doscroll, 3000);
+//                setTimeout(_doscroll, 1000);
+  //              setTimeout(_doscroll, 2000);
+    //            setTimeout(_doscroll, 3000);
             };
             var firstMove;
             window.addEventListener('touchstart', function (e) {
