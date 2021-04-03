@@ -602,7 +602,7 @@
     flex-direction: column;
     justify-content: center;
 }
-.button_row > div, .button_row_side > div {
+.button_row > div, .button_row_side > div, #mobile_search_node {
     margin: 2px;
     background: rgba(255, 255, 255, 0.75);
     pointer-events: auto;
