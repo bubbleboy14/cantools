@@ -604,10 +604,12 @@
 }
 .button_row div, .button_row_side div {
     margin: 2px;
-    display: inline-block;
     background: rgba(255, 255, 255, 0.75);
     pointer-events: auto;
     cursor: pointer;
+}
+.button_row div {
+    display: inline-block;
 }
 .centeredimg img {
     margin-left: auto;
