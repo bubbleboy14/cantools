@@ -578,7 +578,7 @@
     right: -150px !important;
 }
 .button_row {
-    position: absolute;
+    position: fixed;
     text-align: center;
     pointer-events: none;
     -webkit-transition: top 1s, bottom 1s;
@@ -589,7 +589,7 @@
     left: 0px;
 }
 .button_row_side {
-    position: absolute;
+    position: fixed;
     text-align: center;
     pointer-events: none;
     -webkit-transition: left 1s, right 1s;
