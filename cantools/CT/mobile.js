@@ -59,21 +59,25 @@ CT.mobile = {
         }
     },
     "mobileMenuLink": function(bdata) {
-        var pref = "/img/" + (bdata.section && bdata.page || "icons") + "/",
+        var pref = "/img/" + (bdata.section ? (bdata.page || bdata.section) : "icons") + "/",
             name = bdata.name || (bdata.section && bdata.icon) || bdata.page || bdata.icon,
-            url = !bdata.clickChild && bdata.page && (bdata.page + ".html");
+            url = !(bdata.click || bdata.clickChild) && bdata.page && (bdata.page + ".html"),
+            cname = "round bordered padded";
         if (url && bdata.section)
             url += "#!" + bdata.section;
+        if (bdata.className)
+            cname += " " + bdata.className;
         return CT.dom.labeledImage(pref + bdata.icon + ".png", url,
-            name, name, "centeredimg", "round bordered padded",
-            "centered nowrap small", false, (bdata.id || bdata.firstClass || bdata.clickChild)
-                && function() {
-                    CT.dom.ALLNODE.toggleMobileMenu();
-                    if (bdata.clickChild)
-                        CT.dom.id(bdata.clickChild).firstElementChild.onclick();
-                    else
-                        CT.mobile.fitAndSnap(CT.mobile.getMobileNode(bdata));
-                }, true);
+            name, name, "centeredimg", cname, "centered nowrap small", false,
+            (bdata.id || bdata.firstClass || bdata.click || bdata.clickChild) && function() {
+                CT.dom.ALLNODE.toggleMobileMenu();
+                if (bdata.click)
+                    CT.dom.id(bdata.click).onclick();
+                else if (bdata.clickChild)
+                    CT.dom.id(bdata.clickChild).firstElementChild.onclick();
+                else
+                    CT.mobile.fitAndSnap(CT.mobile.getMobileNode(bdata));
+            }, true, "mm" + name);
     },
     "initMobileMenus": function(mmbtn, loggedin, searchcb) {
         mmbtn.tops = CT.dom.node(null, null,
@@ -101,13 +105,24 @@ CT.mobile = {
         document.body.appendChild(mmbtn.bottoms);
 
         var lefts = CT.mobile.page && CT.mobile.page.left || CT.mobile.menus.left;
-        if (!lefts) return
-        mmbtn.lefts = CT.dom.node(null, null,
-            "button_row_side left_out", "left_buttons");
-        lefts.forEach(function(bdata) {
-            mmbtn.lefts.appendChild(CT.mobile.mobileMenuLink(bdata));
-        });
-        document.body.appendChild(mmbtn.lefts);
+        if (lefts) {
+            mmbtn.lefts = CT.dom.node(null, null,
+                "button_row_side left_out", "left_buttons");
+            lefts.forEach(function(bdata) {
+                mmbtn.lefts.appendChild(CT.mobile.mobileMenuLink(bdata));
+            });
+            document.body.appendChild(mmbtn.lefts);
+        }
+
+        var rights = CT.mobile.page && CT.mobile.page.right || CT.mobile.menus.right;
+        if (rights) {
+            mmbtn.rights = CT.dom.node(null, null,
+                "button_row_side right_out", "right_buttons");
+            rights.forEach(function(bdata) {
+                mmbtn.rights.appendChild(CT.mobile.mobileMenuLink(bdata));
+            });
+            document.body.appendChild(mmbtn.rights);
+        }
     },
     "_mset": function() {
         var _a = CT.dom.ALLNODE, i, m,
@@ -182,11 +197,15 @@ CT.mobile = {
                 mmbtn.bottoms.className = "button_row bottom_out";
                 if (mmbtn.lefts)
                     mmbtn.lefts.className = "button_row_side left_out";
+                if (mmbtn.rights)
+                    mmbtn.rights.className = "button_row_side right_out";
             } else {
                 mmbtn.tops.className = "button_row";
                 mmbtn.bottoms.className = "button_row";
                 if (mmbtn.lefts)
                     mmbtn.lefts.className = "button_row_side";
+                if (mmbtn.rights)
+                    mmbtn.rights.className = "button_row_side";
             }
             mmbtn._on = !mmbtn._on;
         };
