@@ -30,19 +30,19 @@ CT.mobile = {
             duration: CT.mobile._dur,
             prefix: true,
             cb: function() {
-                ready && n && n.scrollIntoView(true, { "behavior": "smooth" });
+                ready && n && n.scrollIntoView({ block: "nearest", behavior: "smooth" });
                 ready = true;
                 cb && cb();
             }
         });
         if (!CT.mobile._dur) {
             CT.mobile._dur = 1000;
-            n && n.scrollIntoView(true, { "block": "start", "behavior": "auto" }); // for initial load
+            n && n.scrollIntoView({ block: "start", behavior: "auto" }); // for initial load
         }
     },
     "fitAndSnap": function(n, cb) {
         if (CT.dom.ALLNODE.mobileNode) // smoothest way once we're loaded
-            CT.dom.ALLNODE.mobileNode.scrollIntoView(true, { "behavior": "smooth" });
+            CT.dom.ALLNODE.mobileNode.scrollIntoView({ block: "nearest", behavior: "smooth" });
         CT.mobile.fitNode(n, null, null, cb);
     },
     "mobileSnap": function(cb) {
@@ -149,7 +149,7 @@ CT.mobile = {
             var _doscroll = function(e) {
                 var n = _a.mobileNode || _a;
                 if (n.getBoundingClientRect().bottom < CT.align.height())
-                    n.scrollIntoView(false, { "behavior": "smooth" });
+                    n.scrollIntoView({ block: "nearest", behavior: "smooth" });
             };
             window.onscroll = function(e) {
                 setTimeout(_doscroll, 500);
@@ -157,15 +157,15 @@ CT.mobile = {
   //              setTimeout(_doscroll, 2000);
     //            setTimeout(_doscroll, 3000);
             };
-            var firstMove;
-            window.addEventListener('touchstart', function (e) {
-                firstMove = true;
-            });
+//            var firstMove;
+//            window.addEventListener('touchstart', function (e) {
+  //              firstMove = true;
+    //        });
             window.addEventListener('touchmove', function (e) {
-                if (firstMove) {
-                    e.preventDefault();
-                    firstMove = false;
-                } else
+      //          if (firstMove) {
+        //            e.preventDefault();
+          //          firstMove = false;
+            //    } else
                     window.onscroll && window.onscroll();
             });
         };
