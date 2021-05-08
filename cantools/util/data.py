@@ -65,7 +65,14 @@ def batch(dlist, f, *args, **kwargs):
 
 def token(n=10):
 	import random, string
-	return "".join(random.sample(string.ascii_uppercase + string.digits, n))
+	samp = string.ascii_uppercase + string.digits
+	pop = len(samp)
+	s = ""
+	while n:
+		chunk = min(n, pop)
+		s += "".join(random.sample(samp, chunk))
+		n -= chunk
+	return s
 
 # below (props, drower, tsv) for tsv dumping
 def props(mod):
