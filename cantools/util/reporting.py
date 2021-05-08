@@ -23,7 +23,10 @@ def close_log():
         LOG_FILE = None
 
 def log(msg, level=0, important=False):
-    s = "* %s : %s %s"%(datetime.now(), "  " * level, msg)
+    from cantools import config
+    s = "%s%s"%("  " * level, msg)
+    if config.log.timestamp:
+        s = "* %s : %s"%(datetime.now(), s)
     if important:
         s = "\n%s"%(s,)
     if LOG_FILE:

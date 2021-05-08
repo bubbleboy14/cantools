@@ -2,6 +2,7 @@ import os
 
 cfg = {
 	"log": {
+		"timestamp": True,
 		"allow": ["info", "log", "error"]
 	},
 	"plugin": {

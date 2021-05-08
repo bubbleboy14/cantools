@@ -118,7 +118,7 @@ for line in read("ct.cfg", True):
 		items.append([key, val])
 
 for key, val in items:
-	if key in ["ENCODE", "DB_ECHO", "DB_PUBLIC", "GEO_TEST", "MEMCACHE_REQUEST", "MEMCACHE_DB", "PUBSUB_ECHO", "PUBSUB_META", "PUBSUB_B64", "SSL_VERIFY", "ADMIN_MONITOR_LOG", "WEB_XORIGIN"]:
+	if key in ["ENCODE", "DB_ECHO", "DB_PUBLIC", "GEO_TEST", "MEMCACHE_REQUEST", "MEMCACHE_DB", "PUBSUB_ECHO", "PUBSUB_META", "PUBSUB_B64", "SSL_VERIFY", "ADMIN_MONITOR_LOG", "WEB_XORIGIN", "LOG_TIMESTAMP"]:
 		val = val == "True"
 	elif key in ["PUBSUB_HISTORY"]:
 		val = int(val)
