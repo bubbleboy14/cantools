@@ -466,7 +466,7 @@ CT.modal.Prompt = CT.Class({
 	},
 	_nodify: function(data) {
 		return data.map(function(d) {
-			if (typeof d == "string")
+			if (["string", "number"].includes(typeof d))
 				return CT.dom.node(d);
 			else if (!(d instanceof Node))
 				return CT.dom.node(d.name || d.title || d.label);
