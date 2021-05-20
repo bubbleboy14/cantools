@@ -167,7 +167,7 @@ def build_frags(mode="web", admin_ct_path=None):
             block = jsmin(block)
         write(block, path)
     while len(fragged) is not len(fragz):
-        fcopy = filter(lambda f : f not in fragged, fragz)
+        fcopy = list(filter(lambda f : f not in fragged, fragz))
         fragged.update(fcopy)
         list(map(build_frag, fcopy))
 
