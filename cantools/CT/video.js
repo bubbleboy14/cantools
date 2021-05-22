@@ -30,6 +30,7 @@ CT.video = {
 		"vimeo": "//player.vimeo.com/video/",
 		"dtube": "https://emb.d.tube/#!/",
 		"rumble": "https://rumble.com/embed/",
+		"odysee": "https://odysee.com/$/embed/",
 		"bitchute": "https://www.bitchute.com/embed/",
 		"lbryplayer": "https://cdn.lbryplayer.xyz/api/v4/streams/free/"
 	},
@@ -64,6 +65,8 @@ CT.video = {
 			return url.split("recorded/")[1].split("?")[0];
 		else if (url.indexOf("lbryplayer.xyz") != -1)
 			return url.slice(47);
+		else if (url.indexOf("odysee.com") != -1)
+			return url.slice(27);
 		var spliturl = url.split('.'),
 			ext = spliturl[spliturl.length - 1];
 		if (CT.video.rawVidTypes.indexOf(ext) != -1) // eventually do more about ssl
@@ -89,6 +92,8 @@ CT.video = {
 			return "ustream";
 		if (url.indexOf("lbryplayer.xyz") != -1)
 			return "lbryplayer";
+		if (url.indexOf("odysee.com") != -1)
+			return "odysee";
 		var spliturl = url.split('.'),
 			ext = spliturl[spliturl.length - 1];
 		if (CT.video.rawVidTypes.indexOf(ext) != -1)
@@ -130,6 +135,8 @@ CT.video = {
 			return "<iframe src=\"" + iurl + "?html5=1\" " + dims + ifs + " frameborder=0 webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>";
 		else if (video.player == "ustream")
 			return "<object type=application/x-shockwave-flash data=" + location.protocol + "//static-cdn1.ustream.tv/swf/live/viewerqos:21.swf " + dims + "id=utv" + video.docid + " name=utv" + video.docid + "><param name=flashvars value=autoplay=true&locale=en_US&referrer=http%3A%2F%2Fwww.ustream.tv%2Frecorded%2F" + video.docid + "%3Futm_campaign%3Dustre.am%26utm_source%3Dustre.am%2F%3A44gEy%26utm_medium%3Dsocial%26utm_content%3D20150324210416&autoResize=false&enablejsapi=true&sv=6&volume=1&ts=1427256261325&vid=" + video.docid + "&loc=" + video.docid + "&hasticket=false><param name=allowfullscreen value=true><param name=allowscriptaccess value=always><param name=bgcolor value=000000><param name=wmode value=transparent></object>"
+		else if (video.player == "odysee")
+			return '<iframe ' + dims + ' src="' + iurl + '" allowfullscreen></iframe>';
 		else if (video.player == "lbryplayer")
 			return "<video " + dims + " controls style='max-width:100%' src=" + iurl + "></video>";
 		else if (CT.video.rawVidTypes.indexOf(video.player) != -1)
