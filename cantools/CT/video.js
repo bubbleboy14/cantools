@@ -5,7 +5,7 @@ This module supports video playback.
 We support DTube, BitChute, Vimeo, YouTube, Google Video, Facebook, and uStream.
 
 ### raw formats
-We support mp4, ogg, and webm.
+We support mp4, ogg, webm, and mov.
 
 Typically, you'll want to use the fit() function.
 
@@ -15,7 +15,7 @@ Typically, you'll want to use the fit() function.
 
 CT.video = {
 	// video link detection and parsing
-	"rawVidTypes": ["mp4", "ogg", "webm"],
+	"rawVidTypes": ["mp4", "ogg", "webm", "mov"],
 	"player2url": {
 		"facebook": "www.facebook.com/",
 		"google": "video.google.com?docid=",
@@ -30,7 +30,8 @@ CT.video = {
 		"vimeo": "//player.vimeo.com/video/",
 		"dtube": "https://emb.d.tube/#!/",
 		"rumble": "https://rumble.com/embed/",
-		"bitchute": "https://www.bitchute.com/embed/"
+		"bitchute": "https://www.bitchute.com/embed/",
+		"lbryplayer": "https://cdn.lbryplayer.xyz/api/v4/streams/free/"
 	},
 	"urlFromData": function(player, docid) {
 		return player ? (location.protocol + "//" + CT.video.player2url[player] + docid) : "";
@@ -61,6 +62,8 @@ CT.video = {
 			return encodeURIComponent(url.split("facebook.com/")[1]);
 		else if (url.indexOf("ustream.tv/recorded/") != -1)
 			return url.split("recorded/")[1].split("?")[0];
+		else if (url.indexOf("lbryplayer.xyz") != -1)
+			return url.slice(47);
 		var spliturl = url.split('.'),
 			ext = spliturl[spliturl.length - 1];
 		if (CT.video.rawVidTypes.indexOf(ext) != -1) // eventually do more about ssl
@@ -84,6 +87,8 @@ CT.video = {
 			return "vimeo";
 		if (url.indexOf("ustream.tv") != -1)
 			return "ustream";
+		if (url.indexOf("lbryplayer.xyz") != -1)
+			return "lbryplayer";
 		var spliturl = url.split('.'),
 			ext = spliturl[spliturl.length - 1];
 		if (CT.video.rawVidTypes.indexOf(ext) != -1)
@@ -125,6 +130,8 @@ CT.video = {
 			return "<iframe src=\"" + iurl + "?html5=1\" " + dims + ifs + " frameborder=0 webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>";
 		else if (video.player == "ustream")
 			return "<object type=application/x-shockwave-flash data=" + location.protocol + "//static-cdn1.ustream.tv/swf/live/viewerqos:21.swf " + dims + "id=utv" + video.docid + " name=utv" + video.docid + "><param name=flashvars value=autoplay=true&locale=en_US&referrer=http%3A%2F%2Fwww.ustream.tv%2Frecorded%2F" + video.docid + "%3Futm_campaign%3Dustre.am%26utm_source%3Dustre.am%2F%3A44gEy%26utm_medium%3Dsocial%26utm_content%3D20150324210416&autoResize=false&enablejsapi=true&sv=6&volume=1&ts=1427256261325&vid=" + video.docid + "&loc=" + video.docid + "&hasticket=false><param name=allowfullscreen value=true><param name=allowscriptaccess value=always><param name=bgcolor value=000000><param name=wmode value=transparent></object>"
+		else if (video.player == "lbryplayer")
+			return "<video " + dims + " controls style='max-width:100%' src=" + iurl + "></video>";
 		else if (CT.video.rawVidTypes.indexOf(video.player) != -1)
 			return "<video " + dims + " controls style='max-width:100%'><source src=" + location.protocol + "//" + video.docid + " type=video/" + video.player + "></video>";
 		else
