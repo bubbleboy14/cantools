@@ -2,7 +2,7 @@
 This module supports video playback.
 
 ### video players
-We support DTube, BitChute, Vimeo, YouTube, Google Video, Facebook, and uStream.
+We support DTube, BitChute, Rumble, Odysee, lbryplayer, UGETube, Vimeo, YouTube, Google Video, Facebook, and uStream.
 
 ### raw formats
 We support mp4, ogg, webm, and mov.
@@ -22,7 +22,7 @@ CT.video = {
 		"youtube": "www.youtube.com/watch?v=",
 		"vimeo": "vimeo.com/",
 		"ustream": "www.ustream.tv/recorded/",
-		"mp4": "", "ogg": "", "webm": ""
+		"mp4": "", "ogg": "", "webm": "", "mov": ""
 	},
 	"embed_url": {
 		"facebook": "https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2F",
@@ -31,6 +31,7 @@ CT.video = {
 		"dtube": "https://emb.d.tube/#!/",
 		"rumble": "https://rumble.com/embed/",
 		"odysee": "https://odysee.com/$/embed/",
+		"ugetube": "https://ugetube.com/embed/",
 		"bitchute": "https://www.bitchute.com/embed/",
 		"lbryplayer": "https://cdn.lbryplayer.xyz/api/v4/streams/free/"
 	},
@@ -67,6 +68,8 @@ CT.video = {
 			return url.slice(47);
 		else if (url.indexOf("odysee.com") != -1)
 			return url.slice(27);
+		else if (url.indexOf("ugetube.com") != -1)
+			return url.split("_")[1].split(".")[0];
 		var spliturl = url.split('.'),
 			ext = spliturl[spliturl.length - 1];
 		if (CT.video.rawVidTypes.indexOf(ext) != -1) // eventually do more about ssl
@@ -94,6 +97,8 @@ CT.video = {
 			return "lbryplayer";
 		if (url.indexOf("odysee.com") != -1)
 			return "odysee";
+		if (url.indexOf("ugetube.com") != -1)
+			return "ugetube";
 		var spliturl = url.split('.'),
 			ext = spliturl[spliturl.length - 1];
 		if (CT.video.rawVidTypes.indexOf(ext) != -1)
@@ -123,10 +128,8 @@ CT.video = {
 		}
 		var ifs = ' style="border:none;overflow:hidden;max-width:100%;"',
 			iurl = CT.video.embed_url[video.player] + video.docid;
-		if (video.player == "dtube" || video.player == "bitchute")
+		if (["odysee", "ugetube", "dtube", "bitchute", "rumble"].includes(video.player))
 			return '<iframe ' + dims + ifs + ' src="' + iurl + '" frameborder="0" allowfullscreen></iframe>';
-		else if (video.player == "rumble")
-			return '<iframe src="' + iurl + '" ' + dims + ifs + ' allowfullscreen></iframe>';
 		else if (video.player == "facebook")
 			return '<iframe src="' + iurl + '&show_text=0&width=' + w + '" ' +  dims + ifs + ' scrolling="no" frameborder="0" allowTransparency="true" allowFullScreen="true"></iframe>';
 		else if (video.player == "google")
@@ -135,8 +138,6 @@ CT.video = {
 			return "<iframe src=\"" + iurl + "?html5=1\" " + dims + ifs + " frameborder=0 webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>";
 		else if (video.player == "ustream")
 			return "<object type=application/x-shockwave-flash data=" + location.protocol + "//static-cdn1.ustream.tv/swf/live/viewerqos:21.swf " + dims + "id=utv" + video.docid + " name=utv" + video.docid + "><param name=flashvars value=autoplay=true&locale=en_US&referrer=http%3A%2F%2Fwww.ustream.tv%2Frecorded%2F" + video.docid + "%3Futm_campaign%3Dustre.am%26utm_source%3Dustre.am%2F%3A44gEy%26utm_medium%3Dsocial%26utm_content%3D20150324210416&autoResize=false&enablejsapi=true&sv=6&volume=1&ts=1427256261325&vid=" + video.docid + "&loc=" + video.docid + "&hasticket=false><param name=allowfullscreen value=true><param name=allowscriptaccess value=always><param name=bgcolor value=000000><param name=wmode value=transparent></object>"
-		else if (video.player == "odysee")
-			return '<iframe ' + dims + ' src="' + iurl + '" allowfullscreen></iframe>';
 		else if (video.player == "lbryplayer")
 			return "<video " + dims + " controls style='max-width:100%' src=" + iurl + "></video>";
 		else if (CT.video.rawVidTypes.indexOf(video.player) != -1)
