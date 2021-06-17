@@ -2,7 +2,7 @@
 This module supports video playback.
 
 ### video players
-We support DTube, BitChute, Rumble, Odysee, lbryplayer, UGETube, Vimeo, YouTube, Google Video, Facebook, and uStream.
+We support DTube, BitChute, Rumble, Odysee, lbryplayer, UGETube, GabTV, Vimeo, YouTube, Google Video, Facebook, and uStream.
 
 ### raw formats
 We support mp4, ogg, webm, and mov.
@@ -33,6 +33,7 @@ CT.video = {
 		"odysee": "https://odysee.com/$/embed/",
 		"ugetube": "https://ugetube.com/embed/",
 		"bitchute": "https://www.bitchute.com/embed/",
+		"gab": "https://tv.gab.com/channel/wurzelroot/embed/",
 		"lbryplayer": "https://cdn.lbryplayer.xyz/api/v4/streams/free/"
 	},
 	"urlFromData": function(player, docid) {
@@ -70,6 +71,8 @@ CT.video = {
 			return url.slice(27);
 		else if (url.indexOf("ugetube.com") != -1)
 			return url.split("_")[1].split(".")[0];
+		else if (url.indexOf("tv.gab.com") != -1)
+			return url.split("/view/")[1];
 		var spliturl = url.split('.'),
 			ext = spliturl[spliturl.length - 1];
 		if (CT.video.rawVidTypes.indexOf(ext) != -1) // eventually do more about ssl
@@ -99,6 +102,8 @@ CT.video = {
 			return "odysee";
 		if (url.indexOf("ugetube.com") != -1)
 			return "ugetube";
+		if (url.indexOf("tv.gab.com") != -1)
+			return "gab";
 		var spliturl = url.split('.'),
 			ext = spliturl[spliturl.length - 1];
 		if (CT.video.rawVidTypes.indexOf(ext) != -1)
@@ -128,7 +133,7 @@ CT.video = {
 		}
 		var ifs = ' style="border:none;overflow:hidden;max-width:100%;"',
 			iurl = CT.video.embed_url[video.player] + video.docid;
-		if (["odysee", "ugetube", "dtube", "bitchute", "rumble"].includes(video.player))
+		if (["odysee", "ugetube", "dtube", "bitchute", "rumble", "gab"].includes(video.player))
 			return '<iframe ' + dims + ifs + ' src="' + iurl + '" frameborder="0" allowfullscreen></iframe>';
 		else if (video.player == "facebook")
 			return '<iframe src="' + iurl + '&show_text=0&width=' + w + '" ' +  dims + ifs + ' scrolling="no" frameborder="0" allowTransparency="true" allowFullScreen="true"></iframe>';
