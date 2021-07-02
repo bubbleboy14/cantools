@@ -1,7 +1,11 @@
 import subprocess, os
 from cantools import config
 from cantools.util import log, error, read, write, mkdir
-from jsmin import jsmin
+
+try:
+    from jsmin import jsmin
+except:
+    error("please install jsmin >= 2.2.2")
 
 def nextQuote(text, lastIndex=0):
     z = i = text.find('"', lastIndex)
