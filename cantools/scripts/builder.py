@@ -5,7 +5,7 @@ from cantools.util import log, error, read, write, mkdir
 try:
     from jsmin import jsmin
 except:
-    error("please install jsmin >= 2.2.2")
+    log("build attempt will fail - please install jsmin >= 2.2.2")
 
 def nextQuote(text, lastIndex=0):
     z = i = text.find('"', lastIndex)
