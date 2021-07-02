@@ -1,4 +1,4 @@
-# cantools 0.10.8.99
+# cantools 0.10.8.100
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
  - Docs: http://ct.mkult.co
@@ -1248,10 +1248,10 @@ TODO: remove/replace uid/kval/iskey -- too application-specific
 This module supports video playback.
 
 ### video players
-We support DTube, BitChute, Vimeo, YouTube, Google Video, Facebook, and uStream.
+We support DTube, BitChute, Rumble, Odysee, lbryplayer, UGETube, GabTV, Vimeo, YouTube, Google Video, Facebook, and uStream.
 
 ### raw formats
-We support mp4, ogg, and webm.
+We support mp4, ogg, webm, and mov.
 
 Typically, you'll want to use the fit() function.
 
