@@ -72,7 +72,8 @@ cfg = {
 	"pay": {
 		"merchant": None,
 		"public": None,
-		"private": None
+		"private": None,
+		"environment": "Sandbox"
 	},
 	"scrambler": "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/=_",
 	"encode": False,
