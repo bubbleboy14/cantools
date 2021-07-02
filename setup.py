@@ -28,7 +28,7 @@ setup(
         "jsmin >= 2.2.2",
         "sqlalchemy >= 1.0.12",
         "psutil >= 5.0.1",
-        "braintree >= 4.5.0",
+#        "braintree >= 4.5.0",
         "six >= 1.12.0"
     ],
     entry_points = '''
