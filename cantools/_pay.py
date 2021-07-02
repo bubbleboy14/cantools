@@ -1,14 +1,20 @@
-import braintree
 from cantools.web import respond, succeed, fail, cgi_get
 from cantools import config, util
 from model import *
 
-gateway = braintree.BraintreeGateway(braintree.Configuration(
-	environment=braintree.Environment.Sandbox,
-	merchant_id=config.pay.merchant,
-	public_key=config.pay.public,
-	private_key=config.pay.private
-))
+try:
+	import braintree
+except:
+	util.error("please install braintree >= 0.4.5")
+try:
+	gateway = braintree.BraintreeGateway(braintree.Configuration(
+		environment=getattr(braintree.Environment, config.pay.environment),
+		merchant_id=config.pay.merchant,
+		public_key=config.pay.public,
+		private_key=config.pay.private
+	))
+except:
+	util.error("please install braintree >= 0.4.5 and check your PAY config values")
 
 def response():
 	nonce = cgi_get("nonce", required=False)
