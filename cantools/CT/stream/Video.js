@@ -41,8 +41,9 @@ CT.stream.Video = CT.Class({
 
 		if (v.duration != Infinity && !isNaN(v.duration)) {
 			if (this._duration == v.duration) {
-				this.log("DURATION MATCH RESET!!!");
-				this.reset();
+				this.log("SKIPPED RESET (duration match)");
+//				this.log("DURATION MATCH RESET!!!");
+//				this.reset();
 			}
 			this._duration = v.duration;
 			var target = v.duration - (CT.stream.opts.chunk / 1000);
