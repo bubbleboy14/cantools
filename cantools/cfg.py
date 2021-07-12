@@ -46,6 +46,7 @@ cfg = {
 		"port": 8080,
 		"protocol": "http",
 		"xorigin": False,
+		"csp": None,
 		"log": None,
 		"errlog": None,
 		"rollz": {},

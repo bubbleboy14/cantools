@@ -35,8 +35,16 @@ class Response(object):
         return b
 
     def _send(self, *args, **kwargs):
-        if config.web.xorigin:
+        wcfg = config.web
+        if wcfg.xorigin:
             self.response.headers["Access-Control-Allow-Origin"] = "*"
+        if wcfg.csp:
+            if wcfg.csp.startswith("auto"):
+                d = wcfg.domain
+                if wcfg.csp != "autosub":
+                    d = d.split(".").pop()
+                wcfg.update("csp", "default-src 'self' %s *.%s"%(d, d))
+            self.response.headers["Content-Security-Policy"] = wcfg.csp
         self.response.write(*args, **kwargs)
 
     def _close(self):
