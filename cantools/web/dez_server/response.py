@@ -42,7 +42,7 @@ class Response(object):
             if wcfg.csp.startswith("auto"):
                 d = wcfg.domain
                 if wcfg.csp != "autosub":
-                    d = d.split(".").pop()
+                    d = d.split(".")[-2:]
                 wcfg.update("csp", "default-src 'self' %s *.%s"%(d, d))
             self.response.headers["Content-Security-Policy"] = wcfg.csp
         self.response.write(*args, **kwargs)
