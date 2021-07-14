@@ -353,6 +353,7 @@ CT.modal.Prompt = CT.Class({
 					cb: this.submit,
 					isTA: this.opts.isTA,
 					blurs: this.opts.blurs,
+					value: this.opts.value,
 					classname: this.opts.inputClass
 				});
 			}
