@@ -328,7 +328,7 @@ CT.parse = {
 	    if (phoneMatches) phoneMatches.forEach(function(matchstr) {
 	        var i = cmodded.indexOf(matchstr);
 	        var prev = cmodded.charAt(i - 1);
-	        if (prev != ">" && prev != ":" && prev != "0" && cmodded.slice(i - 2, i) != "+1")
+	        if (!prev || (isNaN(prev) && prev != ">" && prev != ":" && cmodded.slice(i - 2, i) != "+1"))
 	            cmodded = cmodded.replace(matchstr,
 	            	CT.parse.formatPhoneLink(matchstr));
 	    });
