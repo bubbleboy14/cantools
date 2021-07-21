@@ -39,19 +39,19 @@ then
     echo "updating repos"
     sudo apt update
 
-    echo "checking for python"
-    which python
+    echo "checking for python3"
+    which python3
     if [ $? -ne 0 ]
     then
-        echo "installing python"
-        sudo apt install --yes python </dev/null
-        echo "python installed"
+        echo "installing python3"
+        sudo apt install --yes python3 </dev/null
+        echo "python3 installed"
     else
         echo "you got it"
     fi
 
     echo "installing other deps"
-    sudo apt install --yes build-essential libssl-dev libffi-dev python-dev python-setuptools git </dev/null
+    sudo apt install --yes build-essential libssl-dev libffi-dev python3-dev python3-setuptools git </dev/null
 else
     echo "uh-oh -- you've got" $OSTYPE
     echo "this script only knows about Debian and OSX"
@@ -62,18 +62,18 @@ echo "checking for cantools"
 if pwd | grep cantools;
 then
     echo "installing right here right now"
-    sudo python setup.py install
-    sudo python setup.py develop
+    sudo python3 setup.py install
+    sudo python3 setup.py develop
 else
-    python -c 'import cantools' || {
+    python3 -c 'import cantools' || {
         echo "cloning (and hiding) and installing cantools"
         cd ~
         mkdir .ctp
         cd .ctp
         git clone https://github.com/bubbleboy14/cantools.git
         cd cantools
-        sudo python setup.py install
-        sudo python setup.py develop
+        sudo python3 setup.py install
+        sudo python3 setup.py develop
         echo "cantools installed"
     }
 fi
