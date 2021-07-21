@@ -44,7 +44,7 @@ Generates fresh 'static' and 'production' files (from 'development' source files
 
 import subprocess, os
 from cantools import config, __version__
-from cantools.util import log, error, read, write, cmd
+from cantools.util import log, error, read, write, cmd, py
 from .builder import build_all
 
 try:
@@ -117,11 +117,11 @@ def vpush():
     cmd("git push")
     if input("push to cheese shop? [N/y] ").lower().startswith("y"):
         log("laying egg", important=True)
-        cmd("sudo python setup.py install")
+        py("setup.py install", True)
         log("pushing to cheese shop", important=True)
         cmd("twine upload dist/ct-%s-py2.7.egg"%(version,))
         log("restoring cantools develop status", important=True)
-        cmd("sudo python setup.py develop")
+        py("setup.py develop", True)
     log("we did it (%s -> %s)!"%(__version__, version), important=True)
 
 def run():
