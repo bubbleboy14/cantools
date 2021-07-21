@@ -39,7 +39,7 @@ any need for the developer to know or do anything beyond 'ctinit -r'.
 import os, sys
 from optparse import OptionParser
 from cantools import config, include_plugin, mods_and_repos
-from cantools.util import log, error, cp, sym, mkdir, rm, cmd, read
+from cantools.util import log, error, cp, sym, mkdir, rm, py, cmd, read
 from .builder import build_all
 
 try:
@@ -85,11 +85,11 @@ class Builder(object):
 		cmd("git clone https://github.com/%s.git"%(repo,))
 		os.chdir(plug)
 		log("installing plugin", important=True)
-		cmd("python setup.py install", True)
-		cmd("python setup.py develop", True)
+#		cmd("python setup.py install", True) # unnecessary right?
+		py("setup.py develop", True)
 		os.chdir("%s/.."%(self.ctroot,))
 		log("restoring cantools develop status", important=True)
-		cmd("python setup.py develop", True)
+		py("setup.py develop", True)
 		os.chdir(curdir)
 		sys.path.insert(0, os.path.join(config.plugin.path, plug))
 		self._getplug(plug)
@@ -269,9 +269,9 @@ def update():
 	if input("update cantools dependencies? [N/y] ").lower().startswith("y"):
 		os.chdir("%s/.."%(CTP,))
 		log("updating dependencies", important=True)
-		cmd("python setup.py install", True)
+		py("setup.py install", True)
 		log("restoring cantools develop status", important=True)
-		cmd("python setup.py develop", True)
+		py("setup.py develop", True)
 	log("goodbye")
 
 def admin():
