@@ -1,4 +1,4 @@
-import os, subprocess, platform
+import os, sys, subprocess, platform
 try:
 	from commands import getoutput   # py2
 except:
@@ -60,3 +60,8 @@ def cmd(cline, sudo=False):
 def output(cline, silent=False):
 	silent or log('getting output for: "%s"'%(cline,), 2)
 	return getoutput(cline)
+
+PYVER = sys.version_info[0] == 2 and "python" or "python3"
+
+def py(cline, sudo=False):
+	cmd("%s %s"%(PYVER, cline), sudo)
