@@ -2,11 +2,6 @@ import subprocess, os
 from cantools import config
 from cantools.util import log, error, read, write, mkdir
 
-try:
-    from jsmin import jsmin
-except:
-    log("build attempt will fail - please install jsmin >= 2.2.2")
-
 def nextQuote(text, lastIndex=0):
     z = i = text.find('"', lastIndex)
     while z > 0 and text[z-1] == "\\":
@@ -229,4 +224,8 @@ def build_all(mode="web", admin_ct_path=None):
     build_frags(mode, admin_ct_path)
 
 if __name__ == "__main__":
+    try:
+        from jsmin import jsmin
+    except:
+        error("can't build - please install jsmin >= 2.2.2")
     build_all()
