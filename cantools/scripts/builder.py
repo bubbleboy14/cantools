@@ -2,6 +2,16 @@ import subprocess, os
 from cantools import config
 from cantools.util import log, error, read, write, mkdir
 
+# jsmin was removed from the cantools requirements to reduce
+# the maintenance burden for deployments on older systems
+# (often with some degree of broken package management) that
+# don't need to compile anything. so we check here instead.
+try:
+    from jsmin import jsmin
+    BUILDER_READY = True
+except:
+    BUILDER_READY = False
+
 def nextQuote(text, lastIndex=0):
     z = i = text.find('"', lastIndex)
     while z > 0 and text[z-1] == "\\":
@@ -218,14 +228,12 @@ def silence_warnings():
     lex.PlyLogger.warning = quiet
 
 def build_all(mode="web", admin_ct_path=None):
-    silence_warnings()
+    if not BUILDER_READY:
+        error("can't build - please install jsmin >= 2.2.2")
+    #silence_warnings() # is this unnecessary now.... maybe...
     for dirname, dirnames, filenames in os.walk(config.build[mode].dynamic):
         build(admin_ct_path, dirname, filenames + dirnames)
     build_frags(mode, admin_ct_path)
 
 if __name__ == "__main__":
-    try:
-        from jsmin import jsmin
-    except:
-        error("can't build - please install jsmin >= 2.2.2")
     build_all()
