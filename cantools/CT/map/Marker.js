@@ -130,7 +130,7 @@ CT.map.Marker = CT.Class({
 		// suggested: title"", info"" || info(node), map
 		// if content, build custom dom marker
 		this.opts = opts = CT.merge(opts, {
-			icon: "http://maps.google.com/mapfiles/ms/icons/purple-dot.png"
+			icon: "https://maps.google.com/mapfiles/ms/icons/purple-dot.png"
 		});
 		if (opts.info)
 			opts.listeners = CT.merge(opts.listeners, { click: this.showInfo });
