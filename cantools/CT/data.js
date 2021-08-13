@@ -150,8 +150,9 @@ CT.data = {
 		}
 		return s;
 	},
-	"random": function(max) {
-		return Math.floor(Math.random() * max);
+	"random": function(max, noRound) {
+		var r = Math.random() * max;
+		return noRound ? r : Math.floor(r);
 	},
 	"choice": function(arr) {
 		return arr[CT.data.random(arr.length)];
