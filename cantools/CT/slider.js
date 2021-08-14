@@ -241,7 +241,7 @@ CT.slider.Slider = CT.Class({
 		if (index == 0) {
 			circle.className += " active-circle";
 			this.activeCircle = circle;
-			if (!this.opts.parent.slider) // exclude embedded slider
+			if (!this.opts.parent.slider && !this.opts.startFrame) // exclude embedded slider
 				setTimeout(this.container.firstChild.frame.on.show, 500);
 		}
 		if (index == undefined) // ad-hoc frame
@@ -474,13 +474,18 @@ CT.slider.Frame = CT.Class({
 		CT.dom.addContent(this.node, CT.layout.profile(opts));
 	},
 	track: function() { // add img!
-		var oz = this.opts, audio = CT.dom.audio(this.opts.src, true, false, false,
-			null, this.slider.autoSlideCallback), pause = function() {
+		var oz = this.opts, audio = CT.dom.audio(oz.src, true, false, false, null,
+			this.slider.autoSlideCallback), playmod = CT.modal.modal("click to play!", function() {
+				audio.play();
+			}, {
+				noClose: true,
+				innerClass: "gigantic"
+			}, true, true), pause = function() {
 				audio.playing = false;
 				audio.pause();
 			}, resume = function() {
 				audio.playing = true;
-				audio.play();
+				audio.play().catch(playmod.show);
 			}, pauseResume = function() {
 				audio.playing ? pause() : resume();
 			};
