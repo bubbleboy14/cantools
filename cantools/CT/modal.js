@@ -78,7 +78,7 @@ CT.modal = {
 			style: "single-choice"
 		}));
 	},
-	modal: function(content, onhide, opts, closeOnClick) {
+	modal: function(content, onhide, opts, closeOnClick, noshow) {
 		var mod = new CT.modal.Modal(CT.merge(opts, {
 			content: content,
 			onclick: closeOnClick && function() {
@@ -86,7 +86,7 @@ CT.modal = {
 			}
 		}, CT.modal._defs));
 		if (onhide) mod.on.hide = onhide;
-		mod.show();
+		noshow || mod.show();
 		return mod;
 	},
 	img: function(src, onhide) {
