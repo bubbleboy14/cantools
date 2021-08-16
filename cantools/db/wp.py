@@ -32,8 +32,8 @@ try:
 except:
 	log("NO DATABASE CONNECTION!!!!!", important=True)
 
-def getdb():
-	return _db
+def getdb(subdb=False):
+	return subdb and _db.db() or _db
 
 def dbcommit():
 	_db.commit()
