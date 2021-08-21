@@ -98,12 +98,23 @@ class Mailer(object):
 		to, subject, body, html = self._prep(to, subject, body, html)
 		self._send(to, subject, html or body, bcc) # ignore sender -- same every time
 
-	def admins(self, subject, body):
-		log("emailing admins: %s"%(subject,), important=True)
+	def admins(self, subject, body, eset="contacts"):
+		acfg = core.admin
+		admins = acfg.get(eset)
+		if not admins and eset != "contacts":
+			log("no %s configured - defaulting to contacts"%(eset,))
+			eset = "contacts"
+			admins = acfg.get(eset)
+		admins or log("(no admins specified)")
+		log("emailing admins (%s): %s"%(eset, subject), important=True)
 		log(body)
-		for admin in config.admin.contacts:
+		for admin in admins:
 			self.mail(to=admin, subject=subject, body=body)
+
+	def reportees(self, subject, body):
+		self.admins(subject, body, "reportees")
 
 mailer = Mailer(config.mailer, config.mailername)
 send_mail = mailer.mail
 email_admins = mailer.admins
+email_reportees = mailer.reportees
