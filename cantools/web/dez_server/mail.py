@@ -99,7 +99,7 @@ class Mailer(object):
 		self._send(to, subject, html or body, bcc) # ignore sender -- same every time
 
 	def admins(self, subject, body, eset="contacts"):
-		acfg = core.admin
+		acfg = config.admin
 		admins = acfg.get(eset)
 		if not admins and eset != "contacts":
 			log("no %s configured - defaulting to contacts"%(eset,))
