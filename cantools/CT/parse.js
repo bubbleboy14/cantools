@@ -313,6 +313,13 @@ CT.parse = {
 	        || CT.parse._stampString(mins, "min") || "moments") + " ago";
 	},
 
+	"enableVideo": function() {
+		CT.parse.setLinkProcessor(CT.parse.vid);
+	},
+	"vid": function(url) {
+		return CT.video.full(CT.video.videoData(url));
+	},
+
 	// parser
 	"process": function(c, simple, customArg) {
 	    if (!c) return "";
