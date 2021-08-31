@@ -317,7 +317,8 @@ CT.parse = {
 		CT.parse.setLinkProcessor(CT.parse.vid);
 	},
 	"vid": function(url) {
-		return CT.video.full(CT.video.videoData(url));
+		var vdata = CT.video.videoData(url);
+		return vdata ? CT.video.full(vdata) : url;
 	},
 
 	// parser
