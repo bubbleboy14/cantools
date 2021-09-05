@@ -38,6 +38,9 @@ def _apply_filter(query, key, obj, modelName, joinz):
         rad = mdist / 69.11
         query.filter(prop > val - rad)
         query.filter(prop < val + rad)
+    elif comp == "!=" and type(val) == list: # allow multiple exclusions...
+        for item in val:
+            query.filter(operators[comp](prop, item))
     else:
         query.filter(operators[comp](prop, val))
 
