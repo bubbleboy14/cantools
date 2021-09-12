@@ -41,11 +41,14 @@ def dbcommit():
 def query(q, fetch=True):
 	return _db.query(q, fetch)
 
-def memid(email):
-	res = query("select ID from wp_users where user_email = '%s';"%(email,))
+def memprop(email, prop):
+	res = query("select %s from wp_users where user_email = '%s';"%(prop, email))
 	if not res:
 		error("no matching member: %s"%(email,))
 	return res[0][0]
+
+def memid(email):
+	return memprop(email, "ID")
 
 def setmeta(pid, key, val):
 	mres = query("select * from wp_usermeta where user_id = '%s' and meta_key = '%s';"%(pid, key))
