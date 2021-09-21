@@ -33,7 +33,7 @@ CT.video = {
 		"odysee": "https://odysee.com/$/embed/",
 		"ugetube": "https://ugetube.com/embed/",
 		"bitchute": "https://www.bitchute.com/embed/",
-		"gab": "https://tv.gab.com/channel/wurzelroot/embed/",
+		"gab": "https://tv.gab.com/channel/",
 		"lbryplayer": "https://cdn.lbryplayer.xyz/api/v4/streams/free/"
 	},
 	"urlFromData": function(player, docid) {
@@ -72,7 +72,7 @@ CT.video = {
 		else if (url.indexOf("ugetube.com") != -1)
 			return url.split("_")[1].split(".")[0];
 		else if (url.indexOf("tv.gab.com") != -1)
-			return url.split("/view/")[1];
+			return url.split("/channel/")[1].replace("/view/", "/embed/");
 		var spliturl = url.split('.'),
 			ext = spliturl[spliturl.length - 1];
 		if (CT.video.rawVidTypes.indexOf(ext) != -1) // eventually do more about ssl
