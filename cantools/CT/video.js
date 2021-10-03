@@ -76,7 +76,7 @@ CT.video = {
 		var spliturl = url.split('.'),
 			ext = spliturl[spliturl.length - 1];
 		if (CT.video.rawVidTypes.indexOf(ext) != -1) // eventually do more about ssl
-			return url.replace("http://", "").replace("https://", "");
+			return url;//.replace("http://", "").replace("https://", "");
 		return "";
 	},
 	"playerFromUrl": function(url) {
@@ -132,7 +132,8 @@ CT.video = {
 //			dims = "width=100% height=auto";
 		}
 		var ifs = ' style="border:none;overflow:hidden;max-width:100%;"',
-			iurl = CT.video.embed_url[video.player] + video.docid;
+			iurl = CT.video.embed_url[video.player] + video.docid,
+			vsp = 'onclick="arguments[0].stopPropagation();"';
 		if (["odysee", "ugetube", "dtube", "bitchute", "rumble", "gab"].includes(video.player))
 			return '<iframe ' + dims + ifs + ' src="' + iurl + '" frameborder="0" allowfullscreen></iframe>';
 		else if (video.player == "facebook")
@@ -144,9 +145,9 @@ CT.video = {
 		else if (video.player == "ustream")
 			return "<object type=application/x-shockwave-flash data=" + location.protocol + "//static-cdn1.ustream.tv/swf/live/viewerqos:21.swf " + dims + "id=utv" + video.docid + " name=utv" + video.docid + "><param name=flashvars value=autoplay=true&locale=en_US&referrer=http%3A%2F%2Fwww.ustream.tv%2Frecorded%2F" + video.docid + "%3Futm_campaign%3Dustre.am%26utm_source%3Dustre.am%2F%3A44gEy%26utm_medium%3Dsocial%26utm_content%3D20150324210416&autoResize=false&enablejsapi=true&sv=6&volume=1&ts=1427256261325&vid=" + video.docid + "&loc=" + video.docid + "&hasticket=false><param name=allowfullscreen value=true><param name=allowscriptaccess value=always><param name=bgcolor value=000000><param name=wmode value=transparent></object>"
 		else if (video.player == "lbryplayer")
-			return "<video " + dims + " controls style='max-width:100%' src=" + iurl + "></video>";
+			return "<video " + dims + " controls style='max-width:100%' src=" + iurl + " " + vsp + "></video>";
 		else if (CT.video.rawVidTypes.indexOf(video.player) != -1)
-			return "<video " + dims + " controls style='max-width:100%'><source src=" + location.protocol + "//" + video.docid + " type=video/" + video.player + "></video>";
+			return "<video " + dims + " " + vsp + " controls style='max-width:100%'><source src=" + video.docid + " type=video/" + video.player + "></video>";
 		else
 			alert("unknown video player: "+video.player);
 	},
@@ -162,15 +163,17 @@ CT.video = {
 	"full": function(video) {
 		return CT.video._embed(video, "100%", "100%");
 	},
-	"unthumb": function(key, rand) {
+	"unthumb": function(key, rand, e) {
 		var n = CT.dom.id("thumb" + rand + key);
 		n.classList.remove("vidthumb");
 		CT.dom.setContent(n, CT.video.embed(CT.data.get(key)));
+		e && e.stopPropagation();
 	},
 	"thumbnail": function(video, htmlSafe) {
 		if (htmlSafe) {
 			var rand = Math.floor(Math.random() * 1000);
-			return '<div class="vidthumb" id="thumb' + rand + video.key + '"><img class="w1 pointer" src="' + video.thumbnail + '" onclick="CT.video.unthumb(\'' + video.key + '\', ' + rand + ')"></div>';
+			return '<div class="vidthumb" id="thumb' + rand + video.key + '"><img class="w1 pointer" src="' + video.thumbnail
+				+ '" onclick="CT.video.unthumb(\'' + video.key + '\', ' + rand + ', arguments[0])"></div>';
 		}
 		var thumb = CT.dom.img(video.thumbnail, "w1", function() {
 			thumb.parentNode.innerHTML = CT.video.embed(video);
