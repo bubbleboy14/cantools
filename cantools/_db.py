@@ -86,6 +86,7 @@ def response():
 		data = cgi_get("data", required=False)
 		prop = cgi_get("property", required=False)
 		entkey = cgi_get("key", required=False)
+		setter = cgi_get("setter", required=False)
 		ent = entkey and get(entkey)
 		blob = value and BlobWrapper(value=value) or (ent and prop and getattr(ent, prop))
 		if cgi_get("delBlob", default=False):
@@ -98,10 +99,14 @@ def response():
 #			if False:#value: # screw this -- doesn't update entity
 #				blob.set(read_file(data))
 #			else: # going by key, property -- must update index
-			if ent and prop:
-				setattr(ent, prop, read_file(data))
-				ent.put()
-				blob = getattr(ent, prop)
+			if ent:
+				if prop:
+					setattr(ent, prop, read_file(data))
+					ent.put()
+					blob = getattr(ent, prop)
+				elif setter:
+					getattr(ent, setter)(read_file(data))
+					succeed(ent.data())
 			else:
 				blob = BlobWrapper(data=read_file(data))
 			succeed(blob.urlsafe())
