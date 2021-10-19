@@ -113,7 +113,7 @@ CT.cal.Cal = CT.Class({
 			});
 		},
 		slot: function(slot, dobj, cslots, isov) {
-			var ukey = window.user && user.core.get("key"), uslots = cslots.filter(function(c) {
+			var ukey = (typeof user != "undefined") && user.core.get("key"), uslots = cslots.filter(function(c) {
 				return c.task.steward.key == ukey;
 			}), comms = cslots.map(function(s) {
 				return s.task;

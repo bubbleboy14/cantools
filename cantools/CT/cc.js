@@ -28,7 +28,7 @@ CT.cc = {
 		}
 	},
 	view: function(content) {
-		if (!window.CC) return CT.log("content view (disabled)");
+		if (typeof CC == "undefined") return CT.log("content view (disabled)");
 		var _ = CT.cc._, name = content.title || content.name || content.label,
 			identifier = content.identifier || ((content.mtype || content.modelName) + ": " + name),
 			ukey = content.uid || content.user || content.owner,
@@ -49,7 +49,7 @@ CT.cc = {
 		}
 	},
 	views: function(contents) { // expects owner or owners[]
-		if (!window.CC) return CT.log("content views (disabled)");
+		if (typeof CC == "undefined") return CT.log("content views (disabled)");
 		var _ = CT.cc._, oz = [], cz = [], cont, mz;
 		contents.forEach(function(c) {
 			oz = oz.concat(c.owners || [c.owner]);
