@@ -95,6 +95,9 @@ cfg = {
 	"build": {
 		"include": [],
 		"exclude": [],
+		"prod": {
+			"closure": False
+		},
 		"web": {
 			"dynamic": "html",
 			"compiled": {
