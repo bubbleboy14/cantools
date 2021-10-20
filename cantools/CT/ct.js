@@ -383,8 +383,9 @@ var CT = {
 		if (cb)
 			CT._.scriptImportCb[fp].push(cb);
 		if (fresh) {
-			h.appendChild(CT.dom.script(fp));
-			h.appendChild(CT.dom.script(null, "CT._.onImport('" + fp + "');", delay));
+			h.appendChild(CT.dom.script(fp, null, null, () => {
+				setTimeout(() => CT._.onImport(fp), delay);
+			}));
 		}
 	},
 	"require": function(modname, lazy) { // lazy only matters compile-time
