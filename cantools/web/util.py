@@ -366,8 +366,8 @@ def send_file(data, file_type=None, detect=False):
     _send(data)
     _close()
 
-def send_text(data, dtype="html", fname=None, exit=True):
-    headers = { "Content-Type": "text/%s"%(dtype,) }
+def send_text(data, dtype="html", fname=None, exit=True, headers={}):
+    headers["Content-Type"] = "text/%s"%(dtype,)
     if fname:
         headers['Content-Disposition'] = 'attachment; filename="%s.%s"'%(fname, dtype)
     _headers(headers)
