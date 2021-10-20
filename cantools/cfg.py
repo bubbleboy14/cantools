@@ -96,6 +96,7 @@ cfg = {
 		"include": [],
 		"exclude": [],
 		"prod": {
+			"b64": False,
 			"closure": False
 		},
 		"web": {
