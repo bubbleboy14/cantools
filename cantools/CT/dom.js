@@ -1277,7 +1277,7 @@ CT.dom = {
 	"ALLNODE": null,
 	"loadAllNode": function(fallBackToBody) {
 		if (!CT.dom.ALLNODE) {
-			CT.dom.ALLNODE = document.getElementById("all") || (fallBackToBody && document.body);
+			ALLNODE = CT.dom.ALLNODE = document.getElementById("all") || (fallBackToBody && document.body);
 			CT.dom.ALLNODE._mobile = CT.align.width() <= 720;
 			window.onresize = function() {
 				CT.dom.ALLNODE.resize && CT.dom.ALLNODE.resize();

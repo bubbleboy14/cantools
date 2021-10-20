@@ -179,7 +179,7 @@ var CT = {
 			var xhr = window.XMLHttpRequest
 				? new XMLHttpRequest()
 				: new ActiveXObject("Microsoft.XMLHTTP"),
-				xto = window.core && core.config && core.config.xhr_timeout;
+				xto = (typeof core != "undefined") && core.config && core.config.xhr_timeout;
 			xhr.open(method, path, async);
 			if (xto && async)
 				xhr.timeout = xto;
@@ -394,8 +394,15 @@ var CT = {
 				eval(CT.net.get(modname));
 			}
 		} else {
-			var modpath = modname.split("."),
-				curpath, curmod = window;
+			var modpath = modname.split("."), mtxt, curpath, curmod = window;
+			if (!(modpath[0] in curmod)) {
+				try { // not on window if in closure
+					curmod = eval(modpath[0]);
+					modpath.shift();
+				} catch(e) {
+					CT.log("checked inside closure - not present: " + modname);
+				}
+			}
 			while (curmod && modpath.length) {
 				curpath = modpath.shift();
 				if (curpath in curmod)
@@ -409,8 +416,16 @@ var CT = {
 					curmod = null;
 				}
 			}
-			if (!curmod)
-				eval(CT.net.get(CT.net.fullPath(modname.replace(/\./g, "/") + ".js")));
+			if (!curmod) {
+				mtxt = CT.net.get(CT.net.fullPath(modname.replace(/\./g, "/") + ".js"));
+				if (window.CT)
+					eval(mtxt);
+				else { // closure mode
+					window._ctmp = CT;
+					eval("var CT = window._ctmp;" + mtxt);
+					delete window._ctmp;
+				}
+			}
 		}
 		return eval(modname);
 	},

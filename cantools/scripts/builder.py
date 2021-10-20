@@ -12,6 +12,24 @@ try:
 except:
     BUILDER_READY = False
 
+pwrap = {
+    "standard": "<script>%s</script>",
+    "closure": "<script>(function(){%s})();</script>"
+}[config.build.prod.closure and "closure" or "standard"]
+iwraps = {
+    "standard": "%s = %s || {}",
+    "closure": 'if (typeof %s == "undefined") %s = {}',
+    "closvar": 'if (typeof %s == "undefined") var %s = {}'
+}
+iwrap = iwraps[config.build.prod.closure and "closure" or "standard"]
+
+def iwrapper(mod):
+    if config.build.prod.closure:
+        parts = mod.split(".")
+        if len(parts) == 2: # good enough? ....
+            return iwraps["closvar"]%(parts[1], parts[1])
+    return iwrap%(mod, mod)
+
 def nextQuote(text, lastIndex=0):
     z = i = text.find('"', lastIndex)
     while z > 0 and text[z-1] == "\\":
@@ -114,9 +132,11 @@ def require(line, jspaths, block, inits, admin_ct_path=None):
                     fullp = ".".join([fullp, rword])
                 else:
                     fullp = "%s[%s]"%(fullp, rword)
-                tryinit("%s = %s || {}"%(fullp, fullp), inits, prefixes)
+                tryinit(iwrapper(fullp), inits, prefixes)
             pblock = ";".join(prefixes)
             if pblock:
+                if config.build.prod.closure:
+                    pblock = pblock.replace("window.", "")
                 jspaths.append(pblock)
             block = block.replace(line, "%s;%s"%(pblock,
                 processjs(jspath, jspaths, inits, admin_ct_path)), 1)
@@ -143,7 +163,7 @@ def processjs(path, jspaths=[], inits=set(), admin_ct_path=None):
 def compilejs(js, admin_ct_path=None):
     jsblock = ""
     jspaths = []
-    inits = set(["window.CT = window.CT || {}"]) # already initialized
+    inits = set([iwrapper("window.CT")]) # already initialized
     for p in js:
         jsblock += processjs(p, jspaths, inits, admin_ct_path)
     return jspaths, jsblock
@@ -210,7 +230,7 @@ def build(admin_ct_path, dirname, fnames):
                 jsb = jsblock.replace('"_encode": false,', '"_encode": true,').replace("CT.log._silent = false;", "CT.log._silent = true;")
                 if config.customscrambler:
                     jsb += '; CT.net.setScrambler("%s");'%(config.scrambler,)
-                write(remerge(compress(txt), "<script>%s</script>"%(jsmin(jsb),)), topath_prod)
+                write(remerge(compress(txt), pwrap%(jsmin(jsb),)), topath_prod)
                 continue
             else:
                 log('copying to prod/stat unmodified (%s)'%(fname,), important=True)
