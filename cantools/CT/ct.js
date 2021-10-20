@@ -394,7 +394,7 @@ var CT = {
 				eval(CT.net.get(modname));
 			}
 		} else {
-			var modpath = modname.split("."), curpath, curmod = window;
+			var modpath = modname.split("."), mtxt, curpath, curmod = window;
 			if (!(modpath[0] in curmod)) {
 				try { // not on window if in closure
 					curmod = eval(modpath[0]);
@@ -416,8 +416,16 @@ var CT = {
 					curmod = null;
 				}
 			}
-			if (!curmod)
-				eval(CT.net.get(CT.net.fullPath(modname.replace(/\./g, "/") + ".js")));
+			if (!curmod) {
+				mtxt = CT.net.get(CT.net.fullPath(modname.replace(/\./g, "/") + ".js"));
+				if (window.CT)
+					eval(mtxt);
+				else { // closure mode
+					window._ctmp = CT;
+					eval("var CT = window._ctmp;" + mtxt);
+					delete window._ctmp;
+				}
+			}
 		}
 		return eval(modname);
 	},
