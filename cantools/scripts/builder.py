@@ -1,4 +1,4 @@
-import subprocess, os
+import subprocess, os, base64
 from cantools import config
 from cantools.util import log, error, read, write, mkdir
 
@@ -12,16 +12,22 @@ try:
 except:
     BUILDER_READY = False
 
+pcfg = config.build.prod
 pwrap = {
     "standard": "<script>%s</script>",
     "closure": "<script>(function(){%s})();</script>"
-}[config.build.prod.closure and "closure" or "standard"]
+}[pcfg.closure and "closure" or "standard"]
 iwraps = {
     "standard": "%s = %s || {}",
     "closure": 'if (typeof %s == "undefined") %s = {}',
     "closvar": 'if (typeof %s == "undefined") var %s = {}'
 }
-iwrap = iwraps[config.build.prod.closure and "closure" or "standard"]
+iwrap = iwraps[pcfg.closure and "closure" or "standard"]
+
+def pwrapper(stxt):
+    if pcfg.b64:
+        stxt = 'eval(atob("%s"))'%(base64.b64encode(stxt),)
+    return pwrap%(stxt,)
 
 def iwrapper(mod):
     if config.build.prod.closure:
@@ -230,7 +236,7 @@ def build(admin_ct_path, dirname, fnames):
                 jsb = jsblock.replace('"_encode": false,', '"_encode": true,').replace("CT.log._silent = false;", "CT.log._silent = true;")
                 if config.customscrambler:
                     jsb += '; CT.net.setScrambler("%s");'%(config.scrambler,)
-                write(remerge(compress(txt), pwrap%(jsmin(jsb),)), topath_prod)
+                write(remerge(compress(txt), pwrapper(jsmin(jsb))), topath_prod)
                 continue
             else:
                 log('copying to prod/stat unmodified (%s)'%(fname,), important=True)
