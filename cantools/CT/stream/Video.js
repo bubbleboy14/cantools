@@ -47,9 +47,9 @@ CT.stream.Video = CT.Class({
 			}
 			this._duration = v.duration;
 			var target = v.duration - (CT.stream.opts.chunk / 1000);
-			if (v.currentTime < this._lastTime) {
-				this.log("SKIPPED RESET (backtracking)");
-//				that.reset();
+			if (v.currentTime <= this._lastTime) {
+				this.log("RESET (backtracking)");
+				this.reset();
 			}
 			this._lastTime = v.currentTime;
 			if (!v.paused) {
@@ -137,12 +137,29 @@ CT.stream.Video = CT.Class({
 	},
 	remove: function() {
 		this.video.src = "";
-		CT.dom.remove(this.node);
 		this.audio.remove();
+		CT.dom.remove(this.node);
+		clearInterval(this._wakey);
 	},
+	_snoozes: 0,
 	_wakeup: function() {
-		if (this.video._lastct == this.video.currentTime)
+		this.log("_wakeup", this.video.currentTime, this.video.duration,
+			this.video.paused, this.video.error);
+		if (this.video.error) {
+			this.log("_wakeup", "error - RESET!");
+			return this.reset();
+		}
+		if (this.video._lastct == this.video.currentTime) {
+			this.log("_wakeup", "WAKING UP", this.snoozes);
 			this.video.currentTime += 1; // help video along....
+			this.snoozes += 1;
+			if (this.snoozes > 10) {
+				this.snoozes = 0;
+				this.log("overslept - RESET!");
+				return this.reset();
+			}
+		} else
+			this.snoozes = 0;
 		this.video._lastct = this.video.currentTime;
 	},
 	setVideo: function() {
@@ -187,9 +204,12 @@ CT.stream.Video = CT.Class({
 			this.log("RESET", diff);
 			if (diff < chunk)
 				return; // wait
-			if (diff < chunk * 8)
+			if (diff < chunk * 8) {
+				this.log("calling onreset!");
 				this.opts.onreset && this.opts.onreset();
+			}
 		}
+		this.log("resetting!");
 		this._lastReset = n;
 		this.video.removeEventListener("canplay", this.start);
 		this.video.removeEventListener("pause", this.start);
@@ -285,7 +305,7 @@ CT.stream.Video = CT.Class({
 		else {
 			this.setMediaSource();
 			this.audio.build();
-			setInterval(this._wakeup, 1000);
+			this._wakey = setInterval(this._wakeup, 1000);
 		}
 	}
 });
