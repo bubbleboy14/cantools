@@ -29,7 +29,7 @@ CT.stream.Video = CT.Class({
 		this.log("setSourceBuffer - exists:", !!this.sourceBuffer, "mimeType", mt);
 		if (!this.sourceBuffer) {
 			this.sourceBuffer = this.mediaSource.addSourceBuffer(mt);
-			this.sourceBuffer.mode = 'sequence';
+			this.sourceBuffer.mode = 'segments';
 			this.sourceBuffer.addEventListener("updateend", this._sourceUpdate);
 			this.sourceBuffer.addEventListener("error", this._error);
 		}
@@ -149,11 +149,15 @@ CT.stream.Video = CT.Class({
 			this.log("_wakeup", "error - RESET!");
 			return this.reset();
 		}
+		if (this.video.paused) {
+			this.log("_wakeup", "paused - play!");
+			return this.video.play();
+		}
 		if (this.video._lastct == this.video.currentTime) {
 			this.log("_wakeup", "WAKING UP", this.snoozes);
 			this.video.currentTime += 1; // help video along....
 			this.snoozes += 1;
-			if (this.snoozes > 10) {
+			if (this.snoozes > 5) {
 				this.snoozes = 0;
 				this.log("overslept - RESET!");
 				return this.reset();

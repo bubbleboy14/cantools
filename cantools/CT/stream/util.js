@@ -76,10 +76,20 @@ var _sutil = CT.stream.util = {
 			recorder.onerror = function(e) {
 				CT.log("error! " + e.message);
 			};
+			recorder.onstop = function() {
+				if (recorder._resetting) return;
+				CT.log("recorder stopped - stopping stream");
+				stream.stop();
+			};
 			recorder.reset = function() {
-				CT.log("RESETTING RECORDER");
+				CT.log("RESETTING RECORDER (stop/start) -- kinda doesn't work");
+				recorder._resetting = true;
 				recorder.stop();
-				recorder.start(CT.stream.opts.chunk);
+//				recorder.start(CT.stream.opts.chunk);
+				setTimeout(() => {
+					recorder._resetting = false;
+					recorder.start(CT.stream.opts.chunk)
+				}, 500);
 			};
 			recorder.start(CT.stream.opts.chunk);
 			onrecorder && onrecorder(recorder, stream);
