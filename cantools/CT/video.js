@@ -173,7 +173,7 @@ CT.video = {
 		if (htmlSafe) {
 			var rand = Math.floor(Math.random() * 1000);
 			return '<div class="vidthumb" id="thumb' + rand + video.key + '"><img class="w1 pointer" src="' + video.thumbnail
-				+ '" onclick="CT.video.unthumb(\'' + video.key + '\', ' + rand + ', arguments[0])"></div>';
+				+ '" onclick="__ctv_unthumb(\'' + video.key + '\', ' + rand + ', arguments[0])"></div>';
 		}
 		var thumb = CT.dom.img(video.thumbnail, "w1", function() {
 			thumb.parentNode.innerHTML = CT.video.embed(video);
@@ -181,3 +181,5 @@ CT.video = {
 		return CT.dom.div(thumb);
 	}
 };
+
+window.__ctv_unthumb = CT.video.unthumb;
