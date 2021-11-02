@@ -395,20 +395,21 @@ var CT = {
 				eval(CT.net.get(modname));
 			}
 		} else {
-			var modpath = modname.split("."), mtxt, curpath, curmod = window;
+			var modpath = modname.split("."), curmod = window,
+				topmod, topname, mtxt, curpath;
 			if (!(modpath[0] in curmod)) {
 				try { // not on window if in closure
-					curmod = eval(modpath[0]);
-					modpath.shift();
+					topmod = curmod = eval(modpath[0]);
+					topname = modpath.shift();
 				} catch(e) {
 					CT.log("checked inside closure - not present: " + modname);
 				}
 			}
 			while (curmod && modpath.length) {
 				curpath = modpath.shift();
-				if (curpath in curmod)
+				if (curpath in curmod) {
 					curmod = curmod[curpath];
-				else {
+				} else {
 					modpath.unshift(curpath);
 					modpath.forEach(function(p, i) {
 						curmod = curmod[p] = {};
@@ -416,6 +417,8 @@ var CT = {
 					modpath.length = 0;
 					curmod = null;
 				}
+				topname = topname || curpath;
+				topmod = topmod || curmod;
 			}
 			if (!curmod) {
 				mtxt = CT.net.get(CT.net.fullPath(modname.replace(/\./g, "/") + ".js"));
@@ -423,8 +426,17 @@ var CT = {
 					eval(mtxt);
 				else { // closure mode
 					window._ctmp = CT;
-					eval("var CT = window._ctmp;" + mtxt);
+					mtxt = "var CT = window._ctmp;" + mtxt;
+					if (topname != "CT") {
+						if (!topmod)
+							window[topname] = topmod = {}; // eh......
+						window._ttmp = topmod;
+						mtxt = "var " + topname + " = window._ttmp;" + mtxt;
+					}
+					eval(mtxt);
 					delete window._ctmp;
+					if (topname != "CT")
+						delete window._ttmp;
 				}
 			}
 		}
