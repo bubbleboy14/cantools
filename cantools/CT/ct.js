@@ -428,8 +428,13 @@ var CT = {
 					window._ctmp = CT;
 					mtxt = "var CT = window._ctmp;" + mtxt;
 					if (topname != "CT") {
-						if (!topmod)
-							window[topname] = topmod = eval(topname) || {}; // eh......
+						if (!topmod) {
+							try { // one last check ...
+								topmod = eval(topname); // eh......
+							} catch(e) {
+								topmod = {}; // eh......
+							}
+						}
 						window._ttmp = topmod;
 						mtxt = "var " + topname + " = window._ttmp;" + mtxt;
 					}
