@@ -429,7 +429,7 @@ var CT = {
 					mtxt = "var CT = window._ctmp;" + mtxt;
 					if (topname != "CT") {
 						if (!topmod)
-							window[topname] = topmod = {}; // eh......
+							window[topname] = topmod = eval(topname) || {}; // eh......
 						window._ttmp = topmod;
 						mtxt = "var " + topname + " = window._ttmp;" + mtxt;
 					}
