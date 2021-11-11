@@ -147,7 +147,8 @@ class Blob(BasicInt):
 				from cantools import config
 				for f in [os.path.join(config.db.blob, p) for p in os.listdir(config.db.blob)]:
 					if os.path.isfile(f) and data == read(f, binary=True):
-						error("non-unique blob!")
+						return int(os.path.split(f)[-1])
+#						error("non-unique blob!")
 			data = BlobWrapper(data)
 		return data.value
 
