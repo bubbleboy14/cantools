@@ -106,6 +106,7 @@ class BlobWrapper(object):
 			return None
 
 	def _next_value(self): # safely handles gaps
+		from cantools import config
 		p, d, f = next(os.walk(config.db.blob))
 		fiz = [int(i) for i in f]
 		fiz.sort()
