@@ -105,12 +105,22 @@ class BlobWrapper(object):
 		else:
 			return None
 
+	def _next_value(self): # safely handles gaps
+		p, d, f = next(os.walk(config.db.blob))
+		fiz = [int(i) for i in f]
+		fiz.sort()
+		v = 1
+		for n in fiz:
+			if n != v:
+				return v
+			v += 1
+		return len(fiz) + 1
+
 	def _set_path(self, data=None):
 		if data:
 			from cantools import config
 			if not self.value:
-				p, d, f = next(os.walk(config.db.blob))
-				self.value = len(f) + 1
+				self.value = self._next_value()
 			self.path = os.path.join(config.db.blob, str(self.value))
 		else:
 			self.value = 0
