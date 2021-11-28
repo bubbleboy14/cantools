@@ -47,11 +47,14 @@ d=JSON.parse(d);if(cache)
 CT.storage.set(path,d);}
 return d;}},"scriptImport":function(modpath,cb,delay){var h=document.getElementsByTagName("head")[0],fp=(modpath.slice(0,4)=="http")&&modpath||(CT.net.fullPath(modpath.replace(/\./g,"/")+".js")),fresh=!(fp in CT._.scriptImportCb);if(fresh)
 CT._.scriptImportCb[fp]=[];if(cb)
-CT._.scriptImportCb[fp].push(cb);if(fresh){h.appendChild(CT.dom.script(fp,null,null,()=>{setTimeout(()=>CT._.onImport(fp),delay);}));}},"require":function(modname,lazy){if(modname.slice(0,4)=="http"||modname.startsWith("/")){if(!(modname in CT._.extReqs)){CT._.extReqs[modname]=true;eval(CT.net.get(modname));}}else{var modpath=modname.split("."),mtxt,curpath,curmod=window;if(!(modpath[0]in curmod)){try{curmod=eval(modpath[0]);modpath.shift();}catch(e){CT.log("checked inside closure - not present: "+modname);}}
-while(curmod&&modpath.length){curpath=modpath.shift();if(curpath in curmod)
-curmod=curmod[curpath];else{modpath.unshift(curpath);modpath.forEach(function(p,i){curmod=curmod[p]={};});modpath.length=0;curmod=null;}}
+CT._.scriptImportCb[fp].push(cb);if(fresh){h.appendChild(CT.dom.script(fp,null,null,()=>{setTimeout(()=>CT._.onImport(fp),delay);}));}},"require":function(modname,lazy){if(modname.slice(0,4)=="http"||modname.startsWith("/")){if(!(modname in CT._.extReqs)){CT._.extReqs[modname]=true;eval(CT.net.get(modname));}}else{var modpath=modname.split("."),curmod=window,topmod,topname,mtxt,curpath;if(!(modpath[0]in curmod)){try{topmod=curmod=eval(modpath[0]);topname=modpath.shift();}catch(e){CT.log("checked inside closure - not present: "+modname);}}
+while(curmod&&modpath.length){curpath=modpath.shift();if(curpath in curmod){curmod=curmod[curpath];}else{modpath.unshift(curpath);modpath.forEach(function(p,i){curmod=curmod[p]={};});modpath.length=0;curmod=null;}
+topname=topname||curpath;topmod=topmod||curmod;}
 if(!curmod){mtxt=CT.net.get(CT.net.fullPath(modname.replace(/\./g,"/")+".js"));if(window.CT)
-eval(mtxt);else{window._ctmp=CT;eval("var CT = window._ctmp;"+mtxt);delete window._ctmp;}}}
+eval(mtxt);else{window._ctmp=CT;mtxt="var CT = window._ctmp;"+mtxt;if(topname!="CT"){if(!topmod){try{topmod=eval(topname);}catch(e){topmod={};}}
+window._ttmp=topmod;mtxt="var "+topname+" = window._ttmp;"+mtxt;}
+eval(mtxt);delete window._ctmp;if(topname!="CT")
+delete window._ttmp;}}}
 return eval(modname);},"initCSS":function(){var scfg=core.config.css,sec,sload=function(c){c.forEach(function(css){CT.dom.addStyle(null,css);});},pn=location.pathname;if(Array.isArray(scfg))
 return sload(scfg);for(sec in scfg){if(sec.startsWith("!")){if(!pn.startsWith(sec.slice(1)))
 sload(scfg[sec])}else if(pn.startsWith(sec))
