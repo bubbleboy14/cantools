@@ -484,6 +484,7 @@ CT.slider.Frame = CT.Class({
 			}, true, true), pause = function() {
 				audio.playing = false;
 				audio.pause();
+				playmod.hide();
 			}, resume = function() {
 				audio.playing = true;
 				audio.play().catch(playmod.show);
