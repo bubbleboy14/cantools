@@ -149,6 +149,7 @@ def require(line, jspaths, block, inits, admin_ct_path=None):
     return block
 
 def processjs(path, jspaths=[], inits=set(), admin_ct_path=None):
+    log("processing js: %s"%(path,), 1)
     p = path.split("#")[0] # potentially modded to locate file for prod (path remains the same for static)
     if admin_ct_path: # admin pages
         if path.startswith(config.js.path): # such as /js/CT/ct.js
@@ -191,7 +192,6 @@ def build_frags(mode="web", admin_ct_path=None):
             fragz.add(p)
     fragged = set()
     def build_frag(frag):
-        log("processing: %s"%(frag,), 1)
         block = processjs(frag, admin_ct_path=admin_ct_path)
         path = os.path.join(base, frag[len(config.js.path)+1:])
         checkdir(path.rsplit("/", 1)[0], True)
@@ -227,6 +227,7 @@ def build(admin_ct_path, dirname, fnames):
         if "fonts" in dirname or not fname.endswith(".html"):
             log('copying non-html file (%s)'%(fname,), 1)
         else:
+            log("processing html: %s"%(frompath,))
             txt, js = processhtml(data)
             if js:
                 jspaths, jsblock = compilejs(js, admin_ct_path)
