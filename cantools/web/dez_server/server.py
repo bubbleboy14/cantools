@@ -37,6 +37,8 @@ def run_dez_webserver():
 	setlog(c.web.logger.simple)
 	if config.web.log:
 		set_log(os.path.join("logs", config.web.log))
+	if config.rel.sleep:
+		rel.set_sleep(config.rel.sleep)
 	if "kernel" in config.log.allow:
 		rel.timeout(1, log_kernel)
 	set_error(fail)
