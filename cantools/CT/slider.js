@@ -489,7 +489,10 @@ CT.slider.Frame = CT.Class({
 				audio.playing = true;
 				audio.play().catch(playmod.show);
 			}, pauseResume = function() {
-				audio.playing ? pause() : resume();
+				if (playmod.visible)
+					playmod.hide();
+				else
+					audio.playing ? pause() : resume();
 			};
 		this.on.hide = pause;
 		this.on.show = function() {
