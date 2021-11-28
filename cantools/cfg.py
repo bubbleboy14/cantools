@@ -5,6 +5,9 @@ cfg = {
 		"timestamp": True,
 		"allow": ["info", "log", "error"]
 	},
+	"rel": {
+		"sleep": 0 # unset (uses rel's default)
+	},
 	"plugin": {
 		"modules": [],
 		"path": "%s/.ctplug"%(os.environ.get("HOME") or os.environ.get("USERPROFILE"),),
