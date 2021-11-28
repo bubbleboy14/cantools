@@ -477,7 +477,7 @@ CT.slider.Frame = CT.Class({
 		var oz = this.opts, audio = CT.dom.audio(oz.src, true, false, false, function() {
 			playmod.visible && playmod.hide();
 		}, this.slider.autoSlideCallback), playmod = CT.modal.modal("click to play!", function() {
-				audio.play();
+				audio.playing && audio.play();
 			}, {
 				noClose: true,
 				innerClass: "gigantic"
