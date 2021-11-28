@@ -475,7 +475,7 @@ CT.slider.Frame = CT.Class({
 	},
 	track: function() { // add img!
 		var oz = this.opts, audio = CT.dom.audio(oz.src, true, false, false, function() {
-			playmod.hide();
+			playmod.visible && playmod.hide();
 		}, this.slider.autoSlideCallback), playmod = CT.modal.modal("click to play!", function() {
 				audio.play();
 			}, {
@@ -484,7 +484,7 @@ CT.slider.Frame = CT.Class({
 			}, true, true), pause = function() {
 				audio.playing = false;
 				audio.pause();
-				playmod.hide();
+				playmod.visible && playmod.hide();
 			}, resume = function() {
 				audio.playing = true;
 				audio.play().catch(playmod.show);
