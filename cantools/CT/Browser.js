@@ -85,7 +85,7 @@ CT.Browser = CT.Class({
 				nz.list,
 				nz.content
 			]);
-			CT.db.get(oz.modelName, _.build, null, null, null, oz.owner && {
+			CT.db.get(oz.modelName, oz.prebuild || _.build, null, null, null, oz.owner && {
 				owner: user.core.get("key") // requires user module
 			});
 		}
