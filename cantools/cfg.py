@@ -5,8 +5,9 @@ cfg = {
 		"timestamp": True,
 		"allow": ["info", "log", "error"]
 	},
-	"rel": {
-		"sleep": 0 # unset (uses rel's default)
+	"rel": { # 0 = unset (uses rel's default)
+		"sleep": 0,
+		"turbo": 0
 	},
 	"plugin": {
 		"modules": [],

@@ -122,7 +122,7 @@ for key, val in items:
 		val = val == "True"
 	elif key in ["PUBSUB_HISTORY"]:
 		val = int(val)
-	elif key in ["REL_SLEEP"]:
+	elif key in ["REL_SLEEP", "REL_TURBO"]:
 		val = float(val)
 	if key == "DB":
 		config.db.update(config.web.server, _getpass(val, "db"))

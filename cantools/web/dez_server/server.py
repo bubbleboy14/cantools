@@ -39,6 +39,8 @@ def run_dez_webserver():
 		set_log(os.path.join("logs", config.web.log))
 	if config.rel.sleep:
 		rel.set_sleep(config.rel.sleep)
+	if config.rel.turbo:
+		rel.set_turbo(config.rel.turbo)
 	if "kernel" in config.log.allow:
 		rel.timeout(1, log_kernel)
 	set_error(fail)
