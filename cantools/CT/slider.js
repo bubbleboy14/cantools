@@ -32,6 +32,7 @@ the 'opts' object itself, are all optional.
     - keys (default: true): use arrow keys to navigate slider, as well as enter key for peekaboo transitions
     - noEnter (default: false): disable enter key for peekaboo transitions
     - frames (default: []): an array of items corresponding to the frames in the slider
+    - shuffle (default: false): for chunk mode, especially track subMode (randomize playlist) and autoSlide
 
 The last one, 'frames', must be an array either of strings (interpreted
 as image urls) or of data objects (processed in the addFrame function).
@@ -60,6 +61,7 @@ CT.slider.Slider = CT.Class({
 			frames: [],
 			keys: true,
 			noEnter: false,
+			shuffle: false,
 			translateDuration: 300,
 			autoSlideInterval: 5000,
 			autoSlide: true,
@@ -79,6 +81,7 @@ CT.slider.Slider = CT.Class({
 			arrowPosition: "middle", // or "top" or "middle"
 			bubblePosition: "bottom" // or "top"
 		});
+		this.shuffling = opts.shuffle;
 		if (typeof opts.parent == "string")
 			opts.parent = CT.dom.id(opts.parent);
 		if (opts.frameCb) // only makes sense in custom mode
@@ -164,6 +167,9 @@ CT.slider.Slider = CT.Class({
 			this.imgBackController && this.imgBackController.resume();
 			this.container.childNodes[this.index].frame.on.show();
 		}
+	},
+	setShuffle: function(shouldShuff) {
+		this.shuffling = shouldShuff;
 	},
 	onWheel: function(pos, delta) {
 		if (delta > 0)
@@ -290,7 +296,11 @@ CT.slider.Slider = CT.Class({
 		this.trans();
 	},
 	autoSlideCallback: function() {
-		this.shift(CT.slider.orientation2abs[this.opts.orientation].forward, true);
+		if (this.shuffling) {
+			this.updateIndicator(CT.data.random(this.opts.frames.length));
+			this.trans();
+		} else
+			this.shift(CT.slider.orientation2abs[this.opts.orientation].forward, true);
 	},
 	prevButtonCallback: function() {
 		this.pause();
