@@ -295,11 +295,16 @@ CT.slider.Slider = CT.Class({
 		this.updatePosition(direction, force || this.opts.circular);
 		this.trans();
 	},
+	shuffle: function() {
+		this.updateIndicator(CT.data.random(this.opts.frames.length));
+		this.trans();
+	},
 	autoSlideCallback: function() {
-		if (this.shuffling || this.opts.parent.slider && this.opts.parent.slider.shuffling) {
-			this.updateIndicator(CT.data.random(this.opts.frames.length));
-			this.trans();
-		} else
+		if (this.shuffling)
+			this.shuffle();
+		else if (this.opts.parent.slider && this.opts.parent.slider.shuffling)
+			this.opts.parent.slider.shuffle();
+		else
 			this.shift(CT.slider.orientation2abs[this.opts.orientation].forward, true);
 	},
 	prevButtonCallback: function() {
