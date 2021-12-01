@@ -296,7 +296,7 @@ CT.slider.Slider = CT.Class({
 		this.trans();
 	},
 	autoSlideCallback: function() {
-		if (this.shuffling) {
+		if (this.shuffling || this.opts.parent.slider && this.opts.parent.slider.shuffling) {
 			this.updateIndicator(CT.data.random(this.opts.frames.length));
 			this.trans();
 		} else
