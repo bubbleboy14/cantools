@@ -1105,10 +1105,10 @@ CT.dom = {
 		return n;
 	},
 
-	filter: function(nodes) {
+	"filter": function(nodes, showDisplay) {
 		var refresher = function(val) {
 			CT.dom.each(nodes, function(n, i) {
-				CT.dom[(!val || n.firstChild.innerHTML.toLowerCase().includes(val.toLowerCase())) ? "show" : "hide"](n);
+				CT.dom[(!val || (n.firstElementChild || n).innerHTML.toLowerCase().includes(val.toLowerCase())) ? "show" : "hide"](n, showDisplay);
 			});
 			clearbutt.style.display = val ? "inline" : "none";
 		}, sf = CT.dom.smartField({
