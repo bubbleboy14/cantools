@@ -33,21 +33,6 @@ CT.Browser = CT.Class({
 				})
 			], "margined padded bordered round"));
 		},
-		filter: function() {
-			var _ = this._, refresher = function(val) {
-				CT.dom.each(_.tlist, function(n, i) {
-					CT.dom[(!val || n.firstChild.innerHTML.toLowerCase().includes(val.toLowerCase())) ? "show" : "hide"](n);
-				});
-				clearbutt.style.display = val ? "inline" : "none";
-			}, sf = CT.dom.smartField({
-				keyup: refresher
-			}), clearbutt = CT.dom.span("X", "hidden pointer");
-			clearbutt.onclick = function() {
-				sf.value = "";
-				refresher();
-			}
-			return CT.dom.span([sf, clearbutt]);
-		},
 		build: function(items) {
 			this.items(items);
 			var _ = this._, oz = this.opts, defs = {
@@ -72,7 +57,7 @@ CT.Browser = CT.Class({
 					CT.dom.div("+", "biggest bold shiftup"));
 				maker.style.float = "right";
 				_.tlist.parentNode.insertBefore(CT.dom.div([
-					_.filter(),
+					CT.dom.filter(_.tlist),
 					maker
 				], "browser_filter"), _.tlist);
 			}
