@@ -1011,7 +1011,7 @@ CT.dom = {
 		});
 		return n;
 	},
-	"smartField": function(cb, classname, id, value, type, blurs, isTA, noBreak, wyz, keyup) {
+	"smartField": function(cb, classname, id, value, type, blurs, isTA, noBreak, wyz, keyup, placeholder) {
 		if (arguments.length == 1 && typeof arguments[0] != "function") {
 			var obj = arguments[0];
 			cb = obj.cb;
@@ -1024,6 +1024,7 @@ CT.dom = {
 			noBreak = obj.noBreak;
 			wyz = obj.wyz;
 			keyup = obj.keyup;
+			placeholder = obj.placeholder;
 		}
 		var nonbsp, restricted, tables, spellcheck, fullscreen, charmap;
 		if (wyz && wyz.includes) {
@@ -1037,6 +1038,8 @@ CT.dom = {
 		id = id || ("sf" + Math.floor((Math.random() * 100000)));
 		var f = CT.dom.inputEnterCallback(CT.dom[isTA ? "textArea" : "field"](id,
 			value, classname, type), cb, id, noBreak, keyup);
+		if (placeholder)
+			f.placeholder = placeholder;
 		f.fieldValue = function() { // accounts for blur
 			return wyz ? f.get(nonbsp) : CT.dom.getFieldValue(f);
 		};
@@ -1105,14 +1108,15 @@ CT.dom = {
 		return n;
 	},
 
-	"filter": function(nodes, showDisplay) {
+	"filter": function(nodes, placeholder, showDisplay) {
 		var refresher = function(val) {
 			CT.dom.each(nodes, function(n, i) {
 				CT.dom[(!val || (n.firstElementChild || n).innerHTML.toLowerCase().includes(val.toLowerCase())) ? "show" : "hide"](n, showDisplay);
 			});
 			clearbutt.style.display = val ? "inline" : "none";
 		}, sf = CT.dom.smartField({
-			keyup: refresher
+			keyup: refresher,
+			placeholder: placeholder
 		}), clearbutt = CT.dom.span("X", "hidden pointer");
 		clearbutt.onclick = function() {
 			sf.value = "";
