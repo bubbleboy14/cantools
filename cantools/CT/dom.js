@@ -1105,6 +1105,22 @@ CT.dom = {
 		return n;
 	},
 
+	filter: function(nodes) {
+		var refresher = function(val) {
+			CT.dom.each(nodes, function(n, i) {
+				CT.dom[(!val || n.firstChild.innerHTML.toLowerCase().includes(val.toLowerCase())) ? "show" : "hide"](n);
+			});
+			clearbutt.style.display = val ? "inline" : "none";
+		}, sf = CT.dom.smartField({
+			keyup: refresher
+		}), clearbutt = CT.dom.span("X", "hidden pointer");
+		clearbutt.onclick = function() {
+			sf.value = "";
+			refresher();
+		}
+		return CT.dom.span([sf, clearbutt]);
+	},
+
 	// resizers
 	"_isVerticalOrientation": function(node) {
 		if (node.clientHeight == 0 || node.clientWidth == 0)
