@@ -154,12 +154,11 @@ class Blob(BasicInt):
 	def process_bind_param(self, data, dialect):
 		if type(data) is not BlobWrapper:
 			if self.unique:
-				from cantools.util import read, error
+				from cantools.util import indir
 				from cantools import config
-				for f in [os.path.join(config.db.blob, p) for p in os.listdir(config.db.blob)]:
-					if os.path.isfile(f) and data == read(f, binary=True):
-						return int(os.path.split(f)[-1])
-#						error("non-unique blob!")
+				match = indir(data, config.db.blob)
+				if match:
+					return int(match)
 			data = BlobWrapper(data)
 		return data.value
 
