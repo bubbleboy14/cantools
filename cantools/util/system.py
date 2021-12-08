@@ -4,7 +4,7 @@ try:
 except:
 	from subprocess import getoutput # py3
 from .reporting import log
-from .io import write
+from .io import read, write
 
 def cp(content, fname): # more write than copy, buuuut...
 	log("writing %s"%(fname,), 2)
@@ -65,3 +65,8 @@ PYVER = sys.version_info[0] == 2 and "python" or "python3"
 
 def py(cline, sudo=False):
 	cmd("%s %s"%(PYVER, cline), sudo)
+
+def indir(data, path):
+	for f in [os.path.join(path, p) for p in os.listdir(path)]:
+		if os.path.isfile(f) and data == read(f, binary=True):
+			return os.path.split(f)[-1]
