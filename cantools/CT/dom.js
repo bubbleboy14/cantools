@@ -699,7 +699,7 @@ CT.dom = {
 						n.value = i;
 				}
 				onchange && onchange(i);
-				e.stopPropagation();
+				e && e.stopPropagation();
 			};
 			node.classList.add(cellClass || "choice_cell");
 			n.appendChild(node);
