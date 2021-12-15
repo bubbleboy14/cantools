@@ -681,7 +681,7 @@ CT.dom = {
 		n._sel = null;
 		n.value = multi ? [] : -1;
 		nodes.forEach(function(node, i) {
-			node.onclick = function() {
+			node.onclick = function(e) {
 				if (!multi && n._sel)
 					n._sel.classList.remove(selectedClass);
 				n._sel = node;
@@ -699,6 +699,7 @@ CT.dom = {
 						n.value = i;
 				}
 				onchange && onchange(i);
+				e.stopPropagation();
 			};
 			node.classList.add(cellClass || "choice_cell");
 			n.appendChild(node);
