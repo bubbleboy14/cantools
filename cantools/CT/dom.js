@@ -675,7 +675,7 @@ CT.dom = {
 		n.start();
 		return n;
 	},
-	"choices": function(nodes, multi, cellClass, selectedClass, onchange) {
+	"choices": function(nodes, multi, cellClass, selectedClass, onchange, stopProp) {
 		selectedClass = selectedClass || "grayback";
 		var n = CT.dom.node();
 		n._sel = null;
@@ -699,7 +699,7 @@ CT.dom = {
 						n.value = i;
 				}
 				onchange && onchange(i);
-				e && e.stopPropagation();
+				stopProp && e && e.stopPropagation();
 			};
 			node.classList.add(cellClass || "choice_cell");
 			n.appendChild(node);
