@@ -64,6 +64,11 @@ CT.data = {
 		if (elindex != -1)
 			return arr.splice(elindex, 1);
 	},
+	"replace": function(arr, el, rep) {
+		var elindex = arr.indexOf(el);
+		if (elindex != -1)
+			arr[elindex] = rep;
+	},
 	"sum": function(arr) {
 		return arr.length ? arr.reduce(function(a, b) {
 			if (Array.isArray(a)) {
