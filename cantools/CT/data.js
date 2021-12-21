@@ -151,7 +151,7 @@ CT.data = {
 		return s;
 	},
 	"random": function(max, noRound) {
-		var r = Math.random() * max;
+		var r = Math.random() * (max || 2);
 		return noRound ? r : Math.floor(r);
 	},
 	"choice": function(arr) {
