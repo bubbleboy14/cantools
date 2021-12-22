@@ -23,7 +23,7 @@ iwraps = {
     "closvar": 'if (typeof %s == "undefined") var %s = {}'
 }
 iwrap = iwraps[pcfg.closure and "closure" or "standard"]
-bwrap = "Function('\"use strict\";return(' + atob(\"%s\") + ')')()"
+bwrap = "Function(atob(\"%s\"))();"
 
 def pwrapper(stxt):
     if pcfg.b64:
