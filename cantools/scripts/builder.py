@@ -23,10 +23,11 @@ iwraps = {
     "closvar": 'if (typeof %s == "undefined") var %s = {}'
 }
 iwrap = iwraps[pcfg.closure and "closure" or "standard"]
+bwrap = "Function('\"use strict\";return(' + atob(\"%s\") + ')')()"
 
 def pwrapper(stxt):
     if pcfg.b64:
-        stxt = 'eval(atob("%s"))'%(base64.b64encode(stxt),)
+        stxt = bwrap%(base64.b64encode(stxt),)
     return pwrap%(stxt,)
 
 def iwrapper(mod):
