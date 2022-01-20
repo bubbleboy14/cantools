@@ -18,8 +18,14 @@ needs to lazily import CT.lib.lz-string. Could be different, but there it is.
 CT.storage = {
 	"init": function(opts) {
 		if (!CT.storage.opts) {
+			var backend;
+			try {
+				backend = localStorage; // could also be sessionStorage
+			} catch(e) {
+				backend = CT.storage._fake();
+			}
 			CT.storage.opts = CT.merge(opts, {
-				"backend": localStorage, // could also be sessionStorage
+				"backend": backend,
 				"json": true,
 				"compress": true
 			});
@@ -27,6 +33,17 @@ CT.storage = {
 				CT.require("CT.lib.lz_string", true);
 		}
 		return CT.storage.opts;
+	},
+	"_fake": function() {
+		var faker = {};
+		return {
+			setItem: function(k, v) {
+				faker[k] = v;
+			},
+			getItem: function(k) {
+				return faker[k];
+			}
+		};
 	},
 	"_jsp": function(s) {
 		try {
