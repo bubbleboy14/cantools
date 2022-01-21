@@ -31,6 +31,7 @@ CT.rte = {
 		var d = {
 			selector: "#" + nodeid,
 			menubar: false,
+			convert_urls: false,
 			plugins: [
 				'advlist autolink lists link image charmap print preview anchor textcolor',
 				'searchreplace visualblocks code fullscreen',
