@@ -244,7 +244,7 @@ CT.dom = {
 		return CT.dom.node("", "textarea", classname,
 			id, value && {"value": value} || null);
 	},
-	"img": function(src, imgclass, onclick, href, target, title, linkid, wrapperclass, imgid, noanchor, style) {
+	"img": function(src, imgclass, onclick, href, target, title, linkid, wrapperclass, imgid, noanchor, style, attrs) {
 		if (arguments.length == 1 && typeof arguments[0] != "string") {
 			var obj = arguments[0];
 			src = obj.src;
@@ -258,8 +258,9 @@ CT.dom = {
 			imgid = obj.imgid;
 			noanchor = obj.noanchor;
 			style = obj.style;
+			attrs = obj.attrs;
 		}
-		var n = CT.dom.node("", "img", imgclass, imgid, { "src": src }, style);
+		var n = CT.dom.node("", "img", imgclass, imgid, CT.merge({ "src": src }, attrs), style);
 		if (noanchor) // implies onclick -- otherwise, no (compatible) need to specify
 			n.onclick = onclick;
 		else if (onclick || href) {
