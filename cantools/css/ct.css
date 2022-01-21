@@ -472,6 +472,7 @@
 .nonowrap { white-space: normal; }
 .notouch { pointer-events: none; }
 .pointer { cursor: pointer; }
+.pointerimp { cursor: pointer !important; }
 .scroller { overflow: auto; }
 .noflow { overflow: hidden !important; }
 .scrollx { overflow-x: auto !important; overflow-y: hidden; }
