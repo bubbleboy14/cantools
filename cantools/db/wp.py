@@ -13,8 +13,8 @@ class DBWrapper(object):
 				user=self._u, passwd=self._p, db=self._d)
 		return self._db
 
-	def query(self, q, fetch=True):
-		log("executing query: %s"%(q,))
+	def query(self, q, fetch=True, silent=False):
+		silent or log("executing query: %s"%(q,))
 		db = self.db()
 		cur = db.cursor()
 		cur.execute(q)
@@ -38,8 +38,8 @@ def getdb(subdb=False):
 def dbcommit():
 	_db.commit()
 
-def query(q, fetch=True):
-	return _db.query(q, fetch)
+def query(q, fetch=True, silent=False):
+	return _db.query(q, fetch, silent)
 
 def memprop(email, prop):
 	res = query("select %s from wp_users where user_email = '%s';"%(prop, email))
