@@ -82,6 +82,7 @@ cfg = {
 	},
 	"scrambler": "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/=_",
 	"encode": False,
+	"gmailer": False,
 	"mailer": None, # (override w/ MAILER)
 	"mailhtml": True,
 	"pubsub": {

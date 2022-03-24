@@ -19,13 +19,15 @@ class Mailer(object):
 		self.churning = False
 		if not addr:
 			log('no email address configured')
-		elif "gmail.com" in addr:
+		elif config.gmailer or "gmail.com" in addr:
 			import yagmail
 			if self.name:
 				mailer = {}
-				mailer[self.addr] = self.name
+				mailer[addr] = self.name
+			elif "gmail.com" in addr:
+				mailer = addr.split("@")[0]
 			else:
-				mailer = self.addr.split("@")[0]
+				mailer = addr
 			try:
 				self._yag = yagmail.SMTP(mailer, config.cache("email password? "))
 			except:
