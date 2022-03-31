@@ -16,11 +16,11 @@
 	-n, --no_binary            disable binary download
 """
 
-import getpass
+import os, getpass
 from optparse import OptionParser
 from cantools import db
 from cantools.web import fetch, post
-from cantools.util import error, log
+from cantools.util import error, log, mkdir, cmd
 
 LIMIT = 500
 
@@ -186,14 +186,25 @@ def dump(host, port, session, binary, skip=[], tables=None):
 	log("saving %s records to sqlite dump file"%(len(puts),))
 	db.put_multi(puts, session=session, preserve_timestamps=True)
 
-MODES = { "load": load, "dump": dump }
+def blobdiff(cutoff):
+	bz = os.listdir("blob")
+	mkdir("blobdiff")
+	for b in bz:
+		if int(b) > cutoff:
+			cmd("cp blob/%s blobdiff/%s"%(b, b))
+	cmd("zip -r blobdiff.zip blobdiff")
+	cmd("rm -rf blobdiff")
+
+MODES = { "load": load, "dump": dump, "blobdiff": blobdiff }
 
 def go():
-	parser = OptionParser("ctmigrate [load|dump] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME] [--skip=SKIP] [--tables=TABLES] [-n]")
+	parser = OptionParser("ctmigrate [load|dump|blobdiff] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME] [--skip=SKIP] [--tables=TABLES] [--cutoff=CUTOFF] [-n]")
 	parser.add_option("-d", "--domain", dest="domain", default="localhost",
 		help="domain of target server (default: localhost)")
 	parser.add_option("-p", "--port", dest="port", default=8080,
 		help="port of target server (default: 8080)")
+	parser.add_option("-c", "--cutoff", dest="cutoff", default=0,
+		help="blobdiff cutoff - number to start after (default: 0)")
 	parser.add_option("-f", "--filename", dest="filename", default="dump.db",
 		help="name of sqlite data file for dumping/loading to/from (default: dump.db)")
 	parser.add_option("-s", "--skip", dest="skip", default="",
@@ -208,14 +219,17 @@ def go():
 	import model # model loads schema
 	mode = args[0]
 	if mode in MODES:
-		port = int(options.port)
-		session = db.Session("sqlite:///%s"%(options.filename,))
-		tabes = options.tables and options.tables.split("|")
-		if mode == "load":
-			load(options.domain, port, session, tables=tabes)
-		elif mode == "dump":
-			dump(options.domain, port, session, options.binary,
-				options.skip and options.skip.split("|"), tabes)
+		if mode == "blobdiff":
+			blobdiff(int(options.cutoff))
+		else:
+			port = int(options.port)
+			session = db.Session("sqlite:///%s"%(options.filename,))
+			tabes = options.tables and options.tables.split("|")
+			if mode == "load":
+				load(options.domain, port, session, tables=tabes)
+			elif mode == "dump":
+				dump(options.domain, port, session, options.binary,
+					options.skip and options.skip.split("|"), tabes)
 	else:
 		error("invalid mode specified ('%s')"%(mode,),
 			"must be 'ctmigrate load' or ctmigrate dump'")
