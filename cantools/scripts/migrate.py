@@ -33,14 +33,15 @@ def load(host, port, session, filters={}, protocol="http", tables=None):
 		load_model(model, host, port, session, filters=filters, protocol=protocol, pw=pw)
 	log("finished loading data from sqlite dump file")
 
-def load_model(model, host, port, session, filters={}, protocol="http", pw=None, action="put"):
+def load_model(model, host, port, session, filters={}, protocol="http", pw=None, action="put", blobifier=None):
 	log("retrieving %s entities"%(model,), important=True)
 	mod = db.get_model(model)
 	def push(data):
 		log(post(host, "/_db", port, {
 			"pw": pw,
 			"action": action,
-			"data": data
+			"data": data,
+			"blobifier": blobifier
 		}, protocol=protocol, ctjson=True))
 	offset = 0
 	while 1:
@@ -140,16 +141,26 @@ def checkblobs(d, schema):
 			blobs.append(d)
 			break
 
+def blobificator(host, port):
+	return "%s://%s:%s/_db"%((port == 443) and "https" or "http",
+		host, port) + "?action=blob&key=%s&property=%s"
+
+def blobify(d, blobifier, extant=None):
+	for key, prop in list(db.get_schema(d["modelName"]).items()):
+		if prop == "blob" and d[key]:
+			entkey = d.get("gaekey", d["key"])
+			if extant and getattr(extant, key): # skip if some blob is present.........
+				log("%s.%s: already blobbed"%(d["modelName"], key))
+				del d[key]
+			else:
+				log("fetching %s.%s (%s.%s)"%(d["modelName"], key, entkey, d[key]))
+				d[key] = fetch(blobifier%(entkey, key))
+
 def getblobs(host, port):
 	log("retrieving binaries stored on %s records"%(len(blobs),), important=True)
+	blobifier = blobificator(host, port)
 	for d in blobs:
-		for key, prop in list(db.get_schema(d["modelName"]).items()):
-			if prop == "blob" and d[key]:
-				entkey = d.get("gaekey", d["key"])
-				log("fetching %s.%s (%s.%s)"%(d["modelName"], key, entkey, d[key]))
-				d[key] = fetch(host, port=port,
-					path="/_db?action=blob&key=%s&property=%s"%(entkey, key),
-					protocol = (port == 443) and "https" or "http")
+		blobify(d, blobifier)
 
 def dump(host, port, session, binary, skip=[], tables=None):
 	log("dumping database at %s:%s"%(host, port), important=True)
