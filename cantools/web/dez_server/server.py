@@ -58,10 +58,16 @@ def respond(*args, **kwargs):
 
 def _ctjson(result):
 	result = result.decode()
-	if result[0] in "02":
+	code = result[0]
+	if code not in "0123":
+		log("request encoded:")
+		log(result)
+		log("attempting decode")
+		result = rec_conv(result, True)
+	if code in "02":
 		from cantools.util import log
 		log("request failed!! : %s"%(result,), important=True)
-	elif result[0] == "3":
+	elif code == "3":
 		return rec_conv(json.loads(result[1:]), True)
 	else:
 		return json.loads(result[1:])
