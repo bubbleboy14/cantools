@@ -141,9 +141,10 @@ def checkblobs(d, schema):
 			blobs.append(d)
 			break
 
-def blobificator(host, port):
-	return "%s://%s:%s/_db"%((port == 443) and "https" or "http",
-		host, port) + "?action=blob&key=%s&property=%s"
+def blobificator(host=None, port=None, dpref=None):
+	dpref = dpref or "%s://%s:%s"%((port == 443) and "https" or "http",
+		host, port)
+	return dpref + "/_db?action=blob&key=%s&property=%s"
 
 def blobify(d, blobifier, extant=None):
 	for key, prop in list(db.get_schema(d["modelName"]).items()):
