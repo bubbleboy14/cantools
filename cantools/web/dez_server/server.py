@@ -61,7 +61,7 @@ def _ctjson(result):
 	result = result.decode()
 	code = result[0]
 	if code not in "0123":
-		log("request encoded:")
+		log("response encoded:")
 		log(result)
 		log("attempting decode")
 		result = dec(result)
