@@ -64,7 +64,7 @@ def _ctjson(result):
 		log("request encoded:")
 		log(result)
 		log("attempting decode")
-		result = dec(result, True)
+		result = dec(result)
 	if code in "02":
 		from cantools.util import log
 		log("request failed!! : %s"%(result,), important=True)
