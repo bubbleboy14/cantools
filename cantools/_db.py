@@ -17,7 +17,7 @@ def response():
 				fail("wrong")
 
 	# clear cache!
-	if config.memcache.db and action in ["edit", "delete", "put", "bulk"]:
+	if (config.memcache.db or config.memcache.dbclear) and action in ["edit", "delete", "put", "bulk"]:
 		clearmem()
 
 	if action == "schema":
