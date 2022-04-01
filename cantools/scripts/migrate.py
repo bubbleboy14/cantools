@@ -45,15 +45,17 @@ def load_model(model, host, port, session, filters={}, protocol="http", pw=None,
 	offset = 0
 	while 1:
 		chunk = db.get_page(model, LIMIT, offset, filters=filters, session=session)
-		if action == "edit":
-			for item in chunk:
-				push(item)
-		else:
-			push(chunk)
-		offset += len(chunk)
-		if len(chunk) < LIMIT:
+		clen = len(chunk)
+		if clen:
+			if action == "edit":
+				for item in chunk:
+					push(item)
+			else:
+				push(chunk)
+			offset += clen
+			log("processed %s %s records"%(offset, model), 1)
+		if clen < LIMIT:
 			break
-		log("processed %s %s records"%(offset, model), 1)
 
 keys = {}
 missing = {}
