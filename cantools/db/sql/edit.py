@@ -19,10 +19,13 @@ ETRANS = {
 def add_edit_transformation(ptype, func):
     ETRANS[ptype] = func
 
-def edit(data, session=session):
+def edit(data, session=session, blobifier=None):
+    from cantools.scripts.migrate import blobify
     from cantools.db import get, get_model
     haskey = "key" in data
-    ent = haskey and get(data["key"], session) or get_model(data["modelName"])()
+    extant = haskey and get(data["key"], session)
+    blobifier and blobify(data, blobifier, extant)
+    ent = extant or get_model(data["modelName"])()
     haskey and ent.beforeedit(data)
     for propname, val in list(data.items()):
         if propname in ent._schema:
