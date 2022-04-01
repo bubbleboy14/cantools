@@ -120,7 +120,8 @@ def response():
 					blob = blob.get()
 				send_file(blob, detect=True)
 	elif action == "edit":
-		succeed(getattr(edit(cgi_get("data")), cgi_get("exporter", default="data"))())
+		succeed(getattr(edit(cgi_get("data"), blobifier=cgi_get("blobifier",
+			required=False)), cgi_get("exporter", default="data"))())
 	elif action == "put":
 		put_multi([get_model(d["modelName"])(**dprep(d)) for d in cgi_get("data")])
 	elif action == "delete":
