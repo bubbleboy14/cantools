@@ -34,7 +34,7 @@ def load(host, port, session, filters={}, protocol="http", tables=None):
 	log("finished loading data from sqlite dump file")
 
 def load_model(model, host, port, session, filters={}, protocol="http", pw=None, action="put", blobifier=None):
-	log("retrieving %s entities"%(model,), important=True)
+#	log("retrieving %s entities"%(model,), important=True) # too spammy
 	mod = db.get_model(model)
 	def push(data):
 		log(post(host, "/_db", port, {
