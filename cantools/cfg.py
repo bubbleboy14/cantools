@@ -66,6 +66,7 @@ cfg = {
 		"pubsubkey": None # pubsub-only key!! (use pubsubs when running web/admin behind ssl drp)
 	},
 	"db": { # switch on web backend (override w/ DB)
+		"refcount": False,
 		"gae": "data.db",
 		"dez": "sqlite:///data.db",
 		"test": "sqlite:///data_test.db",
