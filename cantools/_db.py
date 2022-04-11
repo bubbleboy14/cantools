@@ -7,10 +7,10 @@ from cantools import config
 import model # load up all models (for schema)
 
 def response():
-	action = cgi_get("action", choices=["schema", "blobs", "get", "blob", "edit", "delete", "put", "index", "bulk", "spreadsheet", "credcheck"])
+	action = cgi_get("action", choices=["schema", "blobs", "get", "blob", "edit", "edits", "delete", "put", "index", "bulk", "spreadsheet", "credcheck"])
 
 	# edit/delete/put/index/bulk always require credentials; getters do configurably
-	if not config.db.public or action in ["blobs", "edit", "delete", "put", "index", "bulk", "spreadsheet", "credcheck"]:
+	if not config.db.public or action in ["blobs", "edit", "edits", "delete", "put", "index", "bulk", "spreadsheet", "credcheck"]:
 		pw = cgi_get("pw")
 		if pw != config.admin.pw:
 			if not pw or pw != config.apikey:
@@ -122,6 +122,12 @@ def response():
 	elif action == "edit":
 		succeed(getattr(edit(cgi_get("data"), blobifier=cgi_get("blobifier",
 			required=False)), cgi_get("exporter", default="data"))())
+	elif action == "edits":
+		items = cgi_get("data")
+		blobifier = cgi_get("blobifier", required=False)
+		exporter = cgi_get("exporter", default="data")
+		for item in items:
+			edit(item, blobifier=blobifier)
 	elif action == "put":
 		put_multi([get_model(d["modelName"])(**dprep(d)) for d in cgi_get("data")])
 	elif action == "delete":
