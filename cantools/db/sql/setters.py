@@ -4,6 +4,7 @@ from ..shared import ct_key
 
 def _init_entity(instance, session=session, preserve_timestamps=False):
     from .lookup import inc_counter, dec_counter
+    from cantools import config
     puts = []
     now = datetime.now()
     cls = instance.__class__
@@ -14,7 +15,7 @@ def _init_entity(instance, session=session, preserve_timestamps=False):
         for key, val in list(cls.__dict__.items()):
             if not preserve_timestamps and getattr(val, "is_dt_autostamper", False) and val.should_stamp(not instance.index):
                 setattr(instance, key, now)
-            if key in instance._orig_fkeys:
+            if config.db.refcount and key in instance._orig_fkeys:
                 oval = instance._orig_fkeys[key]
                 val = getattr(instance, key)
                 if oval != val:
