@@ -56,7 +56,7 @@ def load_model(model, host, port, session, filters={}, protocol="http", pw=None,
 			offset += clen
 			log("processed %s %s records"%(offset, model), 1)
 		if clen < LIMIT:
-			break
+			return offset
 
 keys = {}
 missing = {}
