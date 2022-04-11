@@ -1,5 +1,5 @@
 import datetime
-from cantools.web import respond, succeed, cgi_get, getmem, setmem, delmem, read_file, send_file, fetch
+from cantools.web import respond, succeed, cgi_get, getmem, setmem, delmem, clearmem, read_file, send_file, fetch
 from cantools.util import token, transcode, resizep2
 from cantools.hooks import memhook
 
@@ -14,7 +14,12 @@ def prox():
 	send_file(data, detect=True)
 
 def response():
-	action = cgi_get("action", choices=["get", "set", "forget", "prox"])
+	action = cgi_get("action", choices=["get", "set", "forget", "prox", "clear"])
+	if action == "clear":
+		if cgi_get("pw") != config.admin.pw:
+			fail("wrong")
+		clearmem()
+		succeed()
 	if action == "prox":
 		return prox()
 	key = cgi_get("key")
