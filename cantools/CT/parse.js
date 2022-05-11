@@ -273,7 +273,7 @@ CT.parse = {
 		}, 1000);
 		return n;
 	},
-	"date2string": function(d, noletters, ampm, notime) {
+	"date2string": function(d, noletters, notime) {
 		d = d || new Date();
 		var month = d.getMonth() + 1, date = d.getDate();
 		if (month < 10)
