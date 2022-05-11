@@ -289,7 +289,7 @@ CT.parse = {
 			m = '0' + m;
 		if (s < 10)
 			s = '0' + s;
-		return (noletters ? ' ' : 'T') + h + ':' + m + ':' + s + (noletters ? '' : 'Z');
+		return ds + (noletters ? ' ' : 'T') + h + ':' + m + ':' + s + (noletters ? '' : 'Z');
 	},
 	"string2date": function(s) {
 		var year, month, rest, day, hour, minute, second;
