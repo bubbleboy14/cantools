@@ -273,15 +273,23 @@ CT.parse = {
 		}, 1000);
 		return n;
 	},
-	"date2string": function(d, noletters) {
+	"date2string": function(d, noletters, ampm, notime) {
 		d = d || new Date();
 		var month = d.getMonth() + 1, date = d.getDate();
 		if (month < 10)
 			month = '0' + month;
 		if (date < 10)
 			date = '0' + date;
-		return d.getFullYear() + '-' + month + '-' + date + (noletters ? ' ' : 'T') + d.getHours()
-			+ ':' + d.getMinutes() + ':' + d.getSeconds() + (noletters ? '' : 'Z');
+		var ds = d.getFullYear() + '-' + month + '-' + date;
+		if (notime) return ds;
+		var h = d.getHours(), m = d.getMinutes(), s = d.getSeconds();
+		if (h < 10)
+			h = '0' + h;
+		if (m < 10)
+			m = '0' + m;
+		if (s < 10)
+			s = '0' + s;
+		return (noletters ? ' ' : 'T') + h + ':' + m + ':' + s + (noletters ? '' : 'Z');
 	},
 	"string2date": function(s) {
 		var year, month, rest, day, hour, minute, second;
