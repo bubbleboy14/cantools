@@ -27,7 +27,7 @@ bwrap = "Function(atob(\"%s\"))();"
 
 def pwrapper(stxt):
     if pcfg.b64:
-        stxt = bwrap%(base64.b64encode(stxt),)
+        stxt = bwrap%(base64.b64encode(stxt.encode()).decode(),)
     return pwrap%(stxt,)
 
 def iwrapper(mod):
