@@ -1,4 +1,4 @@
-import MySQLdb
+import pymysql
 from cantools.util import log, read, error
 
 class DBWrapper(object):
@@ -9,7 +9,7 @@ class DBWrapper(object):
 		try:
 			self._db.ping()
 		except:
-			self._db = MySQLdb.connect(host=self._h,
+			self._db = pymysql.connect(host=self._h,
 				user=self._u, passwd=self._p, db=self._d)
 		return self._db
 
