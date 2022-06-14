@@ -219,6 +219,9 @@ class KeyWrapper(object):
 	def __ne__(self, other):
 		return not hasattr(other, "value") or self.value != other.value
 
+	def __hash__(self):
+		return self.value
+
 	def get(self, session=None):
 		from cantools.db import get
 		if not session:
