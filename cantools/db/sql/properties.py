@@ -220,7 +220,7 @@ class KeyWrapper(object):
 		return not hasattr(other, "value") or self.value != other.value
 
 	def __hash__(self):
-		return self.value
+		return sum([ord(c) for c in self.value])
 
 	def get(self, session=None):
 		from cantools.db import get
