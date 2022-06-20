@@ -116,6 +116,8 @@ CT.stream.util.fzn = {
 			onrefresh: onrefresh,
 			videoClass: videoClass,
 			onreset: function() {
+				if (!_.bridge)
+					return CT.log("fzn video onreset(): no bridge!");
 				_.bridge.error({
 					channel: channel,
 					requiredInitChunk: vid.receivedInitChunk
