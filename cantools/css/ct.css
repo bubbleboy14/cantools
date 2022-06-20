@@ -41,6 +41,7 @@
 .hmaxtrans { transition: max-height 1s; }
 .hminit { max-height: initial !important; }
 .hm0 { max-height: 0px !important; }
+.hmaxmax { max-height: 8000px !important; }
 .wm0 { max-width: 0px !important; }
 .hm20p { max-height: 20px !important; }
 .wm20p { max-width: 20px !important; }
