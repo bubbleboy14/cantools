@@ -38,6 +38,7 @@
     max-width: 40px;
     max-height: 40px;
 }
+.hmaxtrans { transition: max-height 1s; }
 .hminit { max-height: initial !important; }
 .hm0 { max-height: 0px !important; }
 .wm0 { max-width: 0px !important; }
