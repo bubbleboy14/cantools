@@ -1413,3 +1413,33 @@ div.mce-fullscreen {
 .cal .days .appointment:hover {
     background: lightblue;
 }
+
+#ctheader.hamburgize #hambo {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    font-size: 600%;
+    display: none;
+}
+
+#ctheader.hamburgize  #hambo:before {
+    content: '\2630';
+}
+
+@media (max-width: 600px) {
+    .hamburgize #ctll {
+        position: fixed;
+        right: -170px;
+        bottom: 0;
+        width: 170px;
+        font-size: 300%;
+        background: black;
+        transition: right 1s;
+    }
+    #ctheader.hamburgize.slidin #ctll {
+        right: 0;
+    }
+    #ctheader.hamburgize #hambo {
+        display: block;
+    }
+}
