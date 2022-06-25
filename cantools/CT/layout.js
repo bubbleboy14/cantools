@@ -78,7 +78,22 @@ CT.layout = {
 			content.push(CT.dom.marquee(m.content,
 				m.className || "abs ctl mosthigh", m.direction, m.noresize));
 		}
-		CT.dom.setContent(CT.dom.id("ctheader"), CT.dom.node(content, "div", "h1 w1"));
+		var bighead = CT.dom.id("ctheader");
+		if (opts.hamburgize) {
+			bighead.classList.add("hamburgize");
+			var hambo = CT.dom.div(null, null, "hambo", {
+				onclick: function() {
+					hambo._slidin = !hambo._slidin;
+					bighead.classList[hambo._slidin ? "add" : "remove"]("slidin");
+				}
+			});
+			content.push(hambo);
+			CT.dom.head(CT.dom.node(null, "meta", null, null, {
+				name: "viewport",
+				content: "width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no"
+			}));
+		}
+		CT.dom.setContent(bighead, CT.dom.div(content, "h1 w1"));
 		if (opts.title)
 			document.title = opts.title;
 	},
