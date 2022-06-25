@@ -373,20 +373,22 @@ var CT = {
 			return d;
 		}
 	},
+	"head": function(sub) {
+		var h = document.getElementsByTagName("head")[0];
+		sub && h.appendChild(sub);
+		return h;
+	},
 	"scriptImport": function(modpath, cb, delay) {
-		var h = document.getElementsByTagName("head")[0],
-			fp = (modpath.slice(0, 4) == "http") && modpath
+		var fp = (modpath.slice(0, 4) == "http") && modpath
 				|| (CT.net.fullPath(modpath.replace(/\./g, "/") + ".js")),
 			fresh = !(fp in CT._.scriptImportCb);
 		if (fresh)
 			CT._.scriptImportCb[fp] = [];
 		if (cb)
 			CT._.scriptImportCb[fp].push(cb);
-		if (fresh) {
-			h.appendChild(CT.dom.script(fp, null, null, () => {
-				setTimeout(() => CT._.onImport(fp), delay);
-			}));
-		}
+		fresh && CT.dom.head(CT.dom.script(fp, null, null, () => {
+			setTimeout(() => CT._.onImport(fp), delay);
+		}));
 	},
 	"require": function(modname, lazy) { // lazy only matters compile-time
 		if (modname.slice(0, 4) == "http" || modname.startsWith("/")) {
