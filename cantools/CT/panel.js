@@ -154,6 +154,14 @@ CT.panel = {
 				node.appendChild(t);
 			trigger && t.trigger();
 		};
+		node.newAdd = function(d) {
+			var t = CT.panel.trigger(d, cb, activeClass, content, condition, rmbutton, ricon, noactive, hovs);
+			if (node.firstChild.nextSibling)
+				node.insertBefore(t, node.firstChild.nextSibling);
+			else
+				node.appendChild(t);
+			t.trigger();
+		};
 		data.forEach(node.postAdd);
 		return node;
 	},
