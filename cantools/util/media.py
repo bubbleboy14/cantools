@@ -1,7 +1,7 @@
 from __future__ import absolute_import # for io.BytesIO
 from io import BytesIO
 import os
-from .system import cmd, rm, mkdir
+from .system import cmd, output, rm, mkdir
 from .reporting import log
 from .io import read, write
 
@@ -15,6 +15,10 @@ SLOW = "ffmpeg -y -i %s -loglevel error -stats -c:v libx264 -preset veryslow -c:
 FAST = "ffmpeg -y -i %s -loglevel error -stats -c:v copy -c:a copy -movflags +faststart -f mp4 _tmp"
 #SEG = "ffmpeg -i %s -loglevel error -stats -map 0 -codec:v libx264 -codec:a aac -f ssegment -segment_list %s/list.m3u8 -segment_list_flags +live -segment_time 10 %s/%%03d.ts"
 SEG = 'ffmpeg -i %s -loglevel error -stats -c:v libx264 -c:a copy -r 30 -x264opts "keyint=60:min-keyint=60" -forced-idr 1 -f ssegment -segment_list %s/list.m3u8 -segment_time 10 %s/%%03d.ts'
+MOOV = "ffmpeg -v trace -i %s 2>&1 | grep -e \"'mdat' parent\" -e \"'moov' parent\""
+
+def shouldMoveMoov(fpath):
+	return "moov" in output(MOOV%(fpath,)).split("\n").pop()
 
 def transcode(orig, tmp=False, fast=True, slow=False, baseline=False):
 	if tmp: # orig is _data_, not _path_
@@ -91,9 +95,9 @@ class ImageResizer(object):
 		dims = self.s2p2()
 		log("resizing to: %sx%s"%dims)
 		rimg = self.img.resize(dims)
-		with BytesIO() as output:
-			rimg.save(output, format=self.img.format)
-			return output.getvalue()
+		with BytesIO() as outbytes:
+			rimg.save(outbytes, format=self.img.format)
+			return outbytes.getvalue()
 
 def resizep2(data):
 	if not p2:
