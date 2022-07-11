@@ -31,6 +31,7 @@ CT.mobile = {
             prefix: true,
             cb: function() {
                 ready && n && n.scrollIntoView({ block: "nearest", behavior: "smooth" });
+                document.body.scrollTop = 0;
                 ready = true;
                 cb && cb();
             }
@@ -38,6 +39,10 @@ CT.mobile = {
         if (!CT.mobile._dur) {
             CT.mobile._dur = 1000;
             n && n.scrollIntoView({ block: "start", behavior: "auto" }); // for initial load
+            setTimeout(function() { // meh........ it works.
+                CT.dom.ALLNODE.resize();
+                document.body.scrollTop = 0;
+            }, 1000);
         }
     },
     "fitAndSnap": function(n, cb) {
