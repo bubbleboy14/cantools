@@ -85,6 +85,9 @@ class ModelBase(with_metaclass(CTMeta, sa_dbase)):
     def __ne__(self, other):
         return not self.__eq__(other)
 
+    def __hash__(self):
+        return self.key.__hash__()
+
     def put(self, session=session):
         put_multi([self], session)
 
