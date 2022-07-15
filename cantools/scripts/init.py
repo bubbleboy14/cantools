@@ -198,7 +198,7 @@ class Builder(object):
 					else:
 						for fname in fnames:
 							log("%s [%s]"%(fname, plugin), 1)
-							cp(read(os.path.join(dp, fname)),
+							cp(read(os.path.join(dp, fname), binary=True),
 								os.path.join(dname, fname))
 
 	def generate_symlinks(self):
