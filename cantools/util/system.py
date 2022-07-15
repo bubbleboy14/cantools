@@ -8,7 +8,7 @@ from .io import read, write
 
 def cp(content, fname): # more write than copy, buuuut...
 	log("writing %s"%(fname,), 2)
-	write(content, fname)
+	write(content, fname, binary=hasattr(content, "decode"))
 
 def _init_win_sym():
 	def win_sym(src, dest):
