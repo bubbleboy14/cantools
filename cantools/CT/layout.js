@@ -273,11 +273,16 @@ CT.layout = {
 					cont.unshift(opts.extra[item.name](f));
 				cont.opts = f.opts;
 				cont.getVal = f.getVal;
+				cont.updateField = f.update;
 				cont.setLabel = function(lval) {
 					lab.innerHTML = lval;
 				};
 				cont.upLabel = function() {
 					item.labeller && cont.setLabel(item.labeller(vals));
+				};
+				cont.update = function() {
+					cont.upLabel();
+					cont.updateField && cont.updateField(vals);
 				};
 				return cont;
 			}
@@ -314,7 +319,7 @@ CT.layout = {
 				} else
 					node.curStep = node.firstChild;
 				if (node.curStep) {
-					node.curStep.upLabel && node.curStep.upLabel();
+					node.curStep.update && node.curStep.update();
 					node.curStep.classList.add("curstep");
 				} else
 					submitter();
