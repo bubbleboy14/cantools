@@ -1103,6 +1103,16 @@ a.whitelink, .whitelink a {
     overflow-y: auto;
 }
 
+.ctform.stepper > div {
+    max-height: 0;
+    overflow: hidden;
+    transition: 1s max-height;
+}
+
+.ctform.stepper > .curstep {
+    max-height: 400px;
+}
+
 #top_buttons {
     top: 3px;
 }
