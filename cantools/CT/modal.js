@@ -425,6 +425,7 @@ CT.modal.Prompt = CT.Class({
 		"form": function(data) {
 			return CT.layout.form({
 				items: data || [],
+				step: this.opts.step,
 				labels: this.opts.labels,
 				numbers: this.opts.numbers || []
 			});
@@ -449,6 +450,8 @@ CT.modal.Prompt = CT.Class({
 		this.hide();
 	},
 	submit: function() {
+		if (this.opts.style == "form" && this.opts.step && this.input.curStep)
+			return this.input.nextStep(this.submit);
 		if (this.opts.style == "multiple-choice") {
 			var that = this;
 			this.opts.cb(this.input.value.map(function(val) {
