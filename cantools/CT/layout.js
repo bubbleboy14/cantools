@@ -264,12 +264,21 @@ CT.layout = {
 				item.wrap = true;
 			f = CT.dom[item.style || "smartField"](item);
 			f.getVal = f.fieldValue || f.value;
+			f.opts = item;
 			fields.push(f);
 			if (opts.labels) {
-				var cont = CT.dom.div([CT.dom.label(item.label || item.name, f.id), f]);
+				var lab = CT.dom.label(item.label || item.name, f.id),
+					cont = CT.dom.div([lab, f]);
 				if (opts.extra && opts.extra[item.name])
 					cont.unshift(opts.extra[item.name](f));
+				cont.opts = f.opts;
 				cont.getVal = f.getVal;
+				cont.setLabel = function(lval) {
+					lab.innerHTML = lval;
+				};
+				cont.upLabel = function() {
+					item.labeller && cont.setLabel(item.labeller(vals));
+				};
 				return cont;
 			}
 			return f;
@@ -278,15 +287,18 @@ CT.layout = {
 			nums.push(f);
 			return [ CT.dom.div(nitem.name, "right"), f ];
 		})), opts.className), i, val, name, vals = {};
+		node.setVal = function(f) {
+			val = f.getVal();
+			name = f.opts.name;
+			if (!val)
+				return alert("please provide a " + name);
+			vals[name] = val;
+			return val;
+		};
 		node.value = function() {
-			for (i = 0; i < fields.length; i++) {
-				f = fields[i];
-				val = f.getVal();
-				name = opts.items[i].name;
-				if (!val)
-					return alert("please provide a " + name);
-				vals[name] = val;
-			}
+			for (i = 0; i < fields.length; i++)
+				if (!node.setVal(fields[i]))
+					return;
 			for (i = 0; i < nums.length; i++)
 				vals[opts.numbers[i].name] = nums[i].value();
 			opts.cb && opts.cb(vals);
@@ -296,15 +308,15 @@ CT.layout = {
 			node.classList.add("stepper");
 			node.nextStep = function(submitter) {
 				if (node.curStep) {
-					if (!node.curStep.getVal())
-						return alert("please provide an answer");
+					if (!node.setVal(node.curStep)) return;
 					node.curStep.classList.remove("curstep");
 					node.curStep = node.curStep.nextSibling;
 				} else
 					node.curStep = node.firstChild;
-				if (node.curStep)
+				if (node.curStep) {
+					node.curStep.upLabel && node.curStep.upLabel();
 					node.curStep.classList.add("curstep");
-				else
+				} else
 					submitter();
 			};
 			node.nextStep();
