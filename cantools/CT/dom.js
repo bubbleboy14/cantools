@@ -475,7 +475,8 @@ CT.dom = {
 			ptxt += "&ensp;";
 		return CT.dom.node(ptxt, "span");
 	},
-	"br": function(bsize) {
+	"br": function(bsize, justbr) {
+		if (justbr) return CT.dom.node(null, "br");
 		bsize = bsize || 1;
 		var bs = [];
 		for (var i = 0; i < bsize; i++)
