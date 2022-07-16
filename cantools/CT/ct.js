@@ -252,19 +252,22 @@ var CT = {
 				result.data = data;
 			return result;
 		},
+		"spinOn": function() {
+			CT.net._spinner_node = CT.net._spinner_node || CT.dom.spinner();
+			document.body.appendChild(CT.net._spinner_node);
+		},
+		"spinOff": function() {
+			CT.dom.remove(CT.net._spinner_node);
+		},
 		"_xhrcb": function(path, cb, eb, cbarg, ebarg, errMsg, signature, _500as200, noct, spinner, basic) {
-			if (CT.net._spinner || spinner) {
-				CT.net._spinner_node = CT.net._spinner_node || CT.dom.spinner();
-				document.body.appendChild(CT.net._spinner_node);
-			}
+			(CT.net._spinner || spinner) && CT.net.spinOn();
 			cb = cb || function() {};
 			eb = eb || function(payload) {
 				CT.net._fallback_error((errMsg || "error") + ": " + payload);
 			};
 			return function(xhr) {
 				if (xhr.status == 200 || (_500as200 && xhr.status == 500)) {
-					if (CT.net._spinner || spinner)
-						CT.dom.remove(CT.net._spinner_node);
+					(CT.net._spinner || spinner) && CT.net.spinOff();
 					var data = xhr.responseType == "blob" ? xhr.response : xhr.responseText.trim();
 					if (basic || CT.net._mode == "basic")
 						cb(data, cbarg);
