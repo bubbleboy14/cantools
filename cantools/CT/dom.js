@@ -503,7 +503,7 @@ CT.dom = {
 		});
 		return n;
 	},
-	"label": function(content, htmlFor, className, click) {
+	"label": function(content, htmlFor, className, click, hover) {
 		var n = CT.dom.node(content, "label", className, null, {
 			"for": htmlFor,
 			"htmlFor": htmlFor
@@ -514,6 +514,7 @@ CT.dom = {
 				tnode && tnode.onclick && tnode.onclick();
 			};
 		}
+		hover && CT.hover.auto(n, hover);
 		return n;
 	},
 
@@ -600,9 +601,27 @@ CT.dom = {
 				cb, stripname, stripnum, lnames[i] == stripval);
 		pnode.appendChild(rtable);
 	},
+	"radio": function(opts) {
+		opts = CT.merge(opts, {
+			options: []
+		});
+		var n = CT.dom.div();
+		n.value = function() {
+			return n._val;
+		};
+		n.setVal = function(v) {
+			n._val = v.name || v;
+		};
+		n.update = function(upts) {
+			n.olist = Array.isArray(opts.options) && opts.options || opts.options(upts);
+			CT.dom.setContent(n, CT.dom.options(n.olist, n.setVal));
+		};
+		(Array.isArray(opts.options) && opts.options.length) && n.update();
+		return n;
+	},
 	"options": function(data, cb, selected) {
-		var fid, dname, n = CT.dom.div(data.map(function(d, i) {
-			dname = d.name || d, fid = "rs" + i + dname, fopts = {
+		var n = CT.dom.div(data.map(function(d, i) {
+			var dname = d.name || d, fid = "rs" + i + dname, fopts = {
 				onclick: function() {
 					cb(d);
 				}
@@ -611,7 +630,7 @@ CT.dom = {
 				fopts.checked = true;
 			return [
 				CT.dom.field(fid, null, null, "radio", fopts),
-				CT.dom.label(dname, fid)
+				CT.dom.label(dname, fid, null, null, d.hover)
 			];
 		}));
 		return n;
