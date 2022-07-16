@@ -1247,7 +1247,7 @@ button, a, label, input[type='checkbox'], .pointer {
 }
 .ctspinner span {
     z-index: -1;
-    position: absolute;
+    position: fixed;
     width: 0;
     height: 0;
     border-left: 50px solid transparent;
