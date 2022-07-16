@@ -260,16 +260,18 @@ CT.layout = {
 		var f, fields = [], nums = [], node = CT.dom.div(opts.items.map(function(item) {
 			if (opts.values && opts.values[item.name] && !item.value)
 				item = CT.merge(item, { value: opts.values[item.name] });
-			f = CT.dom.smartField(item);
+			if (item.style == "fieldList")
+				item.wrap = true;
+			f = CT.dom[item.style || "smartField"](item);
 			fields.push(f);
 			if (opts.labels) {
-				var cont = [CT.dom.label(item.name, f.id), f];
+				var cont = [CT.dom.label(item.label || item.name, f.id), f];
 				if (opts.extra && opts.extra[item.name])
 					cont.unshift(opts.extra[item.name](f));
 				return cont;
 			}
 			return f;
-		}).concat(opts.numbers.map(function(nitem) {
+		}).concat(opts.numbers.map(function(nitem) { // depped .. embed among items[] instead
 			f = CT.dom.numberSelector(nitem);
 			nums.push(f);
 			return [ CT.dom.div(nitem.name, "right"), f ];
@@ -277,7 +279,7 @@ CT.layout = {
 		node.value = function() {
 			for (i = 0; i < fields.length; i++) {
 				f = fields[i];
-				val = f.fieldValue();
+				val = (f.fieldValue || f.value)();
 				name = opts.items[i].name;
 				if (!val)
 					return alert("please provide a " + name);
