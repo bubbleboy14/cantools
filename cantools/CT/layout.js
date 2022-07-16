@@ -263,11 +263,13 @@ CT.layout = {
 			if (item.style == "fieldList")
 				item.wrap = true;
 			f = CT.dom[item.style || "smartField"](item);
+			f.getVal = f.fieldValue || f.value;
 			fields.push(f);
 			if (opts.labels) {
-				var cont = [CT.dom.label(item.label || item.name, f.id), f];
+				var cont = CT.dom.div([CT.dom.label(item.label || item.name, f.id), f]);
 				if (opts.extra && opts.extra[item.name])
 					cont.unshift(opts.extra[item.name](f));
+				cont.getVal = f.getVal;
 				return cont;
 			}
 			return f;
@@ -279,7 +281,7 @@ CT.layout = {
 		node.value = function() {
 			for (i = 0; i < fields.length; i++) {
 				f = fields[i];
-				val = (f.fieldValue || f.value)();
+				val = f.getVal();
 				name = opts.items[i].name;
 				if (!val)
 					return alert("please provide a " + name);
@@ -290,6 +292,23 @@ CT.layout = {
 			opts.cb && opts.cb(vals);
 			return vals;
 		};
+		if (opts.step) {
+			node.classList.add("stepper");
+			node.nextStep = function(submitter) {
+				if (node.curStep) {
+					if (!node.curStep.getVal())
+						return alert("please provide an answer");
+					node.curStep.classList.remove("curstep");
+					node.curStep = node.curStep.nextSibling;
+				} else
+					node.curStep = node.firstChild;
+				if (node.curStep)
+					node.curStep.classList.add("curstep");
+				else
+					submitter();
+			};
+			node.nextStep();
+		}
 		if (opts.button)
 			node.appendChild(CT.dom.button(opts.bname || "continue", node.value));
 		return node;
