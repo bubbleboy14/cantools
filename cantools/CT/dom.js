@@ -603,7 +603,8 @@ CT.dom = {
 	},
 	"radio": function(opts) {
 		opts = CT.merge(opts, {
-			options: []
+			options: [],
+			fieldName: "radio" + CT.data.random(1000)
 		});
 		var n = CT.dom.div();
 		n.value = function() {
@@ -614,26 +615,33 @@ CT.dom = {
 		};
 		n.update = function(upts) {
 			n.olist = Array.isArray(opts.options) && opts.options || opts.options(upts);
-			CT.dom.setContent(n, CT.dom.options(n.olist, n.setVal));
+			CT.dom.setContent(n, CT.dom.options(n.olist, n.setVal, null, opts.fieldName));
 		};
 		(Array.isArray(opts.options) && opts.options.length) && n.update();
 		return n;
 	},
-	"options": function(data, cb, selected) {
-		var n = CT.dom.div(data.map(function(d, i) {
-			var dname = d.name || d, fid = "rs" + i + dname, fopts = {
+	"options": function(data, cb, selected, fieldName) {
+		return CT.dom.div(data.map(function(d, i) {
+			var dname = d.name || (d.other && "other") || d, fopts = {
+				name: fieldName,
 				onclick: function() {
 					cb(d);
 				}
-			};
+			}, fid = "rs" + i + dname, nz;
 			if (selected && ((selected == d) || (selected == d.key)))
 				fopts.checked = true;
-			return [
+			nz = [
 				CT.dom.field(fid, null, null, "radio", fopts),
 				CT.dom.label(dname, fid, null, null, d.hover)
 			];
+			if (d.other) {
+				nz.push(CT.dom.pad());
+				nz.push(CT.dom.smartField({
+					keyup: cb
+				}));
+			}
+			return nz;
 		}));
-		return n;
 	},
 	"linkWithIcon": function(icon, lname, laddr, lonclick) {
 		var n = CT.dom.node("", "span");
