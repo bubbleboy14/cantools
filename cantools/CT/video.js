@@ -59,6 +59,8 @@ CT.video = {
 			return CT.video.getQSParam(url, "docid");
 		else if (url.indexOf("youtube.com") != -1)
 			return CT.video.getQSParam(url, "v");
+		else if (url.indexOf("youtu.be") != -1)
+			return url.slice(url.lastIndexOf("/") + 1);
 		else if (url.indexOf("vimeo.com") != -1)
 			return url.slice(url.lastIndexOf('/') + 1);
 		else if (url.indexOf("facebook.com") != -1 && url.indexOf("video") != -1)
@@ -90,7 +92,7 @@ CT.video = {
 			return "facebook";
 		if (url.indexOf("video.google.com") != -1)
 			return "google";
-		if (url.indexOf("youtube.com") != -1)
+		if (url.indexOf("youtube.com") != -1 || url.indexOf("youtu.be") != -1)
 			return "youtube";
 		if (url.indexOf("vimeo.com") != -1)
 			return "vimeo";
