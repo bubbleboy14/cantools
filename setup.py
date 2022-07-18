@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='ct',
-    version="0.10.8.108",
+    version="0.10.8.109",
     author='Mario Balibrera',
     author_email='mario.balibrera@gmail.com',
     license='MIT License',
