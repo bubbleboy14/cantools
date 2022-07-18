@@ -1,4 +1,4 @@
-# cantools 0.10.8.106
+# cantools 0.10.8.107
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
  - Docs: http://ct.mkult.co
@@ -1095,6 +1095,7 @@ the 'opts' object itself, are all optional.
     - keys (default: true): use arrow keys to navigate slider, as well as enter key for peekaboo transitions
     - noEnter (default: false): disable enter key for peekaboo transitions
     - frames (default: []): an array of items corresponding to the frames in the slider
+    - shuffle (default: false): for chunk mode, especially track subMode (randomize playlist) and autoSlide
 
 The last one, 'frames', must be an array either of strings (interpreted
 as image urls) or of data objects (processed in the addFrame function).
