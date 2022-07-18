@@ -116,12 +116,11 @@ def vpush():
     cmd('git commit -m "vpush %s"'%(version,))
     cmd("git push")
     if input("push to cheese shop? [N/y] ").lower().startswith("y"):
-        log("laying egg", important=True)
-        py("setup.py install", True)
+        log("laying egg (universal py2/3 wheel)", important=True)
+        py("setup.py bdist_wheel --universal", True)
         log("pushing to cheese shop", important=True)
-        cmd("twine upload dist/ct-%s-py2.7.egg"%(version,))
+        cmd("twine upload dist/ct-%s-py2.py3-none-any.whl"%(version,))
         log("restoring cantools develop status", important=True)
-        py("setup.py develop", True)
     log("we did it (%s -> %s)!"%(__version__, version), important=True)
 
 def run():
