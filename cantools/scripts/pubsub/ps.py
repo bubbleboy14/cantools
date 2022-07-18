@@ -42,7 +42,7 @@ class PubSub(WebSocketDaemon):
         if not u.name: # on dc?
             self._log("user disconnected without registering")
             u.conn.close()
-        elif u.name.startswith("__admin__") and u.name.endswith(b64encode(config.admin.pw)):
+        elif u.name.startswith("__admin__") and u.name.endswith(b64encode(config.admin.pw.encode()).decode()):
             self.admins[u.name] = u
             self.snapshot(u)
         else:
