@@ -1,4 +1,4 @@
-import sys, json, gc, os
+import sys, json, gc, os, inspect
 try:
     import psutil
 except ImportError as e:
@@ -51,10 +51,11 @@ class Admin(CTWebBase):
 
     def report(self, req):
         report = json.dumps({
+            "stack_frames": len(inspect.stack()),
             "web": self.controller.web.daemon.counter.report(),
             "admin": self.daemon.counter.report(),
             "gc": len(gc.get_objects()),
             "mem": psutil.Process(os.getpid()).memory_percent()
         })
-        req.write("HTTP/1.0 200 OK\r\n\r\n%s"%(report,))
-        req.close()
+        self.logger.info(report)
+        self.daemon.respond(req, report)

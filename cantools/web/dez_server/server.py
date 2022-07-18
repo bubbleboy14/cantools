@@ -74,6 +74,7 @@ def _ctjson(result):
 		return json.loads(result[1:])
 
 def fetch(host, path="/", port=80, asjson=False, cb=None, timeout=1, asyn=False, protocol="http", ctjson=False, qsp=None, fakeua=False):
+	from cantools.util import log # gives us logger set in run_dez_webserver()
 	if "://" in host:
 		protocol, host = host.split("://")
 		if "/" in host:
@@ -100,7 +101,9 @@ def fetch(host, path="/", port=80, asjson=False, cb=None, timeout=1, asyn=False,
 		gkwargs["headers"] = {
 			'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36'
 		}
-	result = requests.get("%s://%s:%s%s"%(protocol, host, port, path), **gkwargs).content
+	furl = "%s://%s:%s%s"%(protocol, host, port, path)
+	log("fetch %s"%(furl,))
+	result = requests.get(furl, **gkwargs).content
 	if ctjson: # sync only
 		return _ctjson(result)
 	return asjson and json.loads(result) or result
