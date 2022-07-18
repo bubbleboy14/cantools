@@ -120,7 +120,6 @@ def vpush():
         py("setup.py bdist_wheel --universal", True)
         log("pushing to cheese shop", important=True)
         cmd("twine upload dist/ct-%s-py2.py3-none-any.whl"%(version,))
-        log("restoring cantools develop status", important=True)
     log("we did it (%s -> %s)!"%(__version__, version), important=True)
 
 def run():
