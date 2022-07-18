@@ -106,6 +106,7 @@ class Monitor(Bot):
 			"sent": nioc.bytes_sent,
 			"recv": nioc.bytes_recv,
 			"process_memory": dmon["mem"],
+			"stack_frames": dmon["stack_frames"],
 			"virtual_memory": psutil.virtual_memory().percent,
 			"swap_memory": psutil.swap_memory().percent,
 			"connections": len(psutil.net_connections()),
