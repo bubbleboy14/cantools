@@ -1218,7 +1218,7 @@ button, a, label, input[type='checkbox'], .pointer {
 /* source: https://css-tricks.com/examples/Loading/ */
 .ctswrap {
     z-index: 100;
-    position: absolute;
+    position: fixed;
     top: 50%;
     left: 50%;
     margin-top: -50px;
@@ -1257,7 +1257,7 @@ button, a, label, input[type='checkbox'], .pointer {
 }
 .ctspinner span {
     z-index: -1;
-    position: fixed;
+    position: absolute;
     width: 0;
     height: 0;
     border-left: 50px solid transparent;
