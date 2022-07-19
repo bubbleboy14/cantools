@@ -275,7 +275,7 @@ CT.layout = {
 				cont.getVal = f.getVal;
 				cont.updateField = f.update;
 				cont.setLabel = function(lval) {
-					lab.innerHTML = lval;
+					CT.dom.setContent(lab, lval);
 				};
 				cont.upLabel = function() {
 					item.labeller && cont.setLabel(item.labeller(vals));
@@ -296,7 +296,7 @@ CT.layout = {
 			val = f.getVal();
 			name = f.opts.name;
 			if (!val)
-				return alert("please provide a " + name);
+				return alert("please provide a " + CT.parse.key2title(name));
 			vals[name] = val;
 			return val;
 		};
