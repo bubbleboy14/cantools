@@ -574,6 +574,7 @@ CT.dom = {
 				},
 				onclick: () => cb.setChecked(true)
 			});
+			cb.appendChild(CT.dom.pad());
 			cb.appendChild(cb._other);
 		}
 		if (struct.subs) {
