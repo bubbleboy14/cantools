@@ -83,9 +83,9 @@ CT.hover = {
 		}
 		return node;
 	},
-	auto: function(node, content, poptop, stayopen, recursive) { // better default...
+	auto: function(node, content, popbot, stayopen, recursive) { // better default...
 		if (!node.isSameNode)
 			node = CT.dom.div(node);
-		return CT.hover.set(node, content, poptop, stayopen, recursive, true);
+		return CT.hover.set(node, content, !popbot, stayopen, recursive, true);
 	}
 };
