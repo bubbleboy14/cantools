@@ -451,7 +451,7 @@ CT.modal.Prompt = CT.Class({
 	},
 	submit: function() {
 		if (this.opts.style == "form" && this.opts.step && this.input.curStep)
-			return this.input.nextStep(this.submit);
+			return this.input.nextStep(this.submit, this.node.recenter);
 		if (this.opts.style == "multiple-choice") {
 			var that = this;
 			this.opts.cb(this.input.value.map(function(val) {
@@ -485,7 +485,7 @@ CT.modal.Prompt = CT.Class({
 			this.node.appendChild(this.input);
 		}
 		this.node.appendChild(this.continueButton);
-		this.node.appendChild(CT.dom.button("Cancel", this.hide));
+		this.node.appendChild(CT.dom.button("Cancel", this.hide, this.opts.cancelButtonClass));
 	},
 	init: function(opts) {
 		this.opts = CT.merge(opts, CT.modal._defaults.Prompt, this.opts);
