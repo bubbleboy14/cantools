@@ -1110,7 +1110,7 @@ a.whitelink, .whitelink a {
 }
 
 .ctform.stepper > .curstep {
-    max-height: 400px;
+    max-height: 80vh;
 }
 
 #top_buttons {
