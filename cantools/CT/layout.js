@@ -291,18 +291,18 @@ CT.layout = {
 			f = CT.dom.numberSelector(nitem);
 			nums.push(f);
 			return [ CT.dom.div(nitem.name, "right"), f ];
-		})), opts.className), i, val, name, vals = {};
+		})), opts.className), i, val, name, vals = {}, nahs = [undefined, ""];
 		node.setVal = function(f) {
 			val = f.getVal();
 			name = f.opts.name;
-			if (!val)
+			if (nahs.includes(val))
 				return alert("please provide a " + CT.parse.key2title(name));
 			vals[name] = val;
 			return val;
 		};
 		node.value = function() {
 			for (i = 0; i < fields.length; i++)
-				if (!node.setVal(fields[i]))
+				if (nahs.includes(node.setVal(fields[i])))
 					return;
 			for (i = 0; i < nums.length; i++)
 				vals[opts.numbers[i].name] = nums[i].value();
@@ -313,9 +313,11 @@ CT.layout = {
 			node.classList.add("stepper");
 			node.nextStep = function(submitter) {
 				if (node.curStep) {
-					if (!node.setVal(node.curStep)) return;
+					if (nahs.includes(node.setVal(node.curStep))) return;
 					node.curStep.classList.remove("curstep");
 					node.curStep = node.curStep.nextSibling;
+					while (node.curStep && node.curStep.opts.condition && !vals[node.curStep.opts.condition])
+						node.curStep = node.curStep.nextSibling;
 				} else
 					node.curStep = node.firstChild;
 				if (node.curStep) {
