@@ -677,7 +677,12 @@ CT.dom = {
 		var n = CT.dom.radio(CT.merge(opts, {
 			options: ["Yes", "No"]
 		}));
-		n.value = () => n._val == "Yes";
+		n.value = function() { // else undefined
+			if (n._val == "Yes")
+				return true;
+			if (n._val == "No")
+				return false;
+		};
 		return n;
 	},
 	"options": function(data, cb, selected, fieldName) {
@@ -685,20 +690,21 @@ CT.dom = {
 			var dname = d.name || (d.other && "Other") || d, fopts = {
 				name: fieldName,
 				onclick: function() {
-					cb(d);
+					cb(d.other ? sf.fieldValue() : d);
+					d.other && sf.focus();
 				}
-			}, fid = "rs" + i + dname, nz;
+			}, fid = fieldName + "rs" + i + dname, fn, nz, sf;
 			if (selected && ((selected == d) || (selected == d.key)))
 				fopts.checked = true;
-			nz = [
-				CT.dom.field(fid, null, null, "radio", fopts),
-				CT.dom.label(dname, fid, null, null, d.hover)
-			];
+			fn = CT.dom.field(fid, null, null, "radio", fopts);
+			nz = [ fn, CT.dom.label(dname, fid, null, null, d.hover) ];
 			if (d.other) {
+				sf = CT.dom.smartField({
+					keyup: cb,
+					onclick: () => fn.click()
+				});
 				nz.push(CT.dom.pad());
-				nz.push(CT.dom.smartField({
-					keyup: cb
-				}));
+				nz.push(sf);
 			}
 			return nz;
 		}));
