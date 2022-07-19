@@ -339,6 +339,7 @@ CT.dom = {
 		}
 		if (curvalue)
 			s.value = ovalues.indexOf(curvalue) != -1 && curvalue || defaultvalue;
+		s.fieldValue = () => s.container ? s.container.value() : s.value;
 		s.onchange = function() {
 			if (other) {
 				if (s.value == "other")
