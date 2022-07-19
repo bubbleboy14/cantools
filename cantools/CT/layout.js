@@ -263,6 +263,7 @@ CT.layout = {
 			if (item.style == "fieldList")
 				item.wrap = true;
 			f = CT.dom[item.style || "smartField"](item);
+			item.style && f.classList.add(item.style);
 			f.getVal = f.fieldValue || f.value;
 			f.opts = item;
 			fields.push(f);
@@ -311,7 +312,7 @@ CT.layout = {
 		};
 		if (opts.step) {
 			node.classList.add("stepper");
-			node.nextStep = function(submitter) {
+			node.nextStep = function(submitter, recenterer) {
 				if (node.curStep) {
 					if (nahs.includes(node.setVal(node.curStep))) return;
 					node.curStep.classList.remove("curstep");
@@ -323,6 +324,7 @@ CT.layout = {
 				if (node.curStep) {
 					node.curStep.update && node.curStep.update();
 					node.curStep.classList.add("curstep");
+					recenterer && setTimeout(recenterer, 500);
 				} else
 					submitter();
 			};
