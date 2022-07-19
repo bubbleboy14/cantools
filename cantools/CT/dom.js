@@ -673,6 +673,13 @@ CT.dom = {
 		(Array.isArray(opts.options) && opts.options.length) && n.update();
 		return n;
 	},
+	"bool": function(opts) {
+		var n = CT.dom.radio(CT.merge(opts, {
+			options: ["Yes", "No"]
+		}));
+		n.value = () => n._val == "Yes";
+		return n;
+	},
 	"options": function(data, cb, selected, fieldName) {
 		return CT.dom.div(data.map(function(d, i) {
 			var dname = d.name || (d.other && "Other") || d, fopts = {
