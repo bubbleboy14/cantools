@@ -527,13 +527,15 @@ CT.dom = {
 	},
 
 	// composite nodes
-	"checkboxAndLabel": function(cbid, ischecked, lname, lclass, cclass, onclick) {
+	"checkboxAndLabel": function(cbid, ischecked, lname, lclass, cclass, onclick, namesuff) {
 		if (!lname && cbid.indexOf(" ") != -1) {
 			lname = cbid;
 			cbid = cbid.replace(/ /g, "");
 		}
 		var n = CT.dom.node("", "div", cclass);
 		var cbname = cbid+"checkbox";
+		if (namesuff)
+			cbname += namesuff;
 		var cb = CT.dom.checkbox(cbname, ischecked);
 		n.appendChild(cb);
 		if (onclick) {
@@ -545,7 +547,47 @@ CT.dom = {
 		n.isChecked = function() {
 			return cb.checked;
 		};
+		n.setChecked = function(val) {
+			cb.checked = val;
+			onclick && onclick(cb);
+		};
 		return n;
+	},
+	"checkStruct": function(struct) {
+		var name = struct.name || (struct.other && "Other") || struct;
+		var cb = CT.dom.checkboxAndLabel(name, false, null, null, null, function(cbinput) {
+			CT.log(name + ": " + cbinput.checked);
+		}, CT.data.random(1000));
+		cb._name = name;
+		if (struct.other) {
+			cb._other = CT.dom.smartField({
+				keyup: function(val) {
+					cb._name = val || "Other";
+				}
+			});
+			cb.appendChild(cb._other);
+		}
+		if (struct.subs) {
+			cb._subs = CT.dom.checkTree({
+				structure: struct.subs,
+				parent: cb ///// ?????? [todo]
+			});
+			cb.appendChild(CT.dom.div(cb._subs, "tabbed"));
+		}
+		return cb;
+	},
+	"checkTree": function(opts) { // parent?
+		var struct, vals = {}, tree = CT.dom.div(opts.structure.map(CT.dom.checkStruct));
+		tree.value = function() {
+			CT.dom.each(tree, function(sub) {
+				if (sub.isChecked())
+					vals[sub._name] = sub._subs ? sub._subs.value() : true;
+				else
+					vals[sub._name] = false;
+			});
+			return vals;
+		};
+		return tree;
 	},
 	"resizeTextArea": function(cbody) {
 		// expander/contracter
