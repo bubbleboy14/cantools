@@ -339,6 +339,7 @@ CT.dom = {
 		}
 		if (curvalue)
 			s.value = ovalues.indexOf(curvalue) != -1 && curvalue || defaultvalue;
+		s.fieldValue = () => s.container ? s.container.value() : s.value;
 		s.onchange = function() {
 			if (other) {
 				if (s.value == "other")
@@ -527,13 +528,15 @@ CT.dom = {
 	},
 
 	// composite nodes
-	"checkboxAndLabel": function(cbid, ischecked, lname, lclass, cclass, onclick) {
+	"checkboxAndLabel": function(cbid, ischecked, lname, lclass, cclass, onclick, namesuff) {
 		if (!lname && cbid.indexOf(" ") != -1) {
 			lname = cbid;
 			cbid = cbid.replace(/ /g, "");
 		}
 		var n = CT.dom.node("", "div", cclass);
 		var cbname = cbid+"checkbox";
+		if (namesuff)
+			cbname += namesuff;
 		var cb = CT.dom.checkbox(cbname, ischecked);
 		n.appendChild(cb);
 		if (onclick) {
@@ -545,7 +548,58 @@ CT.dom = {
 		n.isChecked = function() {
 			return cb.checked;
 		};
+		n.setChecked = function(val) {
+			cb.checked = val;
+			onclick && onclick(cb);
+		};
 		return n;
+	},
+	"checkStruct": function(struct, single, parent) {
+		var name = struct.name || (struct.other && "Other") || struct;
+		var cb = CT.dom.checkboxAndLabel(name, false, null, null, null, function(cbinput) {
+			CT.log(name + ": " + cbinput.checked);
+			if (cbinput.checked) {
+				parent && parent.setChecked(true);
+				single && CT.dom.each(cb.parentNode, function(sib) {
+					(sib == cb) || sib.setChecked(false);
+				});
+			} else if (cb._subs)
+				CT.dom.each(cb._subs, (s) => s.setChecked(false));
+		}, CT.data.random(1000));
+		cb._name = name;
+		if (struct.other) {
+			cb._other = CT.dom.smartField({
+				keyup: function(val) {
+					cb._name = val || "Other";
+				},
+				onclick: () => cb.setChecked(true)
+			});
+			cb.appendChild(cb._other);
+		}
+		if (struct.subs) {
+			cb._subs = CT.dom.checkTree({
+				structure: struct.subs,
+				single: single,
+				parent: cb
+			});
+			cb.appendChild(CT.dom.div(cb._subs, "tabbed"));
+		}
+		return cb;
+	},
+	"checkTree": function(opts) { // TODO: single mode!!
+		var struct, vals = {}, tree = CT.dom.div(opts.structure.map(function(s) {
+			return CT.dom.checkStruct(s, opts.single, opts.parent);
+		}));
+		tree.value = function() {
+			CT.dom.each(tree, function(sub) {
+				if (sub.isChecked())
+					vals[sub._name] = sub._subs ? sub._subs.value() : true;
+				else
+					vals[sub._name] = false;
+			});
+			return vals;
+		};
+		return tree;
 	},
 	"resizeTextArea": function(cbody) {
 		// expander/contracter
@@ -620,25 +674,38 @@ CT.dom = {
 		(Array.isArray(opts.options) && opts.options.length) && n.update();
 		return n;
 	},
+	"bool": function(opts) {
+		var n = CT.dom.radio(CT.merge(opts, {
+			options: ["Yes", "No"]
+		}));
+		n.value = function() { // else undefined
+			if (n._val == "Yes")
+				return true;
+			if (n._val == "No")
+				return false;
+		};
+		return n;
+	},
 	"options": function(data, cb, selected, fieldName) {
 		return CT.dom.div(data.map(function(d, i) {
-			var dname = d.name || (d.other && "other") || d, fopts = {
+			var dname = d.name || (d.other && "Other") || d, fopts = {
 				name: fieldName,
 				onclick: function() {
-					cb(d);
+					cb(d.other ? sf.fieldValue() : d);
+					d.other && sf.focus();
 				}
-			}, fid = "rs" + i + dname, nz;
+			}, fid = fieldName + "rs" + i + dname, fn, nz, sf;
 			if (selected && ((selected == d) || (selected == d.key)))
 				fopts.checked = true;
-			nz = [
-				CT.dom.field(fid, null, null, "radio", fopts),
-				CT.dom.label(dname, fid, null, null, d.hover)
-			];
+			fn = CT.dom.field(fid, null, null, "radio", fopts);
+			nz = [ fn, CT.dom.label(dname, fid, null, null, d.hover) ];
 			if (d.other) {
+				sf = CT.dom.smartField({
+					keyup: cb,
+					onclick: () => fn.click()
+				});
 				nz.push(CT.dom.pad());
-				nz.push(CT.dom.smartField({
-					keyup: cb
-				}));
+				nz.push(sf);
 			}
 			return nz;
 		}));
@@ -1030,7 +1097,7 @@ CT.dom = {
 		}
 		n.appendChild(CT.dom.node("", "div", "clearnode"));
 	},
-	"inputEnterCallback": function(n, cb, fid, noBreak, keyup) {
+	"inputEnterCallback": function(n, cb, fid, noBreak, keyup, onclick) {
 		n.onenter = function(e) {
 			if (noBreak)
 				n.value = n.value.replace("\n", "").replace("\r", "");
@@ -1047,9 +1114,10 @@ CT.dom = {
 			if (code == 13 || code == 3)
 				n.onenter(e);
 		});
+		onclick && n.addEventListener("click", onclick);
 		return n;
 	},
-	"smartField": function(cb, classname, id, value, type, blurs, isTA, noBreak, wyz, keyup, placeholder) {
+	"smartField": function(cb, classname, id, value, type, blurs, isTA, noBreak, wyz, keyup, placeholder, onclick) {
 		if (arguments.length == 1 && typeof arguments[0] != "function") {
 			var obj = arguments[0];
 			cb = obj.cb;
@@ -1063,6 +1131,7 @@ CT.dom = {
 			wyz = obj.wyz;
 			keyup = obj.keyup;
 			placeholder = obj.placeholder;
+			onclick = obj.onclick;
 		}
 		var nonbsp, restricted, tables, spellcheck, fullscreen, charmap;
 		if (wyz && wyz.includes) {
@@ -1075,7 +1144,7 @@ CT.dom = {
 		}
 		id = id || ("sf" + Math.floor((Math.random() * 100000)));
 		var f = CT.dom.inputEnterCallback(CT.dom[isTA ? "textArea" : "field"](id,
-			value, classname, type), cb, id, noBreak, keyup);
+			value, classname, type), cb, id, noBreak, keyup, onclick);
 		if (placeholder)
 			f.placeholder = placeholder;
 		f.fieldValue = function() { // accounts for blur
