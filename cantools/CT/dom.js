@@ -553,10 +553,20 @@ CT.dom = {
 		};
 		return n;
 	},
-	"checkStruct": function(struct) {
+	"checkStruct": function(struct, single, parent) {
 		var name = struct.name || (struct.other && "Other") || struct;
 		var cb = CT.dom.checkboxAndLabel(name, false, null, null, null, function(cbinput) {
 			CT.log(name + ": " + cbinput.checked);
+			if (cbinput.checked) {
+				parent && parent.setChecked(true);
+			} else {
+				// TODO: turn off children!!!
+				if (cb._subs)
+					CT.dom.each(cb._subs, (s) => s.setChecked(false));
+				if (single) {
+					// TODO: turn off siblings
+				}
+			}
 		}, CT.data.random(1000));
 		cb._name = name;
 		if (struct.other) {
@@ -570,14 +580,17 @@ CT.dom = {
 		if (struct.subs) {
 			cb._subs = CT.dom.checkTree({
 				structure: struct.subs,
-				parent: cb ///// ?????? [todo]
+				single: single,
+				parent: cb
 			});
 			cb.appendChild(CT.dom.div(cb._subs, "tabbed"));
 		}
 		return cb;
 	},
-	"checkTree": function(opts) { // parent?
-		var struct, vals = {}, tree = CT.dom.div(opts.structure.map(CT.dom.checkStruct));
+	"checkTree": function(opts) { // TODO: single mode!!
+		var struct, vals = {}, tree = CT.dom.div(opts.structure.map(function(s) {
+			return CT.dom.checkStruct(s, opts.single, opts.parent);
+		}));
 		tree.value = function() {
 			CT.dom.each(tree, function(sub) {
 				if (sub.isChecked())
