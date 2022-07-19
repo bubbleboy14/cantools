@@ -1,4 +1,4 @@
-import sys, json, gc, os, inspect
+import sys, json, gc, os, inspect, threading
 try:
     import psutil
 except ImportError as e:
@@ -51,6 +51,7 @@ class Admin(CTWebBase):
 
     def report(self, req):
         report = json.dumps({
+            "threads": threading.active_count(),
             "stack_frames": len(inspect.stack()),
             "web": self.controller.web.daemon.counter.report(),
             "admin": self.daemon.counter.report(),
