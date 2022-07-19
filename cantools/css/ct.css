@@ -1424,6 +1424,10 @@ div.mce-fullscreen {
     background: lightblue;
 }
 
+.ct-series-p .ct-bar, .ct-series-p .ct-line, .ct-series-p .ct-point, .ct-series-p .ct-slice-donut {
+    stroke: pink;
+}
+
 #ctheader.hamburgize #hambo {
     position: fixed;
     top: 10px;
