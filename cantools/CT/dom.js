@@ -559,21 +559,19 @@ CT.dom = {
 			CT.log(name + ": " + cbinput.checked);
 			if (cbinput.checked) {
 				parent && parent.setChecked(true);
-			} else {
-				// TODO: turn off children!!!
-				if (cb._subs)
-					CT.dom.each(cb._subs, (s) => s.setChecked(false));
-				if (single) {
-					// TODO: turn off siblings
-				}
-			}
+				single && CT.dom.each(cb.parentNode, function(sib) {
+					(sib == cb) || sib.setChecked(false);
+				});
+			} else if (cb._subs)
+				CT.dom.each(cb._subs, (s) => s.setChecked(false));
 		}, CT.data.random(1000));
 		cb._name = name;
 		if (struct.other) {
 			cb._other = CT.dom.smartField({
 				keyup: function(val) {
 					cb._name = val || "Other";
-				}
+				},
+				onclick: () => cb.setChecked(true)
 			});
 			cb.appendChild(cb._other);
 		}
@@ -677,7 +675,7 @@ CT.dom = {
 	},
 	"options": function(data, cb, selected, fieldName) {
 		return CT.dom.div(data.map(function(d, i) {
-			var dname = d.name || (d.other && "other") || d, fopts = {
+			var dname = d.name || (d.other && "Other") || d, fopts = {
 				name: fieldName,
 				onclick: function() {
 					cb(d);
@@ -1085,7 +1083,7 @@ CT.dom = {
 		}
 		n.appendChild(CT.dom.node("", "div", "clearnode"));
 	},
-	"inputEnterCallback": function(n, cb, fid, noBreak, keyup) {
+	"inputEnterCallback": function(n, cb, fid, noBreak, keyup, onclick) {
 		n.onenter = function(e) {
 			if (noBreak)
 				n.value = n.value.replace("\n", "").replace("\r", "");
@@ -1102,9 +1100,10 @@ CT.dom = {
 			if (code == 13 || code == 3)
 				n.onenter(e);
 		});
+		onclick && n.addEventListener("click", onclick);
 		return n;
 	},
-	"smartField": function(cb, classname, id, value, type, blurs, isTA, noBreak, wyz, keyup, placeholder) {
+	"smartField": function(cb, classname, id, value, type, blurs, isTA, noBreak, wyz, keyup, placeholder, onclick) {
 		if (arguments.length == 1 && typeof arguments[0] != "function") {
 			var obj = arguments[0];
 			cb = obj.cb;
@@ -1118,6 +1117,7 @@ CT.dom = {
 			wyz = obj.wyz;
 			keyup = obj.keyup;
 			placeholder = obj.placeholder;
+			onclick = obj.onclick;
 		}
 		var nonbsp, restricted, tables, spellcheck, fullscreen, charmap;
 		if (wyz && wyz.includes) {
@@ -1130,7 +1130,7 @@ CT.dom = {
 		}
 		id = id || ("sf" + Math.floor((Math.random() * 100000)));
 		var f = CT.dom.inputEnterCallback(CT.dom[isTA ? "textArea" : "field"](id,
-			value, classname, type), cb, id, noBreak, keyup);
+			value, classname, type), cb, id, noBreak, keyup, onclick);
 		if (placeholder)
 			f.placeholder = placeholder;
 		f.fieldValue = function() { // accounts for blur
