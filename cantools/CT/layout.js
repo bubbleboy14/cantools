@@ -330,8 +330,14 @@ CT.layout = {
 			};
 			node.nextStep();
 		}
+		node.continue = function() {
+			if (opts.step && node.curStep)
+				node.nextStep(node.value);
+			else
+				node.value();
+		};
 		if (opts.button)
-			node.appendChild(CT.dom.button(opts.bname || "continue", node.value));
+			node.appendChild(CT.dom.button(opts.bname || "continue", node.continue, opts.buttClass));
 		return node;
 	}
 };
