@@ -317,6 +317,8 @@ CT.layout = {
 					if (nahs.includes(node.setVal(node.curStep))) return;
 					node.curStep.classList.remove("curstep");
 					node.curStep = node.curStep.nextSibling;
+					if (node.curStep.type == "submit")
+						node.curStep = null;
 					while (node.curStep && node.curStep.opts.condition && !vals[node.curStep.opts.condition])
 						node.curStep = node.curStep.nextSibling;
 				} else
