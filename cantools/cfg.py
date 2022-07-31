@@ -263,8 +263,8 @@ If you're running OSX or Ubuntu (or probably most Debian derivatives), you may c
 
     ./bootstrap.sh
 
-Instead of the two "python setup.py" lines. This will also install various dependencies
-that may not already be present on your system (some systems don't even come with Python).
+Instead of the pip3 install line. This will also install various dependencies that
+may not already be present on your system (some systems don't even come with Python).
 
 ## Production Installation (transparent)
   - upside
@@ -288,8 +288,7 @@ This takes less than a moment. Pop open a terminal in your home directory:
 
 	~$ git clone https://github.com/bubbleboy14/cantools.git
 	~$ cd cantools/
-	~/cantools$ python setup.py install
-	~/cantools$ python setup.py develop
+	~/cantools$ sudo pip3 install -e .
 	~/cantools$ cd ..
 	~$ ctinit hello_world
 	~$ cd hello_world/
