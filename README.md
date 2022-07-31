@@ -1,4 +1,4 @@
-# cantools 0.10.8.109
+# cantools 0.10.8.110
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
  - Docs: http://ct.mkult.co
@@ -10,8 +10,7 @@ This portable modern web framework is the application-neutral backbone of Civil 
   - steps
     - git clone https://github.com/bubbleboy14/cantools.git
     - cd cantools
-    - python setup.py install
-    - python setup.py develop
+    - sudo pip3 install -e .
 
 If you're running OSX or Ubuntu (or probably most Debian derivatives), you may consider running (as root or sudoer):
 
@@ -87,16 +86,17 @@ run ctstart in a screen or something (so that you can eventually log out) - that
 NB: it may be necessary to specify --cantools_path. Normally, this is derived from
 the __file__ property (the location of the ctinit script, init.py). However, if the
 package lives in your Python dist-packages (as with 'easy_install', as well as
-'setup.py install'), it does not contain the client-side files necessary for an
-end-to-end web application, and these files therefore cannot be symlinked into your
-new project. In these cases, indicate --cantools_path (the path to the cloned cantools
-repository on your computer), and everything should work fine.
+'setup.py install', and now even 'pip3 install'), it does not contain the client-side
+files necessary for an end-to-end web application, and these files therefore cannot be
+symlinked into your new project. In these cases, indicate --cantools_path (the path to
+the cloned cantools repository on your computer), and everything should work fine.
 
 Generally speaking, one should clone the cantools github repository, 'setup.py install'
-it (for the 'ct' commands), and then run 'setup.py develop', which will point 'cantools'
-at your cloned cantools repo and keep the package up to date as you periodically 'git pull'
-the latest version. Similarly, plugins should be kept in 'develop' mode, as they also will
-generally have non-python files of consequence.
+it (for the 'ct' commands), and then run 'setup.py develop' - actually now instead of
+setup.py anything, just use pip3 install -e - which will point 'cantools' at your cloned
+cantools repo and keep the package up to date as you periodically 'git pull' the latest
+version. Similarly, plugins should be kept in 'develop' mode, as they also will generally
+have non-python files of consequence.
 
 In most cases, the developer won't have to pay much attention to this stuff, because
 initializing or refreshing a project will automatically install any necessary plugins

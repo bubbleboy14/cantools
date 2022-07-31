@@ -1,4 +1,4 @@
-CT.parse={"_linkProcessor":null,"_NUMS":'0123456789',"imgTypes":[".png",".PNG",".jpg",".JPG",".gif",".GIF",".img",".IMG",".bmp",".BMP","jpeg","JPEG"],"setLinkProcessor":function(cb){CT.parse._linkProcessor=cb;},"breakurl":function(url){return url.replace(/&/g,"&&#8203;").replace(/\//g,"/&#8203;").replace(/_/g,"_&#8203;");},"url2link":function(rurl,rname){var furl=rurl;if(furl.slice(0,7)=="http://")
+CT.parse={"_linkProcessor":null,"_NUMS":'0123456789',"imgTypes":[".png",".PNG",".jpg",".JPG",".gif",".GIF",".img",".IMG",".bmp",".BMP","jpeg","JPEG","webp","WEBP"],"setLinkProcessor":function(cb){CT.parse._linkProcessor=cb;},"breakurl":function(url){return url.replace(/&/g,"&&#8203;").replace(/\//g,"/&#8203;").replace(/_/g,"_&#8203;");},"url2link":function(rurl,rname){var furl=rurl;if(furl.slice(0,7)=="http://")
 rurl=rurl.slice(7);else if(furl.slice(0,8)=="https://")
 rurl=rurl.slice(8);else
 furl="http://"+furl;return'<a target="_blank" href='+furl+'>'+(rname||CT.parse.breakurl(rurl))+"</a>";},"processLink":function(url,customArg){var itz=CT.parse.imgTypes,ext=url.slice(-4);if(itz.indexOf(ext)!=-1)
