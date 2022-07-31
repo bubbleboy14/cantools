@@ -51,7 +51,7 @@ then
     fi
 
     echo "installing other deps"
-    sudo apt install --yes build-essential libssl-dev libffi-dev python3-dev python3-setuptools git </dev/null
+    sudo apt install --yes build-essential libssl-dev libffi-dev python3-dev python3-setuptools python3-pip git </dev/null
 else
     echo "uh-oh -- you've got" $OSTYPE
     echo "this script only knows about Debian and OSX"
@@ -62,8 +62,7 @@ echo "checking for cantools"
 if pwd | grep cantools;
 then
     echo "installing right here right now"
-    sudo python3 setup.py install
-    sudo python3 setup.py develop
+    sudo pip3 install -e .
 else
     python3 -c 'import cantools' || {
         echo "cloning (and hiding) and installing cantools"
@@ -72,8 +71,7 @@ else
         cd .ctp
         git clone https://github.com/bubbleboy14/cantools.git
         cd cantools
-        sudo python3 setup.py install
-        sudo python3 setup.py develop
+        sudo pip3 install -e .
         echo "cantools installed"
     }
 fi
