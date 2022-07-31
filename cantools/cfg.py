@@ -257,8 +257,7 @@ This portable modern web framework is the application-neutral backbone of Civil 
   - steps
     - git clone https://github.com/bubbleboy14/cantools.git
     - cd cantools
-    - python setup.py install
-    - python setup.py develop
+    - sudo pip3 install -e .
 
 If you're running OSX or Ubuntu (or probably most Debian derivatives), you may consider running (as root or sudoer):
 
