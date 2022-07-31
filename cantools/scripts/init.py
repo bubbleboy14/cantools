@@ -18,16 +18,17 @@
 NB: it may be necessary to specify --cantools_path. Normally, this is derived from
 the __file__ property (the location of the ctinit script, init.py). However, if the
 package lives in your Python dist-packages (as with 'easy_install', as well as
-'setup.py install'), it does not contain the client-side files necessary for an
-end-to-end web application, and these files therefore cannot be symlinked into your
-new project. In these cases, indicate --cantools_path (the path to the cloned cantools
-repository on your computer), and everything should work fine.
+'setup.py install', and now even 'pip3 install'), it does not contain the client-side
+files necessary for an end-to-end web application, and these files therefore cannot be
+symlinked into your new project. In these cases, indicate --cantools_path (the path to
+the cloned cantools repository on your computer), and everything should work fine.
 
 Generally speaking, one should clone the cantools github repository, 'setup.py install'
-it (for the 'ct' commands), and then run 'setup.py develop', which will point 'cantools'
-at your cloned cantools repo and keep the package up to date as you periodically 'git pull'
-the latest version. Similarly, plugins should be kept in 'develop' mode, as they also will
-generally have non-python files of consequence.
+it (for the 'ct' commands), and then run 'setup.py develop' - actually now instead of
+setup.py anything, just use pip3 install -e - which will point 'cantools' at your cloned
+cantools repo and keep the package up to date as you periodically 'git pull' the latest
+version. Similarly, plugins should be kept in 'develop' mode, as they also will generally
+have non-python files of consequence.
 
 In most cases, the developer won't have to pay much attention to this stuff, because
 initializing or refreshing a project will automatically install any necessary plugins
@@ -86,10 +87,11 @@ class Builder(object):
 		os.chdir(plug)
 		log("installing plugin", important=True)
 #		cmd("python setup.py install", True) # unnecessary right?
-		py("setup.py develop", True)
-		os.chdir("%s/.."%(self.ctroot,))
-		log("restoring cantools develop status", important=True)
-		py("setup.py develop", True)
+#		py("setup.py develop", True)
+		cmd("pip3 install -e .", True)
+#		os.chdir("%s/.."%(self.ctroot,))
+#		log("restoring cantools develop status", important=True)
+#		py("setup.py develop", True)
 		os.chdir(curdir)
 		sys.path.insert(0, os.path.join(config.plugin.path, plug))
 		self._getplug(plug)
@@ -269,9 +271,10 @@ def update():
 	if input("update cantools dependencies? [N/y] ").lower().startswith("y"):
 		os.chdir("%s/.."%(CTP,))
 		log("updating dependencies", important=True)
-		py("setup.py install", True)
-		log("restoring cantools develop status", important=True)
-		py("setup.py develop", True)
+		cmd("pip3 install -e .", True)
+		#py("setup.py install", True)
+		#log("restoring cantools develop status", important=True)
+		#py("setup.py develop", True)
 	log("goodbye")
 
 def admin():
