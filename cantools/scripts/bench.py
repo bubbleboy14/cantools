@@ -71,7 +71,7 @@ class Bencher(object):
 			fpaths += list(map(lambda n : "/_memcache?action=get&key=%s"%(n,), mcz))
 		fpaths or error("nothing to request!")
 		log("randomizing requests among %s total items"%(len(fpaths),))
-		MultiTester(oz.domain, int(oz.port), fpaths, oz.number, oz.concurrency).start()
+		MultiTester(oz.domain, oz.port, fpaths, oz.number, oz.concurrency).start()
 
 def run():
 	parser = OptionParser("ctbench [-bms] [--domain=DOMAIN] [--port=PORT] [--number=NUMBER] [--concurrency=CONCURRENCY]")
@@ -89,7 +89,11 @@ def run():
 		default=False, help="random blob requests (default=False)")
 	parser.add_option("-m", "--memcache", action="store_true", dest="memcache",
 		default=False, help="random memcache requests (default=False)")
-	Bencher(parser.parse_args()[0])
+	options = parser.parse_args()[0]
+	options.port = int(options.port)
+	options.number = int(options.number)
+	options.concurrency = int(options.concurrency)
+	Bencher(options)
 
 if __name__ == "__main__":
 	run()
