@@ -15,10 +15,12 @@
     -m, --memcache        random memcache requests (default=False)
 """
 
-import os
+import os, rel
 from optparse import OptionParser
+from dez.samples.http_load_test import MultiTester
 from cantools import config
-from cantools.util import cmd, log, error
+from cantools.util import cmd, log, error, token
+from cantools.web import post
 
 NUMBER = 5000
 CONCURRENCY = 100
@@ -31,15 +33,25 @@ class Bencher(object):
 		else:
 			self.single()
 
+	def initmc(self):
+		oz = self.options
+		self.memcache = {}
+		for key in map(lambda k : "bencher%s"%(k,), range(10)):
+			val = self.memcache[key] = token(1000)
+			post(oz.domain, "/_memcache", oz.port, {
+				"action": "set",
+				"key": key,
+				"value": val
+			}, ctjson=True)
+
 	def single(self):
-		import rel
+		log("single (direct dbench) mode", important=True)
 		oz = self.options
 		rel.signal(2, rel.abort)
 		cmd("dbench %s %s %s %s"%(oz.domain, oz.port, oz.number, oz.concurrency))
 
 	def multi(self):
-		from dez.samples.http_load_test import MultiTester
-		log("multi (randomized requests) mode")
+		log("multi (randomized requests) mode", important=True)
 		oz = self.options
 		fpaths = []
 		if oz.blobs:
@@ -53,7 +65,10 @@ class Bencher(object):
 			fpaths += list(map(lambda n : "/%s"%(n,), statz))
 			fpaths += list(map(lambda n : "/css/%s"%(n,), cssz))
 		if oz.memcache:
-			error("memcache unimplemented!") # TODO
+			self.initmc()
+			mcz = self.memcache.keys()
+			log("including %s memcache items"%(len(mcz),))
+			fpaths += list(map(lambda n : "/_memcache?action=get&key=%s"%(n,), mcz))
 		fpaths or error("nothing to request!")
 		log("randomizing requests among %s total items"%(len(fpaths),))
 		MultiTester(oz.domain, int(oz.port), fpaths, oz.number, oz.concurrency).start()
