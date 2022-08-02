@@ -292,7 +292,7 @@ CT.layout = {
 			f = CT.dom.numberSelector(nitem);
 			nums.push(f);
 			return [ CT.dom.div(nitem.name, "right"), f ];
-		})), opts.className), i, val, name, vals = {}, nahs = [undefined, ""];
+		})), opts.className), i, val, name, backButt, vals = {}, nahs = [undefined, ""];
 		node.setVal = function(f) {
 			val = f.getVal();
 			name = f.opts.name;
@@ -324,12 +324,21 @@ CT.layout = {
 				} else
 					node.curStep = node.firstChild;
 				if (node.curStep) {
+					if (backButt)
+						backButt.disabled = !CT.dom.childNum(node.curStep);
 					node.curStep.update && node.curStep.update();
 					node.curStep.classList.add("curstep");
 					recenterer && setTimeout(recenterer, 500);
 				} else
 					submitter();
 			};
+			node.prevStep = function() {
+				node.curStep.classList.remove("curstep");
+				node.curStep = node.curStep.previousSibling.previousSibling;
+				node.nextStep();
+			};
+			backButt = opts.backButton && CT.dom.button(opts.bbname || "back", node.prevStep, opts.backButtClass);
+			backButt && node.appendChild(backButt);
 			node.nextStep();
 		}
 		node.continue = function() {
