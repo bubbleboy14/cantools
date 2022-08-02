@@ -20,6 +20,7 @@
 .rowrev { flex-direction: row-reverse; }
 .colrev { flex-direction: column-reverse; }
 .jceven { justify-content: space-around; }
+.jcbetween { justify-content: space-between; }
 .jccenter { justify-content: center; }
 
 /* dimensions */
