@@ -670,7 +670,7 @@ CT.dom = {
 		};
 		n.update = function(upts) {
 			n.olist = Array.isArray(opts.options) && opts.options || opts.options(upts);
-			CT.dom.setContent(n, CT.dom.options(n.olist, n.setVal, null, opts.fieldName));
+			CT.dom.setContent(n, CT.dom.options(n.olist, n.setVal, opts.value, opts.fieldName));
 		};
 		(Array.isArray(opts.options) && opts.options.length) && n.update();
 		return n;
