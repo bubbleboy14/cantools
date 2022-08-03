@@ -1,5 +1,5 @@
 """
-### Usage: ctbench [-bmsv] [--domain=DOMAIN] [--port=PORT] [--number=NUMBER] [--concurrency=CONCURRENCY]
+### Usage: ctbench [-bmsv] [--domain=DOMAIN] [--port=PORT] [--number=NUMBER] [--concurrency=CONCURRENCY] [--weight=WEIGHT] [--keys=KEYS]
 
 ### Options:
     -h, --help            show this help message and exit
@@ -10,6 +10,9 @@
                           number of requests (default=5000)
     -c CONCURRENCY, --concurrency=CONCURRENCY
                           number of connections (default=100)
+    -w WEIGHT, --weight=WEIGHT
+                          weight (size) of memcache blocks (default=10)
+    -k KEYS, --keys=KEYS  key count - number of memcache blocks (default=10)
     -s, --static          random static (html/css) requests (default=False)
     -b, --blobs           random blob requests (default=False)
     -m, --memcache        random memcache requests (default=False)
@@ -25,6 +28,8 @@ from cantools.web import post
 
 NUMBER = 5000
 CONCURRENCY = 100
+WEIGHT = 10
+KEYS = 10
 
 class Bencher(object):
 	def __init__(self, options):
@@ -43,8 +48,8 @@ class Bencher(object):
 	def initmc(self):
 		oz = self.options
 		self.memcache = {}
-		for key in map(lambda k : "bencher%s"%(k,), range(10)):
-			val = self.memcache[key] = token(10)
+		for key in map(lambda k : "bencher%s"%(k,), range(oz.keys)):
+			val = self.memcache[key] = token(oz.weight)
 			post(oz.domain, "/_memcache", oz.port, {
 				"action": "set",
 				"key": key,
@@ -95,7 +100,7 @@ class Bencher(object):
 		MultiTester(oz.domain, oz.port, paths, oz.number, oz.concurrency, oz.validate and self.validator).start()
 
 def run():
-	parser = OptionParser("ctbench [-bmsv] [--domain=DOMAIN] [--port=PORT] [--number=NUMBER] [--concurrency=CONCURRENCY]")
+	parser = OptionParser("ctbench [-bmsv] [--domain=DOMAIN] [--port=PORT] [--number=NUMBER] [--concurrency=CONCURRENCY] [--weight=WEIGHT] [--keys=KEYS]")
 	parser.add_option("-d", "--domain", dest="domain", default=config.web.host,
 		help="hostname (default: %s)"%(config.web.host,))
 	parser.add_option("-p", "--port", dest="port", default=config.web.port,
@@ -104,6 +109,10 @@ def run():
 		help="number of requests (default=%s)"%(NUMBER,))
 	parser.add_option("-c", "--concurrency", dest="concurrency", default=CONCURRENCY,
 		help="number of connections (default=%s)"%(CONCURRENCY,))
+	parser.add_option("-w", "--weight", dest="weight", default=WEIGHT,
+		help="weight (size) of memcache blocks (default=%s)"%(WEIGHT,))
+	parser.add_option("-k", "--keys", dest="keys", default=KEYS,
+		help="key count - number of memcache blocks (default=%s)"%(KEYS,))
 	parser.add_option("-s", "--static", action="store_true", dest="static",
 		default=False, help="random static (html/css) requests (default=False)")
 	parser.add_option("-b", "--blobs", action="store_true", dest="blobs",
