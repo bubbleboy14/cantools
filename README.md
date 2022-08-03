@@ -1,4 +1,4 @@
-# cantools 0.10.8.110
+# cantools 0.10.8.111
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
  - Docs: http://ct.mkult.co
@@ -16,8 +16,8 @@ If you're running OSX or Ubuntu (or probably most Debian derivatives), you may c
 
     ./bootstrap.sh
 
-Instead of the two "python setup.py" lines. This will also install various dependencies
-that may not already be present on your system (some systems don't even come with Python).
+Instead of the pip3 install line. This will also install various dependencies that
+may not already be present on your system (some systems don't even come with Python).
 
 ## Production Installation (transparent)
   - upside
@@ -41,8 +41,7 @@ This takes less than a moment. Pop open a terminal in your home directory:
 
 	~$ git clone https://github.com/bubbleboy14/cantools.git
 	~$ cd cantools/
-	~/cantools$ python setup.py install
-	~/cantools$ python setup.py develop
+	~/cantools$ sudo pip3 install -e .
 	~/cantools$ cd ..
 	~$ ctinit hello_world
 	~$ cd hello_world/
