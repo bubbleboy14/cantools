@@ -568,7 +568,10 @@ CT.dom = {
 		}, CT.data.random(1000));
 		cb._name = name;
 		if (struct.other) {
+			if (value)
+				cb._name = value;
 			cb._other = CT.dom.smartField({
+				value: value,
 				keyup: function(val) {
 					cb._name = val || "Other";
 				},
@@ -588,11 +591,18 @@ CT.dom = {
 		}
 		return cb;
 	},
-	"checkTree": function(opts) { // TODO: single mode!!
-		var struct, vals = {}, tree = CT.dom.div(opts.structure.map(function(s) {
-			return CT.dom.checkStruct(s,
-				opts.value && opts.value[s.name || (s.other && "Other") || s],
-				opts.single, opts.parent);
+	"checkTree": function(opts) {
+		var struct, vals = {}, snames = [], tree = CT.dom.div(opts.structure.map(function(s) {
+			var oval, sname = s.name || s;
+			snames.push(sname);
+			if (opts.value) {
+				if (s.other) {
+					var sels = Object.keys(opts.value).filter(k => !snames.includes(k)).filter(k => opts.value[k]);
+					oval = sels.length ? sels[0] : null; // max one in single mode
+				} else
+					oval = opts.value[sname];
+			}
+			return CT.dom.checkStruct(s, oval, opts.single, opts.parent);
 		}));
 		tree.value = function() {
 			CT.dom.each(tree, function(sub) {
