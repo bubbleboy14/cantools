@@ -700,7 +700,7 @@ CT.dom = {
 					d.other && sf.focus();
 				}
 			}, fid = fieldName + "rs" + i + dname, fn, nz, sf;
-			if (selected && ((selected == d) || (selected == d.key)))
+			if (selected && ((selected == d) || (selected == d.name) || (selected == d.key)))
 				fopts.checked = true;
 			fn = CT.dom.field(fid, null, null, "radio", fopts);
 			nz = [ fn, CT.dom.label(dname, fid, null, null, d.hover) ];
