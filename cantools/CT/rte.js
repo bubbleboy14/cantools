@@ -20,12 +20,14 @@ CT.rte requires the open-source TinyMCE library, pulled in via CT.scriptImport()
 */
 
 //CT.scriptImport("CT.lib.tiny_mce.tiny_mce");
-CT.scriptImport("https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.7.13/tinymce.min.js");
+//var tmcep = "https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.7.13/tinymce.min.js";
+var tmcep = "https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.1.2/tinymce.min.js";
+CT.scriptImport(tmcep);
 CT.rte = {
 	// wysiwyg editor widget
 	"wysiwygize": function(nodeid, isrestricted, val, cb, mismatchcb, tables, spellcheck, fullscreen, charmap) {
 		if (!("tinyMCE" in window)) // just in case...
-			return CT.scriptImport("https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.7.13/tinymce.min.js", function() {
+			return CT.scriptImport(tmcep, function() {
 				CT.rte.wysiwygize(nodeid, isrestricted, val, cb, mismatchcb);
 			}, true);
 		var d = {
