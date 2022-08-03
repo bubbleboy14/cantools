@@ -1,5 +1,5 @@
 """
-### Usage: ctbench [-bms] [--domain=DOMAIN] [--port=PORT] [--number=NUMBER] [--concurrency=CONCURRENCY]
+### Usage: ctbench [-bmsv] [--domain=DOMAIN] [--port=PORT] [--number=NUMBER] [--concurrency=CONCURRENCY]
 
 ### Options:
     -h, --help            show this help message and exit
@@ -13,6 +13,7 @@
     -s, --static          random static (html/css) requests (default=False)
     -b, --blobs           random blob requests (default=False)
     -m, --memcache        random memcache requests (default=False)
+    -v, --validate        validate return values (default=False)
 """
 
 import os, rel, json
