@@ -554,9 +554,9 @@ CT.dom = {
 		};
 		return n;
 	},
-	"checkStruct": function(struct, single, parent) {
+	"checkStruct": function(struct, value, single, parent) {
 		var name = struct.name || (struct.other && "Other") || struct;
-		var cb = CT.dom.checkboxAndLabel(name, false, null, null, null, function(cbinput) {
+		var cb = CT.dom.checkboxAndLabel(name, !!value, null, null, null, function(cbinput) {
 			CT.log(name + ": " + cbinput.checked);
 			if (cbinput.checked) {
 				parent && parent.setChecked(true);
@@ -580,6 +580,7 @@ CT.dom = {
 		if (struct.subs) {
 			cb._subs = CT.dom.checkTree({
 				structure: struct.subs,
+				value: value,
 				single: single,
 				parent: cb
 			});
@@ -589,7 +590,9 @@ CT.dom = {
 	},
 	"checkTree": function(opts) { // TODO: single mode!!
 		var struct, vals = {}, tree = CT.dom.div(opts.structure.map(function(s) {
-			return CT.dom.checkStruct(s, opts.single, opts.parent);
+			return CT.dom.checkStruct(s,
+				opts.value && opts.value[s.name || (s.other && "Other") || s],
+				opts.single, opts.parent);
 		}));
 		tree.value = function() {
 			CT.dom.each(tree, function(sub) {
