@@ -671,6 +671,7 @@ CT.dom = {
 		n.update = function(upts) {
 			n.olist = Array.isArray(opts.options) && opts.options || opts.options(upts);
 			CT.dom.setContent(n, CT.dom.options(n.olist, n.setVal, opts.value, opts.fieldName));
+			opts.value && n.setVal(opts.value);
 		};
 		(Array.isArray(opts.options) && opts.options.length) && n.update();
 		return n;
