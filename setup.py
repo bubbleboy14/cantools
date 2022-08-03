@@ -41,6 +41,7 @@ setup(
         ctmigrate = cantools:ctmigrate
         ctdoc = cantools:ctdoc
         ctbench = cantools:ctbench
+        ctutil = cantools:ctutil
     ''',
     classifiers = [
         'Development Status :: 3 - Alpha',
