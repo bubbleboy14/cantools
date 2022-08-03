@@ -11,7 +11,7 @@ if config.web.server == "gae":
 else:
 	util.init_basic()
 from . import geo
-from .scripts import builder, deploy, init, pubsub, start, index, migrate, doc, bench
+from .scripts import builder, deploy, init, pubsub, start, index, migrate, doc, bench, util
 
 ctstart = start.go
 ctdeploy = deploy.run
@@ -21,3 +21,4 @@ ctindex = index.go
 ctmigrate = migrate.go
 ctdoc = doc.build
 ctbench = bench.run
+ctutil = util.run
