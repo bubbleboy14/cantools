@@ -15,11 +15,11 @@
     -m, --memcache        random memcache requests (default=False)
 """
 
-import os, rel
+import os, rel, json
 from optparse import OptionParser
 from dez.samples.http_load_test import MultiTester
 from cantools import config
-from cantools.util import cmd, log, error, token
+from cantools.util import cmd, log, read, error, token
 from cantools.web import post
 
 NUMBER = 5000
@@ -33,48 +33,68 @@ class Bencher(object):
 		else:
 			self.single()
 
-	def initmc(self):
-		oz = self.options
-		self.memcache = {}
-		for key in map(lambda k : "bencher%s"%(k,), range(10)):
-			val = self.memcache[key] = token(1000)
-			post(oz.domain, "/_memcache", oz.port, {
-				"action": "set",
-				"key": key,
-				"value": val
-			}, ctjson=True)
-
 	def single(self):
 		log("single (direct dbench) mode", important=True)
 		oz = self.options
 		rel.signal(2, rel.abort)
 		cmd("dbench %s %s %s %s"%(oz.domain, oz.port, oz.number, oz.concurrency))
 
+	def initmc(self):
+		oz = self.options
+		self.memcache = {}
+		for key in map(lambda k : "bencher%s"%(k,), range(10)):
+			val = self.memcache[key] = token(10)
+			post(oz.domain, "/_memcache", oz.port, {
+				"action": "set",
+				"key": key,
+				"value": val
+			}, ctjson=True)
+
+	def validator(self, path, value):
+		if "memcache" in path:
+			value = json.loads(value[1:])
+		elif "blob" not in path:
+			value = value.decode()
+		if path in self.values and self.values[path] != value:
+			log("returned:\n%s"%(value,), important=True)
+			log("should have returned:\n%s"%(self.values[path],), important=True)
+			error("return value mismatch: %s"%(path,))
+
+	def regfiles(self, fpath, upath=None, files=None, binary=False, suffix=None):
+		upath = upath or "/%s/"%(fpath,)
+		fnames = files and files.keys() or os.listdir(fpath)
+		log("including %s %s files"%(len(fnames), fpath))
+		if self.options.validate:
+			paths = []
+			for fname in fnames:
+				if suffix and not fname.endswith(suffix):
+					continue
+				path = "%s%s"%(upath, fname)
+				paths.append(path)
+				self.values[path] = files and files[fname] or read(os.path.join(fpath, fname), binary=binary)
+		else:
+			paths = list(map(lambda n : "%s%s"%(upath, n), fnames))
+		return paths
+
 	def multi(self):
 		log("multi (randomized requests) mode", important=True)
+		self.values = {}
 		oz = self.options
-		fpaths = []
+		paths = []
 		if oz.blobs:
-			blobz = os.listdir("blob")
-			log("including %s blob files"%(len(blobz),))
-			fpaths += list(map(lambda n : "/blob/%s"%(n,), blobz))
+			paths += self.regfiles("blob", binary=True)
 		if oz.static:
-			statz = os.listdir(config.build.web[config.mode] or config.build.web.compiled[config.mode])
-			cssz = os.listdir("css")
-			log("including %s html files and %s css files"%(len(statz), len(cssz)))
-			fpaths += list(map(lambda n : "/%s"%(n,), statz))
-			fpaths += list(map(lambda n : "/css/%s"%(n,), cssz))
+			paths += self.regfiles("css")
+			paths += self.regfiles(config.build.web[config.mode] or config.build.web.compiled[config.mode], "/", suffix=".html")
 		if oz.memcache:
 			self.initmc()
-			mcz = self.memcache.keys()
-			log("including %s memcache items"%(len(mcz),))
-			fpaths += list(map(lambda n : "/_memcache?action=get&key=%s"%(n,), mcz))
-		fpaths or error("nothing to request!")
-		log("randomizing requests among %s total items"%(len(fpaths),))
-		MultiTester(oz.domain, oz.port, fpaths, oz.number, oz.concurrency).start()
+			paths += self.regfiles("memcache", "/_memcache?action=get&key=", self.memcache)
+		paths or error("nothing to request!")
+		log("randomizing requests among %s total items"%(len(paths),))
+		MultiTester(oz.domain, oz.port, paths, oz.number, oz.concurrency, oz.validate and self.validator).start()
 
 def run():
-	parser = OptionParser("ctbench [-bms] [--domain=DOMAIN] [--port=PORT] [--number=NUMBER] [--concurrency=CONCURRENCY]")
+	parser = OptionParser("ctbench [-bmsv] [--domain=DOMAIN] [--port=PORT] [--number=NUMBER] [--concurrency=CONCURRENCY]")
 	parser.add_option("-d", "--domain", dest="domain", default=config.web.host,
 		help="hostname (default: %s)"%(config.web.host,))
 	parser.add_option("-p", "--port", dest="port", default=config.web.port,
@@ -89,6 +109,8 @@ def run():
 		default=False, help="random blob requests (default=False)")
 	parser.add_option("-m", "--memcache", action="store_true", dest="memcache",
 		default=False, help="random memcache requests (default=False)")
+	parser.add_option("-v", "--validate", action="store_true", dest="validate",
+		default=False, help="validate return values (default=False)")
 	options = parser.parse_args()[0]
 	options.port = int(options.port)
 	options.number = int(options.number)
