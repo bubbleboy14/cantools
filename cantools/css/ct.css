@@ -25,6 +25,7 @@
 
 /* dimensions */
 .full { width: 100%; height: 100%; }
+.fullv { width: 100vw; height: 100vh; }
 .fulldef {
     width: 100% !important;
     height: 100% !important;
