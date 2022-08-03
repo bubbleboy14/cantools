@@ -260,8 +260,10 @@ CT.layout = {
 		var f, fields = [], nums = [], node = CT.dom.div(opts.items.map(function(item) {
 			if (opts.values && opts.values[item.name] && !item.value)
 				item = CT.merge(item, { value: opts.values[item.name] });
-			if (item.style == "fieldList")
+			if (item.style == "fieldList") {
 				item.wrap = true;
+				item.vals = item.vals || item.value;
+			}
 			f = CT.dom[item.style || "smartField"](item);
 			item.style && f.classList.add(item.style);
 			f.getVal = f.fieldValue || f.value;
