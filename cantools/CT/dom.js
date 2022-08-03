@@ -692,6 +692,7 @@ CT.dom = {
 		return n;
 	},
 	"options": function(data, cb, selected, fieldName) {
+		var otherSel = !data.map(d => d.name || d).includes(selected);
 		return CT.dom.div(data.map(function(d, i) {
 			var dname = d.name || (d.other && "Other") || d, fopts = {
 				name: fieldName,
@@ -700,13 +701,14 @@ CT.dom = {
 					d.other && sf.focus();
 				}
 			}, fid = fieldName + "rs" + i + dname, fn, nz, sf;
-			if (selected && ((selected == d) || (selected == d.name) || (selected == d.key)))
+			if (selected && ((selected == dname) || (selected == d.key) || (d.other && otherSel)))
 				fopts.checked = true;
 			fn = CT.dom.field(fid, null, null, "radio", fopts);
 			nz = [ fn, CT.dom.label(dname, fid, null, null, d.hover) ];
 			if (d.other) {
 				sf = CT.dom.smartField({
 					keyup: cb,
+					value: otherSel && selected,
 					onclick: () => fn.click()
 				});
 				nz.push(CT.dom.pad());
