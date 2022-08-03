@@ -53,6 +53,17 @@ def hlsify(blobpath, check=False):
 		log("transcode > done!")
 
 #
+# audio (ffmpeg)
+#
+
+def wav2mp3():
+	fnames = os.listdir()
+	log("you asked for it! scanning %s files"%(len(fnames),), important=True)
+	for fname in fnames:
+		if fname.endswith(".wav"):
+			cmd("ffmpeg -i %s %s.mp3"%(fname, fname[:-4]))
+
+#
 # images (PIL)
 #
 
