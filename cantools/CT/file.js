@@ -38,6 +38,22 @@ CT.file = {
 		return new CT.file.File({
 			file: new Blob(data)
 		});
+	},
+	modal: function(data, fname) {
+		CT.modal.modal([
+			CT.dom.div("Your file is ready for download!", "bigger pb10"),
+			CT.file.make(data).download(fname, "click me!", "bold centered block")
+		]);
+	},
+	downloader: function(postopts, linkName, classNames, hover) {
+		var node = CT.dom.link(linkName, function() {
+			CT.net.post(CT.merge(postopts, {
+				noct: true,
+				spinner: true,
+				cb: (fdata) => CT.file.modal(fdata, linkName)
+			}));
+		}, null, classNames);
+		return hover ? CT.hover.auto(node, hover) : node;
 	}
 };
 
