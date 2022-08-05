@@ -48,8 +48,9 @@ CT.file = {
 	downloader: function(postopts, fileName, linkName, classNames, hover) {
 		var node = CT.dom.link(linkName || fileName, function() {
 			CT.net.post(CT.merge(postopts, {
-				noct: true,
+				basic: true,
 				spinner: true,
+				responseType: "blob",
 				cb: (fdata) => CT.file.modal(fdata, fileName)
 			}));
 		}, null, classNames);
