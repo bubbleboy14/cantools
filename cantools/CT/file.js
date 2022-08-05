@@ -45,12 +45,12 @@ CT.file = {
 			CT.file.make(data).download(fname, "click me!", "bold centered block")
 		]);
 	},
-	downloader: function(postopts, linkName, classNames, hover) {
-		var node = CT.dom.link(linkName, function() {
+	downloader: function(postopts, fileName, linkName, classNames, hover) {
+		var node = CT.dom.link(linkName || fileName, function() {
 			CT.net.post(CT.merge(postopts, {
 				noct: true,
 				spinner: true,
-				cb: (fdata) => CT.file.modal(fdata, linkName)
+				cb: (fdata) => CT.file.modal(fdata, fileName)
 			}));
 		}, null, classNames);
 		return hover ? CT.hover.auto(node, hover) : node;
