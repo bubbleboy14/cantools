@@ -31,9 +31,7 @@ cfg = {
 		"port": 8002,
 		"protocol": "http",
 		"log": None,
-		"shield": False,
 		"contacts": [],
-		"blacklist": [],
 		"whitelist": [],
 		"monitor": {
 			"interval": 5,
