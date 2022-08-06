@@ -31,7 +31,9 @@ cfg = {
 		"port": 8002,
 		"protocol": "http",
 		"log": None,
+		"shield": False,
 		"contacts": [],
+		"blacklist": [],
 		"whitelist": [],
 		"monitor": {
 			"interval": 5,
@@ -50,10 +52,12 @@ cfg = {
 		"port": 8080,
 		"protocol": "http",
 		"xorigin": False,
+		"shield": False,
 		"csp": None,
 		"log": None,
 		"errlog": None,
 		"rollz": {},
+		"blacklist": [],
 		"whitelist": []
 	},
 	"ssl": {
