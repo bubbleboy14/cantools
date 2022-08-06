@@ -42,8 +42,8 @@ class DController(SocketController):
 			__import__(target)
 		self.handlers[rule](req and Response(req))
 
-	def paperShield(self, path, ip, fspath=False):
-		self.logger.access('NOOP > paperShield("%s", "%s", fspath=%s)'%(path, ip, fspath))
+	def paperShield(self, path, ip, fspath=False, count=True):
+		self.logger.access('NOOP > paperShield("%s", "%s", fspath=%s, count=%s)'%(path, ip, fspath, count))
 
 def getController():
 	global CTR
