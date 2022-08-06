@@ -1,5 +1,6 @@
 import sys, platform
 from dez.network import SocketController, daemon_wrapper
+from dez.http.server.shield import Shield
 from dez.logging import get_logger_getter
 from cantools import config
 from .daemons import Web, Admin
@@ -41,22 +42,30 @@ class DController(SocketController):
 			__import__(target)
 		self.handlers[rule](req and Response(req))
 
+	def paperShield(self, path, ip, fspath=False):
+		self.logger.access('NOOP > paperShield("%s", "%s", fspath=%s)'%(path, ip, fspath))
+
 def getController():
 	global CTR
 	if not CTR:
 		# controller
 		CTR = DController()
 
+		shield = None
+		if config.web.shield: # web/admin share shield and blacklist
+			shield = Shield(logger_getter)
+		localvars.shield = shield or CTR.paperShield
+
 		# web
 		CTR.web = CTR.register_address(config.web.host,
-			config.web.port, dclass=daemon_wrapper(Web, logger_getter))
+			config.web.port, dclass=daemon_wrapper(Web, logger_getter, shield))
 		CTR.web.controller = CTR
 
 		# admin
 		config.admin.update("pw",
 			config.cache("admin password? ", overwrite=config.newpass))
 		CTR.admin = CTR.register_address(config.admin.host,
-			config.admin.port, dclass=daemon_wrapper(Admin, logger_getter))
+			config.admin.port, dclass=daemon_wrapper(Admin, logger_getter, shield))
 		CTR.admin.controller = CTR
 
 		# cron
