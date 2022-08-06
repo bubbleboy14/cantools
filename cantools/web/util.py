@@ -166,7 +166,11 @@ def cgi_get(key, choices=None, required=True, default=None, shield=False):
     if val is None:
         required and fail('no value submitted for required field: "%s" [%s]'%(key, request))
     elif shield:
-        local("shield")(val, local("ip"), fspath=True) and fail()
+        ip = local("ip")
+        shield = local("shield")
+        if shield(val, ip, fspath=True, count=False):
+            log('cgi_get() shield bounced "%s" for "%s"'%(ip, shield.ip(ip)["message"]))
+            fail()
     if choices and val not in choices:
         fail('invalid value for "%s": "%s"'%(key, val))
     return val
