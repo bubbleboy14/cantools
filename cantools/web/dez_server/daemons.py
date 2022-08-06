@@ -37,18 +37,18 @@ class CTWebBase(HTTPApplication):
         return h
 
 class Web(CTWebBase):
-    def __init__(self, bind_address, port, logger_getter):
+    def __init__(self, bind_address, port, logger_getter, shield):
         self.logger = logger_getter("Web")
         wcfg = config.web
         CTWebBase.__init__(self, bind_address, port, logger_getter,
-            whitelist=wcfg.whitelist, blacklist=wcfg.blacklist, shield=wcfg.shield)
+            whitelist=wcfg.whitelist, blacklist=wcfg.blacklist, shield=shield)
 
 class Admin(CTWebBase):
-    def __init__(self, bind_address, port, logger_getter):
+    def __init__(self, bind_address, port, logger_getter, shield):
         self.logger = logger_getter("Admin")
         acfg = config.admin
-        CTWebBase.__init__(self, bind_address, port, logger_getter,
-            A_STATIC[config.mode], A_CB, acfg.whitelist, acfg.blacklist, acfg.shield)
+        CTWebBase.__init__(self, bind_address, port, logger_getter, # share shield/blacklist
+            A_STATIC[config.mode], A_CB, acfg.whitelist, config.web.blacklist, shield)
         self.add_cb_rule("/_report", self.report)
 
     def report(self, req):
