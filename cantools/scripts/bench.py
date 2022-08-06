@@ -56,7 +56,11 @@ class Bencher(object):
 				"value": val
 			}, ctjson=True)
 
-	def validator(self, path, value):
+	def validator(self, path, value, headers):
+		vlen = len(value)
+		clen = int(headers['content-length'])
+		if vlen != clen:
+			error("content-length mismatch! %s != %s"%(vlen, clen))
 		if "memcache" in path:
 			value = json.loads(value[1:])
 		elif "blob" not in path:
