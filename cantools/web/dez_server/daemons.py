@@ -17,11 +17,11 @@ A_STATIC = {
 A_CB = { "/admin": "admin", "/_db": "_db" }
 
 class CTWebBase(HTTPApplication):
-    def __init__(self, bind_address, port, logger_getter, static=static, cb=cb, whitelist=[]):
+    def __init__(self, bind_address, port, logger_getter, static=static, cb=cb, whitelist=[], blacklist=[], shield=False):
         isprod = config.mode == "production"
         HTTPApplication.__init__(self, bind_address, port, logger_getter, "dez/cantools",
             config.ssl.certfile, config.ssl.keyfile, config.ssl.cacerts,
-            isprod, config.web.rollz, isprod, whitelist)
+            isprod, config.web.rollz, isprod, whitelist, blacklist, shield)
         self.memcache = get_memcache()
         self.handlers = {}
         for key, val in list(static.items()):
@@ -39,14 +39,16 @@ class CTWebBase(HTTPApplication):
 class Web(CTWebBase):
     def __init__(self, bind_address, port, logger_getter):
         self.logger = logger_getter("Web")
+        wcfg = config.web
         CTWebBase.__init__(self, bind_address, port, logger_getter,
-            whitelist=config.web.whitelist)
+            whitelist=wcfg.whitelist, blacklist=wcfg.blacklist, shield=wcfg.shield)
 
 class Admin(CTWebBase):
     def __init__(self, bind_address, port, logger_getter):
         self.logger = logger_getter("Admin")
+        acfg = config.admin
         CTWebBase.__init__(self, bind_address, port, logger_getter,
-            A_STATIC[config.mode], A_CB, config.admin.whitelist)
+            A_STATIC[config.mode], A_CB, acfg.whitelist, acfg.blacklist, acfg.shield)
         self.add_cb_rule("/_report", self.report)
 
     def report(self, req):
