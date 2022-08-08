@@ -58,11 +58,11 @@ def getController():
 
 		shield = None
 		if config.web.shield: # web/admin share shield and blacklist
-			shield = Shield(logger_getter, CTR.blup)
 			bl = read("black.list")
 			if bl:
 				config.web.blacklist += bl.split("\n")
 			config.web.update("blacklist", set(config.web.blacklist))
+			shield = Shield(config.web.blacklist, logger_getter, CTR.blup)
 		localvars.shield = shield or CTR.paperShield
 
 		# web
