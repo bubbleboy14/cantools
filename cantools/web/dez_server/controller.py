@@ -45,6 +45,11 @@ class DController(SocketController):
 	def paperShield(self, path, ip, fspath=False, count=True):
 		self.logger.access('NOOP > paperShield("%s", "%s", fspath=%s, count=%s)'%(path, ip, fspath, count))
 
+	def blup(self):
+		bl = list(config.web.blacklist)
+		self.logger.info("saving %s IPs in black.list"%(len(bl),))
+		write("\n".join(bl), "black.list")
+
 def getController():
 	global CTR
 	if not CTR:
@@ -53,7 +58,11 @@ def getController():
 
 		shield = None
 		if config.web.shield: # web/admin share shield and blacklist
-			shield = Shield(logger_getter)
+			shield = Shield(logger_getter, CTR.blup)
+			bl = read("black.list")
+			if bl:
+				config.web.blacklist += bl.split("\n")
+			config.web.update("blacklist", set(config.web.blacklist))
 		localvars.shield = shield or CTR.paperShield
 
 		# web
