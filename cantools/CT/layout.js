@@ -257,7 +257,7 @@ CT.layout = {
 			items: [],
 			numbers: []
 		});
-		var f, fields = [], nums = [], node = CT.dom.div(opts.items.map(function(item) {
+		var f, val, fields = [], nums = [], node = CT.dom.div(opts.items.map(function(item) {
 			if (opts.values && opts.values[item.name] && !item.value)
 				item = CT.merge(item, { value: opts.values[item.name] });
 			if (item.style == "fieldList") {
@@ -294,7 +294,7 @@ CT.layout = {
 			f = CT.dom.numberSelector(nitem);
 			nums.push(f);
 			return [ CT.dom.div(nitem.name, "right"), f ];
-		})), opts.className), i, val, name, backButt, vals = {}, nahs = [undefined, ""];
+		})), opts.className), i, name, backButt, vals = node.vals = {}, nahs = [undefined, ""];
 		node.setVal = function(f) {
 			val = f.getVal();
 			name = f.opts.name;
@@ -317,6 +317,7 @@ CT.layout = {
 			node.nextStep = function(submitter, recenterer) {
 				if (node.curStep) {
 					if (nahs.includes(node.setVal(node.curStep))) return;
+					opts.onStep && opts.onStep(vals);
 					node.curStep.classList.remove("curstep");
 					node.curStep = node.curStep.nextSibling;
 					if (node.curStep.type == "submit")
