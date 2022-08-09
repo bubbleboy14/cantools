@@ -103,6 +103,12 @@ var _sutil = CT.stream.util = {
 		}).then(_sutil._recorder(ondata, onrecorder))["catch"](onfail || function(err) {
 			CT.log.endTimer("record", "got error: " + err);
 		});
+	},
+	tl: function(playchan, className) {
+		var p = "https://truthlink.info";
+		if (playchan) // playchan = playlist[] or channel""
+			p += "#" + (Array.isArray(playchan) ? playchan.join("~") : ("~" + playchan));
+		return CT.dom.iframe(p, className || "fullv noborder");
 	}
 };
 
