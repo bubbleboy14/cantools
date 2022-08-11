@@ -64,17 +64,18 @@ def getController():
 			config.web.update("blacklist", set(config.web.blacklist))
 			shield = Shield(config.web.blacklist, logger_getter, CTR.blup)
 		localvars.shield = shield or CTR.paperShield
+		mempad = config.mempad
 
 		# web
 		CTR.web = CTR.register_address(config.web.host,
-			config.web.port, dclass=daemon_wrapper(Web, logger_getter, shield))
+			config.web.port, dclass=daemon_wrapper(Web, logger_getter, shield, mempad))
 		CTR.web.controller = CTR
 
 		# admin
 		config.admin.update("pw",
 			config.cache("admin password? ", overwrite=config.newpass))
 		CTR.admin = CTR.register_address(config.admin.host,
-			config.admin.port, dclass=daemon_wrapper(Admin, logger_getter, shield))
+			config.admin.port, dclass=daemon_wrapper(Admin, logger_getter, shield, mempad))
 		CTR.admin.controller = CTR
 
 		# cron

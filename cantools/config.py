@@ -120,7 +120,7 @@ for line in read("ct.cfg", True):
 for key, val in items:
 	if key in ["ENCODE", "DB_ECHO", "DB_PUBLIC", "DB_REFCOUNT", "GEO_TEST", "MEMCACHE_REQUEST", "MEMCACHE_DB", "PUBSUB_ECHO", "PUBSUB_META", "PUBSUB_B64", "SSL_VERIFY", "ADMIN_MONITOR_LOG", "WEB_XORIGIN", "LOG_TIMESTAMP", "BUILD_PROD_CLOSURE", "BUILD_PROD_B64"]:
 		val = val == "True"
-	elif key in ["PUBSUB_HISTORY"]:
+	elif key in ["PUBSUB_HISTORY", "MEMPAD"]:
 		val = int(val)
 	elif key in ["REL_SLEEP", "REL_TURBO"]:
 		val = float(val)
