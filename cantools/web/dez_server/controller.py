@@ -57,12 +57,15 @@ def getController():
 		CTR = DController()
 
 		shield = None
-		if config.web.shield: # web/admin share shield and blacklist
+		shfg = config.web.shield
+		if shfg: # web/admin share shield and blacklist
 			bl = read("black.list")
 			if bl:
 				config.web.blacklist += bl.split("\n")
 			config.web.update("blacklist", set(config.web.blacklist))
-			shield = Shield(config.web.blacklist, logger_getter, CTR.blup)
+			shield = Shield(config.web.blacklist, logger_getter, CTR.blup,
+				getattr(shfg, "limit", 400),
+				getattr(shfg, "interval", 2))
 		localvars.shield = shield or CTR.paperShield
 		mempad = config.mempad
 
