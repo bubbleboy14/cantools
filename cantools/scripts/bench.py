@@ -30,6 +30,7 @@ NUMBER = 5000
 CONCURRENCY = 100
 WEIGHT = 10
 KEYS = 10
+PIPES = 50
 
 class Bencher(object):
 	def __init__(self, options):
@@ -43,7 +44,7 @@ class Bencher(object):
 		log("single (direct dbench) mode", important=True)
 		oz = self.options
 		rel.signal(2, rel.abort)
-		cmd("dbench %s %s %s %s"%(oz.domain, oz.port, oz.number, oz.concurrency))
+		cmd("dbench %s %s %s %s %s"%(oz.domain, oz.port, oz.number, oz.concurrency, oz.pipeliners))
 
 	def initmc(self):
 		oz = self.options
@@ -95,13 +96,15 @@ class Bencher(object):
 			paths += self.regfiles("blob", binary=True)
 		if oz.static:
 			paths += self.regfiles("css")
-			paths += self.regfiles(config.build.web[config.mode] or config.build.web.compiled[config.mode], "/", suffix=".html")
+			paths += self.regfiles(config.build.web[config.mode] or config.build.web.compiled[config.mode],
+				"/", suffix=".html")
 		if oz.memcache:
 			self.initmc()
 			paths += self.regfiles("memcache", "/_memcache?action=get&key=", self.memcache)
 		paths or error("nothing to request!")
 		log("randomizing requests among %s total items"%(len(paths),))
-		MultiTester(oz.domain, oz.port, paths, oz.number, oz.concurrency, oz.validate and self.validator).start()
+		MultiTester(oz.domain, oz.port, paths, oz.number, oz.concurrency,
+			oz.pipeliners, oz.validate and self.validator).start()
 
 def run():
 	parser = OptionParser("ctbench [-bmsv] [--domain=DOMAIN] [--port=PORT] [--number=NUMBER] [--concurrency=CONCURRENCY] [--weight=WEIGHT] [--keys=KEYS]")
@@ -117,6 +120,8 @@ def run():
 		help="weight (size) of memcache blocks (default=%s)"%(WEIGHT,))
 	parser.add_option("-k", "--keys", dest="keys", default=KEYS,
 		help="key count - number of memcache blocks (default=%s)"%(KEYS,))
+	parser.add_option("-l", "--pipeliners", dest="pipeliners", default=PIPES,
+		help="number of pipelined requests (default=%s)"%(PIPES,))
 	parser.add_option("-s", "--static", action="store_true", dest="static",
 		default=False, help="random static (html/css) requests (default=False)")
 	parser.add_option("-b", "--blobs", action="store_true", dest="blobs",
@@ -126,9 +131,8 @@ def run():
 	parser.add_option("-v", "--validate", action="store_true", dest="validate",
 		default=False, help="validate return values (default=False)")
 	options = parser.parse_args()[0]
-	options.port = int(options.port)
-	options.number = int(options.number)
-	options.concurrency = int(options.concurrency)
+	for key in ["port", "number", "concurrency", "weight", "keys", "pipeliners"]:
+		setattr(options, key, int(getattr(options, key)))
 	Bencher(options)
 
 if __name__ == "__main__":
