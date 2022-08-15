@@ -21,7 +21,7 @@
 
 import os, rel, json
 from optparse import OptionParser
-from dez.samples.http_load_test import MultiTester
+from dez.bench import MultiTester
 from cantools import config
 from cantools.util import cmd, log, read, error, token
 from cantools.web import post
