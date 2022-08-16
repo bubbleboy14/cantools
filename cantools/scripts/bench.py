@@ -3,6 +3,7 @@
 
 ### Options:
     -h, --help            show this help message and exit
+    -e, --encrypted       use encrypted (https) connection
     -d DOMAIN, --domain=DOMAIN
                           hostname (default: 0.0.0.0)
     -p PORT, --port=PORT  port (default=8080)
@@ -13,6 +14,8 @@
     -w WEIGHT, --weight=WEIGHT
                           weight (size) of memcache blocks (default=10)
     -k KEYS, --keys=KEYS  key count - number of memcache blocks (default=10)
+    -l PIPELINERS, --pipeliners=PIPELINERS
+                          number of pipelined requests (default=50)
     -s, --static          random static (html/css) requests (default=False)
     -b, --blobs           random blob requests (default=False)
     -m, --memcache        random memcache requests (default=False)
@@ -44,7 +47,10 @@ class Bencher(object):
 		log("single (direct dbench) mode", important=True)
 		oz = self.options
 		rel.signal(2, rel.abort)
-		cmd("dbench %s %s %s %s %s"%(oz.domain, oz.port, oz.number, oz.concurrency, oz.pipeliners))
+		cstr = "dbench %s %s %s %s %s"%(oz.domain, oz.port, oz.number, oz.concurrency, oz.pipeliners)
+		if oz.encrypted:
+			cstr += " -e"
+		cmd(cstr)
 
 	def initmc(self):
 		oz = self.options
@@ -104,10 +110,12 @@ class Bencher(object):
 		paths or error("nothing to request!")
 		log("randomizing requests among %s total items"%(len(paths),))
 		MultiTester(oz.domain, oz.port, paths, oz.number, oz.concurrency,
-			oz.pipeliners, oz.validate and self.validator).start()
+			oz.pipeliners, oz.encrypted, oz.validate and self.validator).start()
 
 def run():
-	parser = OptionParser("ctbench [-bmsv] [--domain=DOMAIN] [--port=PORT] [--number=NUMBER] [--concurrency=CONCURRENCY] [--weight=WEIGHT] [--keys=KEYS]")
+	parser = OptionParser("ctbench [-bmsve] [--domain=DOMAIN] [--port=PORT] [--number=NUMBER] [--concurrency=CONCURRENCY] [--weight=WEIGHT] [--keys=KEYS] [--pipeliners=PIPELINERS]")
+	parser.add_option("-e", "--encrypted", action="store_true", dest="encrypted",
+		default=False, help="use encrypted (https) connection")
 	parser.add_option("-d", "--domain", dest="domain", default=config.web.host,
 		help="hostname (default: %s)"%(config.web.host,))
 	parser.add_option("-p", "--port", dest="port", default=config.web.port,
