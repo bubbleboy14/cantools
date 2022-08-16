@@ -1,5 +1,5 @@
 import os, rel, ssl, sys, json, requests
-from dez.http import fetch as dfetch
+from dez.http import fetch as dfetch, post as dpost
 from ..util import *
 from ...util import set_log, set_error
 from .mail import send_mail, email_admins, email_reportees
@@ -73,8 +73,7 @@ def _ctjson(result):
 	else:
 		return json.loads(result[1:])
 
-def fetch(host, path="/", port=None, asjson=False, cb=None, timeout=1, asyn=False, protocol="http", ctjson=False, qsp=None, fakeua=False):
-	from cantools.util import log # gives us logger set in run_dez_webserver()
+def parse_url_parts(host, path, port, protocol):
 	if "://" in host:
 		protocol, host = host.split("://")
 		if "/" in host:
@@ -87,6 +86,11 @@ def fetch(host, path="/", port=None, asjson=False, cb=None, timeout=1, asyn=Fals
 		port = int(port)
 	elif not port:
 		port = protocol == "https" and 443 or 80
+	return host, path, port, protocol
+
+def fetch(host, path="/", port=None, asjson=False, cb=None, timeout=1, asyn=False, protocol="http", ctjson=False, qsp=None, fakeua=False):
+	from cantools.util import log # gives us logger set in run_dez_webserver()
+	host, path, port, protocol = parse_url_parts(host, path, port, protocol)
 	if qsp:
 		path += "?"
 		for k, v in list(qsp.items()):
@@ -115,10 +119,17 @@ def fetch(host, path="/", port=None, asjson=False, cb=None, timeout=1, asyn=Fals
 		return _ctjson(result)
 	return asjson and json.loads(result) or result
 
-def post(host, path="/", port=80, data=None, protocol="http", asjson=False, ctjson=False, text=None):
+def post(host, path="/", port=80, data=None, protocol="http", asjson=False, ctjson=False, text=None, cb=None):
 	if ctjson:
 		data = rec_conv(data)
+	if cb:
+		if ctjson:
+			orig_cb = cb
+			cb = lambda v : orig_cb(_ctjson(v))
+		host, path, port, protocol = parse_url_parts(host, path, port, protocol)
+		return dpost(host, path, port, protocol == "https", data=data, text=text, cb=cb)
 	url = "://" in host and host or "%s://%s:%s%s"%(protocol, host, port, path)
+	log("post %s"%(url,))
 	kwargs = {}
 	if data:
 		kwargs["json"] = data
