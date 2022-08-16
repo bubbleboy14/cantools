@@ -55,13 +55,30 @@ class Bencher(object):
 	def initmc(self):
 		oz = self.options
 		self.memcache = {}
+		self.mccount = 0
+		proto = oz.encrypted and "https" or "http"
 		for key in map(lambda k : "bencher%s"%(k,), range(oz.keys)):
 			val = self.memcache[key] = token(oz.weight)
 			post(oz.domain, "/_memcache", oz.port, {
 				"action": "set",
 				"key": key,
 				"value": val
-			}, ctjson=True)
+			}, proto, cb=self.regmc)
+
+	def initpaths(self):
+		oz = self.options
+		paths = self.paths = []
+		self.values = {}
+		if oz.blobs:
+			paths += self.regfiles("blob", binary=True)
+		if oz.static:
+			paths += self.regfiles("css")
+			paths += self.regfiles(config.build.web[config.mode] or config.build.web.compiled[config.mode],
+				"/", suffix=".html")
+		if oz.memcache:
+			paths += self.regfiles("memcache", "/_memcache?action=get&key=", self.memcache)
+		paths or error("nothing to request!")
+		log("randomizing requests among %s total items"%(len(paths),))
 
 	def validator(self, path, value, headers):
 		vlen = len(value)
@@ -76,6 +93,12 @@ class Bencher(object):
 			log("returned:\n%s"%(value,), important=True)
 			log("should have returned:\n%s"%(self.values[path],), important=True)
 			error("return value mismatch: %s"%(path,))
+
+	def regmc(self):
+		self.mccount += 1
+		if self.mccount == self.options.keys:
+			log("registered %s memcache keys"%(self.mccount,))
+			self._multi()
 
 	def regfiles(self, fpath, upath=None, files=None, binary=False, suffix=None):
 		upath = upath or "/%s/"%(fpath,)
@@ -93,24 +116,18 @@ class Bencher(object):
 			paths = list(map(lambda n : "%s%s"%(upath, n), fnames))
 		return paths
 
+	def _multi(self):
+		oz = self.options
+		self.initpaths()
+		MultiTester(oz.domain, oz.port, self.paths, oz.number, oz.concurrency,
+			oz.pipeliners, oz.encrypted, oz.validate and self.validator).start()
+
 	def multi(self):
 		log("multi (randomized requests) mode", important=True)
-		self.values = {}
-		oz = self.options
-		paths = []
-		if oz.blobs:
-			paths += self.regfiles("blob", binary=True)
-		if oz.static:
-			paths += self.regfiles("css")
-			paths += self.regfiles(config.build.web[config.mode] or config.build.web.compiled[config.mode],
-				"/", suffix=".html")
-		if oz.memcache:
+		if self.options.memcache:
 			self.initmc()
-			paths += self.regfiles("memcache", "/_memcache?action=get&key=", self.memcache)
-		paths or error("nothing to request!")
-		log("randomizing requests among %s total items"%(len(paths),))
-		MultiTester(oz.domain, oz.port, paths, oz.number, oz.concurrency,
-			oz.pipeliners, oz.encrypted, oz.validate and self.validator).start()
+		else:
+			self._multi()
 
 def run():
 	parser = OptionParser("ctbench [-bmsve] [--domain=DOMAIN] [--port=PORT] [--number=NUMBER] [--concurrency=CONCURRENCY] [--weight=WEIGHT] [--keys=KEYS] [--pipeliners=PIPELINERS]")
