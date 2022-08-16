@@ -73,7 +73,7 @@ def _ctjson(result):
 	else:
 		return json.loads(result[1:])
 
-def fetch(host, path="/", port=80, asjson=False, cb=None, timeout=1, asyn=False, protocol="http", ctjson=False, qsp=None, fakeua=False):
+def fetch(host, path="/", port=None, asjson=False, cb=None, timeout=1, asyn=False, protocol="http", ctjson=False, qsp=None, fakeua=False):
 	from cantools.util import log # gives us logger set in run_dez_webserver()
 	if "://" in host:
 		protocol, host = host.split("://")
@@ -85,26 +85,33 @@ def fetch(host, path="/", port=80, asjson=False, cb=None, timeout=1, asyn=False,
 	if ":" in host:
 		host, port = host.split(":")
 		port = int(port)
+	elif not port:
+		port = protocol == "https" and 443 or 80
 	if qsp:
 		path += "?"
 		for k, v in list(qsp.items()):
 			path += "%s=%s&"%(k, v)
 		path = path[:-1]
-	if asyn or cb: # asyn w/o cb works, will just log
-		return dfetch(host, path, port, cb, timeout, asjson)
-	if protocol == "https":
-		port = 443
 	gkwargs = {}
+	headers = {}
+	if fakeua:
+		headers['User-Agent'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36'
+		gkwargs["headers"] = headers
+	if asyn or cb: # asyn w/o cb works, will just log
+		secure = protocol == "https"
+		if ctjson:
+			if cb:
+				orig_cb = cb
+				cb = lambda v : orig_cb(_ctjson(v))
+			else:
+				return _ctjson(dfetch(host, path, port, secure, headers, None, timeout))
+		return dfetch(host, path, port, secure, headers, cb, timeout, asjson)
 	if timeout:
 		gkwargs["timeout"] = timeout
-	if fakeua:
-		gkwargs["headers"] = {
-			'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36'
-		}
 	furl = "%s://%s:%s%s"%(protocol, host, port, path)
 	log("fetch %s"%(furl,))
 	result = requests.get(furl, **gkwargs).content
-	if ctjson: # sync only
+	if ctjson:
 		return _ctjson(result)
 	return asjson and json.loads(result) or result
 
