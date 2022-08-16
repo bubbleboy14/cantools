@@ -96,6 +96,7 @@ class Bencher(object):
 
 	def regmc(self):
 		self.mccount += 1
+		log("regmc %s"%(self.mccount,))
 		if self.mccount == self.options.keys:
 			log("registered %s memcache keys"%(self.mccount,))
 			self._multi()
