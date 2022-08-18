@@ -63,7 +63,8 @@ class Bencher(object):
 				"action": "set",
 				"key": key,
 				"value": val
-			}, proto, cb=self.regmc)
+			}, proto)#, cb=self.regmc)
+			self.regmc() # TODO :: fix async!!!!!
 
 	def initpaths(self):
 		oz = self.options
