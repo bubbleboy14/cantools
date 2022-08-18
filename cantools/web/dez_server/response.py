@@ -15,7 +15,7 @@ class Response(object):
 
     def _read(self):
         b = self.request.body or json.dumps(rec_conv(self.request.qs_params))
-        print(b)
+#        print(b)
         ctype = self.request.headers.get("content-type")
         if ctype and ctype.startswith("multipart/form-data"):
             if type(b) != bytes:
