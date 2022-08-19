@@ -63,8 +63,9 @@ class Bencher(object):
 				"action": "set",
 				"key": key,
 				"value": val
-			}, proto)#, cb=self.regmc)
-			self.regmc() # TODO :: fix async!!!!!
+			}, proto, cb=self.regmc)
+		rel.signal(2, rel.abort)
+		rel.dispatch()
 
 	def initpaths(self):
 		oz = self.options
@@ -95,7 +96,7 @@ class Bencher(object):
 			log("should have returned:\n%s"%(self.values[path],), important=True)
 			error("return value mismatch: %s"%(path,))
 
-	def regmc(self):
+	def regmc(self, resp):
 		self.mccount += 1
 		log("regmc %s"%(self.mccount,))
 		if self.mccount == self.options.keys:
