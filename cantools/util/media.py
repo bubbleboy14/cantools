@@ -64,8 +64,68 @@ def wav2mp3(path="."):
 			cmd('ffmpeg -i "%s" "%s.mp3"'%(fname, fname[:-4]))
 
 #
-# images (PIL)
+# images (identify, convert, montage, PIL)
 #
+
+class Tiler(object):
+	def __init__(self, images, outname, vertical=True):
+		self.vertical = vertical
+		self.outname = outname
+		self.images = images
+		self.final = []
+		self.geos = {}
+		self.assess()
+		self.resize()
+
+	def dims(self, ipath):
+		xy = output("identify %s"%(ipath,)).split(" ")[2].split("x")
+		return {
+			"x": int(xy[0]),
+			"y": int(xy[1])
+		}
+
+	def assess(self):
+		dim = self.vertical and "x" or "y"
+		self.smallest = None
+		for image in self.images:
+			self.geos[image] = self.dims(image)
+			if not self.smallest or self.geos[image][dim] < self.geos[self.smallest][dim]:
+				self.smallest = image
+
+	def _resizer(self):
+		sdim = self.geos[self.smallest][self.vertical and "x" or "y"]
+		resizer = ['convert "%s" -resize']
+		resizer.append(self.vertical and sdim or ("x" + sdim))
+		resizer.append('"%s"')
+		return " ".join(resizer)
+
+	def resize(self):
+		resizer = self._resizer()
+		for image in self.images:
+			if image == self.smallest:
+				self.final.append(image)
+			else:
+				sname = image.replace(".jpg", "s.jpg")
+				cmd(resizer%(image, sname))
+				self.final.append(sname)
+
+	def _renderer(self):
+		montager = ['montage "%s" -geometry +2+2']
+		self.vertical and montager.append("-tile 1x")
+		montager.append('"%s"')
+		return " ".join(montager)
+
+	def render(self):
+		cmd(self._renderer()%(" ".join(self.final), self.outname))
+
+def autotile(outname, vertical=True)
+	Tiler(os.listdir(), outname, vertical).render()
+
+def vtile(outname):
+	autotile(outname)
+
+def htile(outname):
+	autotile(outname, False)
 
 def crop(img, constraint):
 	from PIL import Image
