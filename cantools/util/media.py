@@ -1,7 +1,7 @@
 from __future__ import absolute_import # for io.BytesIO
 from io import BytesIO
 import os
-from .system import cmd, output, rm, mkdir
+from .system import cmd, output, cp, rm, mkdir
 from .reporting import log
 from .io import read, write
 
@@ -118,8 +118,19 @@ class Tiler(object):
 	def render(self):
 		cmd(self._renderer()%(" ".join(self.final), self.outname))
 
-def autotile(outname, vertical=True)
-	Tiler(os.listdir(), outname, vertical).render()
+def dlpix(ilist):
+	from cantools.web import fetch
+	fnames = []
+	i = 0
+	for url in read(ilist).split("\n"):
+		i += 1
+		f = "%s.jpg"%(i,)
+		cp(fetch(url), f)
+		fnames.append(f)
+	return fnames
+
+def autotile(outname, vertical=True):
+	Tiler(outname.endswith(".list") and dlipix(outname) or os.listdir(), outname, vertical).render()
 
 def vtile(outname):
 	autotile(outname)
