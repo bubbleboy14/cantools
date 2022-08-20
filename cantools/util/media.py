@@ -93,7 +93,7 @@ class Tiler(object):
 				self.smallest = image
 
 	def _resizer(self):
-		sdim = self.geos[self.smallest][self.vertical and "x" or "y"]
+		sdim = str(self.geos[self.smallest][self.vertical and "x" or "y"])
 		resizer = ['convert "%s" -resize']
 		resizer.append(self.vertical and sdim or ("x" + sdim))
 		resizer.append('"%s"')
@@ -112,11 +112,11 @@ class Tiler(object):
 	def _renderer(self):
 		montager = ['montage "%s" -geometry +2+2']
 		self.vertical and montager.append("-tile 1x")
-		montager.append('"%s"')
+		montager.append('"%s.jpg"')
 		return " ".join(montager)
 
 	def render(self):
-		cmd(self._renderer()%(" ".join(self.final), self.outname))
+		cmd(self._renderer()%('" "'.join(self.final), self.outname))
 
 def dlpix(ilist):
 	from cantools.web import fetch
@@ -130,7 +130,8 @@ def dlpix(ilist):
 	return fnames
 
 def autotile(outname, vertical=True):
-	Tiler(outname.endswith(".list") and dlipix(outname) or os.listdir(), outname, vertical).render()
+	Tiler(outname.endswith(".list") and dlpix(outname) or os.listdir(),
+		outname.split(".").pop(0), vertical).render()
 
 def vtile(outname):
 	autotile(outname)
