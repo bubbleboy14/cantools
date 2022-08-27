@@ -1,7 +1,7 @@
 import os, sys
 from .io import read, write, writejson
 from .reporting import set_log, close_log, log, set_error, error, start_timer, end_timer
-from .system import cp, sym, mkdir, rm, py, cmd, output, indir
+from .system import cp, sym, mkdir, sed, rm, py, cmd, output, indir
 from .data import getxls, gettsv, getcsv, getcsv_from_data, flatten, arr2csv, batch, token
 from .media import transcode, segment, hlsify, shouldMoveMoov, crop, resizep2
 from .admin import certs, screener
