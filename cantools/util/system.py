@@ -51,8 +51,8 @@ def rm(pname):
 	else:
 		log("can't remove file (doesn't exist): %s"%(pname,), 2)
 
-def sed(fname, flag, replacement):
-	write(read(fname).replace(flag, replacement), fname)
+def sed(fname, flag, replacement, target=None):
+	write(read(fname).replace(flag, replacement), target or fname)
 
 def cmd(cline, sudo=False):
 	if sudo and platform.system() != "Windows":
