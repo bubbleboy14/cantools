@@ -129,15 +129,17 @@ def dlpix(ilist):
 		fnames.append(f)
 	return fnames
 
-def autotile(outname, vertical=True):
-	Tiler(outname.endswith(".list") and dlpix(outname) or os.listdir(),
-		outname.split(".").pop(0), vertical).render()
+def autotile(outname, vertical=True, inames=[]):
+	if outname.endswith(".list"):
+		inames = dlpix(outname)
+		outname = outname.split(".").pop(0)
+	Tiler(inames or os.listdir(), outname, vertical).render()
 
-def vtile(outname):
-	autotile(outname)
+def vtile(outname, *inames):
+	autotile(outname, inames=inames)
 
-def htile(outname):
-	autotile(outname, False)
+def htile(outname, *inames):
+	autotile(outname, False, inames)
 
 def crop(img, constraint):
 	from PIL import Image
