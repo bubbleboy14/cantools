@@ -407,11 +407,11 @@ def strip_html(s):
     p = re.compile(r'<.*?>')
     return p.sub("", s)
 
-def strip_html_old(s, keep_breaks=False):
+def strip_html_carefully(s, besides=[]):
     i = s.find('<');
     while i != -1:
         j = s.find('>', i)
-        if keep_breaks and 'br' in s[i:j]:
+        if s[i+1:j] in besides or s[i+2:j] in besides:
             i = s.find('<', i+1)
         else:
             s = s[:i] + s[j+1:]
