@@ -18,6 +18,8 @@ def screener(ctnum=None, dpath="/root", sname=None):
 	set_log("scrn.log")
 	log("checking screen", important=True)
 	starter = _starter(sname)
+	if ctnum and type(ctnum) is not int:
+		ctnum = ctnum.isdigit() and int(ctnum)
 	if "No Sockets found" in output("screen -list"):
 		log("no screen! restarting", 1)
 		cmd(starter)
