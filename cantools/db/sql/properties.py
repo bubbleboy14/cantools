@@ -77,6 +77,8 @@ DateTime = sqlColumn(DateTimeAutoStamper)
 
 # strings, arrays, keys
 class BasicString(basicType(sqlalchemy.UnicodeText, StringType)):
+	cache_ok = config.db.cache
+
 	def process_bind_param(self, data, dialect):
 #		if data and type(data) is not str:
 #			data = data.decode('utf-8')
@@ -186,6 +188,8 @@ class Binary(basicType(sqlString)):
 """
 
 class ArrayType(BasicString):
+	cache_ok = config.db.cache
+
 	def __init__(self, *args, **kwargs):
 		self.isKey = kwargs.pop("isKey", False)
 		if self.isKey:
