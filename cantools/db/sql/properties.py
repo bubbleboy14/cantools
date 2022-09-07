@@ -1,6 +1,11 @@
+from cantools import config
 import os, json, sqlalchemy
 
+primis = ["Integer", "Float", "Boolean", "Text", "Date", "Time"]
+
 class DynamicType(sqlalchemy.TypeDecorator):
+	cache_ok = config.db.cache
+
 	def __init__(self, *args, **kwargs):
 		self.choices = kwargs.pop("choices", None)
 		sqlalchemy.TypeDecorator.__init__(self, *args, **kwargs)
@@ -11,7 +16,11 @@ class StringType(DynamicType):
 		DynamicType.__init__(self, 500, *args, **kwargs)
 
 def basicType(colClass, baseType=DynamicType):
-	return type("%s"%(colClass.__name__,), (baseType,), { "impl": colClass })
+	cname = colClass.__name__
+	attrs = { "impl": colClass }
+	if config.db.cache and cname in primis:
+		attrs["cache_ok"] = True
+	return type("%s"%(cname,), (baseType,), attrs)
 
 def _col(colClass, *args, **kwargs):
 	cargs = {}
@@ -48,7 +57,7 @@ def _col(colClass, *args, **kwargs):
 def sqlColumn(colClass):
 	return lambda *args, **kwargs : _col(colClass, *args, **kwargs)
 
-for prop in ["Integer", "Float", "Boolean", "Text", "Date", "Time"]:
+for prop in primis:
 	sqlprop = getattr(sqlalchemy, prop)
 	globals()["sql%s"%(prop,)] = sqlprop
 	globals()[prop] = sqlColumn(basicType(sqlprop))
@@ -236,6 +245,8 @@ class KeyWrapper(object):
 		return self.value
 
 class Key(BasicString):
+	cache_ok = config.db.cache
+
 	def __init__(self, *args, **kwargs):
 		self.kinds = kwargs.pop("kinds", [kwargs.pop("kind", "*")])
 		for i in range(len(self.kinds)):
