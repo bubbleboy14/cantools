@@ -313,7 +313,7 @@ def parse_and_make():
 		update()
 	elif options.admin:
 		admin()
-	elif options.plugins == "True":
+	elif options.plugins == "refresh":
 		refresh_plugins()
 	else:
 		if options.plugins:
