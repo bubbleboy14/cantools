@@ -94,6 +94,7 @@ code, and they're only imported as needed (when missing from browser).
 var CT = {
 	"_": {
 		"vals": {},
+		"modules": {},
 		"extReqs": {},
 		"scriptImportCb": {},
 		"onImport": function(fullpath) {
@@ -401,10 +402,11 @@ var CT = {
 			}
 		} else {
 			var modpath = modname.split("."), curmod = window,
-				topmod, topname, mtxt, curpath;
-			if (!(modpath[0] in curmod)) {
+				mz = CT._.modules, mp0 = modpath[0],
+				topmod, topname, m, mtxt, ptxt, curpath;
+			if (!(mp0 in curmod)) {
 				try { // not on window if in closure
-					topmod = curmod = eval(modpath[0]);
+					topmod = curmod = eval(mp0);
 					topname = modpath.shift();
 				} catch(e) {
 					CT.log("checked inside closure - not present: " + modname);
@@ -430,23 +432,15 @@ var CT = {
 				if (window.CT)
 					eval(mtxt);
 				else { // closure mode
+					if ((topname != "CT") && !(topname in mz))
+						mz[topname] = {};
+					ptxt = ["var CT = window._ctmp;"];
+					for (m in mz)
+						ptxt.push("var " + m + " = CT._.modules['" + m + "'];");
+					mtxt = ptxt.join("") + mtxt;
 					window._ctmp = CT;
-					mtxt = "var CT = window._ctmp;" + mtxt;
-					if (topname != "CT") {
-						if (!topmod) {
-							try { // one last check ...
-								topmod = eval(topname); // eh......
-							} catch(e) {
-								topmod = {}; // eh......
-							}
-						}
-						window._ttmp = topmod;
-						mtxt = "var " + topname + " = window._ttmp;" + mtxt;
-					}
 					eval(mtxt);
 					delete window._ctmp;
-					if (topname != "CT")
-						delete window._ttmp;
 				}
 			}
 		}
