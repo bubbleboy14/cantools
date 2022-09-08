@@ -433,7 +433,7 @@ var CT = {
 					eval(mtxt);
 				else { // closure mode
 					if ((topname != "CT") && !(topname in mz))
-						mz[topname] = {};
+						mz[topname] = window[topname] || {}; // ehhhhh .......
 					ptxt = ["var CT = window._ctmp;"];
 					for (m in mz)
 						ptxt.push("var " + m + " = CT._.modules['" + m + "'];");
