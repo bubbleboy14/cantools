@@ -283,6 +283,17 @@ def admin():
 	build_all("admin", CTP)
 	log("finished compilation")
 
+def refresh_plugins():
+	os.chdir(".ctplug")
+	pz = os.listdir(".")
+	log("reinstalling %s plugins"%(len(pz,)), important=True)
+	for p in pz:
+		log(p)
+		os.chdir(p)
+		cmd("git pull")
+		cmd("pip3 install -e .", True)
+		os.chdir("..")
+
 def parse_and_make():
 	parser = OptionParser("ctinit [projname] [-ru] [--plugins=P1|P2|P3] [--cantools_path=PATH] [--web_backend=BACKEND]")
 	parser.add_option("-p", "--plugins", dest="plugins", default="",
@@ -302,6 +313,8 @@ def parse_and_make():
 		update()
 	elif options.admin:
 		admin()
+	elif options.plugins == "True":
+		refresh_plugins()
 	else:
 		if options.plugins:
 			for p in options.plugins.split("|"):
