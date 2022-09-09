@@ -55,6 +55,7 @@ CT.layout = {
 			logo: "Placeholder Logo",
 			right: [],
 			rightPadding: "30px", // non-centerLogo only!
+			linksClass: "abs top0 bottom0 right0 w1-2",
 			centerLogo: true
 		});
 		var content = [];
@@ -66,7 +67,7 @@ CT.layout = {
 			else
 				content.push(CT.dom.node(CT.dom.node(opts.right, "div",
 					"right h1", null, null, { padding: opts.rightPadding }),
-					"div", "abs top0 bottom0 right0 w1-2"));
+					"div", opts.linksClass));
 		}
 		if (opts.centerLogo)
 			content.push(CT.dom.node(CT.dom.link(opts.logo, null, "/"), "center", "biggerester"));
