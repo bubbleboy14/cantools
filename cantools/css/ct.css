@@ -305,6 +305,8 @@
 .smallest { font-size: 40%; }
 .smallerest { font-size: 30%; }
 .tiny { font-size: 25%; }
+.fs30 { font-size: 30px }
+.fs50 { font-size: 50px }
 
 /* appearance */
 .m0 { margin: 0px !important; }
@@ -350,6 +352,8 @@
 .p20 { padding: 20px; }
 .p20i { padding: 20px !important; }
 .p30 { padding: 30px; }
+.p40 { padding: 40px; }
+.p50 { padding: 50px; }
 .ph5 {
     padding-right: 5px;
     padding-left: 5px;
@@ -396,6 +400,18 @@
 }
 .pr15 {
     padding-right: 15px;
+}
+.pt50 {
+    padding-top: 50px;
+}
+.pb50 {
+    padding-bottom: 50px;
+}
+.pl50 {
+    padding-left: 50px;
+}
+.pr50 {
+    padding-right: 50px;
 }
 .bold { font-weight: bold; }
 .italic { font-style: italic; }
