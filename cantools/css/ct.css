@@ -71,6 +71,8 @@
 .h15p { height: 15px; }
 .h30p { height: 30px; }
 .h50p { height: 50px; }
+.h60p { height: 60px; }
+.h70p { height: 70px; }
 .h80p { height: 80px; }
 .h100p { height: 100px; }
 .h120p { height: 120px; }
@@ -322,6 +324,10 @@
     margin-top: 5px;
     margin-bottom: 5px;
 }
+.mv10 {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
 .mt5 { margin-top: 5px; }
 .mr5 { margin-right: 5px; }
 .mb5 { margin-bottom: 5px; }
@@ -402,6 +408,18 @@
 }
 .pr15 {
     padding-right: 15px;
+}
+.pt20 {
+    padding-top: 20px;
+}
+.pb20 {
+    padding-bottom: 20px;
+}
+.pl20 {
+    padding-left: 20px;
+}
+.pr20 {
+    padding-right: 20px;
 }
 .pt50 {
     padding-top: 50px;
@@ -668,6 +686,7 @@
     padding: 10px;
     cursor: pointer;
 }
+.lightgrayback,
 .choice_cell:hover {
     background: lightgray;
 }
