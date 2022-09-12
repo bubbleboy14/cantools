@@ -73,7 +73,7 @@ CT.layout = {
 			content.push(CT.dom.node(CT.dom.link(opts.logo, null, "/"), "center", "biggerester"));
 		else
 			content.push(CT.dom.link(opts.logo, null, "/",
-				"w1-2 biggest bold block nodecoration abs top0 bottom0 left0"));
+				"wm1-2 biggest bold block nodecoration abs top0 bottom0 left0"));
 		if (opts.marquee) { // lol
 			var m = opts.marquee;
 			content.push(CT.dom.marquee(m.content,
