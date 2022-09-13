@@ -94,6 +94,10 @@ CT.layout = {
 				content: "width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no"
 			}));
 		}
+		if (opts.banner && opts.banner[location.pathname]) {
+			content.push(opts.banner[location.pathname]);
+			document.body.classList.add("bannered");
+		}
 		CT.dom.setContent(bighead, CT.dom.div(content, "h1 w1"));
 		if (opts.title)
 			document.title = opts.title;
