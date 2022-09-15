@@ -770,6 +770,9 @@
 .kidvp div {
     padding-bottom: 5px;
 }
+.bpsub > div {
+    padding-bottom: 30px;
+}
 .tabbed {
     padding-left: 20px;
 }
