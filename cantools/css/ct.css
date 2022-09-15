@@ -960,6 +960,10 @@ a.whitelink, .whitelink a {
     background-position: right;
     background-size: cover;
 }
+.bp-right-i {
+    background-position: right !important;
+    background-size: cover !important;
+}
 .carousel-content-container {
     position: relative;
     color: white;
