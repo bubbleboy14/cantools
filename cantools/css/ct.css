@@ -17,6 +17,7 @@
 .fwrap { flex-wrap: wrap; }
 .row { flex-direction: row; }
 .col { flex-direction: column; }
+.vcent { align-items: center; }
 .rowrev { flex-direction: row-reverse; }
 .colrev { flex-direction: column-reverse; }
 .jceven { justify-content: space-around; }
