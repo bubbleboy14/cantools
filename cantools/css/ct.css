@@ -565,6 +565,9 @@
     -ms-transform: skewX(9deg);
     -o-transform: skewX(9deg);
 }
+.squashed {
+    transform: scaleY(0.5);
+}
 .bare {
     padding: 0px !important;
     margin: 0px !important;
