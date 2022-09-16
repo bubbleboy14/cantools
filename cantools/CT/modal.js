@@ -60,7 +60,9 @@ Additionally, CT.modal includes several convenience functions:
 
 CT.modal = {
 	_defs: {
-		transition: "slide"
+		resizeRecenter: true,
+		transition: "slide",
+		orienter: "window" // || node
 	},
 	defaults: function(opts) {
 		CT.modal._defs = CT.merge(opts, CT.modal._defs);
@@ -134,12 +136,12 @@ CT.modal.Modal = CT.Class({
 	visible: false,
 	setup: {
 		_centerv: function(parent) {
-			var val = parent.clientHeight || CT.align.height();
+			var val = (this.opts.orienter == "window") ? window.innerHeight : (parent.clientHeight || CT.align.height());
 			val -= this.node.clientHeight;
 			return val / 2;
 		},
 		_centerh: function(parent) {
-			var val = parent.clientWidth || CT.align.width();
+			var val = (this.opts.orienter == "window") ? window.innerWidth : (parent.clientWidth || CT.align.width());
 			val -= this.node.clientWidth;
 			return val / 2;
 		},
@@ -188,9 +190,10 @@ CT.modal.Modal = CT.Class({
 			};
 		},
 		slide: function() {
-			var n = this.node, add = this.setup._add,
-				origin = this.opts.slide.origin,
-				center = this.opts.center,
+			var n = this.node, add = this.setup._add, oz = this.opts,
+				origin = oz.slide.origin,
+				center = oz.center,
+				windOrienter = oz.orienter == "window",
 				centerv = this.setup._centerv,
 				centerh = this.setup._centerh,
 				fallbacks = this.setup._fallbacks,
@@ -199,8 +202,9 @@ CT.modal.Modal = CT.Class({
 			var _refresh = function(parent, force) {
 				parent = (parent instanceof Node) ? parent : document.body;
 				["top", "bottom"].forEach(function(side, sideIndex) {
+					var h = windOrienter ? window.innerHeight : n.clientHeight;
 					if (origin.startsWith(side)) {
-						n.style[side] = -n.clientHeight + "px";
+						n.style[side] = -h + "px";
 						n._vout = {
 							node: n,
 							property: side,
@@ -215,8 +219,9 @@ CT.modal.Modal = CT.Class({
 					}
 				});
 				["left", "right"].forEach(function(side, sideIndex) {
+					var w = windOrienter ? window.innerWidth : n.clientWidth;
 					if (origin.endsWith(side)) {
-						n.style[side] = -n.clientWidth + "px";
+						n.style[side] = -w + "px";
 						n._hout = {
 							node: n,
 							property: side,
