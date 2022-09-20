@@ -350,13 +350,20 @@ CT.layout = {
 			node.nextStep();
 		}
 		node.continue = function() {
-			if (opts.step && node.curStep)
+			if (opts.step && node.curStep) {
 				node.nextStep(node.value);
+				if (!node.hasStepped) {
+					node.hasStepped = true;
+					opts.onStarted && opts.onStarted(node);
+				}
+			}
 			else
 				node.value();
 		};
-		if (opts.button)
-			node.appendChild(CT.dom.button(opts.bname || "continue", node.continue, opts.buttClass));
+		if (opts.button) {
+			node.butt = CT.dom.button(opts.bname || "continue", node.continue, opts.buttClass);
+			node.appendChild(node.butt);
+		}
 		return node;
 	}
 };
