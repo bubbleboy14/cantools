@@ -34,7 +34,8 @@ CT.video = {
 		"ugetube": "https://ugetube.com/embed/",
 		"bitchute": "https://www.bitchute.com/embed/",
 		"gab": "https://tv.gab.com/channel/",
-		"lbryplayer": "https://cdn.lbryplayer.xyz/api/v4/streams/free/"
+		"lbryplayer": "https://cdn.lbryplayer.xyz/api/v4/streams/free/",
+		"conspyre": "https://conspyre.tv/videoEmbed/"
 	},
 	"urlFromData": function(player, docid) {
 		return player ? (location.protocol + "//" + CT.video.player2url[player] + docid) : "";
@@ -75,6 +76,8 @@ CT.video = {
 			return url.split("_")[1].split(".")[0];
 		else if (url.indexOf("tv.gab.com") != -1)
 			return url.split("/channel/")[1].replace("/view/", "/embed/");
+		else if (url.includes("conspyre.tv"))
+			return url.split("/video/").pop();
 		var spliturl = url.split('.'),
 			ext = spliturl[spliturl.length - 1];
 		if (CT.video.rawVidTypes.indexOf(ext) != -1) // eventually do more about ssl
@@ -106,6 +109,8 @@ CT.video = {
 			return "ugetube";
 		if (url.indexOf("tv.gab.com") != -1)
 			return "gab";
+		if (url.includes("conspyre.tv"))
+			return "conspyre";
 		var spliturl = url.split('.'),
 			ext = spliturl[spliturl.length - 1];
 		if (CT.video.rawVidTypes.indexOf(ext) != -1)
@@ -136,7 +141,7 @@ CT.video = {
 		var ifs = ' style="border:none;overflow:hidden;max-width:100%;"',
 			iurl = CT.video.embed_url[video.player] + video.docid,
 			vsp = 'onclick="arguments[0].stopPropagation();"';
-		if (["odysee", "ugetube", "dtube", "bitchute", "rumble", "gab"].includes(video.player))
+		if (["odysee", "ugetube", "dtube", "bitchute", "rumble", "gab", "conspyre"].includes(video.player))
 			return '<iframe ' + dims + ifs + ' src="' + iurl + '" frameborder="0" allowfullscreen></iframe>';
 		else if (video.player == "facebook")
 			return '<iframe src="' + iurl + '&show_text=0&width=' + w + '" ' +  dims + ifs + ' scrolling="no" frameborder="0" allowTransparency="true" allowFullScreen="true"></iframe>';
