@@ -963,6 +963,7 @@ a.whitelink, .whitelink a {
     background-size: cover;
 }
 .bp-right {
+    background-repeat: no-repeat;
     background-position: right;
     background-size: cover;
 }
