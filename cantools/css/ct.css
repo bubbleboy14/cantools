@@ -429,6 +429,18 @@
 .pr20 {
     padding-right: 20px;
 }
+.pt40 {
+    padding-top: 40px;
+}
+.pb40 {
+    padding-bottom: 40px;
+}
+.pl40 {
+    padding-left: 40px;
+}
+.pr40 {
+    padding-right: 40px;
+}
 .pt50 {
     padding-top: 50px;
 }
