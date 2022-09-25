@@ -18,6 +18,7 @@
 .row { flex-direction: row; }
 .col { flex-direction: column; }
 .vcent { align-items: center; }
+.vstart { align-items: start; }
 .rowrev { flex-direction: row-reverse; }
 .colrev { flex-direction: column-reverse; }
 .jceven { justify-content: space-around; }
@@ -468,6 +469,9 @@
 }
 .pr50 {
     padding-right: 50px;
+}
+.lhsome {
+    line-height: 1.3;
 }
 .bold { font-weight: bold; }
 .italic { font-style: italic; }
