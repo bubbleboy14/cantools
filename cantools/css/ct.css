@@ -390,6 +390,10 @@
     padding-top: 20px;
     padding-bottom: 20px;
 }
+.pv50 {
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
 .pt5 {
     padding-top: 5px;
 }
@@ -428,6 +432,18 @@
 }
 .pr20 {
     padding-right: 20px;
+}
+.pt30 {
+    padding-top: 30px;
+}
+.pb30 {
+    padding-bottom: 30px;
+}
+.pl30 {
+    padding-left: 30px;
+}
+.pr30 {
+    padding-right: 30px;
 }
 .pt40 {
     padding-top: 40px;
