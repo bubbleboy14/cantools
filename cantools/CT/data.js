@@ -96,8 +96,8 @@ CT.data = {
 	"get": function(key) {
 		return CT.data.map[key];
 	},
-	"add": function(d) {
-		if (CT.data.map[d.key]) {
+	"add": function(d, overwrite) {
+		if (CT.data.map[d.key] && overwrite !== true) {
 			for (var k in d)
 				CT.data.map[d.key][k] = d[k];
 		}
