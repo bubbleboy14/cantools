@@ -168,7 +168,7 @@
 .righted { text-align: right; }
 .lefted { text-align: left; }
 .automarg,
-.centered > div {
+.centered > div:not(.inline-block) {
     margin-left: auto;
     margin-right: auto;
 }
@@ -321,10 +321,6 @@
 .m15 { margin: 15px; }
 .m20 { margin: 20px; }
 .m30 { margin: 30px; }
-.mh5 {
-    margin-right: 5px;
-    margin-left: 5px;
-}
 .mv5 {
     margin-top: 5px;
     margin-bottom: 5px;
@@ -332,6 +328,22 @@
 .mv10 {
     margin-top: 10px;
     margin-bottom: 10px;
+}
+.mh5 {
+    margin-right: 5px;
+    margin-left: 5px;
+}
+.mh10 {
+    margin-right: 10px;
+    margin-left: 10px;
+}
+.mh20 {
+    margin-right: 20px;
+    margin-left: 20px;
+}
+.mh40 {
+    margin-right: 40px;
+    margin-left: 40px;
 }
 .mt5 { margin-top: 5px; }
 .mr5 { margin-right: 5px; }
