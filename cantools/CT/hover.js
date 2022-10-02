@@ -83,9 +83,15 @@ CT.hover = {
 		}
 		return node;
 	},
-	auto: function(node, content, popbot, stayopen, recursive) { // better default...
+	auto: function(node, content, icon, popbot, stayopen, recursive) { // better default...
+		var target;
 		if (!node.isSameNode)
 			node = CT.dom.div(node);
-		return CT.hover.set(node, content, !popbot, stayopen, recursive, true);
+		if (icon) {
+			target = CT.dom.img(icon);
+			node.appendChild(target);
+		}
+		CT.hover.set(target || node, content, !popbot, stayopen, recursive, true);
+		return node;
 	}
 };
