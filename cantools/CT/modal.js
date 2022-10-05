@@ -155,6 +155,8 @@ CT.modal.Modal = CT.Class({
 		_add: function(parent, nocenter) {
 			var n = this.node;
 			parent = (parent instanceof Node) ? parent : document.body;
+			if (n.backdrop)
+				CT.dom.addContent(parent, n.backdrop);
 			CT.dom.addContent(parent, n);
 			this.opts.center && !nocenter && this.setup._fallbacks(parent);
 		},
@@ -264,6 +266,8 @@ CT.modal.Modal = CT.Class({
 	},
 	hide: function() {
 		this.node.hide();
+		if (this.node.backdrop)
+			CT.dom.remove(this.node.backdrop);
 		this.visible = false;
 		this.on.hide();
 	},
@@ -311,6 +315,8 @@ CT.modal.Modal = CT.Class({
 		if (!opts.noClose)
 			this.addClose();
 		this.node.modal = this;
+		if (this.opts.backdrop)
+			this.node.backdrop = CT.dom.div(null, "backdrop");
 		this.setup[opts.transition]();
 		this.build();
 		if (opts.content || opts.node) // 'node' is now deprecated :'(
