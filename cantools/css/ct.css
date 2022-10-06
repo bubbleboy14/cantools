@@ -735,6 +735,7 @@
     pointer-events: auto;
     cursor: pointer;
 }
+.ibkid div,
 .button_row div {
     display: inline-block;
 }
