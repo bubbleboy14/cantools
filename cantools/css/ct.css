@@ -870,6 +870,9 @@
 .red {
     color: red;
 }
+.redi {
+    color: red !important;
+}
 .redback {
     background: red;
 }
