@@ -490,8 +490,9 @@ CT.db.edit = {
 				className: "round hoverglow",
 				cb: function(newVal) {
 					media.src = newVal + "?ts=" + Date.now();
-					opts.data[opts.property] = newVal;
-					opts.cb && opts.cb();
+					var rval = {};
+					rval[opts.property] = opts.data[opts.property] = newVal;
+					opts.cb && opts.cb(rval);
 				}
 			});
 		CT.dom.setContent(n, [media, blob.node]);
