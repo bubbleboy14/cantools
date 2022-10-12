@@ -382,6 +382,13 @@ var CT = {
 		sub && h.appendChild(sub);
 		return h;
 	},
+	"module": function(mname) {
+		var mod = window.CT ? window : CT._.modules;
+		mname.split(".").forEach(function(m) {
+			mod = mod[m];
+		});
+		return mod;
+	},
 	"scriptImport": function(modpath, cb, delay) {
 		var fp = (modpath.slice(0, 4) == "http") && modpath
 				|| (CT.net.fullPath(modpath.replace(/\./g, "/") + ".js")),
@@ -401,8 +408,8 @@ var CT = {
 				eval(CT.net.get(modname));
 			}
 		} else {
-			var modpath = modname.split("."), curmod = window,
-				mz = CT._.modules, mp0 = modpath[0],
+			var modpath = modname.split("."), mspath = modpath.slice(0, -1),
+				curmod = window, mz = CT._.modules, mp0 = mspath.shift(),
 				topmod, topname, m, mtxt, ptxt, curpath;
 			if (!(mp0 in curmod)) {
 				try { // not on window if in closure
@@ -412,28 +419,33 @@ var CT = {
 					CT.log("checked inside closure - not present: " + modname);
 				}
 			}
-			while (curmod && modpath.length) {
-				curpath = modpath.shift();
-				if (curpath in curmod) {
-					curmod = curmod[curpath];
-				} else {
-					modpath.unshift(curpath);
-					modpath.forEach(function(p, i) {
-						curmod = curmod[p] = {};
-					});
-					modpath.length = 0;
-					curmod = null;
+			var buildTo = function(mpath) {
+				while (curmod && mpath.length) {
+					curpath = mpath.shift();
+					if (curpath in curmod) {
+						curmod = curmod[curpath];
+					} else {
+						mpath.unshift(curpath);
+						mpath.forEach(function(p, i) {
+							curmod = curmod[p] = {};
+						});
+						mpath.length = 0;
+						curmod = null;
+					}
+					topname = topname || curpath;
+					topmod = topmod || curmod;
 				}
-				topname = topname || curpath;
-				topmod = topmod || curmod;
-			}
+			};
+			buildTo(modpath);
 			if (!curmod) {
 				mtxt = CT.net.get(CT.net.fullPath(modname.replace(/\./g, "/") + ".js"));
 				if (window.CT)
 					eval(mtxt);
 				else { // closure mode
-					if ((topname != "CT") && !(topname in mz))
-						mz[topname] = window[topname] || {}; // ehhhhh .......
+					if ((topname != "CT") && !(topname in mz)) {
+						curmod = mz[topname] = topmod || {};
+						buildTo(mspath);
+					}
 					ptxt = ["var CT = window._ctmp;"];
 					for (m in mz)
 						ptxt.push("var " + m + " = CT._.modules['" + m + "'];");
@@ -441,6 +453,8 @@ var CT = {
 					window._ctmp = CT;
 					eval(mtxt);
 					delete window._ctmp;
+					if (window[topname] && !core.config.softclosure)
+						delete window[topname];
 				}
 			}
 		}
