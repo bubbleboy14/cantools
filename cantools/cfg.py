@@ -168,6 +168,7 @@ cfg = {
 				"escape": True,
 				"transition": "slide"
 			},
+			"softclosure": False,
 			"CC": {
 				"gateway": "https://care-coin.net/comp/api.js",
 				"membership": None,
