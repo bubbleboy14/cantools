@@ -32,3 +32,29 @@ def screener(ctnum=None, dpath="/root", sname=None):
 			cmd("killall screen; %s"%(starter,))
 	log("goodbye")
 	close_log()
+
+def check(cmd="df"):
+	oz = output(cmd).split("\n")
+	for o in oz:
+		if o.endswith("/"):
+			return int(o.rsplit(" ", 2)[1][:-1])
+
+def vitals(dpath="/root", thresh=90):
+	from cantools.web import email_admins
+	os.chdir(dpath)
+	set_log("cron-vitals.log")
+	log("scanning vitals", important=True)
+	lz = []
+	hdrive = check()
+	lz.append("hard drive usage: %s%%"%(hdrive,))
+	inodes = check("df -i")
+	lz.append("inode usage: %s%%"%(inodes,))
+	memuse = float(output("free | grep Mem | awk '{print $3/$2 * 100.0}'"))
+	lz.append("memory usage: %s%%"%(memuse,))
+	for l in lz:
+		log(l)
+	if hdrive > thresh or inodes > thresh or memuse > thresh:
+		log("threshold exceeded - notifying admins")
+		email_admins("threshold exceeded", "\n".join(lz))
+	log("goodbye")
+	close_log()
