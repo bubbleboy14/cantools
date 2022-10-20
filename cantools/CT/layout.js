@@ -95,7 +95,7 @@ CT.layout = {
 			}));
 		}
 		if (opts.banner && opts.banner[location.pathname]) {
-			content.push(opts.banner[location.pathname]);
+			content.push(opts.banner[location.pathname]());
 			document.body.classList.add("bannered");
 		}
 		CT.dom.setContent(bighead, CT.dom.div(content, "h1 w1"));
