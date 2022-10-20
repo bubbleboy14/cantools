@@ -1150,7 +1150,7 @@ CT.dom = {
 			placeholder = obj.placeholder;
 			onclick = obj.onclick;
 		}
-		var nonbsp, restricted, tables, spellcheck, fullscreen, charmap;
+		var f, dw, nonbsp, restricted, tables, spellcheck, fullscreen, charmap;
 		if (wyz && wyz.includes) {
 			nonbsp = wyz.includes("nonbsp");
 			restricted = wyz.includes("restricted");
@@ -1160,7 +1160,13 @@ CT.dom = {
 			charmap = wyz.includes("charmap");
 		}
 		id = id || ("sf" + Math.floor((Math.random() * 100000)));
-		var f = CT.dom.inputEnterCallback(CT.dom[isTA ? "textArea" : "field"](id,
+		if (keyup == "dynwidth") {
+			dw = true;
+			keyup = function() {
+				f.style.width = (f.value.length * 17) + "px";
+			};
+		}
+		f = CT.dom.inputEnterCallback(CT.dom[isTA ? "textArea" : "field"](id,
 			value, classname, type), cb, id, noBreak, keyup, onclick);
 		if (placeholder)
 			f.placeholder = placeholder;
@@ -1170,6 +1176,7 @@ CT.dom = {
 		wyz && CT.rte.qwiz(id, value, !restricted, tables, spellcheck, fullscreen, charmap);
 		if (blurs)
 			CT.dom.blurField(f, blurs);
+		dw && keyup();
 		return f;
 	},
 
