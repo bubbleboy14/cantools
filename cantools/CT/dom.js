@@ -1163,7 +1163,7 @@ CT.dom = {
 		if (keyup == "dynwidth") {
 			dw = true;
 			keyup = function() {
-				f.style.width = (f.value.length * 17) + "px";
+				f.style.width = (f.value.length * 16) + "px";
 			};
 		}
 		f = CT.dom.inputEnterCallback(CT.dom[isTA ? "textArea" : "field"](id,
