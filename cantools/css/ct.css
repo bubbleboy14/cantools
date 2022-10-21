@@ -527,6 +527,42 @@
 .pr50 {
     padding-right: 50px;
 }
+.pt60 {
+    padding-top: 60px;
+}
+.pb60 {
+    padding-bottom: 60px;
+}
+.pl60 {
+    padding-left: 60px;
+}
+.pr60 {
+    padding-right: 60px;
+}
+.pt70 {
+    padding-top: 70px;
+}
+.pb70 {
+    padding-bottom: 70px;
+}
+.pl70 {
+    padding-left: 70px;
+}
+.pr70 {
+    padding-right: 70px;
+}
+.pt80 {
+    padding-top: 80px;
+}
+.pb80 {
+    padding-bottom: 80px;
+}
+.pl80 {
+    padding-left: 80px;
+}
+.pr80 {
+    padding-right: 80px;
+}
 .lh1-2 {
     line-height: 1.2;
 }
