@@ -481,6 +481,8 @@ var CT = {
 		CT.initCSS();
 		if (cfg.autoparse)
 			CT.dom.setAutoparse(cfg.autoparse);
+		if (cfg.parsevid)
+			CT.parse.enableVideo();
 		CT.layout.header(cfg.header);
 		cfg.footer && CT.layout.footer(cfg.footer);
 		cfg.mobile.scale && CT.dom.meta("viewport", "width=device-width, initial-scale=1");
