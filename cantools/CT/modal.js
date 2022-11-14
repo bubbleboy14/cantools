@@ -356,6 +356,7 @@ CT.modal.Prompt = CT.Class({
 					rows: true,
 					input: CT.dom.field(),
 					tapCb: this.submitAC,
+					filters: this.opts.autocomplete.filters,
 					property: this.opts.autocomplete.property,
 					modelName: this.opts.autocomplete.modelName
 				}).input;
