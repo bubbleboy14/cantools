@@ -659,7 +659,7 @@
 }
 
 /* required CT classes */
-.activetab a {
+.activetab, .activetab a {
     color: #670002;
 }
 .backdrop {
