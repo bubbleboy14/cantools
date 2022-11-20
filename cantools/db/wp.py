@@ -62,3 +62,10 @@ def transmeta(pid, key, transformer):
 	mid, uid, k, v = mres[0]
 	val = transformer(v)
 	query("update wp_usermeta set meta_value = '%s' where umeta_id = '%s';"%(val, mid), False)
+
+def id2email(memid):
+	e = query("select user_email from wp_users where ID = '%s';"%(memid,))
+	return e and e[0][0] or "[account %s not found]"%(memid,)
+
+def ip2mems(ip):
+	return [id2email(m[0]) for m in query("select user_id from wp_usermeta where meta_value = '%s';"%(ip,))]
