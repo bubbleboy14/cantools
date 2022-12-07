@@ -106,6 +106,11 @@ CT.parse = {
 	"validPassword": function(s) {
 	    return s && s.length > 5;
 	},
+	"validIPv4": function(s) {
+		var parts = s.split("."),
+			rejoined = parts.map(p => parseInt(p)).join(".");
+		return parts.length == 4 && s == rejoined;
+	},
 
 	// input filter
 	"numOnly": function(n, allowDot, noNeg) {
