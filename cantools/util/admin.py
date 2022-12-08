@@ -58,3 +58,11 @@ def vitals(dpath="/root", thresh=90):
 		email_admins("threshold exceeded", "\n".join(lz))
 	log("goodbye")
 	close_log()
+
+def sslredirect(port=80):
+	from dez.http.reverseproxy import startreverseproxy
+	from cantools.config import Config
+	startreverseproxy(Config({
+		"port": port,
+		"ssl_redirect": "auto"
+	}))
