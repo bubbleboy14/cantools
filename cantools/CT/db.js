@@ -370,7 +370,7 @@ CT.db.edit = {
 			return false;
 		return ptype in CT.db.edit._d;
 	},
-	getDefaults: function(modelName, extras, fixed) {
+	getDefaults: function(modelName, extras, fixed, includeModelName) {
 		var k, d = extras || {},
 			schema = CT.db._schema[modelName];
 		for (k in schema)
@@ -378,6 +378,8 @@ CT.db.edit = {
 		if (fixed)
 			for (k in fixed)
 				d[k] = fixed[k];
+		if (includeModelName)
+			d.modelName = modelName;
 		return d;
 	},
 	_val: function(f, ptype) {
