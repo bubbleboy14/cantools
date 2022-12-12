@@ -1,5 +1,5 @@
 import os
-from cantools.util import cmd, output, log, set_log, close_log
+from cantools.util import cmd, output, log, set_log, close_log, read, write
 
 def _starter(sname):
 	starter = "screen -L -dm"
@@ -66,3 +66,11 @@ def sslredirect(port=80):
 		"port": port,
 		"ssl_redirect": "auto"
 	}))
+
+def replace(flag, swap, ext="md"):
+	fz = list(filter(lambda fn : fn.endswith(ext), os.listdir()))
+	log("processing %s %s files"%(len(fz), ext))
+	for f in fz:
+		log(f, 1)
+		write(read(f).replace(flag, swap), f)
+	log("goodbye!")
