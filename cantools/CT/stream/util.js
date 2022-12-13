@@ -105,7 +105,7 @@ var _sutil = CT.stream.util = {
 		});
 	},
 	tl: function(playchan, className) {
-		var p = "https://truthlink.info";
+		var p = "https://tl.fzn.party";
 		if (playchan) // playchan = playlist[] or channel""
 			p += "#" + (Array.isArray(playchan) ? playchan.join("~") : ("~" + playchan));
 		return CT.dom.iframe(p, className || "fullv noborder");
