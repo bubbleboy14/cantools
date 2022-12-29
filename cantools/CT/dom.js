@@ -951,6 +951,8 @@ CT.dom = {
 		var eyears = ["Year"];
 		startdate = startdate || CT.dom.currentyear;
 		enddate = enddate || CT.dom.currentyear;
+		if (startdate == enddate)
+			enddate += 1;
 		for (var i = startdate; i <= enddate; i++)
 			eyears.push(i);
 		node = node || CT.dom.node(null, "span");
