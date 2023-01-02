@@ -105,6 +105,7 @@ cfg = {
 	"build": {
 		"include": [],
 		"exclude": [],
+		"notjs": [],
 		"prod": {
 			"b64": False,
 			"closure": False
