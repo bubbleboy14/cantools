@@ -193,15 +193,20 @@ def build_frags(mode="web", admin_ct_path=None):
             fragz.add(p)
     fragged = set()
     def build_frag(frag):
-        block = processjs(frag, admin_ct_path=admin_ct_path)
+        notjs = frag in config.build.notjs
+        if notjs:
+            log("not js: %s"%(frag,))
+            block = read(frag, binary=True)
+        else:
+            block = processjs(frag, admin_ct_path=admin_ct_path)
         path = os.path.join(base, frag[len(config.js.path)+1:])
         checkdir(path.rsplit("/", 1)[0], True)
-        if frag in config.build.exclude:
+        if notjs or frag in config.build.exclude:
             log("path excluded -- skipping compression/obfuscation", 2)
         else:
             log("mangling", 2)
             block = jsmin(block)
-        write(block, path)
+        write(block, path, binary=notjs)
     while len(fragged) is not len(fragz):
         fcopy = list(filter(lambda f : f not in fragged, fragz))
         fragged.update(fcopy)
