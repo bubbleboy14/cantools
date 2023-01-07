@@ -1,4 +1,4 @@
-import json, getpass
+import os, json, getpass
 from base64 import b64encode, b64decode
 from .util import read, write
 from .cfg import cfg
@@ -105,7 +105,12 @@ config.plugin.update("modules", [])
 config.plugin.update("repos", [])
 
 items = []
-for line in read("ct.cfg", True):
+lines = read("ct.cfg", True)
+gcpath = os.path.join(os.path.expanduser("~"), "ct.cfg")
+if os.path.isfile(gcpath):
+	print("loading global configuration at: %s"%(gcpath,))
+	lines = read(gcpath, True) + lines
+for line in lines:
 	if line.startswith("#"):
 		continue
 	key, val = [term.strip() for term in line.split(" = ", 1)]
