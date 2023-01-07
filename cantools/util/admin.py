@@ -74,3 +74,6 @@ def replace(flag, swap, ext="md"):
 		log(f, 1)
 		write(read(f).replace(flag, swap), f)
 	log("goodbye!")
+
+def json2abi(fname):
+	write(read(fname, isjson=True)['abi'], fname.replace("json", "abi"), isjson=True)
