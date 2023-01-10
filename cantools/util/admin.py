@@ -13,23 +13,32 @@ def certs(dpath="/root", sname=None):
 	log("goodbye")
 	close_log()
 
-def screener(ctnum=None, dpath="/root", sname=None):
+def pcount(pname):
+	log("checking count: %s"%(pname,), important=True)
+	num = int(output("ps -ef | grep %s | wc -l"%(pname,)))
+	log("%s count: %s"%(pname, num), 1)
+	return num
+
+def pcheck(pname, target, starter):
+	if pcount(pname) != target:
+		log("not enough %s processes - restarting screen!"%(pname,), 1)
+		cmd("killall screen; %s"%(starter,))
+		return True
+
+def screener(ctnum=None, dpath="/root", drpnum=None, sname=None):
 	os.chdir(dpath)
 	set_log("scrn.log")
 	log("checking screen", important=True)
 	starter = _starter(sname)
 	if ctnum and type(ctnum) is not int:
 		ctnum = ctnum.isdigit() and int(ctnum)
+	if drpnum and type(drpnum) is not int:
+		drpnum = drpnum.isdigit() and int(drpnum)
 	if "No Sockets found" in output("screen -list"):
 		log("no screen! restarting", 1)
 		cmd(starter)
-	elif ctnum:
-		log("checking count", important=True)
-		num = int(output("ps -ef | grep ctstart | wc -l"))
-		log("ctstarts: %s"%(num,), 1)
-		if num != ctnum:
-			log("not enough ctstarts! restarting", 1)
-			cmd("killall screen; %s"%(starter,))
+	else:
+		(ctnum and pcheck("ctstart", ctnum, starter)) or (drpnum and pcheck("dez_reverse_proxy", drpnum, starter))
 	log("goodbye")
 	close_log()
 
