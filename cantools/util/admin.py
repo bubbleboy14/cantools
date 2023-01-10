@@ -39,7 +39,7 @@ def screener(ctnum=None, dpath="/root", drpnum=None, sname=None):
 		cmd(starter)
 	else:
 		(ctnum and pcheck("ctstart", ctnum, starter)) or (drpnum and pcheck("dez_reverse_proxy", drpnum, starter))
-	log("goodbye")
+	log("goodbye", important=True)
 	close_log()
 
 def check(cmd="df"):
