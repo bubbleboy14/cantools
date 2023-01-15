@@ -3,6 +3,9 @@ from cantools.util import cmd, output, log, set_log, close_log, read, write
 
 def _starter(sname):
 	starter = "screen -L -dm"
+	if not output("which screen"):
+		log("screen not found - using full path")
+		starter = "/usr/bin/" + starter
 	return sname and "%s -S %s"%(starter, sname) or starter
 
 def certs(dpath="/root", sname=None):
