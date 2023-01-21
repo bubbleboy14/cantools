@@ -28,7 +28,7 @@ Centered, almost-fullscreen, fade-in, image-backed modal with translucent backdr
 
 defaults:
 	{
-		className: "backdrop",
+		className: "backdrop mosthigh",
 		innerClass: "lightbox",
 		transition: "fade",
 		caption: "",
@@ -61,7 +61,6 @@ Additionally, CT.modal includes several convenience functions:
 CT.modal = {
 	_defs: {
 		resizeRecenter: true,
-		transition: "slide",
 		orienter: "window" // || node
 	},
 	defaults: function(opts) {
@@ -80,16 +79,20 @@ CT.modal = {
 			style: "single-choice"
 		}));
 	},
-	modal: function(content, onhide, opts, closeOnClick, noshow) {
-		var mod = new CT.modal.Modal(CT.merge(opts, {
-			content: content,
-			onclick: closeOnClick && function() {
-				mod.hide();
-			}
-		}, CT.modal._defs));
+	modal: function(content, onhide, opts, closeOnClick, noshow, variety) {
+		var coz = { content: content }, mod;
+		if (closeOnClick)
+			coz.onclick = () => mod.hide();
+		mod = new CT.modal[variety || "Modal"](CT.merge(opts, coz, CT.modal._defs));
 		if (onhide) mod.on.hide = onhide;
 		noshow || mod.show();
 		return mod;
+	},
+	lightbox: function(content, onhide, opts, closeOnClick, noshow) {
+		return CT.modal.modal(content, onhide, opts, closeOnClick, noshow, "LightBox");
+	},
+	iframe: function(src) {
+		return CT.modal.lightbox(CT.dom.iframe(src, "full"));
 	},
 	img: function(src, onhide) {
 		return CT.modal.modal(CT.dom.img(src, "wm200p hm200p"), onhide);
@@ -106,7 +109,7 @@ CT.modal._defaults = {
 	Modal: {
 		className: "basicpopup",
 		innerClass: "h1 w1 scroller",
-		transition: "none",
+		transition: "slide",
 		center: true,
 		noClose: false, // turns off 'x' in corner
 		onclick: null,
@@ -115,7 +118,7 @@ CT.modal._defaults = {
 		}
 	},
 	LightBox: {
-		className: "backdrop",
+		className: "backdrop mosthigh",
 		innerClass: "lightbox",
 		transition: "fade",
 		caption: "",
@@ -124,6 +127,7 @@ CT.modal._defaults = {
 	},
 	Prompt: {
 		className: "basicpopup mosthigh",
+		transition: "slide",
 		style: "string",
 		prompt: "",
 		clear: false, // string/password only
@@ -175,16 +179,18 @@ CT.modal.Modal = CT.Class({
 				setTimeout(function() {
 					CT.trans.trans({
 						node: n,
-						property: "opacity",
-						value: 1
+						value: 1,
+						duration: 1000,
+						property: "opacity"
 					});
 				}, 100);
 			};
 			n.hide = function() {
 				CT.trans.trans({
 					node: n,
-					property: "opacity",
 					value: 0,
+					duration: 1000,
+					property: "opacity",
 					cb: function() {
 						CT.dom.remove(n);
 					}
