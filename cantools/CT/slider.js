@@ -149,7 +149,7 @@ CT.slider.Slider = CT.Class({
 			up: this.updatePosition,
 			interval: "auto"
 		};
-		CT.drag.makeDraggable(this.container, this.dragOpts);
+		(opts.frames.length > 1) && CT.drag.makeDraggable(this.container, this.dragOpts);
 		if (opts.autoSlideInterval && opts.autoSlide && !opts.startFrame)
 			this.resume();
 		CT.gesture.listen("down", this.container, this.pause);
