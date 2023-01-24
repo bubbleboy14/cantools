@@ -1,12 +1,17 @@
 import os
-from cantools.util import cmd, output, log, set_log, close_log, read, write
+from cantools.util import cmd, output, error, log, set_log, close_log, read, write
 
 def _starter(sname):
 	starter = "screen -L -dm"
-	if not output("which screen"):
-		log("screen not found - using full path")
-		starter = "/usr/bin/" + starter
 	return sname and "%s -S %s"%(starter, sname) or starter
+
+def _which(names):
+	success = True
+	for name in names:
+		if not output("which %s"%(name,)):
+			log("%s not in path!"%(name,))
+			success = False
+	return success
 
 def certs(dpath="/root", sname=None):
 	os.chdir(dpath)
@@ -31,7 +36,8 @@ def pcheck(pname, target, starter):
 def screener(ctnum=None, dpath="/root", drpnum=None, sname=None):
 	os.chdir(dpath)
 	set_log("scrn.log")
-	log("checking screen", important=True)
+	log("checking modules", important=True)
+	_which(["screen", "ctstart", "ctpubsub"]) or error("update your path!")
 	starter = _starter(sname)
 	if ctnum and type(ctnum) is not int:
 		ctnum = ctnum.isdigit() and int(ctnum)
