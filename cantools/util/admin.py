@@ -37,7 +37,7 @@ def screener(ctnum=None, dpath="/root", drpnum=None, sname=None):
 	os.chdir(dpath)
 	set_log("scrn.log")
 	log("checking modules", important=True)
-	_which(["screen", "ctstart", "ctpubsub"]) or error("update your path!")
+	_which(["screen", "ctstart", "ctpubsub", "dez_reverse_proxy"]) or error("update your path!")
 	starter = _starter(sname)
 	if ctnum and type(ctnum) is not int:
 		ctnum = ctnum.isdigit() and int(ctnum)
