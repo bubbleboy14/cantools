@@ -1,7 +1,7 @@
 import os, rel, ssl, sys, json, requests
 from dez.http import fetch as dfetch, post as dpost
 from ..util import *
-from ...util import set_log, set_error
+from ...util import set_log, set_error, init_rel
 from .mail import send_mail, email_admins, email_reportees
 from .sms import send_sms
 from .controller import getController
@@ -37,10 +37,7 @@ def run_dez_webserver():
 	setlog(c.web.logger.simple)
 	if config.web.log:
 		set_log(os.path.join("logs", config.web.log))
-	if config.rel.sleep:
-		rel.set_sleep(config.rel.sleep)
-	if config.rel.turbo:
-		rel.set_turbo(config.rel.turbo)
+	init_rel()
 	if "kernel" in config.log.allow:
 		rel.timeout(1, log_kernel)
 	set_error(fail)
