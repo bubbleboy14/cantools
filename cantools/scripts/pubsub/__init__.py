@@ -8,10 +8,12 @@
     -p PORT, --port=PORT  use a specific port (default: 8888)
 """
 
+from cantools.util import init_rel
 from cantools import config
 from .bots import Bot
 
 def start(host=config.pubsub.host, port=config.pubsub.port):
+    init_rel()
     from .ps import PubSub
     PubSub(host, port).start()
 
