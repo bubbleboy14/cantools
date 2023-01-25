@@ -9,6 +9,14 @@ from .admin import certs, screener
 def init_basic():
     os.path.isdir("emails") and sys.path.append("emails")
 
+def init_rel():
+    import rel
+    from cantools import config
+    if config.rel.sleep:
+        rel.set_sleep(config.rel.sleep)
+    if config.rel.turbo:
+        rel.set_turbo(config.rel.turbo)
+
 def init_gae():
     try:
         from google import appengine
