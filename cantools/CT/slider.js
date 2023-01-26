@@ -149,11 +149,13 @@ CT.slider.Slider = CT.Class({
 			up: this.updatePosition,
 			interval: "auto"
 		};
-		if (opts.frames.length > 1)
-			CT.drag.makeDraggable(this.container, this.dragOpts);
-		else if (opts.dragFirstFirst)
-			CT.drag.makeDraggable(this.container.firstChild.firstChild,
-				{ interval: "auto", constraint: opts.orientation });
+		if (CT.info.mobile) {
+			if (opts.frames.length > 1)
+				CT.drag.makeDraggable(this.container, this.dragOpts);
+			else if (opts.dragFirstFirst)
+				CT.drag.makeDraggable(this.container.firstChild.firstChild,
+					{ interval: "auto", constraint: opts.orientation });
+		}
 		if (opts.autoSlideInterval && opts.autoSlide && !opts.startFrame)
 			this.resume();
 		CT.gesture.listen("down", this.container, this.pause);
