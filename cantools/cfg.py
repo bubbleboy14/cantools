@@ -7,8 +7,8 @@ cfg = {
 	},
 	"mempad": 0, # 0 = unset (uses dez's default)
 	"rel": { # 0 = unset (uses rel's default)
-		"sleep": 0.01,
-		"turbo": 0.00000001
+		"sleep": 0,
+		"turbo": 0
 	},
 	"plugin": {
 		"modules": [],
