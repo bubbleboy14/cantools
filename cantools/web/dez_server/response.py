@@ -60,4 +60,4 @@ class Response(object):
         set_header(self._header)
         set_send(self._send)
         set_close(self._close)
-
+        set_redir(self.response.redirect)
