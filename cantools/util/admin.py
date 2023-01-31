@@ -95,3 +95,14 @@ def replace(flag, swap, ext="md"):
 
 def json2abi(fname):
 	write(read(fname, isjson=True)['abi'], fname.replace("json", "abi"), isjson=True)
+
+def ushort(url):
+	from cantools import config
+	csl = config.shortlinker
+	if not csl:
+		error("no shortlinker configured")
+	from urllib.parse import quote
+	from cantools.web import fetch
+	code = fetch("https://%s?u=%s"%(csl, quote(url)), ctjson=True)
+	print("code:", code)
+	return "https://%s?k=%s"%(csl, code)
