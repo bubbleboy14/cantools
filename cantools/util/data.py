@@ -65,7 +65,7 @@ def batch(dlist, f, *args, **kwargs):
 
 def token(n=10):
 	import random, string
-	samp = string.ascii_uppercase + string.digits
+	samp = string.ascii_letters + string.digits
 	pop = len(samp)
 	s = ""
 	while n:
