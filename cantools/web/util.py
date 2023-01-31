@@ -100,6 +100,9 @@ def cgi_read():
 def set_read(f):
     localvars.read = f
 
+def set_redir(f):
+    localvars.redir = f
+
 def rdec(data):
     bdata = b64decode(data.encode())
     try: # py2
@@ -160,7 +163,7 @@ def cgi_load(force=False):
         else:
             fail('no request data!')
 
-def cgi_get(key, choices=None, required=True, default=None, shield=False):
+def cgi_get(key, choices=None, required=True, default=None, shield=False, decode=False):
     request = local("request")
     val = request.get(key, default)
     if val is None:
@@ -173,6 +176,8 @@ def cgi_get(key, choices=None, required=True, default=None, shield=False):
             fail()
     if choices and val not in choices:
         fail('invalid value for "%s": "%s"'%(key, val))
+    if decode and val:
+        return unquote(val)
     return val
 
 # response functions
