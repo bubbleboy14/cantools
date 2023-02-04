@@ -96,6 +96,7 @@ CT.map.Map = CT.Class({
 			bounds = oz.autoFrame && this.autoBounds(),
 			bmin = bounds && bounds.min,
 			bmax = bounds && bounds.max;
+		this.built = true;
 		this.opts.center = CT.map.util.latlng(this.opts.center);
 		this.map = new google.maps.Map(this.opts.node, this.opts);
 		for (k in this.opts.markers)
@@ -117,6 +118,7 @@ CT.map.Map = CT.Class({
 		this.map.panTo(latlng);
 	},
 	refresh: function() {
+		this.built || this.build();
 		google.maps.event.trigger(this.map, 'resize');
 	},
 	_geoSucceed: function(pos) {
@@ -130,6 +132,12 @@ CT.map.Map = CT.Class({
 	listen: function(evt, cb) {
 		google.maps.event.addListener(this.map, evt, cb);
 	},
+	build: function() {
+		if (this.opts.center || this.opts.autoFrame)
+			this._build();
+		else
+			navigator.geolocation.getCurrentPosition(this._geoSucceed, this._geoFail);
+	},
 	init: function(opts) { // required: node
 		this.opts = opts = CT.merge(opts, {
 			zoom: 12,
@@ -139,10 +147,6 @@ CT.map.Map = CT.Class({
 			markers: {},
 			listeners: {}
 		});
-
-		if (opts.center || opts.autoFrame)
-			this._build();
-		else
-			navigator.geolocation.getCurrentPosition(this._geoSucceed, this._geoFail);
+		opts.deferBuild || this.build();
 	}
 });
