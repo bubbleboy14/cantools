@@ -39,9 +39,12 @@ def binpath(bpath="/usr/bin/"):
 	log("checking %s core modules"%(len(coremods),), important=True)
 	missings = []
 	for name in coremods:
-		mloc = output("which %s"%(name,))
-		if mloc != "%s%s"%(bpath, name):
-			log("%s not in %s"%(name, bpath))
+		mpath = "%s%s"%(bpath, name)
+		log("checking %s"%(name,), 1)
+		if not os.path.exists(mpath):
+			mloc = output("which %s"%(name,))
+			mloc or error("%s not installed"%(name,))
+			log("%s not in %s - found at %s instead"%(name, bpath, mloc))
 			missings.append(mloc)
 	if missings and input("symlink %s modules to %s? [N/y] "%(len(missings), bpath)).lower().startswith("y"):
 		os.chdir(bpath)
