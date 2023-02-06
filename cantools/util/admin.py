@@ -33,11 +33,27 @@ def pcheck(pname, target, starter):
 		cmd("killall screen; %s"%(starter,))
 		return True
 
+coremods = ["screen", "ctstart", "ctpubsub", "dez_reverse_proxy"]
+
+def binpath(bpath="/usr/bin/"):
+	log("checking %s core modules"%(len(coremods),), important=True)
+	missings = []
+	for name in coremods:
+		mloc = output("which %s"%(name,))
+		if mloc != "%s%s"%(bpath, name):
+			log("%s not in %s"%(name, bpath))
+			missings.push(mloc)
+	if missings and input("symlink %s modules to %s? [N/y] "%(len(missings), bpath)).lower().startswith("y"):
+		os.chdir(bpath)
+		for mloc in missings:
+			cmd("ln -s %s"%(mloc,))
+	log("goodbye", important=True)
+
 def screener(ctnum=None, dpath="/root", drpnum=None, sname=None):
 	os.chdir(dpath)
 	set_log("scrn.log")
 	log("checking modules", important=True)
-	_which(["screen", "ctstart", "ctpubsub", "dez_reverse_proxy"]) or error("update your path!")
+	_which(coremods) or error("update your path!")
 	starter = _starter(sname)
 	if ctnum and type(ctnum) is not int:
 		ctnum = ctnum.isdigit() and int(ctnum)
