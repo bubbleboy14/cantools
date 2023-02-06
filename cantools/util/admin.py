@@ -42,7 +42,7 @@ def binpath(bpath="/usr/bin/"):
 		mloc = output("which %s"%(name,))
 		if mloc != "%s%s"%(bpath, name):
 			log("%s not in %s"%(name, bpath))
-			missings.push(mloc)
+			missings.append(mloc)
 	if missings and input("symlink %s modules to %s? [N/y] "%(len(missings), bpath)).lower().startswith("y"):
 		os.chdir(bpath)
 		for mloc in missings:
