@@ -28,7 +28,7 @@ def pcount(pname):
 	return num
 
 def pcheck(pname, target, starter):
-	if pcount(pname) != target:
+	if target and pcount(pname) != target:
 		log("not enough %s processes - restarting screen!"%(pname,), 1)
 		cmd("killall screen; %s"%(starter,))
 		return True
@@ -52,7 +52,7 @@ def binpath(bpath="/usr/bin/"):
 			cmd("ln -s %s"%(mloc,))
 	log("goodbye", important=True)
 
-def screener(ctnum=None, dpath="/root", drpnum=None, sname=None):
+def screener(ctnum=None, dpath="/root", drpnum=None, sname=None, psnum=None):
 	os.chdir(dpath)
 	set_log("scrn.log")
 	log("checking modules", important=True)
@@ -62,11 +62,13 @@ def screener(ctnum=None, dpath="/root", drpnum=None, sname=None):
 		ctnum = ctnum.isdigit() and int(ctnum)
 	if drpnum and type(drpnum) is not int:
 		drpnum = drpnum.isdigit() and int(drpnum)
+	if psnum and type(psnum) is not int:
+		psnum = psnum.isdigit() and int(psnum)
 	if "No Sockets found" in output("screen -list"):
 		log("no screen! restarting", 1)
 		cmd(starter)
 	else:
-		(ctnum and pcheck("ctstart", ctnum, starter)) or (drpnum and pcheck("dez_reverse_proxy", drpnum, starter))
+		pcheck("ctstart", ctnum, starter) or pcheck("dez_reverse_proxy", drpnum, starter) or pcheck("ctpubsub", psnum, starter)
 	log("goodbye", important=True)
 	close_log()
 
