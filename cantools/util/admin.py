@@ -52,7 +52,7 @@ def binpath(bpath="/usr/bin/"):
 			cmd("ln -s %s"%(mloc,))
 	log("goodbye", important=True)
 
-def screener(ctnum=None, dpath="/root", drpnum=None, sname=None, psnum=None):
+def screener(ctnum=None, dpath="/root", drpnum=None, psnum=None, sname=None):
 	os.chdir(dpath)
 	set_log("scrn.log")
 	log("checking modules", important=True)
