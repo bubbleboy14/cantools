@@ -29,8 +29,6 @@ ALTS = {
     "pubsub": os.path.join("pubsub", "__init__")
 }
 HERE = os.path.abspath(".").split(os.path.sep)[-1]
-if not os.path.isdir(HERE):
-    HERE = input("module name? ")
 CUSTOM = os.path.isfile("doc.cfg") and read("doc.cfg")
 ISPLUGIN = not CUSTOM and HERE.startswith("ct") and HERE
 AUTO = HERE != "cantools" and not CUSTOM and not ISPLUGIN
@@ -187,7 +185,7 @@ def autodoc(data, curdir, contents):
                     })
 
 def build():
-    global OMIT
+    global OMIT, HERE
     parser = OptionParser("ctdoc [-w]")
     parser.add_option("-w", "--web", action="store_true",
         dest="web", default=False, help="build web docs")
@@ -196,6 +194,8 @@ def build():
     parser.add_option("-o", "--omit", dest="omit", default="",
         help="omit any files from autodoc?")
     options, args = parser.parse_args()
+    if not os.path.isdir(HERE):
+        HERE = input("module name? ")
     log("building docs")
     ds = []
     if AUTO or options.auto:
