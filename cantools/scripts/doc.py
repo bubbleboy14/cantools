@@ -29,6 +29,8 @@ ALTS = {
     "pubsub": os.path.join("pubsub", "__init__")
 }
 HERE = os.path.abspath(".").split(os.path.sep)[-1]
+if not os.path.isdir(HERE):
+    HERE = input("module name? ")
 CUSTOM = os.path.isfile("doc.cfg") and read("doc.cfg")
 ISPLUGIN = not CUSTOM and HERE.startswith("ct") and HERE
 AUTO = HERE != "cantools" and not CUSTOM and not ISPLUGIN
@@ -198,7 +200,8 @@ def build():
     ds = []
     if AUTO or options.auto:
         OMIT = options.omit
-        os.path.walk(HERE, autodoc, ds)
+        for dirpath, dirnames, filenames in os.walk(HERE):
+            autodoc(ds, dirpath, filenames)
     else:
         abdata = (ISPLUGIN or CUSTOM) and "# %s\n%s"%(HERE, read("about.txt")) or config.about%(__version__,)
         ds.append(abdata)
