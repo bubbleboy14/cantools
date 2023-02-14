@@ -70,7 +70,8 @@ class Query(object):
                         if config.db.alter == "auto" or not input("Add missing column '%s' to table '%s' (sqlite-only!)? [Y/n] "%(tcol, tmod)).lower().startswith("n"):
                             raise_anyway = False
                             log("adding '%s' to '%s'"%(tcol, tmod))
-                            self.session.engine.execute("ALTER TABLE %s ADD COLUMN %s"%(tmod, tcol))
+                            with self.session.engine.connect() as conn:
+                                result = conn.execute("ALTER TABLE %s ADD COLUMN %s"%(tmod, tcol))
                             log("retrying query operation")
                             res = getattr(self.query, fname)(*args, **kwargs)
                     else:
