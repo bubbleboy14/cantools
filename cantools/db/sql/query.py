@@ -1,3 +1,4 @@
+from sqlalchemy import text
 from sqlalchemy.sql import func, elements
 from cantools.util import start_timer, end_timer, log, error
 from .properties import *
@@ -71,7 +72,7 @@ class Query(object):
                             raise_anyway = False
                             log("adding '%s' to '%s'"%(tcol, tmod))
                             with self.session.engine.connect() as conn:
-                                result = conn.execute("ALTER TABLE %s ADD COLUMN %s"%(tmod, tcol))
+                                result = conn.execute(text("ALTER TABLE %s ADD COLUMN %s"%(tmod, tcol)))
                             log("retrying query operation")
                             res = getattr(self.query, fname)(*args, **kwargs)
                     else:
