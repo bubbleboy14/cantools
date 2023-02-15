@@ -276,9 +276,10 @@ CT.layout = {
 			fields.push(f);
 			if (opts.labels) {
 				var lab = CT.dom.label(item.label || item.name, f.id),
-					cont = CT.dom.div([lab, f]);
+					cont = [lab, f];
 				if (opts.extra && opts.extra[item.name])
 					cont.unshift(opts.extra[item.name](f));
+				cont = CT.dom.div(cont);
 				cont.opts = f.opts;
 				cont.getVal = f.getVal;
 				cont.updateField = f.update;
