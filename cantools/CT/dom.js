@@ -796,11 +796,13 @@ CT.dom = {
 		n.start();
 		return n;
 	},
-	"choices": function(nodes, multi, cellClass, selectedClass, onchange, stopProp) {
+	"choices": function(nodes, multi, cellClass, selectedClass, onchange, stopProp, filter) {
 		selectedClass = selectedClass || "grayback";
 		var n = CT.dom.node();
 		n._sel = null;
 		n.value = multi ? [] : -1;
+		if (filter)
+			n.appendChild(CT.dom.filter(nodes, null, null, typeof filter == "string" && filter));
 		nodes.forEach(function(node, i) {
 			node.onclick = function(e) {
 				if (!multi && n._sel)
@@ -1241,11 +1243,15 @@ CT.dom = {
 		return n;
 	},
 
-	"filter": function(nodes, placeholder, showDisplay) {
+	"filter": function(nodes, placeholder, showDisplay, className) {
 		var refresher = function(val) {
-			CT.dom.each(nodes, function(n, i) {
+			var refitem = function(n, i) {
 				CT.dom[(!val || (n.firstElementChild || n).innerHTML.toLowerCase().includes(val.toLowerCase())) ? "show" : "hide"](n, showDisplay);
-			});
+			};
+			if (Array.isArray(nodes))
+				nodes.forEach(refitem);
+			else
+				CT.dom.each(nodes, refitem);
 			clearbutt.style.display = val ? "inline" : "none";
 		}, sf = CT.dom.smartField({
 			keyup: refresher,
@@ -1255,7 +1261,7 @@ CT.dom = {
 			sf.value = "";
 			refresher();
 		}
-		return CT.dom.span([sf, clearbutt]);
+		return CT.dom.span([sf, clearbutt], className);
 	},
 
 	// resizers
