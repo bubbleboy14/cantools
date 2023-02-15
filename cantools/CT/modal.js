@@ -408,7 +408,7 @@ CT.modal.Prompt = CT.Class({
 							cz.value.includes(ti) || cz.childNodes[ti].onclick();
 						}
 					}
-				});
+				}, null, this.opts.filter);
 			selz && CT.dom.each(cz, function(sel) {
 				if (selz.includes(sel.innerHTML))
 					sel.onclick();
