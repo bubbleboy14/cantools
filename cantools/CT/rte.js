@@ -35,9 +35,9 @@ CT.rte = {
 			menubar: false,
 			convert_urls: false,
 			plugins: [
-				'advlist autolink lists link image charmap print preview anchor textcolor',
-				'searchreplace visualblocks code fullscreen',
-				'insertdatetime media table contextmenu paste code help wordcount'
+				'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'print', 'preview', 'anchor', 'textcolor',
+				'searchreplace', 'visualblocks', 'code', 'fullscreen',
+				'insertdatetime', 'media', 'table', 'contextmenu', 'paste', 'code', 'help', 'wordcount'
 			  ],
 			toolbar: 'insert | undo redo | formatselect | alignleft aligncenter alignright alignjustify | bold italic underline | forecolor backcolor | bullist numlist outdent indent removeformat help',
 		};
