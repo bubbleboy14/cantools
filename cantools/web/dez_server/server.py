@@ -72,7 +72,7 @@ def _ctjson(result):
 
 def parse_url_parts(host, path, port, protocol):
 	if "://" in host:
-		protocol, host = host.split("://")
+		protocol, host = host.split("://", 1)
 		if "/" in host:
 			host, path = host.split("/", 1)
 			path = "/" + path
