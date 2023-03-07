@@ -7,8 +7,8 @@
     -d, --dynamic         switch to dynamic (development) mode
     -s, --static          switch to static (debug) mode
     -p, --production      switch to production (garbled) mode
-    -u, --upload          uploads project in specified mode and then switches
-                          back to dynamic (development) mode
+    -u, --upload          uploads project in specified mode and then (if
+                          gae) switches back to dynamic (development) mode
     -n, --no_build        skip compilation step
     -j JS_PATH, --js_path=JS_PATH
                           set javascript path (default=js)
@@ -122,6 +122,22 @@ def vpush():
         cmd("twine upload dist/ct-%s-py2.py3-none-any.whl"%(version,))
     log("we did it (%s -> %s)!"%(__version__, version), important=True)
 
+def upit():
+    if config.web.server == "gae": # switches back to -d mode [ultra deprecated]
+        log("uploading files")
+        subprocess.call('appcfg.py update . --no_precompilation --noauth_local_webserver', shell=True)
+        setmode("dynamic")
+        return
+    upop = input("upload with git or svn or cancel ([G]it/[s]vn/[c]ancel)? ").lower()[:1]
+    if upop == "c":
+        return
+    if upop == "s":
+        cmd('svn commit html-production/ -m"prod"')
+    else: # default git
+        cmd("git add html-production/")
+        cmd('git commit -m "prod"')
+        cmd("git push")
+
 def run():
     from optparse import OptionParser
     parser = OptionParser("ctdeploy [-d|s|p] [-un] [--js_path=PATH]")
@@ -132,7 +148,7 @@ def run():
     parser.add_option("-p", "--production", action="store_true", dest="production",
         default=False, help="switch to production (garbled) mode")
     parser.add_option("-u", "--upload", action="store_true", dest="upload", default=False,
-        help="uploads project in specified mode and then switches back to dynamic (development) mode")
+        help="uploads project in specified mode and then (if gae) switches back to dynamic (development) mode")
     parser.add_option("-n", "--no_build", action="store_true",
         dest="no_build", default=False, help="skip compilation step")
     parser.add_option("-j", "--js_path", dest="js_path", default=config.js.path,
@@ -160,11 +176,9 @@ def run():
         # 2) switch to specified mode
         setmode(mode)
 
-        # 3) if -u, upload project and switch back to -d mode
+        # 3) if -u, upload project
         if options.upload:
-            log("uploading files")
-            subprocess.call('appcfg.py update . --no_precompilation --noauth_local_webserver', shell=True)
-            setmode("dynamic")
+            upit()
 
     log("goodbye")
 
