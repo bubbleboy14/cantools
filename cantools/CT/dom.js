@@ -337,7 +337,7 @@ CT.dom = {
 			s.appendChild(CT.dom.node(onames[i], "option",
 				"", "", {"value": ovalues[i]}));
 		}
-		if (curvalue)
+		if (curvalue || defaultvalue)
 			s.value = ovalues.indexOf(curvalue) != -1 && curvalue || defaultvalue;
 		s.fieldValue = () => s.container ? s.container.value() : s.value;
 		s.onchange = function() {
