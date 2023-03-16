@@ -137,9 +137,10 @@ class Creeper(object):
 		self.start()
 
 	def signed(self, num):
+		num = round(num, 2)
 		return num < 0 and num or "+%s"%(num,)
 
-	def pad(self, s, target=11):
+	def pad(self, s, target=10):
 		ls = len(s)
 		if ls < target:
 			return "%s%s"%(s, " " * (target - ls))
