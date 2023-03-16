@@ -143,19 +143,21 @@ class Creeper(object):
 			return "%s%s"%(s, " " * (target - ls))
 		return s
 
-	def creep(self):
+	def calc(self, diff):
 		dz = self.diffs
+		dz.append(diff)
+		if len(dz) > 10:
+			dz.pop(0)
+		dl = len(dz)
+		line = self.pad("diff: %s"%(self.signed(diff),))
+		if dl > 1:
+			return "%s ; %s-sec average: %s"%(line, dl, self.signed(sum(dz) / dl))
+		return line
+
+	def creep(self):
 		current = int(output("free | grep Mem | awk '{print $3}'", True))
 		if self.last:
-			diff = current - self.last
-			dz.append(diff)
-			if len(dz) > 10:
-				dz.pop(0)
-			dl = len(dz)
-			line = self.pad("diff: %s"%(self.signed(diff),))
-			if dl > 1:
-				line = "%s ; %s-sec average: %s"%(line, dl, self.signed(sum(dz) / dl))
-			log(line)
+			log(self.calc(current - self.last))
 		self.last = current
 		return True
 
