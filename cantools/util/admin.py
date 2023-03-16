@@ -127,3 +127,37 @@ def ushort(url):
 	code = fetch("https://%s?u=%s"%(csl, quote(url)), ctjson=True)
 	print("code:", code)
 	return "https://%s?k=%s"%(csl, code)
+
+creeper = {
+	"diffs": []
+}
+def _signed(num):
+	return num < 0 and num or "+%s"%(num,)
+
+def _pad(s, target=12):
+	ls = len(s)
+	if ls < target:
+		return "%s%s"%(s, " " * (target - ls))
+	return s
+
+def _creep():
+	dz = creeper["diffs"]
+	cur = int(output("free | grep Mem | awk '{print $3}'", True))
+	if "last" in creeper:
+		diff = cur - creeper["last"]
+		dz.append(diff)
+		if len(dz) > 10:
+			dz.pop(0)
+		dl = len(dz)
+		line = _pad("diff: %s"%(_signed(diff),))
+		if dl > 1:
+			line = "%s ; %s-sec average: %s"%(line, dl, _signed(sum(dz) / dl))
+		log(line)
+	creeper["last"] = cur
+	return True
+
+def memcreep():
+	import rel
+	rel.signal(2, rel.abort)
+	rel.timeout(1, _creep)
+	rel.dispatch()
