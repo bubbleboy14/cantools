@@ -54,10 +54,10 @@ def rm(pname):
 def sed(fname, flag, replacement, target=None):
 	write(read(fname).replace(flag, replacement), target or fname)
 
-def cmd(cline, sudo=False):
+def cmd(cline, sudo=False, silent=False):
 	if sudo and platform.system() != "Windows":
 		cline = "sudo %s"%(cline,)
-	log('issuing command: "%s"'%(cline,), 2)
+	silent or log('issuing command: "%s"'%(cline,), 2)
 	subprocess.call(cline, shell=True)
 
 def output(cline, silent=False):
