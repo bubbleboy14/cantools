@@ -129,7 +129,9 @@ def ushort(url):
 	return "https://%s?k=%s"%(csl, code)
 
 class Creeper(object):
-	def __init__(self):
+	def __init__(self, total=40, partial=10):
+		self.total = total
+		self.partial = partial
 		self.last = None
 		self.diffs = []
 		self.start()
@@ -137,22 +139,38 @@ class Creeper(object):
 	def signed(self, num):
 		return num < 0 and num or "+%s"%(num,)
 
-	def pad(self, s, target=12):
+	def pad(self, s, target=11):
 		ls = len(s)
 		if ls < target:
 			return "%s%s"%(s, " " * (target - ls))
 		return s
 
+	def ave(self, size=None):
+		dz = self.diffs
+		if size == "now":
+			diff = dz[-1]
+		else:
+			if size:
+				nums = dz[-size:]
+			else:
+				nums = dz
+				size = len(dz)
+			diff = sum(nums) / size
+			size = "%ss"%(size,)
+		return self.pad("%s: %s"%(size, self.signed(diff)))
+
 	def calc(self, diff):
 		dz = self.diffs
 		dz.append(diff)
-		if len(dz) > 10:
+		if len(dz) > self.total:
 			dz.pop(0)
 		dl = len(dz)
-		line = self.pad("diff: %s"%(self.signed(diff),))
+		parts = [self.ave("now")]
 		if dl > 1:
-			return "%s ; %s-sec average: %s"%(line, dl, self.signed(sum(dz) / dl))
-		return line
+			if dl > self.partial:
+				parts.append(self.ave(self.partial))
+			parts.append(self.ave())
+		return " ; ".join(parts)
 
 	def creep(self):
 		current = int(output("free | grep Mem | awk '{print $3}'", True))
@@ -167,5 +185,5 @@ class Creeper(object):
 		rel.timeout(1, self.creep)
 		rel.dispatch()
 
-def memcreep():
-	Creeper()
+def memcreep(total=40, partial=10):
+	Creeper(int(total), int(partial))
