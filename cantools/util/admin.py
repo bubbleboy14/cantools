@@ -129,9 +129,10 @@ def ushort(url):
 	return "https://%s?k=%s"%(csl, code)
 
 class Creeper(object):
-	def __init__(self, total=40, partial=10):
+	def __init__(self, total=120, mid=40, short=10):
 		self.total = total
-		self.partial = partial
+		self.mid = mid
+		self.short = short
 		self.last = None
 		self.diffs = []
 		self.start()
@@ -168,15 +169,17 @@ class Creeper(object):
 		dl = len(dz)
 		parts = [self.ave("now")]
 		if dl > 1:
-			if dl > self.partial:
-				parts.append(self.ave(self.partial))
+			if dl > self.short:
+				parts.append(self.ave(self.short))
+				if dl > self.mid:
+					parts.append(self.ave(self.mid))
 			parts.append(self.ave())
 		return " ; ".join(parts)
 
 	def creep(self):
 		current = int(output("free | grep Mem | awk '{print $3}'", True))
 		if self.last:
-			log(self.calc(current - self.last))
+			print(self.calc(current - self.last))
 		self.last = current
 		return True
 
@@ -186,5 +189,5 @@ class Creeper(object):
 		rel.timeout(1, self.creep)
 		rel.dispatch()
 
-def memcreep(total=40, partial=10):
-	Creeper(int(total), int(partial))
+def memcreep(total=120, mid=40, short=10):
+	Creeper(int(total), int(mid), int(short))
