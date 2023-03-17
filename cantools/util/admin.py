@@ -133,6 +133,7 @@ class Creeper(object):
 		self.total = total
 		self.mid = mid
 		self.short = short
+		self.duration = 0
 		self.last = None
 		self.diffs = []
 		self.start()
@@ -177,9 +178,10 @@ class Creeper(object):
 		return " ; ".join(parts)
 
 	def creep(self):
+		self.duration += 1
 		current = int(output("free | grep Mem | awk '{print $3}'", True))
 		if self.last:
-			print(self.calc(current - self.last))
+			print("dur: %s ; %s"%(self.duration, self.calc(current - self.last)))
 		self.last = current
 		return True
 
