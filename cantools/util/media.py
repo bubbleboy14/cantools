@@ -159,7 +159,7 @@ def crop(img, constraint):
 	return img.crop((int(fromx), int(fromy), int(tox),
 		int(toy))).resize((constraint, constraint), Image.ANTIALIAS)
 
-p2 = []
+_p2 = []
 class ImageResizer(object):
 	def __init__(self, img):
 		self.img = img
@@ -168,7 +168,7 @@ class ImageResizer(object):
 		log("loaded with size: %sx%s"%img.size)
 
 	def closest(self, n):
-		for p in p2:
+		for p in _p2:
 			if n > p:
 				return p
 
@@ -185,11 +185,18 @@ class ImageResizer(object):
 			return outbytes.getvalue()
 
 def resizep2(data):
-	if not p2:
+	if not _p2:
 		n = 16
 		while n <= 1024:
-			p2.append(n)
+			_p2.append(n)
 			n *= 2
-		p2.reverse()
+		_p2.reverse()
 	from PIL import Image
 	return ImageResizer(Image.open(BytesIO(data))).resize()
+
+def p2(path):
+	opath = path
+	resized = resizep2(read(path, binary=True))
+	if input("overwrite %s? [Y/n] "%(path,)).lower().startswith("n"):
+		opath = input("ok, what should we call the output file? ")
+	write(resized, opath, binary=True)
