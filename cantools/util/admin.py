@@ -136,6 +136,7 @@ class Creeper(object):
 		self.duration = 0
 		self.last = None
 		self.diffs = []
+		self.diff = 0
 		self.start()
 
 	def signed(self, num):
@@ -150,7 +151,9 @@ class Creeper(object):
 
 	def ave(self, size=None):
 		dz = self.diffs
-		if size == "now":
+		if size == "diff":
+			diff = self.diff
+		elif size == "cur":
 			diff = dz[-1]
 		else:
 			if size:
@@ -163,18 +166,20 @@ class Creeper(object):
 		return self.pad("%s: %s"%(size, self.signed(diff)))
 
 	def calc(self, diff):
+		self.diff += diff
 		dz = self.diffs
 		dz.append(diff)
 		if len(dz) > self.total:
 			dz.pop(0)
 		dl = len(dz)
-		parts = [self.ave("now")]
+		parts = [self.ave("cur")]
 		if dl > 1:
 			if dl > self.short:
 				parts.append(self.ave(self.short))
 				if dl > self.mid:
 					parts.append(self.ave(self.mid))
 			parts.append(self.ave())
+		parts.append(self.ave("diff"))
 		return " ; ".join(parts)
 
 	def creep(self):
