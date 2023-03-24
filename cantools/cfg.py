@@ -27,6 +27,9 @@ cfg = {
 		"request": False,
 		"db": False
 	},
+	"cron": {
+		"catchup": False
+	},
 	"admin": {
 		"host": "localhost",
 		"port": 8002,
