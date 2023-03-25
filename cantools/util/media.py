@@ -1,9 +1,13 @@
 from __future__ import absolute_import # for io.BytesIO
 from io import BytesIO
-import os
+import os, magic
 from .system import cmd, output, cp, rm, mkdir
 from .reporting import log
 from .io import read, write
+try:
+	from PIL import Image
+except:
+	log("no PIL.Image")
 
 #
 # video (ffmpeg)
@@ -142,7 +146,6 @@ def htile(outname, *inames):
 	autotile(outname, False, inames)
 
 def crop(img, constraint):
-	from PIL import Image
 	w = img.size[0]
 	h = img.size[1]
 	smaller = min(w, h)
@@ -159,6 +162,15 @@ def crop(img, constraint):
 	return img.crop((int(fromx), int(fromy), int(tox),
 		int(toy))).resize((constraint, constraint), Image.ANTIALIAS)
 
+def jpgize(path, fromform=None, overwrite=False):
+	opath = path
+	if not overwrite and input("overwrite %s? [Y/n] "%(path,)).lower().startswith("n"):
+		opath = input("ok, what should we call the output file? ")
+	if fromform == "TIFF":
+		Image.open(BytesIO(read(path, binary=True))).save(opath, format="JPEG")
+	else:
+		cmd("convert %s tmp.jpg; mv tmp.jpg %s"%(path, opath))
+
 _p2 = []
 class ImageResizer(object):
 	def __init__(self, img):
@@ -169,7 +181,7 @@ class ImageResizer(object):
 
 	def closest(self, n):
 		for p in _p2:
-			if n > p:
+			if n >= p:
 				return p
 
 	def s2p2(self):
@@ -184,19 +196,50 @@ class ImageResizer(object):
 			rimg.save(outbytes, format=self.img.format)
 			return outbytes.getvalue()
 
-def resizep2(data):
+def _initp2():
 	if not _p2:
 		n = 16
 		while n <= 1024:
 			_p2.append(n)
 			n *= 2
 		_p2.reverse()
-	from PIL import Image
+
+def resizep2(data):
+	_initp2()
 	return ImageResizer(Image.open(BytesIO(data))).resize()
 
-def p2(path):
+def p2(path, overwrite=False):
 	opath = path
 	resized = resizep2(read(path, binary=True))
-	if input("overwrite %s? [Y/n] "%(path,)).lower().startswith("n"):
+	if not overwrite and input("overwrite %s? [Y/n] "%(path,)).lower().startswith("n"):
 		opath = input("ok, what should we call the output file? ")
 	write(resized, opath, binary=True)
+
+def imeta(f, silent=False):
+	_initp2()
+	magstr = magic.from_file(f)
+	if "image" not in magstr:
+		return
+	fm = magstr.split(" ").pop(0)
+	d = {}
+	m = {
+		"format": fm,
+		"dims": d
+	}
+	if fm == "JPEG":
+		[w, h] = magstr.split(", ")[-2].split("x")
+	elif fm == "PNG":
+		[w, h] = magstr.split(", ")[1].split(" x ")
+	elif fm == "TIFF":
+		parts = magstr.split("=")
+		[w, h] = [parts[-1], parts[2].split(", ").pop(0)]
+	d["width"] = w = int(w)
+	d["height"] = h = int(h)
+	m["p2"] = w in _p2 and h in _p2
+	silent or log(m)
+	return m
+
+def scanp2():
+	for f in os.listdir():
+		m = imeta(f, True)
+		m and not m["p2"] and print(f, m)
