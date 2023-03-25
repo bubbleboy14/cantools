@@ -1,4 +1,4 @@
-import time
+import time, os
 from datetime import datetime, timedelta
 from rel import timeout
 from cantools import config
@@ -65,13 +65,15 @@ class Scheduler(object):
     def __init__(self, logger_getter):
         self.logger_getter = logger_getter
         self.logger = logger_getter("Scheduler")
-        self.lasts = read("cron.ts", isjson=True, default={})
+        self.tsfile = os.path.join(os.path.abspath("."), "cron.ts")
+        self.lasts = read(self.tsfile, isjson=True, default={})
         self.logger.info("initialized with %s timestamps"%(len(self.lasts.keys()),))
+        self.logger.info("saving state to timestamp file at %s"%(self.tsfile,))
 
     def update(self, rule):
         self.lasts[rule.url] = time.time()
         self.logger.info("updating %s timestamp to %s"%(rule.url, self.lasts[rule.url]))
-        write(self.lasts, "cron.ts", isjson=True)
+        write(self.lasts, self.tsfile, isjson=True)
 
     def ff(self, rule):
         if rule.url in self.lasts:
