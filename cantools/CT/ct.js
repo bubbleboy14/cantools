@@ -176,7 +176,7 @@ var CT = {
 			}
 			return CT.net._path + p;
 		},
-		"xhr": function(path, method, params, async, cb, headers, passthrough, noct, responseType) {
+		"xhr": function(path, method, params, async, cb, headers, passthrough, noct, responseType, syncParse) {
 			var xhr = window.XMLHttpRequest
 				? new XMLHttpRequest()
 				: new ActiveXObject("Microsoft.XMLHTTP"),
@@ -204,7 +204,8 @@ var CT = {
 			}
 			xhr.send(params);
 			if (!async)
-				return xhr.responseText;
+				return syncParse ? CT.net._ctresponse(xhr.responseText).data : xhr.responseText;
+//				return xhr.responseText;
 		},
 		"_fallback_error": function(msg) {
 			if (CT.net._silentFail)
@@ -298,7 +299,7 @@ var CT = {
 			opts.headers["Content-Type"] = "multipart/form-data";
 			return CT.net.post(opts);
 		},
-		"post": function(path, params, errMsg, cb, eb, headers, cbarg, ebarg, sync, passthrough, noct, spinner, basic, responseType, retry) {
+		"post": function(path, params, errMsg, cb, eb, headers, cbarg, ebarg, sync, passthrough, noct, spinner, basic, responseType, retry, syncParse) {
 			if (arguments.length == 1 && typeof arguments[0] != "string") {
 				var obj = arguments[0];
 				path = obj.path;
@@ -316,6 +317,7 @@ var CT = {
 				basic = obj.basic;
 				responseType = obj.responseType;
 				retry = obj.retry;
+				syncParse = obj.syncParse;
 			}
 			var signature;
 			if (CT.net._cache) {
@@ -338,7 +340,7 @@ var CT = {
 			}
 			return CT.net.xhr(path, "POST", params, !sync, CT.net._xhrcb(path, cb,
 				eb, cbarg, ebarg, errMsg, signature, null, noct, spinner, basic),
-				headers, passthrough, noct, responseType);
+				headers, passthrough, noct, responseType, syncParse);
 		},
 		"put": function(path, params, cb, headers, passthrough, _500as200, noct, spinner, basic) {
 			CT.net.xhr(path, "PUT", params, true, CT.net._xhrcb(path, cb, null, null, null,
