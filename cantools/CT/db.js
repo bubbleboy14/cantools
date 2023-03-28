@@ -122,14 +122,17 @@ CT.db = {
 			property: CT.db._schema[t]._label
 		};
 	},
-	put: function(data, cb, action, pname) {
+	put: function(data, cb, action, pname, sync, spinner) {
 		var params = {
 			action: action || "edit",
 			pw: core.config.keys.storage
 		};
 		params[pname || "data"] = data;
-		CT.net.post({
+		return CT.net.post({
 			path: "/_db",
+			sync: sync,
+			syncParse: sync,
+			spinner: sync || spinner,
 			params: params,
 			cb: function(d) {
 				CT.data.add(d);
