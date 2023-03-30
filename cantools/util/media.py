@@ -226,6 +226,8 @@ def imeta(f, silent=False):
 		"format": fm,
 		"dims": d
 	}
+	w = None
+	h = None
 	if fm == "JPEG":
 		[w, h] = magstr.split(", ")[-2].split("x")
 	elif fm == "PNG":
@@ -233,8 +235,9 @@ def imeta(f, silent=False):
 	elif fm == "TIFF":
 		parts = magstr.split("=")
 		[w, h] = [parts[-1], parts[2].split(", ").pop(0)]
-	d["width"] = w = int(w)
-	d["height"] = h = int(h)
+	if w:
+		d["width"] = w = int(w)
+		d["height"] = h = int(h)
 	m["p2"] = w in _p2 and h in _p2
 	silent or log(m)
 	return m
