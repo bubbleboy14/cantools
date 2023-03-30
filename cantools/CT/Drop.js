@@ -75,7 +75,7 @@ CT.Drop = CT.Class({
 			border: null
 		});
 		this.className = opts.relative ? "relative drop" :
-			((opts.transparent ? "backtrans" : opts.translucent ? "whitebacktrans" : "whiteback") + " drop mosthigh");
+			((opts.transparent ? "backtrans" : opts.translucent ? "whitebacktrans" : "whiteback") + " drop mosthigher");
 		if (opts.round)
 			this.className += " round";
 		if (opts.rows)
