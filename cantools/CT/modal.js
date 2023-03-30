@@ -270,11 +270,16 @@ CT.modal.Modal = CT.Class({
 		show: function() {},
 		hide: function() {}
 	},
+	removables: [],
+	registerRemovable: function(node) {
+		this.removables.push(node);
+	},
 	hide: function() {
 		this.node.hide();
 		if (this.node.backdrop)
 			CT.dom.remove(this.node.backdrop);
 		this.visible = false;
+		this.removables.forEach(r => r.remove());
 		this.on.hide();
 	},
 	_show: function(n) {
@@ -357,16 +362,18 @@ CT.modal.Prompt = CT.Class({
 	CLASSNAME: "CT.modal.Prompt",
 	_input: {
 		string: function() {
-			if (this.opts.autocomplete)
-				return CT.autocomplete.DBGuesser({
+			if (this.opts.autocomplete) {
+				var dbg = new CT.autocomplete.DBGuesser({
 					rows: true,
 					input: CT.dom.field(),
 					tapCb: this.submitAC,
 					filters: this.opts.autocomplete.filters,
 					property: this.opts.autocomplete.property,
 					modelName: this.opts.autocomplete.modelName
-				}).input;
-			else {
+				});
+				this.registerRemovable(dbg.node);
+				return dbg.input;
+			} else {
 				return CT.dom.smartField({
 					cb: this.submit,
 					isTA: this.opts.isTA,
