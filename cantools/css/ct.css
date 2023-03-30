@@ -158,6 +158,7 @@
 .above { z-index: 1000 !important; }
 .abover { z-index: 2000 !important; }
 .mosthigh { z-index: 99999 !important; }
+.mosthigher { z-index: 999999 !important; }
 .low { z-index: -100 !important; }
 .lower { z-index: -200 !important; }
 .lowest { z-index: -300 !important; }
