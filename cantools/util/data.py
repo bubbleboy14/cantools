@@ -110,4 +110,4 @@ def spreadsheet(fmat, ents, pz, rower=None):
 	return (fmat == "tsv" and tsv or ez2csv)(ents, pz, rower)
 
 def rgb2hex(rgbstr="rgb(224, 62, 45)"):
-	return '#%02x%02x%02x' % tuple([int(c) for c in rgbstr[4:-1].split(", ")])
+	return '%02x%02x%02x' % tuple([int(c) for c in rgbstr[4:-1].split(", ")])
