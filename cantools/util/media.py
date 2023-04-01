@@ -78,6 +78,7 @@ class Tiler(object):
 		self.images = images
 		self.final = []
 		self.geos = {}
+		self.reduce()
 		self.assess()
 		self.resize()
 
@@ -87,6 +88,14 @@ class Tiler(object):
 			"x": int(xy[0]),
 			"y": int(xy[1])
 		}
+
+	def reduce(self):
+		for i in range(len(self.images)):
+			iline = self.images[i]
+			if type(iline) == list:
+				newname = "".join([n.split(".").pop(0) for n in iline])
+				Tiler(iline, newname, not self.vertical).render()
+				self.images[i] = "%s.jpg"%(newname,)
 
 	def assess(self):
 		dim = self.vertical and "x" or "y"
@@ -122,15 +131,22 @@ class Tiler(object):
 	def render(self):
 		cmd(self._renderer()%('" "'.join(self.final), self.outname))
 
-def dlpix(ilist):
+_ii = 0
+def dlp(url):
+	global _ii
 	from cantools.web import fetch
+	_ii += 1
+	f = "%s.jpg"%(_ii,)
+	cp(fetch(url), f)
+	return f
+
+def dlpix(ilist):
 	fnames = []
-	i = 0
 	for url in read(ilist).split("\n"):
-		i += 1
-		f = "%s.jpg"%(i,)
-		cp(fetch(url), f)
-		fnames.append(f)
+		if " " in url:
+			fnames.append([dlp(u) for u in url.split(" ")])
+		else:
+			fnames.append(dlp(url))
 	return fnames
 
 def autotile(outname, vertical=True, inames=[]):
