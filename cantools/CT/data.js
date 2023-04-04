@@ -146,6 +146,9 @@ CT.data = {
 	},
 
 	// random stuff
+	"token": function() {
+		return Math.random().toString(36).substr(2);
+	},
 	"numstr": function(len) {
 		var s = "", chunk;
 		while (len) {
