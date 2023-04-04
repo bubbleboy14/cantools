@@ -114,6 +114,11 @@ var _sutil = CT.stream.util = {
 
 CT.stream.util.fzn = {
 	_: { vids: {} },
+	streamer: function(chan) {
+		var f = CT.dom.iframe("https://fzn.party/stream#" + chan);
+		f.setAttribute('allow','microphone; camera');
+		return f;
+	},
 	video: function(channel, videoClass, onrefresh) {
 		var _ = CT.stream.util.fzn._, vid = _.vids[channel] = new CT.stream.Video({
 			frame: false,
