@@ -386,10 +386,14 @@ var CT = {
 	},
 	"module": function(mname) {
 		var mod = window.CT ? window : CT._.modules;
-		mname.split(".").forEach(function(m) {
-			mod = mod[m];
-		});
-		return mod;
+		try:
+			mname.split(".").forEach(function(m) {
+				mod = mod[m];
+			});
+			return mod;
+		catch (e) {
+			return eval(mname); // last ditch...
+		}
 	},
 	"scriptImport": function(modpath, cb, delay) {
 		var fp = (modpath.slice(0, 4) == "http") && modpath
