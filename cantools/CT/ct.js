@@ -386,12 +386,12 @@ var CT = {
 	},
 	"module": function(mname) {
 		var mod = window.CT ? window : CT._.modules;
-		try:
+		try {
 			mname.split(".").forEach(function(m) {
 				mod = mod[m];
 			});
 			return mod;
-		catch (e) {
+		} catch (e) {
 			return eval(mname); // last ditch...
 		}
 	},
