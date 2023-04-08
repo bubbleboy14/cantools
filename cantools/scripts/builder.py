@@ -145,7 +145,7 @@ def require(line, jspaths, block, inits, admin_ct_path=None):
                 if config.build.prod.closure:
                     pblock = pblock.replace("window.", "")
                 jspaths.append(pblock)
-            block = block.replace(line, "%s;%s"%(pblock,
+            block = block.replace(line, "%s;%s;%s"%(pblock, line.replace("require", "regmod"),
                 processjs(jspath, jspaths, inits, admin_ct_path)), 1)
     return block
 
