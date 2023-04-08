@@ -386,14 +386,17 @@ var CT = {
 	},
 	"module": function(mname) {
 		var mod = window.CT ? window : CT._.modules;
-		try {
-			mname.split(".").forEach(function(m) {
-				mod = mod[m];
-			});
-			return mod;
-		} catch (e) {
-			return eval(mname); // last ditch...
-		}
+		mname.split(".").forEach(function(m) {
+			mod = mod[m];
+		});
+		return mod;
+	},
+	"regmod": function(mname) {
+		if (window.CT || mname.startsWith("CT."))
+			return;
+		var mparts = mname.split("."), mtop = mparts[0];
+		if (!(mtop in CT._.modules))
+			CT._.modules[mtop] = eval(mtop);
 	},
 	"scriptImport": function(modpath, cb, delay) {
 		var fp = (modpath.slice(0, 4) == "http") && modpath
