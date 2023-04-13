@@ -254,7 +254,7 @@ CT.trans = {
 		}, controllercb = function() {
 			opts[node._prop] = opts[node._prop] ? 0 : node._bound;
 			CT.trans.translate(node, opts);
-		}, controller = new CT.trans.Controller(controllercb);
+		}, controller = new CT.trans.Controller(controllercb, "pan");
 		node.onload = function() {
 			var oldprop = node._prop;
 			setV();
@@ -313,7 +313,7 @@ CT.trans = {
 				}, opts.wait);
 			} else
 				CT.trans.fadeOut(node, opts);
-		});
+		}, "pulse");
 		opts.cb = controller.tick;
 		if (!wait)
 			controller.tick();
@@ -327,6 +327,7 @@ CT.trans.Controller = CT.Class({
 		this._paused = true;
 	},
 	resume: function() {
+		this.verbose && this.log("resume", this.name);
 		if (this._paused != false) {
 			this._paused = false;
 			if (this._stalled) {
@@ -344,8 +345,10 @@ CT.trans.Controller = CT.Class({
 		else
 			this._stalled = true;
 	},
-	init: function(cb) {
+	init: function(cb, name, verbose) {
 		this.cb = cb;
+		this.name = name;
+		this.verbose = verbose;
 		this._stalled = true;
 	}
 });

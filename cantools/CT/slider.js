@@ -39,6 +39,10 @@ as image urls) or of data objects (processed in the addFrame function).
 */
 
 CT.slider = {
+	_preloadImgs: false,
+	setPreloadImgs: function(shouldPre) {
+		CT.slider._preloadImgs = shouldPre;
+	},
 	other_dim: { height: "width", width: "height" },
 	other_orientation: { vertical: "horizontal", horizontal: "vertical" },
 	orientation2dim: { vertical: "height", horizontal: "width" },
@@ -330,10 +334,13 @@ CT.slider.Frame = CT.Class({
 		hide: function() {}
 	},
 	peekaboo: function() {
-		var opts = this.opts, node = this.node, slider = this.slider, pulser,
-			full = CT.dom.node(opts.content, "div", "big carousel-content-full"),
-			imageBack = CT.dom.node(CT.dom.img(opts.img || slider.opts.defaultImg, "abs"), "div", "w1 h1 noflow carousel-content-image"),
-			nodes = [ imageBack, full ];
+		var opts = this.opts, slider = this.slider, slopts = slider.opts, imageBack = CT.dom.div(CT.dom.img({
+			src: opts.img || slopts.defaultImg,
+			className: "abs",
+			loadFirst: CT.slider._preloadImgs
+		}), "w1 h1 noflow carousel-content-image"),
+			full = CT.dom.div(opts.content, "big carousel-content-full"),
+			node = this.node, pulser, nodes = [ imageBack, full ];
 		var teaserTap = function() {
 			slider.pause();
 			node._retracted = !node._retracted;
@@ -374,12 +381,12 @@ CT.slider.Frame = CT.Class({
 					value: "100px"
 				});
 				slider.showNav();
-				this.tab && this.tab.show(slider.opts.parent);
+				this.tab && this.tab.show(slopts.parent);
 			}
 		};
-		if (slider.opts.pan) {
+		if (slopts.pan) {
 			imageBack.controller = CT.trans.pan(imageBack.firstChild, {
-				duration: opts.panDuration || slider.opts.panDuration || slider.opts.autoSlideInterval
+				duration: opts.panDuration || slopts.panDuration || slopts.autoSlideInterval
 			});
 		} else {
 			CT.onload(function() {
@@ -390,7 +397,7 @@ CT.slider.Frame = CT.Class({
 			var blurbNode = CT.dom.div(opts.blurb, "bigger"), teaser = CT.dom.div([
 				CT.dom.div(opts.title, "biggest"), blurbNode
 			], "carousel-content-teaser transparent hoverglow pointer cc-teaser-"
-				+ (slider.opts.translucentTeaser ? "trans" : "opaque"));
+				+ (slopts.translucentTeaser ? "trans" : "opaque"));
 			CT.dom.fit(blurbNode);
 			nodes.push(teaser);
 		}
@@ -406,21 +413,21 @@ CT.slider.Frame = CT.Class({
 				blurbNode.style.maxHeight = (teaser.parentNode.clientHeight - 200) + "px";
 				blurbNode.fit();
 			}
-			if (slider.opts.keys && !slider.opts.noEnter && teaser) // unreg somewhere?
+			if (slopts.keys && !slopts.noEnter && teaser) // unreg somewhere?
 				CT.key.on("ENTER", teaserTap);
-			if (slider.opts.pan)
+			if (slopts.pan)
 				imageBack.controller.resume();
 			if (opts.pulse)
 				pulser.controller.resume();
 			if (this.tab)
-				this.tab.show(slider.opts.parent);
+				this.tab.show(slopts.parent);
 		};
 		this.on.hide = function() {
 			if (opts.title || opts.blurb)
 				CT.trans.fadeOut(teaser);
 			if (node._retracted)
 				teaserTap();
-			if (slider.opts.pan)
+			if (slopts.pan)
 				imageBack.controller.pause();
 			if (opts.pulse)
 				pulser.controller.pause();

@@ -252,7 +252,7 @@ CT.dom = {
 		return CT.dom.node("", "textarea", classname,
 			id, value && {"value": value} || null);
 	},
-	"img": function(src, imgclass, onclick, href, target, title, linkid, wrapperclass, imgid, noanchor, style, attrs) {
+	"img": function(src, imgclass, onclick, href, target, title, linkid, wrapperclass, imgid, noanchor, style, attrs, loadFirst) {
 		if (arguments.length == 1 && typeof arguments[0] != "string") {
 			var obj = arguments[0];
 			src = obj.src;
@@ -267,8 +267,22 @@ CT.dom = {
 			noanchor = obj.noanchor;
 			style = obj.style;
 			attrs = obj.attrs;
+			loadFirst = obj.loadFirst;
 		}
-		var n = CT.dom.node("", "img", imgclass, imgid, CT.merge({ "src": src }, attrs), style);
+		var n = CT.dom.node("", "img", imgclass, imgid, CT.merge({
+			"src": !loadFirst && src
+		}, attrs), style);
+		if (loadFirst) {
+			var img = new Image();
+			img.src = src;
+			n.style.opacity = 0;
+			img.decode().then(function() {
+				n.src = img.src;
+				setTimeout(function() {
+					n.style.opacity = 1;
+				}, 100);
+			});
+		}
 		if (noanchor) // implies onclick -- otherwise, no (compatible) need to specify
 			n.onclick = onclick;
 		else if (onclick || href) {
