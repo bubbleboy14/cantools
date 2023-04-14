@@ -7,7 +7,7 @@ from .io import read, write
 try:
 	from PIL import Image
 except:
-	log("no PIL.Image")
+	print("no PIL.Image")
 
 #
 # video (ffmpeg)
