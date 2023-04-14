@@ -114,13 +114,24 @@ var _sutil = CT.stream.util = {
 
 CT.stream.util.fzn = {
 	_: { vids: {} },
+	log: function(msg) {
+		CT.log("fzn: " + msg);
+	},
 	streamer: function(chan) {
 		var f = CT.dom.iframe("https://fzn.party/stream#" + chan);
 		f.setAttribute('allow','microphone; camera');
 		return f;
 	},
+	start: function(vid) {
+		var fzn = CT.stream.util.fzn, _ = fzn._;
+		if (!_.bridge) return fzn.log("start aborted - no bridge, waiting");
+		if (vid.streamup)
+			(vid.streamup == "direct") ? _.bridge.direct(vid.channel) : _.bridge.stream(vid.channel);
+		else
+			_.bridge.subscribe(vid.channel);
+	},
 	video: function(channel, videoClass, onrefresh, streamup) {
-		var _ = CT.stream.util.fzn._, vid = _.vids[channel] = new CT.stream.Video({
+		var fzn = CT.stream.util.fzn, _ = fzn._, vid = _.vids[channel] = new CT.stream.Video({
 			frame: false,
 			fullscreen: {},
 			activeAudio: true,
@@ -128,27 +139,27 @@ CT.stream.util.fzn = {
 			videoClass: videoClass,
 			onreset: function() {
 				if (!_.bridge)
-					return CT.log("fzn video onreset(): no bridge!");
+					return fzn.log("video onreset(): no bridge!");
 				_.bridge.error({
 					channel: channel,
 					requiredInitChunk: vid.receivedInitChunk
 				});
 			}
 		});
+		vid.channel = channel;
 		vid.streamup = streamup;
-		CT.stream.util.fzn.init();
-		if (_.bridge)
-			streamup ? _.bridge.stream(channel) : _.bridge.subscribe(channel);
+		fzn.init();
+		fzn.start(vid);
 		return vid;
 	},
 	init: function() {
-		var _ = CT.stream.util.fzn._, v;
+		var fzn = CT.stream.util.fzn, _ = fzn._, v;
 		if (_.bridge) return;
 		document.head.appendChild(CT.dom.script("https://fzn.party/CT/bridge.js", null, null, function() {
 			_.bridge = PMB.bridge({
 				allow: "microphone; camera",
 				widget: "/stream/vidsrc.html",
-				senders: ["subscribe", "stream", "error"],
+				senders: ["subscribe", "stream", "direct", "error"],
 				receivers: {
 					clip: function(data) {
 						_.vids[data.channel].bufferer(data.data);
@@ -159,7 +170,7 @@ CT.stream.util.fzn = {
 				}
 			});
 			for (v in _.vids)
-				_.vids[v].streamup ? _.bridge.stream(v) : _.bridge.subscribe(v);
+				fzn.start(_.vids[v]);
 		}));
 	}
 };
