@@ -1,14 +1,6 @@
 CT.stream.Multiplexer = CT.Class({
 	CLASSNAME: "CT.stream.Multiplexer",
 	initChunk: false,
-	_push: function(blob, channel, signature) {
-		CT.memcache.blob.set(signature, blob, function() {
-			CT.pubsub.publish(channel, {
-				action: "clip",
-				data: signature
-			}); // (no echo)
-		});
-	},
 	join: function(channel) {
 		if (this.opts.singlechannel) {
 			var ckeys = Object.keys(this.channels);
@@ -44,15 +36,10 @@ CT.stream.Multiplexer = CT.Class({
 			this.leave(chan);
 	},
 	push: function(blobs, segment, channel, stream) {
-		var signature = channel + this.opts.user,
+		var signature = CT.stream.util.sig(channel, this.opts.user, segment, this),
 			video = this.getVideo(channel, this.opts.user, stream);
-		if (!this.initChunk) {// requires init chunk
-			this.initChunk = true;
-			signature += "init";
-		} else
-			signature += segment;
 		video.recorder && video.recorder.remember(blobs.video);
-		this._push(blobs.video, channel, signature);
+		CT.stream.util.push(blobs.video, channel, signature);
 		return video;
 	},
 	chat: function(message, user) {

@@ -54,6 +54,23 @@ var _sutil = CT.stream.util = {
 		};
 		buffer ? fr.readAsArrayBuffer(blob) : fr.readAsDataURL(blob);
 	},
+	push: function(blob, channel, signature) {
+		CT.memcache.blob.set(signature, blob, function() {
+			CT.pubsub.publish(channel, {
+				action: "clip",
+				data: signature
+			}); // (no echo)
+		});
+	},
+	sig: function(channel, user, segment, tracker) {
+		var signature = channel + user;
+		if (!tracker.initChunk) { // requires init chunk
+			tracker.initChunk = true;
+			signature += "init";
+		} else
+			signature += segment;
+		return signature;
+	},
 	update: function(signature, process, requiredInitChunk) {
 		var mt = CT.stream.opts.mropts.mimeType;
 		if (requiredInitChunk && !signature.endsWith("init")) {
@@ -114,38 +131,65 @@ var _sutil = CT.stream.util = {
 
 CT.stream.util.fzn = {
 	_: { vids: {} },
+	log: function(msg) {
+		CT.log("fzn: " + msg);
+	},
 	streamer: function(chan) {
 		var f = CT.dom.iframe("https://fzn.party/stream#" + chan);
 		f.setAttribute('allow','microphone; camera');
 		return f;
 	},
-	video: function(channel, videoClass, onrefresh) {
-		var _ = CT.stream.util.fzn._, vid = _.vids[channel] = new CT.stream.Video({
+	start: function(vid) {
+		var fzn = CT.stream.util.fzn, _ = fzn._;
+		if (!_.bridge)
+			fzn.log("start aborted - no bridge, waiting");
+		else if (!vid.streamup)
+			_.bridge.subscribe(vid.channel);
+		else if (vid.streamup != "direct")
+			_.bridge.stream(vid.channel);
+	},
+	video: function(channel, videoClass, onrefresh, streamup) {
+		var fzn = CT.stream.util.fzn, _ = fzn._, vopts = {
 			frame: false,
+			domset: true,
 			fullscreen: {},
 			activeAudio: true,
 			onrefresh: onrefresh,
 			videoClass: videoClass,
 			onreset: function() {
 				if (!_.bridge)
-					return CT.log("fzn video onreset(): no bridge!");
+					return fzn.log("video onreset(): no bridge!");
 				_.bridge.error({
 					channel: channel,
 					requiredInitChunk: vid.receivedInitChunk
 				});
 			}
-		});
-		CT.stream.util.fzn.init();
-		_.bridge && _.bridge.subscribe(channel);
+		}, vid, shouldAllow;
+		if (streamup == "direct") {
+			vopts.stream = "adhoc";
+			vopts.onseg = function(blobs, segment) {
+				_.bridge.push({
+					channel: channel,
+					segment: segment,
+					blob: blobs.video
+				});
+			};
+		} else if (streamup)
+			shouldAllow = true;
+		vid = _.vids[channel] = new CT.stream.Video(vopts);
+		vid.channel = channel;
+		vid.streamup = streamup;
+		fzn.init(shouldAllow);
+		fzn.start(vid);
 		return vid;
 	},
-	init: function() {
-		var _ = CT.stream.util.fzn._, v;
+	init: function(shouldAllow) {
+		var fzn = CT.stream.util.fzn, _ = fzn._, bropts, v;
 		if (_.bridge) return;
 		document.head.appendChild(CT.dom.script("https://fzn.party/CT/bridge.js", null, null, function() {
-			_.bridge = PMB.bridge({
+			bropts = {
 				widget: "/stream/vidsrc.html",
-				senders: ["subscribe", "error"],
+				senders: ["subscribe", "stream", "push", "error"],
 				receivers: {
 					clip: function(data) {
 						_.vids[data.channel].bufferer(data.data);
@@ -154,9 +198,12 @@ CT.stream.util.fzn = {
 						_.vids[data.channel].setEncoding(data.mode);
 					}
 				}
-			});
+			};
+			if (shouldAllow)
+				bropts.allow = "microphone; camera";
+			_.bridge = PMB.bridge(bropts);
 			for (v in _.vids)
-				_.bridge.subscribe(v);
+				fzn.start(_.vids[v]);
 		}));
 	}
 };
