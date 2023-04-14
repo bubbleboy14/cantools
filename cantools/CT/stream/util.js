@@ -141,15 +141,17 @@ CT.stream.util.fzn = {
 	},
 	start: function(vid) {
 		var fzn = CT.stream.util.fzn, _ = fzn._;
-		if (!_.bridge) return fzn.log("start aborted - no bridge, waiting");
-		if (vid.streamup)
-			(vid.streamup == "direct") || _.bridge.stream(vid.channel);
-		else
+		if (!_.bridge)
+			fzn.log("start aborted - no bridge, waiting");
+		else if (!vid.streamup)
 			_.bridge.subscribe(vid.channel);
+		else if (vid.streamup != "direct")
+			_.bridge.stream(vid.channel);
 	},
 	video: function(channel, videoClass, onrefresh, streamup) {
 		var fzn = CT.stream.util.fzn, _ = fzn._, vopts = {
 			frame: false,
+			domset: true,
 			fullscreen: {},
 			activeAudio: true,
 			onrefresh: onrefresh,
@@ -163,8 +165,16 @@ CT.stream.util.fzn = {
 				});
 			}
 		}, vid;
-		if (streamup == "direct")
+		if (streamup == "direct") {
 			vopts.stream = "adhoc";
+			vopts.onseg = function(blobs, segment) {
+				_.bridge.push({
+					channel: channel,
+					segment: segment,
+					blob: blobs.video
+				});
+			};
+		}
 		vid = _.vids[channel] = new CT.stream.Video(vopts);
 		vid.channel = channel;
 		vid.streamup = streamup;
