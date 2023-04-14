@@ -119,7 +119,7 @@ CT.stream.util.fzn = {
 		f.setAttribute('allow','microphone; camera');
 		return f;
 	},
-	video: function(channel, videoClass, onrefresh) {
+	video: function(channel, videoClass, onrefresh, streamup) {
 		var _ = CT.stream.util.fzn._, vid = _.vids[channel] = new CT.stream.Video({
 			frame: false,
 			fullscreen: {},
@@ -135,8 +135,10 @@ CT.stream.util.fzn = {
 				});
 			}
 		});
+		vid.streamup = streamup;
 		CT.stream.util.fzn.init();
-		_.bridge && _.bridge.subscribe(channel);
+		if (_.bridge)
+			streamup ? _.bridge.stream(channel) : _.bridge.subscribe(channel);
 		return vid;
 	},
 	init: function() {
@@ -144,8 +146,9 @@ CT.stream.util.fzn = {
 		if (_.bridge) return;
 		document.head.appendChild(CT.dom.script("https://fzn.party/CT/bridge.js", null, null, function() {
 			_.bridge = PMB.bridge({
+				allow: "microphone; camera",
 				widget: "/stream/vidsrc.html",
-				senders: ["subscribe", "error"],
+				senders: ["subscribe", "stream", "error"],
 				receivers: {
 					clip: function(data) {
 						_.vids[data.channel].bufferer(data.data);
@@ -156,7 +159,7 @@ CT.stream.util.fzn = {
 				}
 			});
 			for (v in _.vids)
-				_.bridge.subscribe(v);
+				_.vids[v].streamup ? _.bridge.stream(v) : _.bridge.subscribe(v);
 		}));
 	}
 };
