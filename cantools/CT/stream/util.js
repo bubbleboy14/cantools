@@ -54,6 +54,23 @@ var _sutil = CT.stream.util = {
 		};
 		buffer ? fr.readAsArrayBuffer(blob) : fr.readAsDataURL(blob);
 	},
+	push: function(blob, channel, signature) {
+		CT.memcache.blob.set(signature, blob, function() {
+			CT.pubsub.publish(channel, {
+				action: "clip",
+				data: signature
+			}); // (no echo)
+		});
+	},
+	sig: function(channel, user, segment, tracker) {
+		var signature = channel + user;
+		if (!tracker.initChunk) { // requires init chunk
+			tracker.initChunk = true;
+			signature += "init";
+		} else
+			signature += segment;
+		return signature;
+	},
 	update: function(signature, process, requiredInitChunk) {
 		var mt = CT.stream.opts.mropts.mimeType;
 		if (requiredInitChunk && !signature.endsWith("init")) {
@@ -126,12 +143,12 @@ CT.stream.util.fzn = {
 		var fzn = CT.stream.util.fzn, _ = fzn._;
 		if (!_.bridge) return fzn.log("start aborted - no bridge, waiting");
 		if (vid.streamup)
-			(vid.streamup == "direct") ? _.bridge.direct(vid.channel) : _.bridge.stream(vid.channel);
+			(vid.streamup == "direct") || _.bridge.stream(vid.channel);
 		else
 			_.bridge.subscribe(vid.channel);
 	},
 	video: function(channel, videoClass, onrefresh, streamup) {
-		var fzn = CT.stream.util.fzn, _ = fzn._, vid = _.vids[channel] = new CT.stream.Video({
+		var fzn = CT.stream.util.fzn, _ = fzn._, vopts = {
 			frame: false,
 			fullscreen: {},
 			activeAudio: true,
@@ -145,7 +162,10 @@ CT.stream.util.fzn = {
 					requiredInitChunk: vid.receivedInitChunk
 				});
 			}
-		});
+		}, vid;
+		if (streamup == "direct")
+			vopts.stream = "adhoc";
+		vid = _.vids[channel] = new CT.stream.Video(vopts);
 		vid.channel = channel;
 		vid.streamup = streamup;
 		fzn.init();
@@ -159,7 +179,7 @@ CT.stream.util.fzn = {
 			_.bridge = PMB.bridge({
 				allow: "microphone; camera",
 				widget: "/stream/vidsrc.html",
-				senders: ["subscribe", "stream", "direct", "error"],
+				senders: ["subscribe", "stream", "push", "error"],
 				receivers: {
 					clip: function(data) {
 						_.vids[data.channel].bufferer(data.data);
