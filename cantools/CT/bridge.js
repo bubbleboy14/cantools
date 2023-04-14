@@ -48,6 +48,7 @@ window.PMB = {
 		iframe: function(opts) {
 			var ifr = document.createElement("iframe"),
 				loc = PMB._.location();
+			opts.allow && ifr.setAttribute("allow", opts.allow);
 			ifr._targetOrigin = loc;
 			ifr.src = loc + opts.widget;
 			if (opts.node) {
@@ -77,7 +78,8 @@ window.PMB = {
 			receivers: {},         // callbacks functions
 			hash: null,            // if widget pays attention to hashes
 			node: null,            // else, iframe is invisible
-			widget: null           // required! e.g. /map/widget.html
+			widget: null,          // required! e.g. /map/widget.html
+			allow: null            // eg "microphone; camera"
 		});
 		var _ = PMB._, b = {
 			opts: opts,
