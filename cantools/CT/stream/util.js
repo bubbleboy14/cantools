@@ -164,7 +164,7 @@ CT.stream.util.fzn = {
 					requiredInitChunk: vid.receivedInitChunk
 				});
 			}
-		}, vid;
+		}, vid, shouldAllow;
 		if (streamup == "direct") {
 			vopts.stream = "adhoc";
 			vopts.onseg = function(blobs, segment) {
@@ -174,20 +174,20 @@ CT.stream.util.fzn = {
 					blob: blobs.video
 				});
 			};
-		}
+		} else if (streamup)
+			shouldAllow = true;
 		vid = _.vids[channel] = new CT.stream.Video(vopts);
 		vid.channel = channel;
 		vid.streamup = streamup;
-		fzn.init();
+		fzn.init(shouldAllow);
 		fzn.start(vid);
 		return vid;
 	},
-	init: function() {
-		var fzn = CT.stream.util.fzn, _ = fzn._, v;
+	init: function(shouldAllow) {
+		var fzn = CT.stream.util.fzn, _ = fzn._, bropts, v;
 		if (_.bridge) return;
 		document.head.appendChild(CT.dom.script("https://fzn.party/CT/bridge.js", null, null, function() {
-			_.bridge = PMB.bridge({
-				allow: "microphone; camera",
+			bropts = {
 				widget: "/stream/vidsrc.html",
 				senders: ["subscribe", "stream", "push", "error"],
 				receivers: {
@@ -198,7 +198,10 @@ CT.stream.util.fzn = {
 						_.vids[data.channel].setEncoding(data.mode);
 					}
 				}
-			});
+			};
+			if (shouldAllow)
+				bropts.allow = "microphone; camera";
+			_.bridge = PMB.bridge(bropts);
 			for (v in _.vids)
 				fzn.start(_.vids[v]);
 		}));
