@@ -1,5 +1,6 @@
 CT.stream.Video = CT.Class({
 	CLASSNAME: "CT.stream.Video",
+	_: {}, // TODO: move _ stuff here....
 	_buffers: [],
 	_lastTime: 0,
 	_nextChunk: 0,
@@ -130,10 +131,15 @@ CT.stream.Video = CT.Class({
 		}
 	},
 	remove: function() {
+		var _ = this._;
 		this.video.src = "";
 		this.audio.remove();
 		CT.dom.remove(this.node);
 		clearInterval(this._wakey);
+		if (_.recorder) {
+			_.recorder.state != "inactive" && _.recorder.stop();
+			_.recorder._stopped = true;
+		}
 	},
 	_snoozes: 0,
 	_wakeup: function() {
@@ -160,9 +166,12 @@ CT.stream.Video = CT.Class({
 			this.snoozes = 0;
 		this.video._lastct = this.video.currentTime;
 	},
+	_video: function(src) {
+		return CT.dom.video(src, this.opts.videoClass,
+			this.opts.videoId, this.opts.attrs);
+	},
 	setVideo: function() {
-		this.video = this.opts.video || CT.dom.video(this.opts.stream,
-			this.opts.videoClass, this.opts.videoId, this.opts.attrs);
+		this.video = this.opts.video || this._video(this.opts.stream);
 		this.video.on("canplay", this.start);
 		this.video.on("pause", this.start);
 		this.video.on("error", this._error);
@@ -230,33 +239,8 @@ CT.stream.Video = CT.Class({
 		this.requiredInitChunk = this.receivedInitChunk;
 		this.opts.onrefresh && this.opts.onrefresh();
 	},
-	init: function(opts) {
-		this.opts = opts = CT.merge(opts, {
-			video: null,
-			stream: null,
-			className: null,
-			id: null,
-			frame: true,
-			videoClass: null,
-			videoId: null,
-			watermark: null,
-			mimeType: CT.stream.opts.codecs.av,
-			activeAudio: false,
-			onreset: null,
-			buttons: [], // only checked when frame is false
-			record: { // recorder always shows when frame is true
-				streamer: false,
-				lurker: false,
-				auto: false
-			},
-			fullscreen: {
-				streamer: false,
-				lurker: true
-			},
-			attrs: {
-				autoplay: true
-			}
-		});
+	build: function() {
+		var opts = this.opts;
 		if (opts.stream)
 			opts.attrs.srcObject = opts.stream;
 		this.setVideo();
@@ -305,5 +289,44 @@ CT.stream.Video = CT.Class({
 			this.audio.build();
 			this._wakey = setInterval(this._wakeup, 1000);
 		}
+		opts.domset && document.body.appendChild(this.node);
+	},
+	startStream: function() {
+		var _ = this._, opts = this.opts, build = this.build,
+			vid = this.video = this.opts.video = this.opts.video || this._video();
+		CT.stream.util.record(opts.onseg, function(rec, vstream) {
+			_.recorder = rec;
+			opts.stream = vid.srcObject = vstream;
+			build();
+		});
+	},
+	init: function(opts) {
+		this.opts = opts = CT.merge(opts, {
+			video: null,
+			stream: null,
+			className: null,
+			id: null,
+			frame: true,
+			videoClass: null,
+			videoId: null,
+			watermark: null,
+			mimeType: CT.stream.opts.codecs.av,
+			activeAudio: false,
+			onreset: null,
+			buttons: [], // only checked when frame is false
+			record: { // recorder always shows when frame is true
+				streamer: false,
+				lurker: false,
+				auto: false
+			},
+			fullscreen: {
+				streamer: false,
+				lurker: true
+			},
+			attrs: {
+				autoplay: true
+			}
+		});
+		(opts.stream == "adhoc") ? this.startStream() : this.build();
 	}
 });
