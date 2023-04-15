@@ -318,6 +318,16 @@ CT.trans = {
 		if (!wait)
 			controller.tick();
 		return controller;
+	},
+	glow: function(node) {
+		node.classList.add("glowing");
+		node.classList.add("glogo");
+		setTimeout(function() {
+			node.classList.remove("glogo");
+		}, 1000);
+		setTimeout(function() {
+			node.classList.remove("glowing");
+		}, 2000);
 	}
 };
 
