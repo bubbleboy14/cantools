@@ -590,7 +590,7 @@
     -o-transition: text-shadow 1s;
     transition: text-shadow 1s;
 }
-.glowing:hover {
+.glowing:hover, .glowing.glogo {
     text-shadow:
         -2px -2px 0 gold,
          2px -2px 0 gold,
