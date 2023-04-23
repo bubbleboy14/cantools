@@ -60,11 +60,11 @@ def hlsify(blobpath, check=False):
 # audio (ffmpeg)
 #
 
-def wav2mp3(path="."):
+def mp3ize(ext=".wav", path="."):
 	fnames = os.listdir(path)
-	log("you asked for it! scanning %s files"%(len(fnames),), important=True)
+	log("you asked for it! scanning %s files for %s"%(len(fnames), ext), important=True)
 	for fname in fnames:
-		if fname.endswith(".wav"):
+		if fname.endswith(ext):
 			cmd('ffmpeg -i "%s" "%s.mp3"'%(fname, fname[:-4]))
 
 #
