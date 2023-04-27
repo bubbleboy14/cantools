@@ -284,9 +284,15 @@ def admin():
 	log("finished compilation")
 
 def refresh_plugins():
-	os.chdir(".ctplug")
+	os.chdir(input("search directory? [default: .ctplug] ") or ".ctplug")
 	pz = os.listdir(".")
-	log("reinstalling %s plugins"%(len(pz,)), important=True)
+	log("%s items in directory"%(len(pz),))
+	filt = input("filter by preface? [suggested: ct] ")
+	if filt:
+		pz = list(filter(lambda name : name.startswith(filt), pz))
+	log("found %s plugins:\n\n%s"%(len(pz), "\n".join(pz)))
+	if input("reinstall %s plugins? [Y/n] "%(len(pz,))).lower().startswith("n"):
+		return
 	for p in pz:
 		log(p)
 		os.chdir(p)
