@@ -1,4 +1,4 @@
-import os
+import os, sys
 from cantools.util import cmd, output, error, log, set_log, close_log, read, write
 
 def _starter(sname):
@@ -71,6 +71,13 @@ def screener(ctnum=None, dpath="/root", drpnum=None, psnum=None, sname=None):
 		pcheck("ctstart", ctnum, starter) or pcheck("dez_reverse_proxy", drpnum, starter) or pcheck("ctpubsub", psnum, starter)
 	log("goodbye", important=True)
 	close_log()
+
+def managedpip():
+	fname = "/usr/lib/python%s/EXTERNALLY-MANAGED"%(".".join(sys.version.split(" ").pop(0).split(".")[:2]),)
+	print("checking for", fname)
+	isext = os.path.isfile(fname)
+	print("found:", isext)
+	return isext
 
 def check(cmd="df"):
 	oz = output(cmd).split("\n")
