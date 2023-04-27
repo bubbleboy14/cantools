@@ -41,6 +41,7 @@ import os, sys
 from optparse import OptionParser
 from cantools import config, include_plugin, mods_and_repos
 from cantools.util import log, error, cp, sym, mkdir, rm, py, cmd, read
+from cantools.util.admin import managedpip
 from .builder import build_all
 
 try:
@@ -283,6 +284,14 @@ def admin():
 	build_all("admin", CTP)
 	log("finished compilation")
 
+def pipper():
+	p = "pip3 install -e ."
+	if managedpip():
+		log("your Python is externally managed by your OS")
+		if input("install anyway? [y/N] ").lower().startswith("y"):
+			p += " --break-system-packages"
+	return p
+
 def refresh_plugins():
 	os.chdir(input("search directory? [default: .ctplug] ") or ".ctplug")
 	pz = os.listdir(".")
@@ -293,11 +302,12 @@ def refresh_plugins():
 	log("found %s plugins:\n\n%s"%(len(pz), "\n".join(pz)))
 	if input("reinstall %s plugins? [Y/n] "%(len(pz,))).lower().startswith("n"):
 		return
+	pcmd = pipper()
 	for p in pz:
 		log(p)
 		os.chdir(p)
 		cmd("git pull")
-		cmd("pip3 install -e .", True)
+		cmd(pcmd, True)
 		os.chdir("..")
 
 def parse_and_make():
