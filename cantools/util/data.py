@@ -111,3 +111,6 @@ def spreadsheet(fmat, ents, pz, rower=None):
 
 def rgb2hex(rgbstr="rgb(224, 62, 45)"):
 	return '%02x%02x%02x' % tuple([int(c) for c in rgbstr[4:-1].split(", ")])
+
+def hex2rgb(h="#ffaabb"):
+	return "rgb%s"%(tuple(int(h[i:i+2], 16) for i in (1, 3, 5)),)
