@@ -50,6 +50,9 @@ def memprop(email, prop):
 def memid(email):
 	return memprop(email, "ID")
 
+def getmeta(pid, key):
+	return query("select meta_value from wp_usermeta where user_id = '%s' and meta_key = '%s';"%(pid, key))
+
 def setmeta(pid, key, val):
 	mres = query("select * from wp_usermeta where user_id = '%s' and meta_key = '%s';"%(pid, key))
 	if mres:
