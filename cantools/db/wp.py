@@ -66,6 +66,14 @@ def transmeta(pid, key, transformer):
 	val = transformer(v)
 	query("update wp_usermeta set meta_value = '%s' where umeta_id = '%s';"%(val, mid), False)
 
+def bymeta(key, val, props=["user_email"], like=True):
+	cond = (like and "like '%%%s%%'" or "= '%s'")%(val,)
+	q = "select %s from wp_users join wp_usermeta on wp_users.ID = wp_usermeta.user_id where wp_usermeta.meta_key = '%s' and wp_usermeta.meta_value %s;"%(", ".join(props), key, cond)
+	return query(q)
+
+def capability2emails(capability):
+	return bymeta("wp_capabilities", "capability")
+
 def id2email(memid):
 	e = query("select user_email from wp_users where ID = '%s';"%(memid,))
 	return e and e[0][0] or "[account %s not found]"%(memid,)
