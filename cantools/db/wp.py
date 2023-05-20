@@ -72,7 +72,7 @@ def bymeta(key, val, props=["user_email"], like=True):
 	return query(q)
 
 def capability2emails(capability):
-	return bymeta("wp_capabilities", capability)
+	return [row[0] for row in bymeta("wp_capabilities", capability)]
 
 def id2email(memid):
 	e = query("select user_email from wp_users where ID = '%s';"%(memid,))
