@@ -48,13 +48,19 @@ CT.key = {
 		CT.data.remove(CT.key._downs, character);
 		CT.key._cbs[character] && CT.key._cbs[character]();
 	},
-	clear: function(character) {
+	clear: function(character, noescape) {
+		var eu, ed, k = CT.key;
 		if (character) {
-			delete CT.key._cbs[character];
-			delete CT.key._downcbs[character];
+			delete k._cbs[character];
+			delete k._downcbs[character];
 		} else {
-			CT.key._cbs = {};
-			CT.key._downcbs = {};
+			if (noescape) {
+				eu = k._cbs.ESCAPE;
+				ed = k._downcbs.ESCAPE;
+			}
+			k._cbs = {};
+			k._downcbs = {};
+			noescape && (eu || ed) && k.on("ESCAPE", eu, ed);
 		}
 	},
 	downs: function(chars) {
