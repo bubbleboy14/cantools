@@ -338,7 +338,8 @@ CT.modal.Modal = CT.Class({
 	init: function(opts) {
 		this.opts = CT.merge(opts, CT.modal._defaults.Modal);
 		setTimeout(this._buildContent); // wait a tick for all inits to run
-		CT.modal.latest = this;
+		if (!opts.notlatest)
+			CT.modal.latest = this;
 	}
 });
 
