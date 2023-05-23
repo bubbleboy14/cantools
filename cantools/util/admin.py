@@ -102,7 +102,7 @@ def plugdirs(cb, pdir=".ctplug", filt="ct", ask=True):
 		os.chdir("..")
 	os.chdir(opath)
 
-def gc(pdir=".ctplug", filt="ct", ask=False)
+def gc(pdir=".ctplug", filt="ct", ask=False):
 	plugdirs(lambda : cmd("git gc"), pdir, filt, ask)
 
 def vitals(dpath="/root", thresh=90):
