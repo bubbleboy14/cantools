@@ -41,7 +41,7 @@ import os, sys
 from optparse import OptionParser
 from cantools import config, include_plugin, mods_and_repos
 from cantools.util import log, error, cp, sym, mkdir, rm, py, cmd, read
-from cantools.util.admin import managedpip
+from cantools.util.admin import managedpip, plugdirs
 from .builder import build_all
 
 try:
@@ -293,22 +293,12 @@ def pipper():
 	return p
 
 def refresh_plugins():
-	os.chdir(input("search directory? [default: .ctplug] ") or ".ctplug")
-	pz = os.listdir(".")
-	log("%s items in directory"%(len(pz),))
-	filt = input("filter by preface? [suggested: ct] ")
-	if filt:
-		pz = list(filter(lambda name : name.startswith(filt), pz))
-	log("found %s plugins:\n\n%s"%(len(pz), "\n".join(pz)))
-	if input("reinstall %s plugins? [Y/n] "%(len(pz,))).lower().startswith("n"):
-		return
 	pcmd = pipper()
-	for p in pz:
-		log(p)
-		os.chdir(p)
+	def refresher():
 		cmd("git pull")
 		cmd(pcmd, True)
-		os.chdir("..")
+	plugdirs(refresher, input("search directory? [default: .ctplug] ") or ".ctplug",
+		input("filter by preface? [suggested: ct] "))
 
 def parse_and_make():
 	parser = OptionParser("ctinit [projname] [-ru] [--plugins=P1|P2|P3] [--cantools_path=PATH] [--web_backend=BACKEND]")

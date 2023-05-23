@@ -85,6 +85,26 @@ def check(cmd="df"):
 		if o.endswith("/"):
 			return int(o.rsplit(" ", 2)[1][:-1])
 
+def plugdirs(cb, pdir=".ctplug", filt="ct", ask=True):
+	opath = os.path.abspath(".")
+	os.chdir(pdir)
+	pz = os.listdir(".")
+	log("%s items in directory"%(len(pz),))
+	if filt:
+		pz = list(filter(lambda name : name.startswith(filt), pz))
+	log("found %s plugins:\n\n%s"%(len(pz), "\n".join(pz)))
+	if ask and input("process %s plugins? [Y/n] "%(len(pz,))).lower().startswith("n"):
+		return
+	for p in pz:
+		log(p)
+		os.chdir(p)
+		cb()
+		os.chdir("..")
+	os.chdir(opath)
+
+def gc(pdir=".ctplug", filt="ct", ask=False)
+	plugdirs(lambda : cmd("git gc"), pdir, filt, ask)
+
 def vitals(dpath="/root", thresh=90):
 	from cantools.web import email_admins
 	os.chdir(dpath)
