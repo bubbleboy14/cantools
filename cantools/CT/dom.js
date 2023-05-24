@@ -896,8 +896,8 @@ CT.dom = {
 		};
 		return n;
 	},
-	"dragList": function(data, rower, onchange, colattrs, colstyle) {
-		var pnode = CT.dom.div(data.map(d => CT.dom.dragListing(d, rower)), "bordered", null, CT.merge({
+	"dragList": function(data, rower, onchange, colattrs, colstyle, wrapperclass) {
+		var pnode = CT.dom.div(data.map(d => CT.dom.dragListing(d, rower)), wrapperclass || "bordered", null, CT.merge({
 			ondrop: function(ev) {
 				var nodeId = ev.dataTransfer.getData("text/plain"),
 					tar = ev.target, dnode = CT.dom.id(nodeId);
