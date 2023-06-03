@@ -45,7 +45,7 @@ CT.hover = {
 		var _ = CT.hover._;
 		if (!_.infoBubble) {
 			_.infoBubble = CT.dom.div("", "small hidden infobubble");
-			CT.dom.getAllNode(true).appendChild(_.infoBubble);
+			CT.dom.onAllNode(n => n.appendChild(_.infoBubble));
 			_.bubbleBounds = {
 				'left': 0,
 				'top': 0

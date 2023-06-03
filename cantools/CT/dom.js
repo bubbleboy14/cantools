@@ -1468,6 +1468,11 @@ CT.dom = {
 		_a.style.filter = "alpha(opacity = 100)";
 		_a.style["-ms-filter"] = "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
 	},
+	"onAllNode": function(cb, noBodyFallback) {
+		if (!document.body)
+			return setTimeout(() => CT.dom.onAllNode(cb, noBodyFallback), 100);
+		cb(CT.dom.getAllNode(!noBodyFallback));
+	},
 
 	// dynamically add style rules
 	"addStyle": function(text, href, obj) { // choose one!
