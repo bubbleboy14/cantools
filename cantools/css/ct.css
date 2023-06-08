@@ -72,6 +72,7 @@
 .wmin1-2 { min-width: 50%; }
 .hmin200p { min-height: 200px; }
 .hmin400p { min-height: 400px; }
+.h10p { height: 10px; }
 .h15p { height: 15px; }
 .h30p { height: 30px; }
 .h40p { height: 40px; }
@@ -738,6 +739,12 @@
 .blue {
     color: #010068;
 }
+.blueblue {
+    color: blue;
+}
+.blueback {
+    background: blue;
+}
 .bordered-gray {
     border: 1px solid #ccc;
 }
@@ -863,6 +870,9 @@
 }
 .green {
     color: green;
+}
+.greenback {
+    background: green;
 }
 .gray {
     color: gray;
