@@ -42,7 +42,7 @@ a string, a password, or one or more selections from a list.
 
 defaults:
 	{
-		className: "basicpopup mosthigh",
+		className: "basicpopup mosthigh flex col",
 		style: "string", // string|multiple-string|password|single-choice|multiple-choice|file|number|time|date|form|icon|phone|email|sound|reorder|draggers
 		prompt: "",
 		clear: false, // string/password only
@@ -126,7 +126,7 @@ CT.modal._defaults = {
 		outerClose: true
 	},
 	Prompt: {
-		className: "basicpopup mosthigh",
+		className: "basicpopup mosthigh flex col",
 		transition: "slide",
 		style: "string",
 		prompt: "",
@@ -326,8 +326,11 @@ CT.modal.Modal = CT.Class({
 		if (!opts.noClose)
 			this.addClose();
 		this.node.modal = this;
-		if (this.opts.backdrop)
+		if (this.opts.backdrop) {
 			this.node.backdrop = CT.dom.div(null, "backdrop");
+			if (this.opts.outerClose)
+				this.node.backdrop.onclick = () => this.hide();
+		}
 		this.setup[opts.transition]();
 		this.build();
 		if (opts.content || opts.node) // 'node' is now deprecated :'(
@@ -505,10 +508,10 @@ CT.modal.Prompt = CT.Class({
 	},
 	build: function() {
 		this.continueButton = CT.dom.button("Continue", this.submit);
-		this.node.appendChild(CT.dom.node(this.opts.prompt));
+		this.node.insertBefore(CT.dom.node(this.opts.prompt), this.node.lastChild);
 		if (this.opts.style != "confirm") {
 			this.input = this._input[this.opts.style](this.opts.data);
-			this.node.appendChild(this.input);
+			this.add(this.input);
 		}
 		this.node.appendChild(this.continueButton);
 		this.node.appendChild(CT.dom.button("Cancel", this.hide, this.opts.cancelButtonClass));
