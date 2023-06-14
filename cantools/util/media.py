@@ -10,8 +10,41 @@ except:
 	print("no PIL.Image")
 
 #
+# general
+#
+_ii = 0
+def get(url, ext="jpg"):
+	global _ii
+	from cantools.web import fetch
+	_ii += 1
+	f = "%s.%s"%(_ii, ext)
+	cp(fetch(url), f)
+	return f
+
+def dl(ilist, ext="jpg"):
+	fnames = []
+	for url in read(ilist).split("\n"):
+		if " " in url:
+			fnames.append([get(u, ext) for u in url.split(" ")])
+		else:
+			fnames.append(get(url, ext))
+	return fnames
+
+def o2f(outname, inames, ext="jpg"):
+	if outname.endswith(".list"):
+		inames = dl(outname, ext)
+		outname = outname.split(".").pop(0)
+	return outname, inames
+
+#
 # video (ffmpeg)
 #
+
+def concat(outname, vnames=[]):
+	outname, vnames = o2f(outname, vnames, "mp4")
+	flist = "\n".join(map(lambda vn : "file %s"%(vn,), vnames))
+	cp(flist, "files.list")
+	cmd("ffmpeg -f concat -i files.list -c copy %s.mp4"%(outname,))
 
 TRANS = "ffmpeg -y -i %s -loglevel error -stats -c:a aac -movflags +faststart -f mp4 _tmp"
 BASELINE = "ffmpeg -y -i %s -loglevel error -stats -c:a aac -profile:v baseline -level 3.0 -movflags +faststart -f mp4 _tmp"
@@ -131,28 +164,8 @@ class Tiler(object):
 	def render(self):
 		cmd(self._renderer()%('" "'.join(self.final), self.outname))
 
-_ii = 0
-def dlp(url):
-	global _ii
-	from cantools.web import fetch
-	_ii += 1
-	f = "%s.jpg"%(_ii,)
-	cp(fetch(url), f)
-	return f
-
-def dlpix(ilist):
-	fnames = []
-	for url in read(ilist).split("\n"):
-		if " " in url:
-			fnames.append([dlp(u) for u in url.split(" ")])
-		else:
-			fnames.append(dlp(url))
-	return fnames
-
 def autotile(outname, vertical=True, inames=[]):
-	if outname.endswith(".list"):
-		inames = dlpix(outname)
-		outname = outname.split(".").pop(0)
+	outname, inames = o2f(outname, inames)
 	Tiler(inames or os.listdir(), outname, vertical).render()
 
 def vtile(outname, *inames):
