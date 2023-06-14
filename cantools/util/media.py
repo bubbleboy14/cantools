@@ -40,7 +40,7 @@ def o2f(outname, inames, ext="jpg"):
 # video (ffmpeg)
 #
 
-def concat(outname, vnames=[]):
+def concat(outname, *vnames):
 	outname, vnames = o2f(outname, vnames, "mp4")
 	flist = "\n".join(map(lambda vn : "file %s"%(vn,), vnames))
 	cp(flist, "files.list")
