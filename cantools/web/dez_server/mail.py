@@ -16,6 +16,7 @@ class Mailer(object):
 		self._yag = None
 		self._smtp = None
 		self.queue = []
+		self.cbs = {}
 		self.churning = False
 		if not addr:
 			log('no email address configured')
@@ -72,7 +73,12 @@ class Mailer(object):
 				self._refresh()
 		elif self._smtp:
 			sender = self.name and "%s <%s>"%(self.name, self.addr) or self.addr
-			self._smtp.sendmail(self.addr, to, self._body(sender, to, subject, body))
+			try:
+				self._smtp.sendmail(self.addr, to, self._body(sender, to, subject, body))
+			except smtplib.SMTPRecipientsRefused:
+				log("Recipient Refused: %s"%(to,), important=True)
+				if "refused" in self.cbs:
+					self.cbs["refused"](to)
 
 	def _sender(self):
 		while len(self.queue):
@@ -92,6 +98,9 @@ class Mailer(object):
 			log('spawning mail thread')
 			self.churning = True
 			rel.thread(self._sender)
+
+	def on(self, event_name, cb):
+		self.cbs[event_name] = cb
 
 	def mail(self, to=None, sender=None, subject=None, body=None, html=None, bcc=None):
 		if not self._yag and not self._smtp:
