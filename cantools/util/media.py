@@ -13,26 +13,26 @@ except:
 # general
 #
 _ii = 0
-def get(url, ext="jpg"):
+def get(url, ext="jpg", pref=""):
 	global _ii
 	from cantools.web import fetch
 	_ii += 1
-	f = "%s.%s"%(_ii, ext)
+	f = "%s%s.%s"%(pref, _ii, ext)
 	cp(fetch(url), f)
 	return f
 
-def dl(ilist, ext="jpg"):
+def dl(ilist, ext="jpg", pref=""):
 	fnames = []
 	for url in read(ilist).split("\n"):
 		if " " in url:
-			fnames.append([get(u, ext) for u in url.split(" ")])
+			fnames.append([get(u, ext, pref) for u in url.split(" ")])
 		else:
-			fnames.append(get(url, ext))
+			fnames.append(get(url, ext, pref))
 	return fnames
 
-def o2f(outname, inames, ext="jpg"):
+def o2f(outname, inames, ext="jpg", pref=""):
 	if outname.endswith(".list"):
-		inames = dl(outname, ext)
+		inames = dl(outname, ext, pref)
 		outname = outname.split(".").pop(0)
 	return outname, inames
 
