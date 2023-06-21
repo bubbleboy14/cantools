@@ -271,7 +271,9 @@ def imeta(f, silent=False):
 	silent or log(m)
 	return m
 
-def scanp2():
+def scanp2(overwrite=False):
 	for f in os.listdir():
 		m = imeta(f, True)
-		m and not m["p2"] and print(f, m)
+		if m:
+			print(f, m)
+			overwrite and not m["p2"] and p2(f)
