@@ -419,7 +419,7 @@ CT.modal.Prompt = CT.Class({
 							cz.value.includes(ti) || cz.childNodes[ti].onclick();
 						}
 					}
-				}, null, this.opts.filter);
+				}, null, this.opts.filter, this.prompter);
 			selz && CT.dom.each(cz, function(sel) {
 				if (selz.includes(sel.innerHTML))
 					sel.onclick();
@@ -508,7 +508,8 @@ CT.modal.Prompt = CT.Class({
 	},
 	build: function() {
 		this.continueButton = CT.dom.button("Continue", this.submit);
-		this.node.insertBefore(CT.dom.node(this.opts.prompt), this.node.lastChild);
+		this.prompter = CT.dom.node(this.opts.prompt);
+		this.node.insertBefore(this.prompter, this.node.lastChild);
 		if (this.opts.style != "confirm") {
 			this.input = this._input[this.opts.style](this.opts.data);
 			this.add(this.input);
