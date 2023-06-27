@@ -162,6 +162,7 @@ cfg = {
 				"logo": "Your Logo",
 				"right": []
 			},
+			"spinner": True,
 			"borderbox": True,
 			"css": [],
 			"keys": {},

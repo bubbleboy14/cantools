@@ -492,14 +492,18 @@ var CT = {
 			CT.dom.setAutoparse(cfg.autoparse);
 		if (cfg.parsevid)
 			CT.parse.enableVideo();
+		if (cfg.spinner)
+			CT.net.setSpinner(cfg.spinner);
 		CT.layout.header(cfg.header);
 		cfg.footer && CT.layout.footer(cfg.footer);
 		cfg.mobile.scale && CT.dom.meta("viewport", "width=device-width, initial-scale=1");
 		cfg.borderbox && CT.dom.addStyle("* {box-sizing: border-box;}");
 		if (!cfg.modals) // for legacy projects
 			cfg.modals = {};
-		if (cfg.escapeModals) // old style
+		if (cfg.escapeModals) { // old style
+			CT.log("config: please use modals.escape instead of escapeModals flag");
 			cfg.modals.escape = true;
+		}
 		if (CT.modal) {
 			cfg.modals.escape && CT.key && CT.key.on("ESCAPE", CT.modal.close);
 			CT.modal.defaults(cfg.modals);
