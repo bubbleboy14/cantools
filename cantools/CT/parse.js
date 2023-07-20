@@ -60,7 +60,8 @@ CT.parse = {
 	    ".img", ".IMG",
 	    ".bmp", ".BMP",
 	    "jpeg", "JPEG",
-	    "webp", "WEBP"
+	    "webp", "WEBP",
+	    "avif", "AVIF"
 	],
 
 	// link handlers
