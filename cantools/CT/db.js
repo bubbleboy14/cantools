@@ -446,12 +446,12 @@ CT.db.edit = {
 			if (opts.label)
 				bopts.firstUp = "upload " + k;
 			valcell = (new CT.db.Blob(bopts)).node;
-		}
-		else if (ptype == "list") {
-			if (val)
-				valcell = CT.dom.fieldList(val, null, lstyle);
-			else
-				valcell = CT.dom.field();
+		} else if (ptype == "list") {
+			valcell = CT.dom.fieldList({
+				vals: val,
+				style: lstyle,
+				label: opts.label && k
+			});
 		} else if (ptype == "keylist") {
 			if (val)
 				valcell = CT.dom.fieldList(val, function(v) {
