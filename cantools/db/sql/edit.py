@@ -26,7 +26,10 @@ def edit(data, session=session, blobifier=None):
     extant = haskey and get(data["key"], session)
     blobifier and blobify(data, blobifier, extant)
     ent = extant or get_model(data["modelName"])()
-    haskey and ent.beforeedit(data)
+    if haskey: # what about nokey uniqueness checks?
+        editFailure = ent.beforeedit(data)
+        if editFailure:
+            return editFailure
     for propname, val in list(data.items()):
         if propname in ent._schema:
             if val:
