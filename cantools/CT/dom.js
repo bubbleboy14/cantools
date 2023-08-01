@@ -1441,6 +1441,12 @@ CT.dom = {
 	"setBody": function(content) {
 		CT.dom.setContent(document.body, content);
 	},
+	"addMain": function(content) {
+		CT.dom.addContent("ctmain", content);
+	},
+	"addBody": function(content) {
+		CT.dom.addContent(document.body, content);
+	},
 	"addEach": function(parent, subs) {
 		subs.forEach(function(node) { // must wrap
 			parent.appendChild(node);
