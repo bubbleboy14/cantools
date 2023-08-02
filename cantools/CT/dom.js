@@ -199,7 +199,7 @@ CT.dom = {
 		return CT.dom.field(id, null, classname,
 			"file", { onchange: cb, multiple: multiple });
 	},
-	"fieldList": function(vals, maker, style, onadd, onremove, onchange, bottomadd, wrap) {
+	"fieldList": function(vals, maker, style, onadd, onremove, onchange, bottomadd, wrap, label) {
 		if (arguments.length == 1 && vals && !Array.isArray(vals)) {
 			var obj = vals;
 			vals = obj.vals;
@@ -210,6 +210,7 @@ CT.dom = {
 			onchange = obj.onchange;
 			bottomadd = obj.bottomadd;
 			wrap = obj.wrap;
+			label = obj.label;
 		}
 		var input = function(v, i) { return maker ? maker(v, i) : CT.dom.field(null, v); },
 			row = function(v, i) {
@@ -239,9 +240,9 @@ CT.dom = {
 				return wrapper.lastChild.value;
 			});
 		};
-		if (wrap) {
+		if (label || wrap) {
 			var wrapper = CT.dom.div([
-				n.empty, n.addButton, n
+				label, n.empty, n.addButton, n
 			]);
 			wrapper.value = n.value;
 			return wrapper;
@@ -1439,6 +1440,12 @@ CT.dom = {
 	},
 	"setBody": function(content) {
 		CT.dom.setContent(document.body, content);
+	},
+	"addMain": function(content) {
+		CT.dom.addContent("ctmain", content);
+	},
+	"addBody": function(content) {
+		CT.dom.addContent(document.body, content);
 	},
 	"addEach": function(parent, subs) {
 		subs.forEach(function(node) { // must wrap

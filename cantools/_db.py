@@ -120,8 +120,11 @@ def response():
 					blob = blob.get()
 				send_file(blob, detect=True)
 	elif action == "edit":
-		succeed(getattr(edit(cgi_get("data"), blobifier=cgi_get("blobifier",
-			required=False)), cgi_get("exporter", default="data"))())
+		eres = edit(cgi_get("data"), blobifier=cgi_get("blobifier", required=False))
+		if type(eres) == str:
+			fail(eres)
+		else:
+			succeed(getattr(eres, cgi_get("exporter", default="data"))())
 	elif action == "edits":
 		items = cgi_get("data")
 		blobifier = cgi_get("blobifier", required=False)

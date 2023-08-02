@@ -53,6 +53,7 @@ class ModelBase(with_metaclass(CTMeta, sa_dbase)):
     }
     label = "key"
     _data_omit = []
+    _unique_cols = []
 
     def __init__(self, *args, **kwargs):
         sa_dbase.__init__(self, *args, **kwargs)
@@ -91,8 +92,24 @@ class ModelBase(with_metaclass(CTMeta, sa_dbase)):
     def put(self, session=session):
         put_multi([self], session)
 
+    def otherwith(self, prop, val):
+        k = self._schema[prop]
+        c = self.__class__
+        col = getattr(c, prop)
+        q = c.query(c.key != self.key)
+        print("checking", c.__name__, "for", prop, k, "=", val)
+        if k.endswith("list"):
+            for v in val:
+                q.filter(col.contains(v))
+        else:
+            q.filter(col == val)
+        return q.get()
+
     def beforeedit(self, edits):
-        pass
+        for prop in edits:
+            if prop in self._unique_cols and self.otherwith(prop, edits[prop]):
+                print(prop, "conflict!\n\n")
+                return "%s must be unique"%(prop,)
 
     def beforeremove(self, session):
         pass
