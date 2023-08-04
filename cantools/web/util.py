@@ -275,6 +275,9 @@ def do_respond(responseFunc, failMsg="failed", failHtml=False, failNoEnc=False, 
     else:
         wrapped_response()
 
+def redir302(addr):
+    _write("HTTP/1.1 302 Found\r\nLocation: %s\r\n\r\n"%(addr,))
+
 def redirect(addr, msg="", noscript=False, exit=True):
     a = "<script>"
     if msg:
