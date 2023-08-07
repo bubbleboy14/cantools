@@ -40,16 +40,18 @@ def o2f(outname, inames, ext="jpg", pref=""):
 # video (ffmpeg)
 #
 
-def thumb(vname, src=".", dest=".", vext="mp4", forceDest=False):
+def thumb(vname, src=".", dest=".", vext="mp4", forceDest=False, overwrite=False):
 	if "." in vname:
 		vpath = vname
 		vname = vname.split(".")[0]
 	else:
 		vpath = "%s/%s.%s"%(src, vname, vext)
+	dpath = os.path.join(dest, vname.rsplit("/", 1)[0])
+	dname = "%s/%s.jpg"%(dest, vname)
 	if forceDest:
-		dpath = os.path.join(dest, vname.rsplit("/", 1)[0])
 		os.path.isdir(dpath) or mkdir(dpath, True)
-	cmd('ffmpeg -i %s -vf "thumbnail" -frames:v 1 %s/%s.jpg'%(vpath, dest, vname))
+	if overwrite or not os.path.exists(dname):
+		cmd('ffmpeg -i %s -vf "thumbnail" -frames:v 1 %s'%(vpath, dname))
 
 def concat(outname, *vnames):
 	outname, vnames = o2f(outname, vnames, "mp4")
