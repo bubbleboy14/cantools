@@ -82,13 +82,13 @@ CT.parse = {
 	    return '<a target="_blank" href=' + furl + '>' + (rname || CT.parse.breakurl(rurl)) + "</a>";
 	},
 	"processLink": function(url, customArg) {
-	    var itz = CT.parse.imgTypes,
-	    	ext = url.slice(-4);
+	    var itz = CT.parse.imgTypes, ext = url.slice(-4),
+	    	icap = core.config.nolazy ? ">" : " loading=lazy>";
 	    if (itz.indexOf(ext) != -1) // first pass (fast)
-	        return '<img src=' + url + '>';
+	        return '<img src=' + url + icap;
 	    for (var i = 0; i < itz.length; i++) { // second pass
 	    	if (url.indexOf(itz[i] + "?") != -1)
-		        return '<img src=' + url + '>';
+		        return '<img src=' + url + icap;
 	    }
 	    return CT.parse._linkProcessor
 	    	&& CT.parse._linkProcessor(url, customArg)

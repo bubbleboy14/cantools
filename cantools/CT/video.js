@@ -141,6 +141,10 @@ CT.video = {
 		var ifs = ' style="border:none;overflow:hidden;max-width:100%;"',
 			iurl = CT.video.embed_url[video.player] + video.docid,
 			vsp = 'onclick="arguments[0].stopPropagation();"';
+		if (!core.config.nolazy) { // regardless of CT.info.mobile...
+			ifs += " loading=lazy";
+			vsp += " preload=metadata";
+		}
 		if (["odysee", "ugetube", "dtube", "bitchute", "rumble", "gab", "conspyre"].includes(video.player))
 			return '<iframe ' + dims + ifs + ' src="' + iurl + '" frameborder="0" allowfullscreen></iframe>';
 		else if (video.player == "facebook")
