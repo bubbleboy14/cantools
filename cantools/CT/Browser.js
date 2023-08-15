@@ -106,7 +106,7 @@ CT.Browser = CT.Class({
 	},
 	view: function(d) {
 		// override!
-		CT.dom.setContent(_.nodes.content, [
+		CT.dom.setContent(this._.nodes.content, [
 			this.namer(d),
 			JSON.stringify(d)
 		]);
