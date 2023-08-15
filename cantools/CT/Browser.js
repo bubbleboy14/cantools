@@ -6,18 +6,19 @@ CT.Browser = CT.Class({
 	CLASSNAME: "CT.Browser",
 	_: {
 		nodes: {},
-		edit: function(data, noreview, cb, silent) {
+		edited: function(data, dfull, cb, review, silent) {
 			var _ = this._, oz = this.opts, view = this.view;
-			CT.db.put(data, function(dfull) {
-				if (data.key) {
-					oz.saveMessage && !silent && alert(oz.saveMessage);
-					noreview || view(dfull);
-				} else {
-					_.items.push(dfull);
-					_.tlist.postAdd(dfull, true);
-				}
-				cb && cb();
-			});
+			if (data.key) {
+				oz.saveMessage && !silent && alert(oz.saveMessage);
+				review && view(dfull);
+			} else {
+				_.items.push(dfull);
+				_.tlist.postAdd(dfull, true);
+			}
+			cb && cb();
+		},
+		edit: function(data, noreview, cb, silent) {
+			CT.db.put(data, dfull => this._.edited(data, dfull, cb, !noreview, silent));
 		},
 		load: function(d) {
 			var _ = this._, oz = this.opts, fview = this.firstview;
