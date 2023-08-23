@@ -460,8 +460,9 @@ CT.modal.Prompt = CT.Class({
 			});
 		},
 		"icon": function(data) {
-			return CT.dom.iconSelector(data,
-				true, this.opts.page, this.opts.iclick);
+			var oz = this.opts;
+			return CT.dom.iconSelector(data, true,
+				oz.page, oz.iclick, oz.searchable);
 		},
 		"sound": function(data) {
 			return CT.dom.soundSelector(data, true);
