@@ -1237,7 +1237,7 @@ CT.dom = {
 		return n;
 	},
 
-	"iconSelector": function(items, selectFirst, page, onclick) {
+	"iconSelector": function(items, selectFirst, page, onclick, searchable) {
 		var cur, maker = function(i) {
 			var img = CT.dom.img(i.img || i.url || i.item || i, "padded margined round", function() {
 				if (cur)
@@ -1248,12 +1248,40 @@ CT.dom = {
 			});
 			img._icon = i;
 			return img;
-		}, n = CT.dom.div(page ? CT.dom.pager(items, page, maker) : items.map(maker));
+		}, n = CT.dom.div(), cont, iz;
 		n.value = function() {
 			return cur && cur._icon;
 		};
+		n.update = function(searchFor) {
+			cont = [];
+			iz = items;
+			if (searchable) {
+				if (searchFor) {
+					iz = iz.filter(i => i.includes(searchFor));
+					cont.push(CT.dom.div([
+						CT.dom.span(searchFor, "bold"),
+						CT.dom.link("(unfilter)", () => n.update())
+					], searchable));
+				} else {
+					cont.push(CT.dom.smartField({
+						classname: searchable,
+						blurs: [
+							"what do you want?",
+							"what do you need?",
+							"enter search terms",
+							"what are you looking for?",
+							"what are you searching for?",
+						],
+						cb: n.update
+					}));
+				}
+			}
+			cont.unshift(page ? CT.dom.pager(iz, page, maker) : iz.map(maker));
+			CT.dom.setContent(n, cont);
+		};
+		n.update();
 		if (selectFirst) {
-			var sftar = n.firstChild;
+			var sftar = n.firstChild.firstChild;
 			if (page) // hah
 				sftar = sftar.firstChild.firstChild.firstChild;
 			sftar.onclick();
