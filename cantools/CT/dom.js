@@ -1237,13 +1237,14 @@ CT.dom = {
 		return n;
 	},
 
-	"iconSelector": function(items, selectFirst, page) {
+	"iconSelector": function(items, selectFirst, page, onclick) {
 		var cur, maker = function(i) {
 			var img = CT.dom.img(i.img || i.url || i.item || i, "padded margined round", function() {
 				if (cur)
 					cur.firstChild.classList.remove("bordered");
 				cur = img;
 				cur.firstChild.classList.add("bordered");
+				onclick && onclick(i);
 			});
 			img._icon = i;
 			return img;
