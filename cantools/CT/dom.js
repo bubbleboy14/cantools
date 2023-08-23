@@ -1213,8 +1213,32 @@ CT.dom = {
 
 	},
 
-	"iconSelector": function(items, selectFirst) {
-		var cur, n = CT.dom.div(items.map(function(i) {
+	"pager": function(items, page, maker) {
+		var n = CT.dom.div(), curpage = 1,
+			pages = Math.ceil(items.length / page);
+		maker = maker || CT.dom.div;
+		n.update = function() {
+			CT.dom.setContent(n, [
+				items.slice((curpage - 1) * page, curpage * page).map(maker),
+				(curpage > 1) && CT.dom.link("<", function() {
+					curpage -= 1;
+					n.update();
+				}),
+				CT.dom.pad(),
+				CT.dom.span(curpage + " of " + pages),
+				CT.dom.pad(),
+				(curpage < pages) && CT.dom.link(">", function() {
+					curpage += 1;
+					n.update();
+				})
+			]);
+		};
+		n.update();
+		return n;
+	},
+
+	"iconSelector": function(items, selectFirst, page) {
+		var cur, maker = function(i) {
 			var img = CT.dom.img(i.img || i.url || i.item || i, "padded margined round", function() {
 				if (cur)
 					cur.firstChild.classList.remove("bordered");
@@ -1223,11 +1247,16 @@ CT.dom = {
 			});
 			img._icon = i;
 			return img;
-		}));
+		}, n = CT.dom.div(page ? CT.dom.pager(items, page, maker) : items.map(maker));
 		n.value = function() {
 			return cur && cur._icon;
 		};
-		selectFirst && n.firstChild.onclick();
+		if (selectFirst) {
+			var sftar = n.firstChild;
+			if (page) // hah
+				sftar = sftar.firstChild.firstChild.firstChild;
+			sftar.onclick();
+		}
 		return n;
 	},
 
