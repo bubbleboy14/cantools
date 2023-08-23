@@ -460,7 +460,8 @@ CT.modal.Prompt = CT.Class({
 			});
 		},
 		"icon": function(data) {
-			return CT.dom.iconSelector(data, true, this.opts.page);
+			return CT.dom.iconSelector(data,
+				true, this.opts.page, this.opts.iclick);
 		},
 		"sound": function(data) {
 			return CT.dom.soundSelector(data, true);
