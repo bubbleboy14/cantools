@@ -40,6 +40,12 @@ def o2f(outname, inames, ext="jpg", pref=""):
 # video (ffmpeg)
 #
 
+def dlp(url, opath=None, tarform="mp4", size="+size"):
+	ytc = "yt-dlp -f %s -S %s"%(tarform, size)
+	if opath:
+		ytc = "%s -o %s"%(ytc, opath)
+	cmd("%s %s"%(ytc, url))
+
 def thumb(vname, src=".", dest=".", vext="mp4", forceDest=False, overwrite=False):
 	if "." in vname:
 		vpath = vname
