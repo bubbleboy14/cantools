@@ -694,6 +694,8 @@ CT.event = {
 };
 
 // shims (fallbacks for old browsers)
+if (!window.IntersectionObserver)
+	CT.require("CT.lib.shims.IntersectionObserver", true);
 if (!window.JSON)
 	CT.require("CT.lib.shims.JSON", true);
 if (!"sessionStorage" in window)
