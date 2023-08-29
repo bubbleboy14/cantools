@@ -1648,6 +1648,41 @@ div.mce-fullscreen {
     stroke: pink;
 }
 
+.ctmarquee {
+/*    position: relative;
+    overflow: hidden;*/
+}
+
+.ctmarquee > div {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -moz-animation: ctmarquee 5s linear infinite alternate;
+    -webkit-animation: ctmarquee 5s linear infinite alternate;
+    animation: ctmarquee 5s linear infinite alternate;
+}
+
+@-moz-keyframes ctmarquee {
+    0%   { -moz-transform: translateX(70%); }
+    100% { -moz-transform: translateX(0%); }
+}
+@-webkit-keyframes ctmarquee {
+    0%   { -webkit-transform: translateX(70%); }
+    100% { -webkit-transform: translateX(0%); }
+}
+@keyframes ctmarquee {
+    0% {
+        -moz-transform: translateX(70%); /* Firefox bug fix */
+        -webkit-transform: translateX(70%); /* Firefox bug fix */
+        transform: translateX(70%);
+    }
+    100% {
+        -moz-transform: translateX(0%); /* Firefox bug fix */
+        -webkit-transform: translateX(0%); /* Firefox bug fix */
+        transform: translateX(0%);
+    }
+}
+
 #ctheader.hamburgize #hambo {
     position: fixed;
     top: 10px;
