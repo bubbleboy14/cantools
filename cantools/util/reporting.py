@@ -32,19 +32,19 @@ def closedeeps():
             DLZ[group][dl].close()
         del DLZ[group]
 
-def deeplog(logname, subname):
-    dpath = os.path.join("logs", logname)
-    os.path.exists(dpath) or os.mkdir(dpath)
-    if logname not in DLZ:
-        DLZ[logname] = {}
-    if subname not in DLZ[logname]:
-        fullp = os.path.join(dpath,
-            "%s.log"%(''.join([s for s in subname if s.isalnum()]),))
+def deeplog(group, sub):
+    gpath = os.path.join("logs", group)
+    os.path.exists(gpath) or os.mkdir(gpath)
+    if group not in DLZ:
+        DLZ[group] = {}
+    if sub not in DLZ[group]:
+        fullp = os.path.join(gpath,
+            "%s.log"%(''.join([s for s in sub if s.isalnum()]),))
         print("initializing", fullp)
-        DLZ[logname][subname] = open(fullp, "a")
-    return DLZ[logname][subname]
+        DLZ[group][sub] = open(fullp, "a")
+    return DLZ[group][sub]
 
-def log(msg, level=0, important=False, logname=None, subname=None):
+def log(msg, level=0, important=False, group=None, sub=None):
     from cantools import config
     s = "%s%s"%("  " * level, msg)
     if config.log.timestamp:
@@ -54,8 +54,8 @@ def log(msg, level=0, important=False, logname=None, subname=None):
     ws = "%s\n"%(s,)
     if LOG_FILE:
         LOG_FILE.write(ws)
-    if logname and subname and config.log.deep:
-        deeplog(logname, subname).write(ws)
+    if group and sub and config.log.deep:
+        deeplog(group, sub).write(ws)
     print(s)
 
 def set_error(f):
