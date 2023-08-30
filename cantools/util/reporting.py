@@ -34,12 +34,19 @@ def closedeeps():
 
 def deeplog(group, sub):
     gpath = os.path.join("logs", group)
-    os.path.exists(gpath) or os.mkdir(gpath)
     if group not in DLZ:
         DLZ[group] = {}
     if sub not in DLZ[group]:
+        if "(" in sub:
+            variety, name = sub[:-1].split("(")
+            gpath = os.path.join(gpath, variety)
+        else:
+            name = sub
+        if not os.path.exists(gpath):
+            from .system import mkdir
+            mkdir(gpath, True)
         fullp = os.path.join(gpath,
-            "%s.log"%(''.join([s for s in sub if s.isalnum()]),))
+            "%s.log"%(''.join([s for s in name if s.isalnum()]),))
         print("initializing", fullp)
         DLZ[group][sub] = open(fullp, "a")
     return DLZ[group][sub]
