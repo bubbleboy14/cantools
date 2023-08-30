@@ -53,16 +53,19 @@ def deeplog(group, sub):
 
 def log(msg, level=0, important=False, group=None, sub=None):
     from cantools import config
+    lcfg = config.log
     s = "%s%s"%("  " * level, msg)
-    if config.log.timestamp:
+    if lcfg.timestamp:
         s = "* %s : %s"%(datetime.now(), s)
     if important:
         s = "\n%s"%(s,)
     ws = "%s\n"%(s,)
     if LOG_FILE:
         LOG_FILE.write(ws)
-    if group and sub and config.log.deep:
-        deeplog(group, sub).write(ws)
+    if group and sub and lcfg.deep:
+        dl = deeplog(group, sub)
+        dl.write(ws)
+        lcfg.flush and dl.flush()
     print(s)
 
 def set_error(f):
