@@ -62,6 +62,7 @@ def log(msg, level=0, important=False, group=None, sub=None):
     ws = "%s\n"%(s,)
     if LOG_FILE:
         LOG_FILE.write(ws)
+        lcfg.flush and LOG_FILE.flush()
     if group and sub and lcfg.deep:
         dl = deeplog(group, sub)
         dl.write(ws)
