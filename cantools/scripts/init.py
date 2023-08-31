@@ -272,7 +272,7 @@ def update():
 	if input("update cantools dependencies? [N/y] ").lower().startswith("y"):
 		os.chdir("%s/.."%(CTP,))
 		log("updating dependencies", important=True)
-		cmd("pip3 install -e .", True)
+		cmd(pipper(), True)
 		#py("setup.py install", True)
 		#log("restoring cantools develop status", important=True)
 		#py("setup.py develop", True)
