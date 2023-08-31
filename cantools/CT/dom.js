@@ -508,6 +508,10 @@ CT.dom = {
 		return CT.dom.node(bs);
 	},
 	"marquee": function(content, className, direction, noresize) {
+		CT.log("creating a marquee - are you sure you want to do this?");
+		if (!core.config.realMarquee)
+			return CT.dom.div(content, "ctmarquee " + className);
+		CT.log("wow, you're creating a classic marquee, good luck!");
 		var n = CT.dom.node(content, "marquee", className, null, {
 			direction: direction || "left",
 			behavior: "alternate"

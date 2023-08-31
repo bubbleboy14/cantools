@@ -3,7 +3,7 @@ import os
 cfg = {
 	"log": {
 		"timestamp": True,
-		"allow": ["info", "log", "error"]
+		"allow": ["info", "log", "error"] # access,info,log,warn,error,detail,query,kernel
 	},
 	"mempad": 0, # 0 = unset (uses dez's default)
 	"rel": { # 0 = unset (uses rel's default)
