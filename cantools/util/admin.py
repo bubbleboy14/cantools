@@ -52,6 +52,18 @@ def binpath(bpath="/usr/bin/"):
 			cmd("ln -s %s"%(mloc,))
 	log("goodbye", important=True)
 
+def refresh_plugins():
+	pcmd = pipper()
+	def refresher():
+		cmd("git pull")
+		cmd(pcmd, True)
+	plugdirs(refresher, input("search directory? [default: .ctplug] ") or ".ctplug",
+		input("filter by preface? [suggested: ct] "))
+
+def postup():
+	binpath()
+	refresh_plugins()
+
 def screener(ctnum=None, dpath="/root", drpnum=None, psnum=None, sname=None):
 	os.chdir(dpath)
 	set_log("scrn.log")

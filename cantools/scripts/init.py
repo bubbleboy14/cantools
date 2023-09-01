@@ -41,7 +41,7 @@ import os, sys
 from optparse import OptionParser
 from cantools import config, include_plugin, mods_and_repos
 from cantools.util import log, error, cp, sym, mkdir, rm, py, cmd, read
-from cantools.util.admin import pipper, plugdirs
+from cantools.util.admin import pipper, refresh_plugins
 from .builder import build_all
 
 try:
@@ -285,14 +285,6 @@ def admin():
 	os.chdir(os.path.join(CTP, "admin"))
 	build_all("admin", CTP)
 	log("finished compilation")
-
-def refresh_plugins():
-	pcmd = pipper()
-	def refresher():
-		cmd("git pull")
-		cmd(pcmd, True)
-	plugdirs(refresher, input("search directory? [default: .ctplug] ") or ".ctplug",
-		input("filter by preface? [suggested: ct] "))
 
 def parse_and_make():
 	parser = OptionParser("ctinit [projname] [-ru] [--plugins=P1|P2|P3] [--cantools_path=PATH] [--web_backend=BACKEND]")
