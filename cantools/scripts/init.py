@@ -41,7 +41,7 @@ import os, sys
 from optparse import OptionParser
 from cantools import config, include_plugin, mods_and_repos
 from cantools.util import log, error, cp, sym, mkdir, rm, py, cmd, read
-from cantools.util.admin import pipper, refresh_plugins
+from cantools.util.package import pipper, refresh_plugins
 from .builder import build_all
 
 try:
