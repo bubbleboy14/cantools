@@ -289,7 +289,7 @@ def pipper():
 	if managedpip():
 		log("your Python is externally managed by your OS")
 		if input("install anyway? [y/N] ").lower().startswith("y"):
-			p += " --break-system-packages"
+			p += " --break-system-packages --use-pep517"
 	return p
 
 def refresh_plugins():
