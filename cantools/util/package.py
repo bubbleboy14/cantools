@@ -1,4 +1,4 @@
-import os, sys
+import os, sys, importlib
 from cantools.util import cmd, log, py
 
 def managedpip():
@@ -81,7 +81,6 @@ def getmod():
     return os.path.isdir(h) and h or input("module name? ")
 
 def getver(modname):
-    import importlib
     v = importlib.import_module(modname).__version__
     print(v)
     return v
