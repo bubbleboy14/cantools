@@ -52,14 +52,6 @@ def binpath(bpath="/usr/bin/"):
 			cmd("ln -s %s"%(mloc,))
 	log("goodbye", important=True)
 
-def refresh_plugins():
-	pcmd = pipper()
-	def refresher():
-		cmd("git pull")
-		cmd(pcmd, True)
-	plugdirs(refresher, input("search directory? [default: .ctplug] ") or ".ctplug",
-		input("filter by preface? [suggested: ct] "))
-
 def postup():
 	binpath()
 	refresh_plugins()
@@ -83,31 +75,6 @@ def screener(ctnum=None, dpath="/root", drpnum=None, psnum=None, sname=None):
 		pcheck("ctstart", ctnum, starter) or pcheck("dez_reverse_proxy", drpnum, starter) or pcheck("ctpubsub", psnum, starter)
 	log("goodbye", important=True)
 	close_log()
-
-def managedpip():
-	fname = "/usr/lib/python%s/EXTERNALLY-MANAGED"%(".".join(sys.version.split(" ").pop(0).split(".")[:2]),)
-	print("checking for", fname)
-	isext = os.path.isfile(fname)
-	print("found:", isext)
-	return isext
-
-def pipper(execute=False, force=False):
-	p = "pip3 install -e ."
-	valid = True
-	if managedpip():
-		log("your Python is externally managed by your OS")
-		if force or input("install anyway? [y/N] ").lower().startswith("y"):
-			p += " --break-system-packages --use-pep517"
-		else:
-			valid = False
-	if execute:
-		if valid:
-			cmd(p, True)
-		else:
-			log("aborting execution!")
-	else:
-		log(p)
-	return p
 
 def check(cmd="df"):
 	oz = output(cmd).split("\n")
