@@ -23,12 +23,13 @@ import os, json
 from optparse import OptionParser
 from cantools import __version__, config
 from cantools.util import read, write, log, cp, cmd
+from cantools.util.package import here
 
 WEB = []
 ALTS = {
     "pubsub": os.path.join("pubsub", "__init__")
 }
-HERE = os.path.abspath(".").split(os.path.sep)[-1]
+HERE = here()
 CUSTOM = os.path.isfile("doc.cfg") and read("doc.cfg")
 ISPLUGIN = not CUSTOM and HERE.startswith("ct") and HERE
 AUTO = HERE != "cantools" and not CUSTOM and not ISPLUGIN

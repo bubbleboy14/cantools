@@ -44,7 +44,8 @@ Generates fresh 'static' and 'production' files (from 'development' source files
 
 import subprocess, os
 from cantools import config, __version__
-from cantools.util import log, error, read, write, cmd, py
+from cantools.util import log, error, read, write, cmd
+from cantools.util.package import vpush
 from .builder import build_all
 
 try:
@@ -82,45 +83,12 @@ def setmode(mode):
             ctpy = ctpy.replace(config.py.mode%(m,), config.py.mode%(mode,))
     write(ctpy, config.py.path)
 
-def vpush():
-    log("vpushin!", important=True)
-    log("current version: %s"%(__version__,))
-    vnumz = [int(n) for n in __version__.split(".")]
-    while len(vnumz) < 4:
-        vnumz.append(0)
-    vnumz[-1] += 1
-    minor = ".".join([str(n) for n in vnumz])
-    vnumz[-2] += 1
-    major = ".".join([str(n) for n in vnumz[:-1]])
-    log("How should we increment? You have three options:", important=True)
-    log("Major ('M' - %s)"%(major,), 1)
-    log("Minor ('m' - %s)"%(minor,), 1)
-    log("Custom ('c')", 1)
-    selection = input("So? (M/m/c - default: m): ")
-    if selection == "c":
-        version = input("ok, then. what's the new version #? ")
-    elif selection == "M":
-        version = major
-    else: # default (minor)
-        version = minor
-    log("going with: %s"%(version,), important=True)
-    for fname in ["setup.py", os.path.join("cantools", "__init__.py")]:
-        log("updating: %s"%(fname,), 1)
-        write(read(fname).replace(__version__, version), fname)
+def buildox():
     cmd("ctinit -a")
     cmd("ctdoc -w")
     os.chdir("docs")
     cmd("ctdeploy -p")
     os.chdir("..")
-    cmd("git add -u")
-    cmd('git commit -m "vpush %s"'%(version,))
-    cmd("git push")
-    if input("push to cheese shop? [N/y] ").lower().startswith("y"):
-        log("laying egg (universal py2/3 wheel)", important=True)
-        py("setup.py bdist_wheel --universal", True)
-        log("pushing to cheese shop", important=True)
-        cmd("twine upload dist/ct-%s-py2.py3-none-any.whl"%(version,))
-    log("we did it (%s -> %s)!"%(__version__, version), important=True)
 
 def upit():
     if config.web.server == "gae": # switches back to -d mode [ultra deprecated]
@@ -158,7 +126,7 @@ def run():
     options, args = parser.parse_args()
 
     if options.vpush:
-        vpush()
+        vpush("cantools", "ct", __version__, buildox)
     else:
         mode = options.dynamic and "dynamic" or options.static and "static" or options.production and "production"
         if not mode:
