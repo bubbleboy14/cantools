@@ -68,6 +68,7 @@ class Builder(object):
 		self.web_backend = web_backend
 		self.refresh_symlinks = refresh_symlinks
 		self.plugins = {}
+		self.pipper = None
 		self.installed = set()
 		self.install_plugins()
 		if not refresh_symlinks:
@@ -78,6 +79,7 @@ class Builder(object):
 
 	def _install(self, repo):
 		log("Building Package: %s"%(repo,), important=True)
+		self.pipper = self.pipper or pipper()
 		curdir = os.getcwd()
 		if not os.path.isdir(config.plugin.path):
 			mkdir(config.plugin.path)
@@ -89,7 +91,7 @@ class Builder(object):
 		log("installing plugin", important=True)
 #		cmd("python setup.py install", True) # unnecessary right?
 #		py("setup.py develop", True)
-		cmd("pip3 install -e .", True)
+		cmd(self.pipper, True)
 #		os.chdir("%s/.."%(self.ctroot,))
 #		log("restoring cantools develop status", important=True)
 #		py("setup.py develop", True)
