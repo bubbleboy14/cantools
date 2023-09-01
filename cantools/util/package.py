@@ -31,8 +31,8 @@ def pushv(version):
     cmd('git commit -m "vpush %s"'%(version,))
     cmd("git push")
 
-def upv(oldver, newver, pname):
-    fnames = [
+def upv(oldver, newver, pname, fnames=None):
+    fnames = fnames or [
         "setup.py",
         "about.txt",
         os.path.join(pname, "__init__.py"),
@@ -94,8 +94,11 @@ def vpush(modname=None, packname=None, curver=None, doxxer=None):
     upv(curver, version, modname)
     if doxxer:
         doxxer()
-    else:
+    elif input("generate documentation? [y/N] ").lower().startswith("y"):
         cmd("ctdoc")
+    else:
+        print("okay, i'll just update your README.md directly")
+        upv(curver, version, modname, ["README.md"])
     pushv(version)
     pwheel(packname or modname, version)
     log("we did it (%s -> %s)!"%(curver, version), important=True)
