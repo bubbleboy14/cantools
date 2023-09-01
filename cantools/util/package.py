@@ -80,8 +80,8 @@ def getmod():
     h = here()
     return os.path.isdir(h) and h or input("module name? ")
 
-def getver(modname):
-    v = importlib.import_module(modname).__version__
+def getver(modname=None):
+    v = importlib.import_module(modname or getmod()).__version__
     print(v)
     return v
 
