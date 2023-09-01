@@ -73,6 +73,33 @@ def pwheel(pname, version, withCheese=False):
         log("pushing to cheese shop", important=True)
         cmd("twine upload dist/%s-%s-py2.py3-none-any.whl"%(pname, version))
 
+def here():
+    return os.path.abspath(".").split(os.path.sep)[-1]
+
+def mod():
+    h = here()
+    return os.path.isdir(h) and h or input("module name? ")
+
+def getver(modname):
+    import importlib
+    v = importlib.import_module(modname).__version__
+    print(v)
+    return v
+
+def vpush(modname=None, packname=None, curver=None, doxxer=None):
+    modname = modname or mod()
+    curver = curver or getver(modname)
+    log("vpushin %s!"%(modname,), important=True)
+    version = incv(curver)
+    upv(curver, version, modname)
+    if doxxer:
+        doxxer()
+    else:
+        cmd("ctdoc")
+    pushv(version)
+    pwheel(packname or modname, version)
+    log("we did it (%s -> %s)!"%(curver, version), important=True)
+
 def refresh_plugins():
     pcmd = pipper()
     def refresher():
