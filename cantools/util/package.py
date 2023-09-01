@@ -76,7 +76,7 @@ def pwheel(pname, version, withCheese=False):
 def here():
     return os.path.abspath(".").split(os.path.sep)[-1]
 
-def mod():
+def getmod():
     h = here()
     return os.path.isdir(h) and h or input("module name? ")
 
@@ -87,7 +87,7 @@ def getver(modname):
     return v
 
 def vpush(modname=None, packname=None, curver=None, doxxer=None):
-    modname = modname or mod()
+    modname = modname or getmod()
     curver = curver or getver(modname)
     log("vpushin %s!"%(modname,), important=True)
     version = incv(curver)
