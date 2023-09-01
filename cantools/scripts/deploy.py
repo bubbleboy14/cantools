@@ -45,7 +45,7 @@ Generates fresh 'static' and 'production' files (from 'development' source files
 import subprocess, os
 from cantools import config, __version__
 from cantools.util import log, error, read, write, cmd
-from cantools.util.package import incv, upv, pushv, pwheel
+from cantools.util.package import vpush
 from .builder import build_all
 
 try:
@@ -83,18 +83,12 @@ def setmode(mode):
             ctpy = ctpy.replace(config.py.mode%(m,), config.py.mode%(mode,))
     write(ctpy, config.py.path)
 
-def vpush():
-    log("vpushin!", important=True)
-    version = incv(__version__)
-    upv(__version__, version, "cantools")
+def buildox():
     cmd("ctinit -a")
     cmd("ctdoc -w")
     os.chdir("docs")
     cmd("ctdeploy -p")
     os.chdir("..")
-    pushv(version)
-    pwheel("ct", version)
-    log("we did it (%s -> %s)!"%(__version__, version), important=True)
 
 def upit():
     if config.web.server == "gae": # switches back to -d mode [ultra deprecated]
@@ -132,7 +126,7 @@ def run():
     options, args = parser.parse_args()
 
     if options.vpush:
-        vpush()
+        vpush("cantools", "ct", __version__, buildox)
     else:
         mode = options.dynamic and "dynamic" or options.static and "static" or options.production and "production"
         if not mode:
