@@ -1,5 +1,5 @@
 import os, sys, importlib
-from cantools.util import cmd, log, py
+from cantools.util import cmd, log, py, read, write
 
 def managedpip():
     fname = "/usr/lib/python%s/EXTERNALLY-MANAGED"%(".".join(sys.version.split(" ").pop(0).split(".")[:2]),)
