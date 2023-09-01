@@ -93,6 +93,8 @@ def pipper(execute=False, force=False):
 			cmd(p, True)
 		else:
 			log("aborting execution!")
+	else:
+		log(p)
 	return p
 
 def check(cmd="df"):
