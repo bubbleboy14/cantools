@@ -41,7 +41,7 @@ import os, sys
 from optparse import OptionParser
 from cantools import config, include_plugin, mods_and_repos
 from cantools.util import log, error, cp, sym, mkdir, rm, py, cmd, read
-from cantools.util.admin import managedpip, plugdirs
+from cantools.util.admin import pipper, plugdirs
 from .builder import build_all
 
 try:
@@ -274,7 +274,7 @@ def update():
 	if input("update cantools dependencies? [N/y] ").lower().startswith("y"):
 		os.chdir("%s/.."%(CTP,))
 		log("updating dependencies", important=True)
-		cmd(pipper(), True)
+		pipper(execute=True)
 		#py("setup.py install", True)
 		#log("restoring cantools develop status", important=True)
 		#py("setup.py develop", True)
@@ -285,14 +285,6 @@ def admin():
 	os.chdir(os.path.join(CTP, "admin"))
 	build_all("admin", CTP)
 	log("finished compilation")
-
-def pipper():
-	p = "pip3 install -e ."
-	if managedpip():
-		log("your Python is externally managed by your OS")
-		if input("install anyway? [y/N] ").lower().startswith("y"):
-			p += " --break-system-packages --use-pep517"
-	return p
 
 def refresh_plugins():
 	pcmd = pipper()

@@ -79,6 +79,22 @@ def managedpip():
 	print("found:", isext)
 	return isext
 
+def pipper(execute=False, force=False):
+	p = "pip3 install -e ."
+	valid = True
+	if managedpip():
+		log("your Python is externally managed by your OS")
+		if force or input("install anyway? [y/N] ").lower().startswith("y"):
+			p += " --break-system-packages --use-pep517"
+		else:
+			valid = False
+	if execute:
+		if valid:
+			cmd(p, True)
+		else:
+			log("aborting execution!")
+	return p
+
 def check(cmd="df"):
 	oz = output(cmd).split("\n")
 	for o in oz:
