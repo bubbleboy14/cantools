@@ -1,22 +1,25 @@
 """
-### Usage: ctmigrate [load|dump] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME] [--skip=SKIP] [-n]
+### Usage: ctmigrate [load|dump|blobdiff|snap] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME] [--skip=SKIP] [--tables=TABLES] [--cutoff=CUTOFF] [-n]
 
 ### Options:
-	-h, --help                 show this help message and exit
-	-d DOMAIN, --domain=DOMAIN
-	                           domain of target server (default: localhost)
-	-p PORT, --port=PORT       port of target server (default: 8080)
-	-f FILENAME, --filename=FILENAME
-	                           name of sqlite data file for dumping/loading to/from
-	                           (default: dump.db)
-	-s SKIP, --skip=SKIP       don't dump these tables - use '|' as separator, such
-	                           as 'table1|table2|table3' (default: none)
-	-t TABLES, --tables=TABLES dump these tables - use '|' as separator, such
-	                           as 'table1|table2|table3' (default: all)
-	-n, --no_binary            disable binary download
+    -h, --help            show this help message and exit
+    -d DOMAIN, --domain=DOMAIN
+                          domain of target server (default: localhost)
+    -p PORT, --port=PORT  port of target server (default: 8080)
+    -c CUTOFF, --cutoff=CUTOFF
+                          blobdiff cutoff - number to start after (default: 0)
+    -f FILENAME, --filename=FILENAME
+                          name of sqlite data file for dumping/loading to/from
+                          (default: dump.db)
+    -s SKIP, --skip=SKIP  don't dump these tables - use '|' as separator, such
+                          as 'table1|table2|table3' (default: none)
+    -t TABLES, --tables=TABLES
+                          dump these tables - use '|' as separator, such as
+                          'table1|table2|table3' (default: all)
+    -n, --no_binary       disable binary download
 """
 
-import os, getpass
+import os, getpass, datetime
 from optparse import OptionParser
 from cantools import db
 from cantools.web import fetch, post
@@ -209,10 +212,49 @@ def blobdiff(cutoff):
 	cmd("zip -r blobdiff.zip blobdiff")
 	cmd("rm -rf blobdiff")
 
-MODES = { "load": load, "dump": dump, "blobdiff": blobdiff }
+def projpath():
+	path = os.path.join(*os.path.abspath(".").rsplit("/", 2)[1:])
+	return input("what's the project's path? [default: %s] "%(path,)) or path
+
+def scp(user, domain, path, keyfile=None, isdir=False):
+	line = ["scp"]
+	isdir and line.append("-r")
+	keyfile and line.append("-i %s"%(keyfile,))
+	line.append("%s@%s:%s ."%(user, domain, path))
+	cmd(" ".join(line))
+
+def askArch(path):
+	if not os.path.exists(path):
+		return
+	if input("%s exists - should i archive it? [Y/n] "%(path,)).lower().startswith("n"):
+		return log("ok, i'm overwriting it!", important=True)
+	newpath = "%s%s"%(path, str(datetime.datetime.now()).split(" ").pop(0))
+	log("ok, i'm moving it to %s"%(newpath,))
+	os.rename(path, newpath)
+
+def askGet(path, user, domain, projpath, keyfile=None, isdir=False):
+	if input("should i get %s? [Y/n] "%(path,)).lower().startswith("n"):
+		return
+	askArch(path)
+	scp(user, domain, "/%s/%s/%s"%(user, projpath, path), keyfile, isdir)
+
+def doGets(user, domain, projpath, keyfile):
+	askGet("data.db", user, domain, projpath, keyfile)
+	askGet("blob", user, domain, projpath, keyfile, True)
+	otherPath = input("anything else? [default: nah] ")
+	while otherPath:
+		askGet(otherPath, user, domain, projpath, keyfile,
+			input("is that a directory? [default: nope] "))
+		otherPath = input("anything else? [default: nah] ")
+
+def snap(domain):
+	doGets(input("what's the home directory? [default: root]: ") or "root",
+		domain, projpath(), input("what's the key file? [default: none] "))
+
+MODES = { "load": load, "dump": dump, "blobdiff": blobdiff, "snap": snap }
 
 def go():
-	parser = OptionParser("ctmigrate [load|dump|blobdiff] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME] [--skip=SKIP] [--tables=TABLES] [--cutoff=CUTOFF] [-n]")
+	parser = OptionParser("ctmigrate [load|dump|blobdiff|snap] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME] [--skip=SKIP] [--tables=TABLES] [--cutoff=CUTOFF] [-n]")
 	parser.add_option("-d", "--domain", dest="domain", default="localhost",
 		help="domain of target server (default: localhost)")
 	parser.add_option("-p", "--port", dest="port", default=8080,
@@ -235,6 +277,8 @@ def go():
 	if mode in MODES:
 		if mode == "blobdiff":
 			blobdiff(int(options.cutoff))
+		elif mode == "snap":
+			snap(options.domain)
 		else:
 			port = int(options.port)
 			session = db.Session("sqlite:///%s"%(options.filename,))
@@ -246,8 +290,8 @@ def go():
 					options.skip and options.skip.split("|"), tabes)
 	else:
 		error("invalid mode specified ('%s')"%(mode,),
-			"must be 'ctmigrate load' or ctmigrate dump'")
-	log("everything seems to have worked -- you might want to run ctindex")
+			"must be 'ctmigrate snap' or 'ctmigrate load' or ctmigrate dump' or ctmigrate blobdiff'")
+	log("everything seems to have worked!")
 	log("goodbye")
 
 if __name__ == "__main__":
