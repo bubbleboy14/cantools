@@ -10,8 +10,8 @@
     -w WEB_BACKEND, --web_backend=WEB_BACKEND
                           web backend. options: dez, gae. (default: dez)
     -r, --refresh_symlinks
-                          add symlinks to project and configure version control
-                          path exclusion (if desired)
+                          add symlinks to project, create any missing directories,
+                          and configure version control path exclusion (if desired)
     -u, --update          update cantools and all managed plugins
     -a, --admin           compile admin pages [ctdev only]
 
@@ -71,7 +71,9 @@ class Builder(object):
 		self.pipper = None
 		self.installed = set()
 		self.install_plugins()
-		if not refresh_symlinks:
+		if refresh_symlinks:
+			self.plugdirs()
+		else:
 			self.build_dirs()
 			self.make_files()
 		self.vcignore()
@@ -151,6 +153,16 @@ class Builder(object):
 			log("Installing %s Plugins"%(pil,), 1)
 			self._getplugs(config.plugin.modules)
 
+	def plugdirs(self):
+		log("Building Directories for %s Plugins"%(len(list(self.plugins.keys())),), important=True)
+		for mod in list(self.plugins.values()):
+			if hasattr(mod.init, "dirs"):
+				for d in mod.init.dirs:
+					if os.path.exists(d):
+						log("already exists: %s"%(d,))
+					else:
+						mkdir(d)
+
 	def build_dirs(self):
 		log("building directories", 1)
 		mkdir(self.pname)
@@ -161,11 +173,7 @@ class Builder(object):
 		mkdir(jsc)
 		mkdir("emails")
 		if self.plugins:
-			log("Building Directories for %s Plugins"%(len(list(self.plugins.keys())),), important=True)
-			for mod in list(self.plugins.values()):
-				if hasattr(mod.init, "dirs"):
-					for d in mod.init.dirs:
-						mkdir(d)
+			self.plugdirs()
 
 	def make_files(self):
 		log("generating configuration", 1)
@@ -295,7 +303,7 @@ def parse_and_make():
 	parser.add_option("-w", "--web_backend", dest="web_backend", default="dez",
 		help="web backend. options: dez, gae. (default: dez)")
 	parser.add_option("-r", "--refresh_symlinks", action="store_true",
-		dest="refresh_symlinks", default=False, help="add symlinks to project and configure version control path exclusion (if desired)")
+		dest="refresh_symlinks", default=False, help="add symlinks to project, create any missing directories, and configure version control path exclusion (if desired)")
 	parser.add_option("-u", "--update", action="store_true",
 		dest="update", default=False, help="update cantools and all managed plugins")
 	parser.add_option("-a", "--admin", action="store_true",
