@@ -58,7 +58,7 @@ CT.layout = {
 			linksClass: "abs top0 bottom0 right0 w1-2",
 			centerLogo: true
 		});
-		var content = [];
+		var content = [], noright;
 		if (opts.img) // opts also may include: panDuration
 			content.push(CT.dom.panImg(opts));
 		if (opts.right instanceof Node || opts.right.length) {
@@ -68,7 +68,8 @@ CT.layout = {
 				content.push(CT.dom.node(CT.dom.node(opts.right, "div",
 					"right h1", null, null, { padding: opts.rightPadding }),
 					"div", opts.linksClass));
-		}
+		} else
+			noright = true;
 		if (opts.centerLogo)
 			content.push(CT.dom.node(CT.dom.link(opts.logo, null, "/"), "center", "biggerester"));
 		else
@@ -80,7 +81,7 @@ CT.layout = {
 				m.className || "abs ctl mosthigh", m.direction, m.noresize));
 		}
 		var bighead = CT.dom.id("ctheader");
-		if (opts.hamburgize) {
+		if (opts.hamburgize && !noright) {
 			bighead.classList.add("hamburgize");
 			var hambo = CT.dom.div(null, null, "hambo", {
 				onclick: function() {
