@@ -56,6 +56,7 @@ CT.layout = {
 			right: [],
 			rightPadding: "30px", // non-centerLogo only!
 			linksClass: "abs top0 bottom0 right0 w1-2",
+			logoClass: "wm1-2",
 			centerLogo: true
 		});
 		var content = [], noright;
@@ -74,7 +75,7 @@ CT.layout = {
 			content.push(CT.dom.node(CT.dom.link(opts.logo, null, "/"), "center", "biggerester"));
 		else
 			content.push(CT.dom.link(opts.logo, null, "/",
-				"wm1-2 biggest bold block nodecoration abs top0 bottom0 left0"));
+				opts.logoClass + " biggest bold block nodecoration abs top0 bottom0 left0"));
 		if (opts.marquee) { // lol
 			var m = opts.marquee;
 			content.push(CT.dom.marquee(m.content,
