@@ -30,7 +30,7 @@ CT.mobile = {
             duration: CT.mobile._dur,
             prefix: true,
             cb: function() {
-                ready && n && n.scrollIntoView({ block: "nearest", behavior: "smooth" });
+                ready && n && n.scrollIntoView({ block: "start", behavior: "smooth" });
                 document.body.scrollTop = 0;
                 ready = true;
                 cb && cb();
@@ -46,8 +46,8 @@ CT.mobile = {
         }
     },
     "fitAndSnap": function(n, cb) {
-        if (CT.dom.ALLNODE.mobileNode) // smoothest way once we're loaded
-            CT.dom.ALLNODE.mobileNode.scrollIntoView({ block: "nearest", behavior: "smooth" });
+//        if (CT.dom.ALLNODE.mobileNode) // smoothest way once we're loaded
+  //          CT.dom.ALLNODE.mobileNode.scrollIntoView({ block: "nearest", behavior: "smooth" });
         CT.mobile.fitNode(n, null, null, cb);
     },
     "mobileSnap": function(cb) {
