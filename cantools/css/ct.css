@@ -67,6 +67,12 @@
 .wm1-2i { max-width: 50% !important; }
 .hm1-3 { max-height: 33%; }
 .wm1-3 { max-width: 33%; }
+.hm2-3 { max-height: 66%; }
+.wm2-3 { max-width: 66%; }
+.hm1-4 { max-height: 25%; }
+.wm1-4 { max-width: 25%; }
+.hm3-4 { max-height: 75%; }
+.wm3-4 { max-width: 75%; }
 .hmin1 { min-height: 100%; }
 .wmin1 { min-width: 100%; }
 .hmin1-2 { min-height: 50%; }
