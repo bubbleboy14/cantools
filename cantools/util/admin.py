@@ -53,9 +53,9 @@ def binpath(bpath="/usr/bin/"):
 	log("goodbye", important=True)
 
 def postup():
-	binpath()
 	from cantools.util.package import refresh_plugins
 	refresh_plugins()
+	binpath()
 
 def screener(ctnum=None, dpath="/root", drpnum=None, psnum=None, sname=None):
 	os.chdir(dpath)
