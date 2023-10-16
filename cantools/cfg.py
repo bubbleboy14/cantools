@@ -58,6 +58,7 @@ cfg = {
 		"csp": None,
 		"log": None,
 		"errlog": None,
+		"report": False,
 		"rollz": {},
 		"blacklist": [],
 		"whitelist": []
