@@ -339,6 +339,9 @@ def fail(data="failed", html=False, err=None, noenc=False, exit=True):
         if DEBUG:
             # write it
             data = logdata
+        if config.web.report:
+            from cantools.web import email_admins
+            email_admins("error encountered", logdata)
     _header("Content-Type", "text/%s"%(html and "html" or "plain"))
     draw = processResponse(data, "0")
     dstring = (config.encode and not noenc) and enc(draw) or draw
