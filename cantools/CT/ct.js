@@ -610,7 +610,7 @@ if (location.search) {
 	var k, v, part, parts = location.search.slice(1).split("&");
 	for (part of parts) {
 		[k, v] = part.split("=");
-		CT.info.query[k] = v;
+		CT.info.query[k] = decodeURIComponent(v);
 	}
 }
 
