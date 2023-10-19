@@ -6,6 +6,7 @@ except:
     from urllib import quote, unquote, urlencode # py2.7
     from urllib2 import urlopen, Request
 from base64 import b64encode, b64decode
+from dez.http.static import StaticStore
 from cantools import config
 from six import string_types
 
@@ -428,3 +429,35 @@ def strip_html_carefully(s, besides=[]):
     while "  " in s:
         s = s.replace("  ", " ")
     return s
+
+# metaization
+metastore = StaticStore()
+qcache = {}
+METS = """
+  <meta property="og:title" content="%s">
+  <meta property="twitter:title" content="%s">
+  <meta property="og:image" content="%s">
+  <meta property="twitter:image" content="%s">
+  <meta property="og:description" content="%s">
+  <meta property="twitter:description" content="%s">
+  <meta property="description" content="%s">
+"""
+
+def metized(markup, m):
+    n = m["name"]
+    i = m["image"]
+    b = m["blurb"]
+    return markup.replace("<head>", "<head>%s"%(METS%(n, n, i, i, b, b, b),))
+
+def metize(mextractor):
+    qs = local("request_string") # better key?
+    p = local("response").request.url
+    mdir = config.mode == "dynamic" and "html" or "html-%s"%(config.mode,)
+    fp = "%s%s"%(mdir, p)
+    if p not in qcache:
+        qcache[p] = {}
+    if qs not in qcache[p]:
+        markup = metastore.read(fp)[0].decode()
+        metas = mextractor(p, markup)
+        qcache[p][qs] = metas and metized(markup, metas) or markup
+    send_file(qcache[p][qs])
