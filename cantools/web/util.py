@@ -164,7 +164,7 @@ def cgi_load(force=False):
         else:
             fail('no request data!')
 
-def cgi_get(key, choices=None, required=True, default=None, shield=False, decode=False):
+def cgi_get(key, choices=None, required=True, default=None, shield=False, decode=False, base64=False):
     request = local("request")
     val = request.get(key, default)
     if val is None:
@@ -178,7 +178,9 @@ def cgi_get(key, choices=None, required=True, default=None, shield=False, decode
     if choices and val not in choices:
         fail('invalid value for "%s": "%s"'%(key, val))
     if decode and val:
-        return unquote(val)
+        val = unquote(val)
+    if base64 and val:
+        val = b64decode(val)
     return val
 
 # response functions
