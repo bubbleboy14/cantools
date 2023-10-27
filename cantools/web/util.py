@@ -177,10 +177,10 @@ def cgi_get(key, choices=None, required=True, default=None, shield=False, decode
             fail()
     if choices and val not in choices:
         fail('invalid value for "%s": "%s"'%(key, val))
+    if base64 and val:
+        val = b64decode(unquote(val))
     if decode and val:
         val = unquote(val)
-    if base64 and val:
-        val = b64decode(val)
     return val
 
 # response functions
