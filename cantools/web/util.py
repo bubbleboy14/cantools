@@ -462,7 +462,6 @@ def text2image(parts, full=False):
     while parts:
         part = parts.pop(0)
         if part.startswith("https://"):
-            print("part:", part)
             part = vid2thumb(part)
             if not part:
                 continue
