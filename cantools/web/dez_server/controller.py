@@ -18,6 +18,7 @@ class DController(SocketController):
 		self.logger = logger_getter("Controller")
 		SocketController.__init__(self, *args, **kwargs)
 		self.handlers = {}
+		self.modules = {}
 		self.logger.info("cantools: %s"%(__version__,))
 		self.logger.info("Python: %s"%(sys.version.split(' ')[0],))
 		self.logger.info("System: " + " > ".join([part for part in platform.uname() if part]))
@@ -38,8 +39,13 @@ class DController(SocketController):
 	def trigger_handler(self, rule, target, req=None):
 		self.curpath = rule
 		if rule not in self.handlers:
-			self.logger.info("importing module: %s"%(target,))
-			__import__(target)
+			if target in self.modules:
+				self.logger.info("linking module: %s"%(target,))
+				self.handlers[rule] = self.modules[target]
+			else:
+				self.logger.info("importing module: %s"%(target,))
+				__import__(target)
+				self.modules[target] = self.handlers[rule]
 		self.handlers[rule](req and Response(req))
 
 	def paperShield(self, path, ip, fspath=False, count=True):

@@ -164,7 +164,7 @@ def cgi_load(force=False):
         else:
             fail('no request data!')
 
-def cgi_get(key, choices=None, required=True, default=None, shield=False, decode=False):
+def cgi_get(key, choices=None, required=True, default=None, shield=False, decode=False, base64=False):
     request = local("request")
     val = request.get(key, default)
     if val is None:
@@ -177,8 +177,10 @@ def cgi_get(key, choices=None, required=True, default=None, shield=False, decode
             fail()
     if choices and val not in choices:
         fail('invalid value for "%s": "%s"'%(key, val))
+    if base64 and val:
+        val = b64decode(unquote(val))
     if decode and val:
-        return unquote(val)
+        val = unquote(val)
     return val
 
 # response functions
@@ -276,13 +278,15 @@ def do_respond(responseFunc, failMsg="failed", failHtml=False, failNoEnc=False, 
     else:
         wrapped_response()
 
-def redirect(addr, msg="", noscript=False, exit=True):
+def redirect(addr, msg="", noscript=False, exit=True, metas=None):
     a = "<script>"
     if msg:
         a += 'alert("%s"); '%(msg,)
     a += "document.location = '%s';</script>"%(addr,)
     if noscript:
         a += '<noscript>This site requires Javascript to function properly. To enable Javascript in your browser, please follow <a href="http://www.google.com/support/bin/answer.py?answer=23852">these instructions</a>. Thank you, and have a nice day.</noscript>'
+    if metas:
+        a = "<html><head>%s%s</head><body></body></html>"%(metas, a)
     _header("Content-Type", "text/html")
     _write(_env(True)%(a,), exit)
 
@@ -443,11 +447,13 @@ METS = """
   <meta property="description" content="%s">
 """
 
-def metized(markup, m):
+def metized(m, markup=None):
     n = m["name"]
     i = m["image"]
     b = m["blurb"]
-    return markup.replace("<head>", "<head>%s"%(METS%(n, n, i, i, b, b, b),))
+    mets = METS%(n, n, i, i, b, b, b)
+    return markup and markup.replace("<head>",
+        "<head>%s"%(mets,)) or mets
 
 def metize(mextractor):
     qs = local("request_string") # better key?
@@ -459,5 +465,5 @@ def metize(mextractor):
     if qs not in qcache[p]:
         markup = metastore.read(fp)[0].decode()
         metas = mextractor(p, markup)
-        qcache[p][qs] = metas and metized(markup, metas) or markup
+        qcache[p][qs] = metas and metized(metas, markup) or markup
     send_file(qcache[p][qs])
