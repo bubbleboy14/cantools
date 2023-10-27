@@ -434,6 +434,20 @@ def strip_html_carefully(s, besides=[]):
         s = s.replace("  ", " ")
     return s
 
+# media extraction
+def vid2thumb(url):
+    if "youtube.com" in url:
+        url = "https://img.youtube.com/vi/%s/0.jpg"%(url.split("?v=")[1],)
+    elif "tl.fzn.party" in url:
+        url = url.replace("/v/", "/img/v/").replace(".mp4", ".jpg")
+    return url
+
+def text2image(parts):
+    while parts:
+        part = parts.pop(0)
+        if part.startswith("https://"):
+            return vid2thumb(part)
+
 # metaization
 metastore = StaticStore()
 qcache = {}
