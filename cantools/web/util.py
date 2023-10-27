@@ -477,11 +477,13 @@ def text2image(parts, full=False):
     return part
 
 def text2parts(text):
-    name, rest = text.split(" http", 1)
-    image, blurb = rest.split(" ", 1)
-    image = vid2thumb("http%s"%(image,))
-    if name and image and blurb:
-        return name, image, blurb
+    if " http" in text:
+        name, rest = text.split(" http", 1)
+        if " " in rest:
+            image, blurb = rest.split(" ", 1)
+            image = vid2thumb("http%s"%(image,))
+            if name and image and blurb:
+                return name, image, blurb
     return text2image(text.split(" "), True)
 
 # metaization
