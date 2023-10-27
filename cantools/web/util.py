@@ -435,18 +435,54 @@ def strip_html_carefully(s, besides=[]):
     return s
 
 # media extraction
+ITYPES = [ # from CT.parse.imgTypes[]
+    ".png", ".PNG",
+    ".jpg", ".JPG",
+    ".gif", ".GIF",
+    ".img", ".IMG",
+    ".bmp", ".BMP",
+    "jpeg", "JPEG",
+    "webp", "WEBP",
+    "avif", "AVIF"
+]
+
 def vid2thumb(url):
     if "youtube.com" in url:
         url = "https://img.youtube.com/vi/%s/0.jpg"%(url.split("?v=")[1],)
     elif "tl.fzn.party" in url:
         url = url.replace("/v/", "/img/v/").replace(".mp4", ".jpg")
-    return url
+    if url[-4:] in ITYPES: # fast
+        return url
+    for itype in ITYPES: # thorough
+        if itype in url:
+            return url
 
-def text2image(parts):
+def text2image(parts, full=False):
+    name = []
     while parts:
         part = parts.pop(0)
         if part.startswith("https://"):
-            return vid2thumb(part)
+            print("part:", part)
+            part = vid2thumb(part)
+            if not part:
+                continue
+            if part[-4:] in ITYPES: # fast
+                break
+            for itype in ITYPES: # thorough
+                if itype in part:
+                    break
+        name.append(part)
+    if full:
+        return " ".join(name), part, " ".join(parts)
+    return part
+
+def text2parts(text):
+    name, rest = text.split("http", 1)
+    image, blurb = rest.split(" ", 1)
+    image = vid2thumb("http%s"%(image,))
+    if name and image and blurb:
+        return name, image, blurb
+    return text2image(text.split(" "), True)
 
 # metaization
 metastore = StaticStore()
