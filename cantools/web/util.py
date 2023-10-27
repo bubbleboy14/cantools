@@ -477,7 +477,7 @@ def text2image(parts, full=False):
     return part
 
 def text2parts(text):
-    name, rest = text.split("http", 1)
+    name, rest = text.split(" http", 1)
     image, blurb = rest.split(" ", 1)
     image = vid2thumb("http%s"%(image,))
     if name and image and blurb:
