@@ -1,4 +1,4 @@
-import re, sys, ast, json, time, threading
+import re, os, sys, ast, json, time, threading
 try:
     from urllib.parse import quote, unquote, urlencode # py3
     from urllib.request import urlopen, Request
@@ -397,7 +397,6 @@ def send_xml(data):
 
 # misc
 def verify_recaptcha(cresponse, pkey):
-    import os
     verification_result = urlopen(Request(
         url = "https://www.google.com/recaptcha/api/siteverify",
         data = urlencode({
@@ -511,6 +510,8 @@ def metize(mextractor):
     p = local("response").request.url
     mdir = config.mode == "dynamic" and "html" or "html-%s"%(config.mode,)
     fp = "%s%s"%(mdir, p)
+    if os.path.isdir(fp):
+        fp += "/index.html"
     if p not in qcache:
         qcache[p] = {}
     if qs not in qcache[p]:
