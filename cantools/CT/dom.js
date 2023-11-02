@@ -944,16 +944,16 @@ CT.dom = {
 	},
 
 	"timeline": function(bz) {
-		var low = null, high = null, bars = bz.map(function(bar) {
+		var low = null, high = null, wmin = 120, bars = bz.map(function(bar) {
 			var b = CT.dom.div([
-				CT.dom.div(bar.start + bar.width, "right"),
+				CT.dom.div(bar.width ? (bar.start + bar.width) : "->", "right"),
 				CT.dom.div(bar.start, "left"),
 				bar.name
 			]), bs = b.style;
 			b.width = bar.width;
 			b.start = bar.start;
 			low = Math.min(b.start, low);
-			high = Math.max(b.start + b.width, high);
+			high = Math.max(b.start + (b.width || wmin), high);
 			bs.backgroundColor = bar.color;
 			bs.textAlign = "center";
 			return b;
@@ -961,7 +961,7 @@ CT.dom = {
 		wrapper.style.marginLeft = (-low * 100 / fullwidth) + "%";
 		bars.forEach(function(b) {
 			var bs = b.style;
-			bs.width = (100 * b.width / fullwidth) + "%";
+			bs.width = (100 * (b.width || wmin) / fullwidth) + "%";
 			bs.marginLeft = (100 * b.start / fullwidth) + "%";
 		});
 		return wrapper;
