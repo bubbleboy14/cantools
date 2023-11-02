@@ -943,12 +943,26 @@ CT.dom = {
 		], "div", "ctspinner"), "div", "ctswrap");
 	},
 
-	"timeline": function(bz) {
-		var low, high, h, wmin = 120, bars = bz.map(function(bar) {
+	"timeline": function(bz, pz, shift, pshift) {
+		var low, high, h, wmin = 120, date = function(d) {
+			if (shift)
+				return d + " (" + (d + shift) + ")";
+			return d;
+		}, per = function(num) {
+			return (100 * num / fullwidth) + "%";
+		}, pins = pz.map(function(pin) {
+			var p = CT.dom.div([
+				CT.dom.img("https://" + pin.icon, "w50pi"),
+				pin.name,
+				CT.dom.div(date(pin.date), "small")
+			], "abs centered small");
+			p.date = pin.date;
+			return p;
+		}), bars = bz.map(function(bar) {
 			var b = CT.dom.div([
-				CT.dom.div(bar.width ? (bar.start + bar.width) : "->", "right"),
-				CT.dom.div(bar.start, "left"),
-				bar.name
+				CT.dom.div(bar.width ? date(bar.start + bar.width) : "->", "right"),
+				CT.dom.div(date(bar.start), "left"),
+				CT.dom.div(bar.name, "bold")
 			]), bs = b.style;
 			b.width = bar.width;
 			b.start = bar.start;
@@ -958,12 +972,19 @@ CT.dom = {
 			bs.backgroundColor = bar.color;
 			bs.textAlign = "center";
 			return b;
-		}), fullwidth = high - low, wrapper = CT.dom.div(bars, "w1");
-		wrapper.style.marginLeft = (-low * 100 / fullwidth) + "%";
+		}), fullwidth = high - low, wrapper = CT.dom.div([pins, bars], "w1"),
+			xoff = wrapper.style.marginLeft = per(-low);
+		pins.forEach(function(p) {
+			var ps = p.style;
+			ps.left = per(p.date);
+			ps.marginLeft = "calc(" + xoff + " - 30px)";
+			if (pshift)
+				ps.marginTop = pshift + "px";
+		});
 		bars.forEach(function(b) {
 			var bs = b.style;
-			bs.width = (100 * (b.width || wmin) / fullwidth) + "%";
-			bs.marginLeft = (100 * b.start / fullwidth) + "%";
+			bs.width = per(b.width || wmin);
+			bs.marginLeft = per(b.start);
 		});
 		return wrapper;
 	},
