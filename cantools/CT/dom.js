@@ -943,6 +943,30 @@ CT.dom = {
 		], "div", "ctspinner"), "div", "ctswrap");
 	},
 
+	"timeline": function(bz) {
+		var low = null, high = null, bars = bz.map(function(bar) {
+			var b = CT.dom.div([
+				CT.dom.div(bar.start + bar.width, "right"),
+				CT.dom.div(bar.start, "left"),
+				bar.name
+			]), bs = b.style;
+			b.width = bar.width;
+			b.start = bar.start;
+			low = Math.min(b.start, low);
+			high = Math.max(b.start + b.width, high);
+			bs.backgroundColor = bar.color;
+			bs.textAlign = "center";
+			return b;
+		}), fullwidth = high - low, wrapper = CT.dom.div(bars, "w1");
+		wrapper.style.marginLeft = (-low * 100 / fullwidth) + "%";
+		bars.forEach(function(b) {
+			var bs = b.style;
+			bs.width = (100 * b.width / fullwidth) + "%";
+			bs.marginLeft = (100 * b.start / fullwidth) + "%";
+		});
+		return wrapper;
+	},
+
 	// date selector
 	"_monthnames": ["January", "February",
 		"March", "April", "May", "June", "July", "August",
