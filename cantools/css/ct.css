@@ -102,8 +102,10 @@
 .h800p { height: 800px; }
 .w15p { width: 15px; }
 .w50p { width: 50px; }
+.w50pi { width: 50px !important; }
 .w80p { width: 80px; }
 .w100p { width: 100px; }
+.w100pi { width: 100px !important; }
 .w160p { width: 160px; }
 .w195p { width: 195px; }
 .w200p { width: 200px; }
