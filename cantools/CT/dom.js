@@ -944,7 +944,7 @@ CT.dom = {
 	},
 
 	"timeline": function(bz) {
-		var low = null, high = null, wmin = 120, bars = bz.map(function(bar) {
+		var low, high, h, wmin = 120, bars = bz.map(function(bar) {
 			var b = CT.dom.div([
 				CT.dom.div(bar.width ? (bar.start + bar.width) : "->", "right"),
 				CT.dom.div(bar.start, "left"),
@@ -952,8 +952,9 @@ CT.dom = {
 			]), bs = b.style;
 			b.width = bar.width;
 			b.start = bar.start;
-			low = Math.min(b.start, low);
-			high = Math.max(b.start + (b.width || wmin), high);
+			h = b.start + (b.width || wmin);
+			high = isNaN(high) ? h : Math.max(h, high);
+			low = isNaN(low) ? b.start : Math.min(b.start, low);
 			bs.backgroundColor = bar.color;
 			bs.textAlign = "center";
 			return b;
