@@ -977,7 +977,7 @@ CT.dom = {
 		pins.forEach(function(p) {
 			var ps = p.style;
 			ps.left = per(p.date);
-			ps.marginLeft = "calc(" + xoff + " - 30px)";
+			ps.marginLeft = "calc(" + xoff + " - 25px)";
 			if (pshift)
 				ps.marginTop = pshift + "px";
 		});
