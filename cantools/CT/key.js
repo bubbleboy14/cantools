@@ -39,6 +39,7 @@ CT.key = {
 		var code = e.keyCode || e.which,
 			character = CT.key._codes[code];
 		CT.data.append(CT.key._downs, character);
+		CT.key._event = e;
 		CT.key._downcbs[character] && CT.key._downcbs[character]();
 	},
 	_onUp: function(e) {
@@ -46,7 +47,14 @@ CT.key = {
 		var code = e.keyCode || e.which,
 			character = CT.key._codes[code];
 		CT.data.remove(CT.key._downs, character);
+		CT.key._event = e;
 		CT.key._cbs[character] && CT.key._cbs[character]();
+	},
+	preDe: function() {
+		CT.key._event.preventDefault();
+	},
+	stopProp: function() {
+		CT.key._event.stopPropagation();
 	},
 	clear: function(character, noescape) {
 		var eu, ed, k = CT.key;
