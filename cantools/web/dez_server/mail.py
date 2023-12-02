@@ -68,10 +68,10 @@ class Mailer(object):
 	def _emit(self, to, subject, body, bcc):
 		log('emailing "%s" to %s'%(subject, to))
 		if self._yag: # bcc yagmail only!
-			try:
+			try: # failures probs handled by _refresh()...
 				self._yag.send(to, subject, body, bcc=bcc)
-			except smtplib.SMTPServerDisconnected: # handled by _refresh()?
-				log("SMTPServerDisconnected (will try again...)")
+			except (smtplib.SMTPServerDisconnected, smtplib.SMTPDataError) as e:
+				log("smtp error (will try again): %s"%(str(e),))
 			if self._yag.unsent:
 				self._refresh()
 		elif self._smtp:
