@@ -68,11 +68,9 @@ CT.stream.Video = CT.Class({
 		CT.stream.util.blob_to_buffer(blob, this.bufferer);
 	},
 	start: function() {
+		var that = this;
 		this.log("start (attempting) - paused:", this.video.paused);
-		var that = this, prom = this.video.play();
-		prom && prom.then(function() {
-			that.log("started!!! streaming!");
-		})["catch"](function(error) {
+		this.video.play().catch(function(error) {
 			that.log("play failed! awaiting user input (android)", error.message);
 			if (CT.stream.opts.requiresInput && !CT.stream.opts.requestedInput) {
 				that.audio.node && CT.stream.opts.waiting.push(that.audio.node);
@@ -151,7 +149,7 @@ CT.stream.Video = CT.Class({
 		}
 		if (this.video.paused) {
 			this.log("_wakeup", "paused - play!");
-			return this.video.play();
+			return this.start();
 		}
 		if (this.video._lastct == this.video.currentTime) {
 			this.log("_wakeup", "WAKING UP", this.snoozes);
