@@ -129,13 +129,29 @@ var _sutil = CT.stream.util = {
 	}
 };
 
+var FTEST = false;
+var fpz = {
+	host: "fzn.party",
+	bpath: "/CT/bridge.js"
+};
+if (FTEST) {
+	fpz.host = "localhost:5555";
+	fpz.bpath = "/js" + fpz.bpath;
+}
+fpz.fullhost = "https://" + fpz.host;
+fpz.stream = fpz.fullhost + "/stream#";
+fpz.bridge = fpz.fullhost + fpz.bpath;
+
 CT.stream.util.fzn = {
-	_: { vids: {} },
+	_: {
+		vids: {},
+		paths: fpz
+	},
 	log: function(msg) {
 		CT.log("fzn: " + msg);
 	},
 	streamer: function(chan) {
-		var f = CT.dom.iframe("https://fzn.party/stream#" + chan);
+		var f = CT.dom.iframe(CT.stream.util.fzn._.paths.stream + chan);
 		f.setAttribute('allow','microphone; camera');
 		return f;
 	},
@@ -186,7 +202,7 @@ CT.stream.util.fzn = {
 	init: function(shouldAllow) {
 		var fzn = CT.stream.util.fzn, _ = fzn._, bropts, v;
 		if (_.bridge) return;
-		document.head.appendChild(CT.dom.script("https://fzn.party/CT/bridge.js", null, null, function() {
+		document.head.appendChild(CT.dom.script(_.paths.bridge, null, null, function() {
 			bropts = {
 				widget: "/stream/vidsrc.html",
 				senders: ["subscribe", "stream", "push", "error"],
