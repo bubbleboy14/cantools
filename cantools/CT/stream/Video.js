@@ -83,7 +83,7 @@ CT.stream.Video = CT.Class({
 					prompt: "Ready to stream?"
 				})).show();
 			}
-			CT.stream.opts.waiting.push(that.video);
+			CT.data.append(CT.stream.opts.waiting, that.video);
 		});
 	},
 	_miniRecorder: function() {
