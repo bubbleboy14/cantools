@@ -48,6 +48,7 @@ var stropts = CT.stream.opts = {
 	},
 	startWaiting: function() {
 		CT.stream.opts.waiting.forEach(function(w) { w.play(); });
+		CT.stream.opts.waiting = [];
 	}
 };
 if (CT.info.isFirefox)
