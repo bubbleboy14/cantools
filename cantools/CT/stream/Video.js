@@ -71,7 +71,9 @@ CT.stream.Video = CT.Class({
 		var that = this;
 		this.log("start (attempting) - paused:", this.video.paused);
 		this.video.play().catch(function(error) {
-			that.log("play failed! awaiting user input (android)", error.message);
+			that.log("play failed! awaiting user input", error.message);
+			if (error.message.includes("no supported source"))
+				return CT.log("NO SUPPORTED SOURCE!");
 			if (CT.stream.opts.requiresInput && !CT.stream.opts.requestedInput) {
 				that.audio.node && CT.stream.opts.waiting.push(that.audio.node);
 				CT.stream.opts.requestedInput = true;
@@ -155,7 +157,7 @@ CT.stream.Video = CT.Class({
 			this.log("_wakeup", "WAKING UP", this.snoozes);
 			this.video.currentTime += 1; // help video along....
 			this.snoozes += 1;
-			if (this.snoozes > 5) {
+			if (this.snoozes > CT.stream.opts.snoozes) {
 				this.snoozes = 0;
 				this.log("overslept - RESET!");
 				return this.reset();
@@ -204,6 +206,7 @@ CT.stream.Video = CT.Class({
 	reset: function() {
 		if (!this.video.parentNode) return; //  node is removed -- we're done
 		var n = Date.now(), chunk = CT.stream.opts.chunk;
+		this.log("resetting!");
 		if (this._lastReset) {
 			var diff = n - this._lastReset;
 			this.log("RESET", diff);
@@ -214,8 +217,11 @@ CT.stream.Video = CT.Class({
 				this.opts.onreset && this.opts.onreset();
 			}
 		}
-		this.log("resetting!");
 		this._lastReset = n;
+		this.refresh();
+	},
+	refresh: function() {
+		this.log("refreshing!");
 		this.video.removeEventListener("canplay", this.start);
 		this.video.removeEventListener("pause", this.start);
 		this.video.removeEventListener("error", this._error);
