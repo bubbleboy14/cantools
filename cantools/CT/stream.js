@@ -33,7 +33,7 @@ var stropts = CT.stream.opts = {
 	reset: 2000,
 	resetWait: 3000,
 	cutoff: 30000,
-	resetLimit: 2,
+	resetLimit: "auto",
 	snoozes: 1,
 	width: 320,
 	height: 240,

@@ -92,7 +92,7 @@ CT.stream.Multiplexer = CT.Class({
 		} else if (data.message.action == "chat")
 			this.chat(data.message, data.user);
 		else if (data.message.action == "error" && this.opts.onerror)
-			this.opts.onerror(data.message.data);
+			this.opts.onerror(data.message.data, data.channel);
 		CT.log.endTimer("update", data.message.data.length
 			+ " " + data.channel + " " + data.user);
 	},
