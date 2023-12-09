@@ -403,6 +403,10 @@
 .pt120 { padding-top: 120px; }
 .pt140 { padding-top: 140px; }
 .p0 { padding: 0px !important; }
+.p1 { padding: 1px; }
+.p2 { padding: 2px; }
+.p3 { padding: 3px; }
+.p4 { padding: 4px; }
 .p5 { padding: 5px; }
 .p10 { padding: 10px; }
 .p20 { padding: 20px; }
