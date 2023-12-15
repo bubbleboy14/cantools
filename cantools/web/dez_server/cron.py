@@ -27,22 +27,24 @@ class Rule(object):
 
     def trigger(self):
         self.logger.info("trigger: %s (%s)"%(self.url, getattr(self, "seconds", self.rule)))
-        self.controller.trigger_handler(self.url, self.url[1:])
-        if not self.exact and self.rule != "on start":
+        self.controller.trigger_handler(self.url, self.url[1:],
+            option=self.rule.endswith("nothread") and "nothread")
+        if not self.exact and not self.rule.startswith("on start"):
             self.scheduler.update(self)
         return True
 
     def start(self):
-        if self.rule != "on start":
-            self.logger.info("start (%s seconds)"%(self.seconds,))
-            self.timer.add(self.seconds)
-            if self.exact:
-                self.timer.delay = 60 * 60 * 24
-            else:
-                ff = self.scheduler.ff(self)
-                if ff:
-                    self.logger.info("rescheduled for %s seconds"%(self.timer.delay - ff,))
-                    self.timer.expiration -= ff
+        if self.rule.startswith("on start"):
+            return
+        self.logger.info("start (%s seconds)"%(self.seconds,))
+        self.timer.add(self.seconds)
+        if self.exact:
+            self.timer.delay = 60 * 60 * 24
+        else:
+            ff = self.scheduler.ff(self)
+            if ff:
+                self.logger.info("rescheduled for %s seconds"%(self.timer.delay - ff,))
+                self.timer.expiration -= ff
 
     def parse(self):
         self.logger.info("parse")
@@ -51,7 +53,7 @@ class Rule(object):
             n = datetime.now()
             t = datetime(n.year, n.month, n.day, int(hours), int(mins))
             self.seconds = (t - n).seconds
-        elif self.rule == "on start":
+        elif self.rule.startswith("on start"):
             self.logger.info("triggering start script")
             self.trigger()
         elif len(self.words) == 3 and self.words[0] == "every": # every [NUMBER] [UNIT]
