@@ -24,10 +24,12 @@ class DController(SocketController):
 		self.logger.info("System: " + " > ".join([part for part in platform.uname() if part]))
 
 	def _respond(self, resp, *args, **kwargs):
-		if resp: # regular request
+		if resp == "nothread": # "on start nothread" cron
+			kwargs["noLoad"] = True
+		elif resp: # regular request
 			kwargs["response"] = resp
 			localvars.response = resp
-		else: # cron
+		else: # regular cron
 			kwargs["noLoad"] = True
 			kwargs["threaded"] = True
 		do_respond(*args, **kwargs)
@@ -36,7 +38,7 @@ class DController(SocketController):
 		self.logger.info("register handler: %s"%(self.curpath,))
 		self.handlers[self.curpath] = lambda resp : self._respond(resp, *args, **kwargs)
 
-	def trigger_handler(self, rule, target, req=None):
+	def trigger_handler(self, rule, target, req=None, option=None):
 		self.curpath = rule
 		if rule not in self.handlers:
 			if target in self.modules:
@@ -46,7 +48,7 @@ class DController(SocketController):
 				self.logger.info("importing module: %s"%(target,))
 				__import__(target)
 				self.modules[target] = self.handlers[rule]
-		self.handlers[rule](req and Response(req))
+		self.handlers[rule](req and Response(req) or option)
 
 	def paperShield(self, path, ip, fspath=False, count=True):
 		self.logger.access('NOOP > paperShield("%s", "%s", fspath=%s, count=%s)'%(path, ip, fspath, count))
