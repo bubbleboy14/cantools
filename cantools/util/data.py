@@ -22,8 +22,8 @@ def _svlines(data):
 def gettsv(data):
 	return [l.split("\t") for l in _svlines(data) if l]
 
-def getcsv_from_data(data): # deprecated! doesn't work _that_ well.
-	return [l.split(",") for l in _svlines(data) if l]
+def getcsv_from_data(data, unquote=False): # deprecated! doesn't work _that_ well.
+	return [[unquote and i.strip('"') or i for i in l.split(",")] for l in _svlines(data) if l]
 
 # eh, module reads it better sometimes (especially if we write(_svlines(read())) first)
 def getcsv(fname):
