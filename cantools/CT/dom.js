@@ -952,7 +952,8 @@ CT.dom = {
 			return (100 * num / fullwidth) + "%";
 		}, pins = pz.map(function(pin) {
 			var pu = "https://" + pin.icon, p = CT.dom.div([
-				CT.dom.img(pu, "w50pi pointer hoverglow", () => CT.modal.img(pu)),
+				CT.dom.img(pu, "w50pi pointer hoverglow",
+					() => CT.modal.img(pu, null, "wm400p hm400p")),
 				pin.name,
 				CT.dom.div(date(pin.date), "small")
 			], "abs centered small");

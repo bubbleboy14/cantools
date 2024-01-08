@@ -94,8 +94,8 @@ CT.modal = {
 	iframe: function(src, onhide) {
 		return CT.modal.lightbox(CT.dom.iframe(src, "full"), onhide);
 	},
-	img: function(src, onhide) {
-		return CT.modal.modal(CT.dom.img(src, "wm200p hm200p"), onhide);
+	img: function(src, onhide, className) {
+		return CT.modal.modal(CT.dom.img(src, className || "wm200p hm200p"), onhide);
 	},
 	close: function() {
 		if (CT.modal.latest) {
