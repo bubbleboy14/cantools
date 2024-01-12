@@ -1,4 +1,4 @@
-import os, rel, ssl, sys, json, requests
+import os, rel, ssl, sys, json
 from dez.http import fetch as dfetch, post as dpost
 from ..util import *
 from ...util import set_log, set_error, init_rel
@@ -101,20 +101,14 @@ def fetch(host, path="/", port=None, asjson=False, cb=None, timeout=1, asyn=Fals
 	if asyn or cb: # asyn w/o cb works, will just log
 		secure = protocol == "https"
 		if ctjson:
-			if cb:
-				orig_cb = cb
-				cb = lambda v : orig_cb(_ctjson(v))
-			else:
-				return _ctjson(dfetch(host, path, port, secure, headers, None, timeout))
+			orig_cb = cb or log
+			cb = lambda v : orig_cb(_ctjson(v))
 		return dfetch(host, path, port, secure, headers, cb, timeout, asjson)
 	if timeout:
 		gkwargs["timeout"] = timeout
 	furl = "%s://%s:%s%s"%(protocol, host, port, path)
 	log("fetch %s"%(furl,))
-	result = requests.get(furl, **gkwargs).content
-	if ctjson:
-		return _ctjson(result)
-	return asjson and json.loads(result) or result
+	return syncreq(furl, "get", asjson, ctjson, rekwargs=gkwargs)
 
 def post(host, path="/", port=80, data=None, protocol="http", asjson=False, ctjson=False, text=None, cb=None):
 	if ctjson:
@@ -132,10 +126,26 @@ def post(host, path="/", port=80, data=None, protocol="http", asjson=False, ctjs
 		kwargs["json"] = data
 	elif text:
 		kwargs["data"] = text
-	result = requests.post(url, **kwargs).content
+	return syncreq(url, "post", asjson, ctjson, rekwargs=kwargs)
+
+def _dosyncreq(requester, url, asjson, ctjson, rekwargs):
+	result = requester(url, **rekwargs).content
 	if ctjson:
 		return _ctjson(result)
 	return asjson and json.loads(result) or result
+
+def syncreq(url, method="get", asjson=False, ctjson=False, retries=3, rekwargs={}):
+	import time, requests
+	attempt = 1
+	requester = getattr(requests, method)
+	while attempt < retries:
+		try:
+			return _dosyncreq(requester, url, asjson, ctjson, rekwargs)
+		except requests.exceptions.ConnectionError:
+			log("syncreq(%s %s) attempt #%s failed"%(method, url, attempt))
+			time.sleep(1)
+		attempt += 1
+	return _dosyncreq(requester, url, asjson, ctjson, rekwargs) # final try-less try
 
 # file uploads
 def read_file(data_field):
