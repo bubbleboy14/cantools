@@ -20,6 +20,9 @@ class Config(object):
 	def __getitem__(self, key):
 		return self._cfg.get(key)
 
+	def __setitem__(self, key, val):
+		self._cfg[key] = val
+
 	def __contains__(self, key):
 		return key in self._cfg
 
