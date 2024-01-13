@@ -1,4 +1,4 @@
-import sys, platform
+import os, sys, platform
 from dez.network import SocketController, daemon_wrapper
 from dez.http.server.shield import Shield
 from dez.logging import get_logger_getter
@@ -54,9 +54,23 @@ class DController(SocketController):
 		self.logger.access('NOOP > paperShield("%s", "%s", fspath=%s, count=%s)'%(path, ip, fspath, count))
 
 	def blup(self):
-		bl = list(config.web.blacklist)
-		self.logger.info("saving %s IPs in black.list"%(len(bl),))
-		write("\n".join(bl), "black.list")
+		bl = config.web.blacklist.obj()
+		self.logger.warn("saving %s IPs in black.list"%(len(bl.keys()),))
+		write(bl, "black.list", isjson=True)
+
+def setBlacklist():
+	bl = {}
+	for preban in config.web.blacklist:
+		bl[preban] = "config ban"
+	if os.path.isfile("black.list"):
+		try:
+			bsaved = read("black.list", isjson=True)
+		except: # old style
+			bsaved = {}
+			for line in read("black.list", lines=True):
+				bsaved[line.strip()] = "legacy ban"
+		bl.update(bsaved)
+	config.web.update("blacklist", bl)
 
 def getController():
 	global CTR
@@ -67,10 +81,7 @@ def getController():
 		shield = None
 		shfg = config.web.shield
 		if shfg: # web/admin share shield and blacklist
-			bl = read("black.list")
-			if bl:
-				config.web.blacklist += bl.split("\n")
-			config.web.update("blacklist", set(config.web.blacklist))
+			setBlacklist()
 			shield = Shield(config.web.blacklist, logger_getter, CTR.blup,
 				getattr(shfg, "limit", 400),
 				getattr(shfg, "interval", 2))
