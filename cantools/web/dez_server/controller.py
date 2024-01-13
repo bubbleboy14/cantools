@@ -57,6 +57,9 @@ class DController(SocketController):
 		bl = config.web.blacklist.obj()
 		self.logger.warn("saving %s IPs in black.list"%(len(bl.keys()),))
 		write(bl, "black.list", isjson=True)
+		if config.web.report:
+			from cantools.web import email_admins
+			email_admins("sketch IPs blacklisted", config.web.blacklist.json())
 
 def setBlacklist():
 	bl = {}
