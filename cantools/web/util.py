@@ -346,7 +346,10 @@ def fail(data="failed", html=False, err=None, noenc=False, exit=True):
             data = logdata
         if config.web.report:
             from cantools.web import email_admins
-            email_admins("error encountered", logdata)
+            resp = local("response")
+            path = resp and resp.request.url or "can't find path!"
+            email_admins("error encountered",
+                "%s\n\n%s\n\n%s"%(path, local("request_string"), logdata))
     _header("Content-Type", "text/%s"%(html and "html" or "plain"))
     draw = processResponse(data, "0")
     dstring = (config.encode and not noenc) and enc(draw) or draw
