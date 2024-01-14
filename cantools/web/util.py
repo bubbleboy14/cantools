@@ -348,8 +348,9 @@ def fail(data="failed", html=False, err=None, noenc=False, exit=True):
             from cantools.web import email_admins
             resp = local("response")
             path = resp and resp.request.url or "can't find path!"
+            ip = resp and resp.ip or "can't find ip!"
             email_admins("error encountered",
-                "%s\n\n%s\n\n%s"%(path, local("request_string"), logdata))
+                "%s\n\n%s\n\n%s\n\n%s"%(path, ip, local("request_string"), logdata))
     _header("Content-Type", "text/%s"%(html and "html" or "plain"))
     draw = processResponse(data, "0")
     dstring = (config.encode and not noenc) and enc(draw) or draw
