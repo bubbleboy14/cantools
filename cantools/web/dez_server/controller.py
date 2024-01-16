@@ -54,12 +54,14 @@ class DController(SocketController):
 		self.logger.access('NOOP > paperShield("%s", "%s", fspath=%s, count=%s)'%(path, ip, fspath, count))
 
 	def blup(self):
-		bl = config.web.blacklist.obj()
+		wcfg = config.web
+		bl = wcfg.blacklist.obj()
 		self.logger.warn("saving %s IPs in black.list"%(len(bl.keys()),))
 		write(bl, "black.list", isjson=True)
-		if config.web.report:
+		if wcfg.report:
 			from cantools.web import email_admins
-			email_admins("sketch IPs blacklisted", config.web.blacklist.json())
+			email_admins("sketch IPs blacklisted", wcfg.blacklist.json())
+		wcfg.blacklister and wcfg.blacklister.update(bl)
 
 def setBlacklist():
 	bl = {}
