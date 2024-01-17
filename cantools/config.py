@@ -1,81 +1,8 @@
 import os, json, getpass
 from base64 import b64encode, b64decode
+from fyg import Config, PCache
 from .util import read, write
 from .cfg import cfg
-
-try:
-    input = raw_input # py2/3 compatibility
-except NameError:
-    pass
-
-class Config(object):
-	def __init__(self, cfg):
-		self._cfg = {}
-		for key, val in list(cfg.items()):
-			self.update(key, val)
-
-	def __getattr__(self, key):
-		return self._cfg.get(key)
-
-	def __getitem__(self, key):
-		return self._cfg.get(key)
-
-	def __setitem__(self, key, val):
-		self._cfg[key] = val
-
-	def __contains__(self, key):
-		return key in self._cfg
-
-	def obj(self):
-		obj = {}
-		for k, v in list(self.items()):
-			if v.__class__ == Config:
-				obj[k] = v.obj()
-			else:
-				obj[k] = v
-		return obj
-
-	def json(self):
-		return json.dumps(self.obj(), indent=4)
-
-	# dict compabitility
-	def get(self, key, fallback=None):
-		return self._cfg.get(key, fallback)
-
-	def values(self):
-		return list(self._cfg.values())
-
-	def items(self):
-		return list(self._cfg.items())
-
-	def keys(self):
-		return list(self._cfg.keys())
-
-	def update(self, key, val={}):
-		self._cfg[key] = isinstance(val, dict) and Config(val) or val
-
-	def sub(self, key):
-		if key not in self._cfg:
-			self.update(key)
-		return self._cfg.get(key)
-
-class PCache(object):
-	def __init__(self, cfg):
-		self.fname = cfg
-		self._cache = json.loads(b64decode(read(cfg, default="")).decode() or "{}")
-
-	def _save(self):
-		write(b64encode(json.dumps(self._cache).encode()).decode(), self.fname)
-
-	def __call__(self, key, password=True, overwrite=False):
-		dk = b64encode(key.encode()).decode()
-		if overwrite or dk not in self._cache:
-			p = (password and getpass.getpass or input)(key)
-			if input("store %s? [Y/n]: "%(password and "password" or "value")).lower().startswith("n"):
-				return p
-			self._cache[dk] = b64encode(p.encode()).decode()
-			self._save()
-		return b64decode(self._cache[dk]).decode()
 
 pc = PCache(".ctp")
 
