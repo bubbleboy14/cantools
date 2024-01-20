@@ -55,6 +55,8 @@
 .hm50p { max-height: 50px !important; }
 .hm100p { max-height: 100px !important; }
 .wm100p { max-width: 100px !important; }
+.hm150p { max-height: 150px !important; }
+.wm150p { max-width: 150px !important; }
 .hm200p { max-height: 200px !important; }
 .wm200p { max-width: 200px !important; }
 .hm300p { max-height: 300px; }
