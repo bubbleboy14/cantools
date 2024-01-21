@@ -60,6 +60,7 @@ cfg = {
 		"errlog": None,
 		"report": False,
 		"rollz": {},
+		"eflags": [],
 		"blacklist": [],
 		"whitelist": []
 	},

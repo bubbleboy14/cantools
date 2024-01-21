@@ -344,6 +344,16 @@ def fail(data="failed", html=False, err=None, noenc=False, exit=True):
         if DEBUG:
             # write it
             data = logdata
+        if config.web.shield and config.web.eflags:
+            ip = local("ip")
+            shield = local("shield")
+            for ef in config.web.eflags:
+                if ef in logdata:
+                    reason = '"%s" in traceback'%(ef,)
+                    logline = "%s - IP (%s) banned!"%(reason, ip)
+                    logdata = "%s\n\n%s"%(logline, logdata)
+                    shield.suss(ip, reason)
+                    log(logline)
         if config.web.report:
             from cantools.web import email_admins
             resp = local("response")
