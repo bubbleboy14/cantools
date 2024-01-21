@@ -67,8 +67,8 @@ else
     python3 -c 'import cantools' || {
         echo "cloning (and hiding) and installing cantools"
         cd ~
-        mkdir .ctp
-        cd .ctp
+        mkdir .ct
+        cd .ct
         git clone https://github.com/bubbleboy14/cantools.git
         cd cantools
         sudo pip3 install -e .
