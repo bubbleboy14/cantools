@@ -1,3 +1,15 @@
+ipac()
+{
+    echo checking for $1
+    if which $1; then
+        echo you have $1
+    else
+        echo installing $1
+        $paman install $1
+        echo $1 installed
+    fi
+}
+
 echo determining platform
 if echo OSTYPE | grep darwin; then
     echo you have a mac!
@@ -17,6 +29,10 @@ elif which apt; then
 elif which pkg; then
     echo you have pkg - running bsd
     paman="env ASSUME_ALWAYS_YES=yes pkg"
+    for pacname in libxml2 libxslt py39-lxml
+    do
+        ipac $pacname
+    done
 elif which yum; then
     echo found yum - that works
     paman=yum
@@ -28,14 +44,7 @@ fi
 
 for pacname in python3 git
 do
-    echo checking for $pacname
-    if which $pacname; then
-        echo you have $pacname
-    else
-        echo installing $pacname
-        $paman install $pacname
-        echo $pacname installed
-    fi
+    ipac $pacname
 done
 
 if echo $paman | grep brew; then
