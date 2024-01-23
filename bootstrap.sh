@@ -29,7 +29,7 @@ elif which apt; then
 elif which pkg; then
     echo you have pkg - running bsd
     paman="env ASSUME_ALWAYS_YES=yes pkg"
-    for pacname in libxml2 libxslt py39-lxml
+    for pacname in libxml2 libxslt py39-lxml py39-sqlite3
     do
         ipac $pacname
     done
