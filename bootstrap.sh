@@ -1,80 +1,79 @@
-echo "determining platform"
-if [ ${OSTYPE:0:6} = "darwin" ]
+echo determining platform
+if echo OSTYPE | grep darwin;
 then
-    echo "you've got a mac!"
-    python -c 'import magic' || {
-        echo "you need magic!"
-        echo "checking for brew"
-        which brew
-        if [ $? -ne 0 ]
-        then
-            echo "you need brew!"
-            /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-            echo "brew installed!"
-        else
-            echo "you've got it!"
-        fi
-        brew install libmagic
-        echo "magic installed"
-    }
-elif [ $OSTYPE == "linux-gnu" ]
+    echo you have a mac!
+    echo checking for brew
+    if which brew;
+    then
+        echo you have brew
+    else
+        echo you need brew!
+        /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+        echo brew installed!
+    fi
+    paman=brew
+elif which apt;
 then
-    echo "you've got linux -- great!"
-    echo "determining compatibility"
-    which apt
-    if [ $? -ne 0 ]
-    then
-        echo "You don't have apt, which means you're not running"
-        echo "Debian. This script is designed to install cantools"
-        echo "and all dependencies on a clean Ubuntu system (fresh"
-        echo "outta AWS or wherever). Unfortunately, you'll have to"
-        echo "do it the old fashioned way :'(it's not that hard;)"
-        echo "Maybe you can build a bootstrapper for your type of system?"
-        echo "Good luck, sorry!"
-        exit 126
-    else
-        echo "you're good to go!"
-    fi
-
-    echo "updating repos"
-    sudo apt update
-
-    echo "checking for python3"
-    which python3
-    if [ $? -ne 0 ]
-    then
-        echo "installing python3"
-        sudo apt install --yes python3 </dev/null
-        echo "python3 installed"
-    else
-        echo "you got it"
-    fi
-
-    echo "installing other deps"
-    sudo apt install --yes build-essential libssl-dev libffi-dev python3-dev python3-setuptools python3-pip git </dev/null
+    echo you have debian -- great!
+    paman="sudo apt"
+elif which pkg;
+then
+    echo you have pkg - running bsd
+    paman=pkg
 else
-    echo "uh-oh -- you've got" $OSTYPE
-    echo "this script only knows about Debian and OSX"
+    echo uh-oh -- you have $OSTYPE
+    echo this script only knows about Debian and BSD and OSX
     exit 126
 fi
 
-echo "checking for cantools"
+for pacname in python3 git
+do
+    echo checking for $pacname
+    if which python3;
+    then
+        echo you have $pacname
+    else
+        echo installing $pacname
+        $paman install $pacname
+        echo $pacname installed
+    fi
+done
+
+if echo $paman | grep brew;
+then
+    python -c 'import magic' || {
+        echo you need magic!
+        brew install libmagic
+        echo magic installed
+    }
+elif echo $paman | grep apt;
+then
+    echo updating repos
+    $paman update
+    echo installing other deps
+    $paman install --yes build-essential libssl-dev libffi-dev python3-dev python3-setuptools </dev/null
+fi
+
+echo ensuring pip present
+python3 -m ensurepip
+
+echo checking for cantools
 if pwd | grep cantools;
 then
-    echo "installing right here right now"
-    sudo pip3 install -e .
+    echo installing right here right now
+    pip3 install -e .
 else
     python3 -c 'import cantools' || {
-        echo "cloning (and hiding) and installing cantools"
+        echo cloning (and hiding) and installing cantools
         cd ~
         mkdir .ct
         cd .ct
         git clone https://github.com/bubbleboy14/cantools.git
         cd cantools
-        sudo pip3 install -e .
-        echo "cantools installed"
+        pip3 install -e .
+        echo cantools installed
     }
 fi
 
-echo "installed cantools and all dependencies. happy coding."
-echo "goodbye"
+echo installed cantools and all dependencies. happy coding.
+echo goodbye
