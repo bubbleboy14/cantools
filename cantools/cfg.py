@@ -271,7 +271,7 @@ This portable modern web framework is the application-neutral backbone of Civil 
     - cd cantools
     - pip3 install -e .
 
-If you're running OSX or Ubuntu (or probably most Debian derivatives), you may consider running (as root or sudoer):
+If you're running Debian or Fedora or BSD or OSX, you may consider running (probably as root or sudoer):
 
     ./bootstrap.sh
 
