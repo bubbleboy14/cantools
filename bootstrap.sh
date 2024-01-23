@@ -29,7 +29,7 @@ fi
 for pacname in python3 git
 do
     echo checking for $pacname
-    if which python3;
+    if which $pacname;
     then
         echo you have $pacname
     else
