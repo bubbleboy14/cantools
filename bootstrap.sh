@@ -23,7 +23,8 @@ else
     exit 126
 fi
 
-for pacname in python3 git do
+for pacname in python3 git
+do
     echo checking for $pacname
     if which $pacname; then
         echo you have $pacname
@@ -56,7 +57,7 @@ if pwd | grep cantools; then
     pip3 install -e .
 else
     python3 -c 'import cantools' || {
-        echo cloning (and hiding) and installing cantools
+        echo "cloning (and hiding) and installing cantools"
         cd ~
         mkdir .ct
         cd .ct
