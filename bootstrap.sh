@@ -19,7 +19,7 @@ then
 elif which pkg;
 then
     echo you have pkg - running bsd
-    paman=pkg
+    paman="env ASSUME_ALWAYS_YES=yes pkg"
 else
     echo uh-oh -- you have $OSTYPE
     echo this script only knows about Debian and BSD and OSX
