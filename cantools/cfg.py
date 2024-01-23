@@ -286,7 +286,7 @@ may not already be present on your system (some systems don't even come with Pyt
   - downside
     - no easy access to ct source -- aren't you curious?
     - OSX or Debian (especially Ubuntu) -only (until you add support for your system!)
-  - command: wget -O - https://raw.githubusercontent.com/bubbleboy14/cantools/master/bootstrap.sh | bash
+  - command: curl https://raw.githubusercontent.com/bubbleboy14/cantools/master/bootstrap.sh | cat | sh
 
 ## Package Installation (limited -- not recommended)
   - downside
