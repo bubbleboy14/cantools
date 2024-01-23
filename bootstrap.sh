@@ -17,9 +17,12 @@ elif which apt; then
 elif which pkg; then
     echo you have pkg - running bsd
     paman="env ASSUME_ALWAYS_YES=yes pkg"
+elif which yum; then
+    echo found yum - that works
+    paman=yum
 else
     echo uh-oh -- you have $OSTYPE
-    echo this script only knows about Debian and BSD and OSX
+    echo this script only knows about Debian, Fedora, BSD, and OSX
     exit 126
 fi
 
