@@ -1,6 +1,5 @@
 echo determining platform
-if echo OSTYPE | grep darwin;
-then
+if echo OSTYPE | grep darwin; then
     echo you have a mac!
     echo checking for brew
     if which brew;
@@ -12,12 +11,10 @@ then
         echo brew installed!
     fi
     paman=brew
-elif which apt;
-then
+elif which apt; then
     echo you have debian -- great!
     paman="sudo apt"
-elif which pkg;
-then
+elif which pkg; then
     echo you have pkg - running bsd
     paman="env ASSUME_ALWAYS_YES=yes pkg"
 else
@@ -26,11 +23,9 @@ else
     exit 126
 fi
 
-for pacname in python3 git
-do
+for pacname in python3 git do
     echo checking for $pacname
-    if which $pacname;
-    then
+    if which $pacname; then
         echo you have $pacname
     else
         echo installing $pacname
@@ -39,15 +34,13 @@ do
     fi
 done
 
-if echo $paman | grep brew;
-then
+if echo $paman | grep brew; then
     python -c 'import magic' || {
         echo you need magic!
         brew install libmagic
         echo magic installed
     }
-elif echo $paman | grep apt;
-then
+elif echo $paman | grep apt; then
     echo updating repos
     $paman update
     echo installing other deps
@@ -58,8 +51,7 @@ echo ensuring pip present
 python3 -m ensurepip
 
 echo checking for cantools
-if pwd | grep cantools;
-then
+if pwd | grep cantools; then
     echo installing right here right now
     pip3 install -e .
 else
