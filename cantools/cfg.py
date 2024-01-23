@@ -269,7 +269,7 @@ This portable modern web framework is the application-neutral backbone of Civil 
   - steps
     - git clone https://github.com/bubbleboy14/cantools.git
     - cd cantools
-    - sudo pip3 install -e .
+    - pip3 install -e .
 
 If you're running OSX or Ubuntu (or probably most Debian derivatives), you may consider running (as root or sudoer):
 
@@ -300,7 +300,7 @@ This takes less than a moment. Pop open a terminal in your home directory:
 
 	~$ git clone https://github.com/bubbleboy14/cantools.git
 	~$ cd cantools/
-	~/cantools$ sudo pip3 install -e .
+	~/cantools$ pip3 install -e .
 	~/cantools$ cd ..
 	~$ ctinit hello_world
 	~$ cd hello_world/
@@ -313,7 +313,7 @@ You just found out that you need to deploy a cantools project to a fresh, naked
 Ubuntu system that doesn't even have Python or git. Oh no, what do you do? This
 (as root or sudoer for first and last commands):
 
-	~$ wget -O - https://raw.githubusercontent.com/bubbleboy14/cantools/master/bootstrap.sh | bash
+	~$ curl https://raw.githubusercontent.com/bubbleboy14/cantools/master/bootstrap.sh | cat | sh
 	~$ git clone https://github.com/your_organization/your_project.git
 	~$ cd your_project
 	~/your_project$ ctinit -r

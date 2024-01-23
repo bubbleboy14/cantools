@@ -55,7 +55,7 @@ def sed(fname, flag, replacement, target=None):
 	write(read(fname).replace(flag, replacement), target or fname)
 
 def cmd(cline, sudo=False, silent=False):
-	if sudo and platform.system() != "Windows":
+	if sudo and platform.system() != "Windows" and os.geteuid(): # !root
 		cline = "sudo %s"%(cline,)
 	silent or log('issuing command: "%s"'%(cline,), 2)
 	subprocess.call(cline, shell=True)
