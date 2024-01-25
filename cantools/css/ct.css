@@ -15,6 +15,7 @@
 /* flex */
 .flex { display: flex; }
 .fgrow { flex-grow: 1; }
+.fgrow2 { flex-grow: 2; }
 .fwrap { flex-wrap: wrap; }
 .row { flex-direction: row; }
 .col { flex-direction: column; }
