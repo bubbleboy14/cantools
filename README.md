@@ -1,4 +1,4 @@
-# cantools 0.10.8.111
+# cantools 0.10.8.112
 This portable modern web framework is the application-neutral backbone of Civil Action Network. It includes: a pubsub WebSocket server and bot platform; swappable web backends capable of targeting high-concurrency standalone or cloud platforms; a variable-mode application compiler; a broad-spectrum ORM and database migration tools; a built in administrative interface; and a rich modular JavaScript library.
 
  - Docs: http://ct.mkult.co
@@ -10,9 +10,9 @@ This portable modern web framework is the application-neutral backbone of Civil 
   - steps
     - git clone https://github.com/bubbleboy14/cantools.git
     - cd cantools
-    - sudo pip3 install -e .
+    - pip3 install -e .
 
-If you're running OSX or Ubuntu (or probably most Debian derivatives), you may consider running (as root or sudoer):
+If you're running Debian or Fedora or BSD or OSX, you may consider running (probably as root or sudoer):
 
     ./bootstrap.sh
 
@@ -27,7 +27,7 @@ may not already be present on your system (some systems don't even come with Pyt
   - downside
     - no easy access to ct source -- aren't you curious?
     - OSX or Debian (especially Ubuntu) -only (until you add support for your system!)
-  - command: wget -O - https://raw.githubusercontent.com/bubbleboy14/cantools/master/bootstrap.sh | bash
+  - command: curl https://raw.githubusercontent.com/bubbleboy14/cantools/master/bootstrap.sh | cat | sh
 
 ## Package Installation (limited -- not recommended)
   - downside
@@ -41,7 +41,7 @@ This takes less than a moment. Pop open a terminal in your home directory:
 
 	~$ git clone https://github.com/bubbleboy14/cantools.git
 	~$ cd cantools/
-	~/cantools$ sudo pip3 install -e .
+	~/cantools$ pip3 install -e .
 	~/cantools$ cd ..
 	~$ ctinit hello_world
 	~$ cd hello_world/
@@ -54,7 +54,7 @@ You just found out that you need to deploy a cantools project to a fresh, naked
 Ubuntu system that doesn't even have Python or git. Oh no, what do you do? This
 (as root or sudoer for first and last commands):
 
-	~$ wget -O - https://raw.githubusercontent.com/bubbleboy14/cantools/master/bootstrap.sh | bash
+	~$ curl https://raw.githubusercontent.com/bubbleboy14/cantools/master/bootstrap.sh | cat | sh
 	~$ git clone https://github.com/your_organization/your_project.git
 	~$ cd your_project
 	~/your_project$ ctinit -r
@@ -77,8 +77,8 @@ run ctstart in a screen or something (so that you can eventually log out) - that
     -w WEB_BACKEND, --web_backend=WEB_BACKEND
                           web backend. options: dez, gae. (default: dez)
     -r, --refresh_symlinks
-                          add symlinks to project and configure version control
-                          path exclusion (if desired)
+                          add symlinks to project, create any missing directories,
+                          and configure version control path exclusion (if desired)
     -u, --update          update cantools and all managed plugins
     -a, --admin           compile admin pages [ctdev only]
 
@@ -127,8 +127,8 @@ any need for the developer to know or do anything beyond 'ctinit -r'.
     -d, --dynamic         switch to dynamic (development) mode
     -s, --static          switch to static (debug) mode
     -p, --production      switch to production (garbled) mode
-    -u, --upload          uploads project in specified mode and then switches
-                          back to dynamic (development) mode
+    -u, --upload          uploads project in specified mode and then (if
+                          gae) switches back to dynamic (development) mode
     -n, --no_build        skip compilation step
     -j JS_PATH, --js_path=JS_PATH
                           set javascript path (default=js)
@@ -171,21 +171,24 @@ Generates fresh 'static' and 'production' files (from 'development' source files
     -p PORT, --port=PORT  use a specific port (default: 8888)
 
 ## ctmigrate
-### Usage: ctmigrate [load|dump] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME] [--skip=SKIP] [-n]
+### Usage: ctmigrate [load|dump|blobdiff|snap] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME] [--skip=SKIP] [--tables=TABLES] [--cutoff=CUTOFF] [-n]
 
 ### Options:
-	-h, --help                 show this help message and exit
-	-d DOMAIN, --domain=DOMAIN
-	                           domain of target server (default: localhost)
-	-p PORT, --port=PORT       port of target server (default: 8080)
-	-f FILENAME, --filename=FILENAME
-	                           name of sqlite data file for dumping/loading to/from
-	                           (default: dump.db)
-	-s SKIP, --skip=SKIP       don't dump these tables - use '|' as separator, such
-	                           as 'table1|table2|table3' (default: none)
-	-t TABLES, --tables=TABLES dump these tables - use '|' as separator, such
-	                           as 'table1|table2|table3' (default: all)
-	-n, --no_binary            disable binary download
+    -h, --help            show this help message and exit
+    -d DOMAIN, --domain=DOMAIN
+                          domain of target server (default: localhost)
+    -p PORT, --port=PORT  port of target server (default: 8080)
+    -c CUTOFF, --cutoff=CUTOFF
+                          blobdiff cutoff - number to start after (default: 0)
+    -f FILENAME, --filename=FILENAME
+                          name of sqlite data file for dumping/loading to/from
+                          (default: dump.db)
+    -s SKIP, --skip=SKIP  don't dump these tables - use '|' as separator, such
+                          as 'table1|table2|table3' (default: none)
+    -t TABLES, --tables=TABLES
+                          dump these tables - use '|' as separator, such as
+                          'table1|table2|table3' (default: all)
+    -n, --no_binary       disable binary download
 
 ## ctindex
 ### Usage: ctindex [--mode=MODE] [--domain=DOMAIN] [--port=PORT] [--skip=SKIP]
@@ -852,7 +855,7 @@ Centered, almost-fullscreen, fade-in, image-backed modal with translucent backdr
 
 defaults:
 	{
-		className: "backdrop",
+		className: "backdrop mosthigh",
 		innerClass: "lightbox",
 		transition: "fade",
 		caption: "",
@@ -866,7 +869,7 @@ a string, a password, or one or more selections from a list.
 
 defaults:
 	{
-		className: "basicpopup mosthigh",
+		className: "basicpopup mosthigh flex col",
 		style: "string", // string|multiple-string|password|single-choice|multiple-choice|file|number|time|date|form|icon|phone|email|sound|reorder|draggers
 		prompt: "",
 		clear: false, // string/password only
