@@ -2,12 +2,13 @@ import datetime
 from cantools.web import respond, succeed, cgi_get, getmem, setmem, delmem, clearmem, read_file, send_file, fetch
 from cantools.util import token, transcode, resizep2
 from cantools.hooks import memhook
+from cantools import config
 
 def prox():
 	url = cgi_get("url")
 	data = getmem(url, False)
 	if not data:
-		data = fetch(url)
+		data = fetch(url, timeout=config.memcache.prox.timeout)
 		if cgi_get("p2", default=False):
 			data = resizep2(data)
 		setmem(url, data, False)

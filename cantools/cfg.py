@@ -25,7 +25,10 @@ cfg = {
 	},
 	"memcache": {
 		"request": False,
-		"db": False
+		"db": False,
+		"prox": {
+			"timeout": 5
+		}
 	},
 	"cron": {
 		"catchup": False
