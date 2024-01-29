@@ -92,9 +92,12 @@ class Mailer(object):
 		self.churning = False
 
 	def _send(self, to, subject, body, bcc):
-		if to.endswith(".@gmail.com"): # ridiculous
-			log('dropped trailing "." from ridiculous email: "%s"'%(to,))
-			to = to.replace(".@gmail.com", "@gmail.com")
+		if to.endswith("@gmail.com"):
+			while to.endswith(".@gmail.com"): # ridiculous
+				log('dropped trailing "." from ridiculous email: "%s"'%(to,))
+				to = to.replace(".@gmail.com", "@gmail.com")
+			while ".." in to:
+				to = to.replace("..", ".")
 		log('enqueueing email "%s" to %s'%(subject, to))
 		self.queue.append([to, subject, body, bcc])
 		if not self.churning:
