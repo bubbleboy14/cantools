@@ -1,5 +1,5 @@
 import os, sys
-from cantools.util import cmd, output, error, log, set_log, close_log, read, write
+from cantools.util import cmd, output, error, log, set_log, close_log, read, write, confirm, rm
 
 def _starter(sname):
 	starter = "screen -L -dm"
@@ -46,7 +46,7 @@ def binpath(bpath="/usr/bin/"):
 			mloc or error("%s not installed"%(name,))
 			log("%s not in %s - found at %s instead"%(name, bpath, mloc))
 			missings.append(mloc)
-	if missings and input("symlink %s modules to %s? [N/y] "%(len(missings), bpath)).lower().startswith("y"):
+	if missings and confirm("symlink %s modules to %s"%(len(missings), bpath)):
 		os.chdir(bpath)
 		for mloc in missings:
 			cmd("ln -s %s"%(mloc,))
@@ -91,7 +91,7 @@ def plugdirs(cb, pdir=".ctplug", filt="ct", ask=True):
 	if filt:
 		pz = list(filter(lambda name : name.startswith(filt), pz))
 	log("found %s plugins:\n\n%s"%(len(pz), "\n".join(pz)))
-	if ask and input("process %s plugins? [Y/n] "%(len(pz,))).lower().startswith("n"):
+	if ask and not confirm("process %s plugins"%(len(pz),), True):
 		return
 	for p in pz:
 		log(p)
@@ -102,6 +102,20 @@ def plugdirs(cb, pdir=".ctplug", filt="ct", ask=True):
 
 def gc(pdir=".ctplug", filt="ct", ask=False):
 	plugdirs(lambda : cmd("git gc"), pdir, filt, ask)
+
+def cleanup():
+	if confirm("garbage collect git repos"):
+		gc()
+	if confirm("vacuum up old journals"):
+		cmd("journalctl --vacuum-size=50M")
+	if confirm("clean up screenlogs?"):
+		lines = output("du -a . | sort -n -r | head -n 20 | grep screenlog").split("\n")
+		paths = [l.split("\t").pop() for l in lines]
+		plen = len(paths)
+		log("founds %s screenlogs:\n\n%s"%(plen, "\n".join(paths)), important=True)
+		if plen and confirm("delete %s screenlogs"%(plen,)):
+			for slog in paths:
+				rm(slog)
 
 def vitals(dpath="/root", thresh=90):
 	from cantools.web import email_admins
