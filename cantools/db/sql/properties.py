@@ -65,6 +65,8 @@ for prop in primis:
 # datetime
 BasicDT = basicType(sqlalchemy.DateTime)
 class DateTimeAutoStamper(BasicDT):
+	cache_ok = config.db.cache
+
 	def __init__(self, *args, **kwargs):
 		self.auto_now = kwargs.pop("auto_now", False)
 		self.auto_now_add = kwargs.pop("auto_now_add", False)
