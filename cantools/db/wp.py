@@ -36,10 +36,10 @@ def getdb(subdb=False):
 	return subdb and _db.db() or _db
 
 def dbcommit():
-	_db.commit()
+	getdb().commit()
 
 def query(q, fetch=True, silent=False):
-	return _db.query(q, fetch, silent)
+	return getdb().query(q, fetch, silent)
 
 def memprop(email, prop):
 	res = query("select %s from wp_users where user_email = '%s';"%(prop, email))
