@@ -47,3 +47,11 @@ def selnum(data, rower=pprint.pformat):
                 print("\n\nyou've selected: %s"%(lines[whatdo],))
                 return data[whatdo]
             print("'%s' is out of range - try again!"%(whatdo,))
+
+def confirm(condition, assumeYes=False):
+    prompt = "%s? %s "%(condition, assumeYes and "[Y/n]" or "[N/y]")
+    resp = input(prompt).lower()
+    if assumeYes:
+        return not resp.startswith("n")
+    else:
+        return resp.startswith("y")
