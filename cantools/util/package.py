@@ -1,5 +1,5 @@
 import os, sys, importlib
-from cantools.util import cmd, log, py, read, write
+from cantools.util import cmd, log, pymod, read, write
 
 def managedpip():
     fname = "/usr/lib/python%s/EXTERNALLY-MANAGED"%(".".join(sys.version.split(" ").pop(0).split(".")[:2]),)
@@ -68,7 +68,7 @@ def incv(curver):
 
 def pwheel(pname, version, withCheese=False):
     log("laying egg (universal py2/3 wheel)", important=True)
-    py("setup.py bdist_wheel --universal", True)
+    pymod("build -n", True)
     if withCheese or input("push to cheese shop? [N/y] ").lower().startswith("y"):
         log("pushing to cheese shop", important=True)
         cmd("twine upload dist/%s-%s-py2.py3-none-any.whl"%(pname, version))
