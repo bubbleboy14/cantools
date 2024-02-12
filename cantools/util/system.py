@@ -69,6 +69,9 @@ PYVER = sys.version_info[0] == 2 and "python" or "python3"
 def py(cline, sudo=False):
 	cmd("%s %s"%(PYVER, cline), sudo)
 
+def pymod(mod, sudo=False):
+	py("-m %s"%(mod,), sudo)
+
 def indir(data, path):
 	for f in [os.path.join(path, p) for p in os.listdir(path)]:
 		if os.path.isfile(f) and data == read(f, binary=True):
