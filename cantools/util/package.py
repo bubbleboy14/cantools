@@ -71,7 +71,7 @@ def pwheel(pname, version, withCheese=False):
     pymod("build -n", True)
     if withCheese or input("push to cheese shop? [N/y] ").lower().startswith("y"):
         log("pushing to cheese shop", important=True)
-        cmd("twine upload dist/%s-%s-py2.py3-none-any.whl"%(pname, version))
+        cmd("twine upload dist/%s-%s-py3-none-any.whl"%(pname, version))
 
 def here():
     return os.path.abspath(".").split(os.path.sep)[-1]
