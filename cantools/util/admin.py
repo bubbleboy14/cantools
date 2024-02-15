@@ -30,6 +30,7 @@ def pcount(pname):
 def pcheck(pname, target, starter):
 	if target and pcount(pname) != target:
 		log("not enough %s processes - restarting screen!"%(pname,), 1)
+		log(output("screen -Q windows"), important=True)
 		cmd("killall screen; %s"%(starter,))
 		return True
 
