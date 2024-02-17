@@ -1,4 +1,4 @@
-import pymysql
+import pymysql, time
 from cantools.util import log, read, error
 
 class DBWrapper(object):
@@ -27,13 +27,30 @@ class DBWrapper(object):
 	def commit(self):
 		self.db().commit()
 
-try:
-	_db = DBWrapper()
-except:
-	log("NO DATABASE CONNECTION!!!!!", important=True)
+_db = None
+
+def setdb():
+	global _db
+	if not _db:
+		try:
+			_db = DBWrapper()
+		except:
+			log("NO DATABASE CONNECTION!!!!!", important=True)
+	return _db
+
+setdb()
+
+def trydb(attempts=5, wait=0.4):
+	for attempt in range(attempts):
+		db = setdb()
+		if db:
+			return db
+		log("trydb failed retry #" + attempt, important=True)
+		time.sleep(wait)
 
 def getdb(subdb=False):
-	return subdb and _db.db() or _db
+	db = trydb()
+	return subdb and db.db() or db
 
 def dbcommit():
 	getdb().commit()
