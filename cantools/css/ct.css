@@ -327,6 +327,7 @@
 .r200, .right200 { right: 200px; }
 
 /* size */
+.bigish { font-size: 110%; }
 .big { font-size: 120%; }
 .bigger { font-size: 140%; }
 .biggest { font-size: 180%; }
