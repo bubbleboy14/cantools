@@ -109,14 +109,19 @@ def cleanup():
 		gc()
 	if confirm("vacuum up old journals"):
 		cmd("journalctl --vacuum-size=50M")
-	if confirm("clean up screenlogs?"):
-		lines = output("du -a . | sort -n -r | head -n 20 | grep screenlog").split("\n")
-		paths = [l.split("\t").pop() for l in lines]
-		plen = len(paths)
-		log("founds %s screenlogs:\n\n%s"%(plen, "\n".join(paths)), important=True)
-		if plen and confirm("delete %s screenlogs"%(plen,)):
-			for slog in paths:
-				rm(slog)
+	if confirm("remove old packages"):
+		cmd("apt autoremove")
+	if confirm("clean up screenlogs"):
+		slogs = output("du -a . | sort -n -r | head -n 20 | grep screenlog")
+		if slogs:
+			lines = slogs.split("\n")
+			paths = [l.split("\t").pop() for l in lines]
+			plen = len(paths)
+			log("founds %s screenlogs:\n\n%s"%(plen, "\n".join(paths)), important=True)
+			if plen and confirm("delete %s screenlogs"%(plen,)):
+				for slog in paths:
+					rm(slog)
+		log("all clear!")
 
 def vitals(dpath="/root", thresh=90):
 	from cantools.web import email_admins
