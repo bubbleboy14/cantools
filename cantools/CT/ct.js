@@ -494,6 +494,8 @@ var CT = {
 			CT.parse.enableVideo();
 		if (cfg.spinner)
 			CT.net.setSpinner(cfg.spinner);
+		if (cfg.dblimit)
+			CT.db && CT.db.setLimit(cfg.dblimit);
 		CT.layout.header(cfg.header);
 		cfg.footer && CT.layout.footer(cfg.footer);
 		cfg.mobile.scale && CT.dom.meta("viewport", "width=device-width, initial-scale=1");
