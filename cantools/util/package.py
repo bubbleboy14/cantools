@@ -1,4 +1,4 @@
-import os, sysconfig, importlib
+import os, sys, sysconfig, importlib
 from cantools.util import cmd, log, pymod, read, write
 
 def managedpip():
@@ -8,10 +8,15 @@ def managedpip():
     print("found:", isext)
     return isext
 
+def virtenv():
+    invenv = sys.prefix != sys.base_prefix
+    print("virtual environment:", invenv)
+    return invenv
+
 def pipper(execute=False, force=False):
     p = "pip3 install -e ."
     valid = True
-    if managedpip():
+    if managedpip() and not virtenv():
         log("your Python is externally managed by your OS")
         if force or input("install anyway? [y/N] ").lower().startswith("y"):
             p += " --break-system-packages --use-pep517"
