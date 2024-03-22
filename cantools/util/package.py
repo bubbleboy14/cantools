@@ -1,8 +1,9 @@
-import os, sys, importlib
+import os, sysconfig, importlib
 from cantools.util import cmd, log, pymod, read, write
 
 def managedpip():
-    fname = "/usr/lib/python%s/EXTERNALLY-MANAGED"%(".".join(sys.version.split(" ").pop(0).split(".")[:2]),)
+    fname = os.path.join(sysconfig.get_path("stdlib",
+        sysconfig.get_default_scheme()), "EXTERNALLY-MANAGED")
     print("checking for", fname)
     isext = os.path.isfile(fname)
     print("found:", isext)
