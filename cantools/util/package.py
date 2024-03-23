@@ -16,7 +16,8 @@ def virtenv():
 def pipper(execute=False, force=False):
     p = "pip3 install -e ."
     valid = True
-    if managedpip() and not virtenv():
+    notvenv = not virtenv()
+    if managedpip() and notvenv:
         log("your Python is externally managed by your OS")
         if force or input("install anyway? [y/N] ").lower().startswith("y"):
             p += " --break-system-packages --use-pep517"
@@ -24,7 +25,7 @@ def pipper(execute=False, force=False):
             valid = False
     if execute:
         if valid:
-            cmd(p, True)
+            cmd(p, notvenv)
         else:
             log("aborting execution!")
     else:
