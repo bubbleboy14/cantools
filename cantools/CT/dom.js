@@ -158,7 +158,9 @@ CT.dom = {
 		return CT.dom.node(content, "div", classname, id, attrs, style);
 	},
 	"flex": function(content, classname, id, attrs, style) {
-		return CT.dom.div(content, "flex " + (classname || "row"), id, attrs, style);
+		var n = CT.dom.div(content, "flex " + (classname || "row"), id, attrs, style);
+		n._displayStyle = "flex";
+		return n;
 	},
 	"span": function(content, classname, id, attrs, style) {
 		return CT.dom.node(content, "span", classname, id, attrs, style);
@@ -1497,6 +1499,8 @@ CT.dom = {
 			CT.dom.showHide(nodes[i], juston, justoff, dstyle);
 	},
 	"show": function(n, dstyle) {
+		if (dstyle == "auto")
+			dstyle = n._displayStyle || "block";
 		CT.dom.showHide(n, true, false, dstyle);
 	},
 	"hide": function(n) {
