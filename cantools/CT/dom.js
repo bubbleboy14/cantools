@@ -1517,11 +1517,11 @@ CT.dom = {
 		if (typeof n == "string") n = CT.dom.id(n);
 		n && n.parentNode && n.parentNode.removeChild(n);
 	},
-	"replace": function(target, replacement) {
+	"replace": function(target, replacement, withClass) {
 		if (typeof target == "string")
 			target = CT.dom.id(target);
-		if (typeof replacement == "string")
-			replacement = CT.dom.div(replacement);
+		if (withClass || Array.isArray(replacement) || typeof replacement == "string")
+			replacement = CT.dom.div(replacement, withClass);
 		if (target.parentNode) {
 			target.parentNode.insertBefore(replacement, target);
 			target.parentNode.removeChild(target);
