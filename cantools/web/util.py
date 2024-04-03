@@ -462,7 +462,11 @@ ITYPES = [ # from CT.parse.imgTypes[]
 
 def vid2thumb(url):
     if "youtube.com" in url:
-        url = "https://img.youtube.com/vi/%s/0.jpg"%(url.split("?v=")[1],)
+        if "shorts" in url:
+            token = url.split("/").pop()
+        else:
+            token = url.split("?v=")[1]
+        url = "https://img.youtube.com/vi/%s/0.jpg"%(token,)
     elif "tl.fzn.party" in url:
         url = url.replace("/v/", "/img/v/").replace(".mp4", ".jpg")
     if url[-4:] in ITYPES: # fast
