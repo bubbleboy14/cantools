@@ -1,16 +1,11 @@
 from sqlalchemy import text
 from sqlalchemy.sql import func, elements
-from cantools.util import start_timer, end_timer, log, error
+from cantools.util import log, start_timer, end_timer
 from .properties import *
 from .getters import *
 from .setters import *
 from .session import session, testSession, metadata, Session
 from six import string_types
-
-try:
-    input = raw_input # py2/3 compatibility
-except NameError:
-    pass
 
 _passthru = ["count", "all"]
 _qmod = ["filter", "limit", "offset", "join"]
@@ -59,26 +54,9 @@ class Query(object):
             try:
                 res = getattr(self.query, fname)(*args, **kwargs)
             except Exception as e:
-                log("Query operation failed: %s"%(e,), important=True)
-                raise_anyway = True
-                flag = " no such column: "
-                stre = str(e)
-                if flag in stre:
-                    target = stre.split(flag)[1].split(None, 1)[0]
-                    log("Missing column: %s"%(target,), important=True)
-                    if config.db.alter:
-                        tmod, tcol = target.split(".")
-                        if config.db.alter == "auto" or not input("Add missing column '%s' to table '%s' (sqlite-only!)? [Y/n] "%(tcol, tmod)).lower().startswith("n"):
-                            raise_anyway = False
-                            log("adding '%s' to '%s'"%(tcol, tmod))
-                            with self.session.engine.connect() as conn:
-                                result = conn.execute(text("ALTER TABLE %s ADD COLUMN %s"%(tmod, tcol)))
-                            log("retrying query operation")
-                            res = getattr(self.query, fname)(*args, **kwargs)
-                    else:
-                        log("To auto-update columns, add 'DB_ALTER = True' to your ct.cfg (sqlite only!)", important=True)
-                if raise_anyway:
-                    error(e)
+                self.mod.handle_error(e, self.session)
+                log("retrying query operation")
+                res = getattr(self.query, fname)(*args, **kwargs)
             if "query" in config.log.allow:
                 end_timer(qkey)
             return res

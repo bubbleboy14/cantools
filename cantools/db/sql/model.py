@@ -1,13 +1,13 @@
 from sqlalchemy import orm
 from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
 from .query import *
-from cantools import util
+from cantools.util import log, error
 from six import with_metaclass
 
 def choice_validator(choices):
     def cval(s, k, v):
         if v not in choices:
-            util.error("can't set %s! %s not in %s"%(k, v, choices))
+            error("can't set %s! %s not in %s"%(k, v, choices))
         return v
     return cval
 
@@ -67,6 +67,29 @@ class ModelBase(with_metaclass(CTMeta, sa_dbase)):
         for prop in self._schema["_kinds"]:
             self._orig_fkeys[prop] = getattr(self, prop)
 
+    def handle_error(self, e, session=session, flag=" no such column: "):
+        log("Database operation failed: %s"%(e,), important=True)
+        raise_anyway = True
+        stre = str(e)
+        if flag in stre:
+            target = stre.split(flag)[1].split(None, 1)[0]
+            log("Missing column: %s"%(target,), important=True)
+            if config.db.alter:
+                if "." in target:
+                    tmod, tcol = target.split(".")
+                else:
+                    tcol = target
+                    tmod = self.polytype
+                if config.db.alter == "auto" or not input("Add missing column '%s' to table '%s' (sqlite-only!)? [Y/n] "%(tcol, tmod)).lower().startswith("n"):
+                    raise_anyway = False
+                    log("adding '%s' to '%s'"%(tcol, tmod))
+                    with session.engine.connect() as conn:
+                        result = conn.execute(text("ALTER TABLE %s ADD COLUMN %s"%(tmod, tcol)))
+            else:
+                log("To auto-update columns, add 'DB_ALTER = True' to your ct.cfg (sqlite only!)", important=True)
+        if raise_anyway:
+            error(e)
+
     def _defaults(self):
         for prop in self._schema["_kinds"]:
             if getattr(self, prop, None) is None:
@@ -90,7 +113,10 @@ class ModelBase(with_metaclass(CTMeta, sa_dbase)):
         return self.key.__hash__()
 
     def put(self, session=session):
-        put_multi([self], session)
+        try:
+            put_multi([self], session)
+        except Exception as e:
+            self.handle_error(e, session, "has no column named")
 
     def otherwith(self, prop, val):
         k = self._schema[prop]
