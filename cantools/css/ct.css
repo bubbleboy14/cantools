@@ -761,6 +761,9 @@
 .bb {
     box-sizing: border-box;
 }
+.purple {
+    color: purple;
+}
 .blue {
     color: #010068;
 }
