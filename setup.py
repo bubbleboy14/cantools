@@ -22,8 +22,8 @@ setup(
     zip_safe = False,
     install_requires = [
         "fyg >= 0.1.4",
-        "rel >= 0.4.9.8",
-        "dez >= 0.10.10.15",
+        "rel >= 0.4.9.10",
+        "dez >= 0.10.10.16",
         "yagmail >= 0.6.161",
         "requests >= 2.3.0",
 #        "jsmin >= 2.2.2",
