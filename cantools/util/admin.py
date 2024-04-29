@@ -151,6 +151,21 @@ def sslredirect(port=80):
 		"ssl_redirect": "auto"
 	}))
 
+def blacklist(ip):
+	if not confirm("blacklist %s?"%(ip,)):
+		return log("okay, bye!")
+	from cantools.web.controller import setBlacklist
+	from cantools import config
+	setBlacklist()
+	blist = config.web.blacklist
+	if ip in blist:
+		return log("%s is already blacklisted! reason: %s"%(ip, blist[ip]))
+	log("adding %s to black.list"%(ip,))
+	blist[ip] = input("reason? [default: 'manual ban'] ") or "manual ban"
+	log("saving black.list")
+	write(blist, "black.list", isjson=True)
+	confirm("restart screen?") and cmd("killall screen ; screen -L")
+
 def replace(flag, swap, ext="md"):
 	fz = list(filter(lambda fn : fn.endswith(ext), os.listdir()))
 	log("processing %s %s files"%(len(fz), ext))
