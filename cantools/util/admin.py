@@ -163,7 +163,7 @@ def blacklist(ip):
 	log("adding %s to black.list"%(ip,))
 	blist[ip] = input("reason? [default: 'manual ban'] ") or "manual ban"
 	log("saving black.list")
-	write(blist, "black.list", isjson=True)
+	write(blist.obj(), "black.list", isjson=True)
 	confirm("restart screen?") and cmd("killall screen ; screen -L")
 
 def replace(flag, swap, ext="md"):
