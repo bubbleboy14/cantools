@@ -157,13 +157,13 @@ def blacklist(ip):
 	from cantools.web import controller
 	from cantools import config
 	controller.setBlacklist()
-	blist = config.web.blacklist
+	blist = config.web.blacklist.obj()
 	if ip in blist:
 		return log("%s is already blacklisted! reason: %s"%(ip, blist[ip]))
 	log("adding %s to black.list"%(ip,))
 	blist[ip] = input("reason? [default: 'manual ban'] ") or "manual ban"
 	log("saving black.list")
-	write(blist.obj(), "black.list", isjson=True)
+	write(blist, "black.list", isjson=True)
 	confirm("restart screen?") and cmd("killall screen ; screen -L")
 
 def replace(flag, swap, ext="md"):
