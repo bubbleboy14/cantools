@@ -43,7 +43,11 @@ if os.path.isfile(gcpath):
 for line in lines:
 	if line.startswith("#"):
 		continue
-	key, val = [term.strip() for term in line.split(" = ", 1)]
+	try:
+		key, val = [term.strip() for term in line.split(" = ", 1)]
+	except Exception as e:
+		print("failed to parse config on line:", line)
+		raise e
 	if key == "PLUGIN_MODULES":
 		mods = val.split("|")
 		config.plugin.update("modules", [p.split("/")[-1] for p in mods])
