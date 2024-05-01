@@ -762,6 +762,9 @@
 .bb {
     box-sizing: border-box;
 }
+.pink {
+    color: pink;
+}
 .purple {
     color: purple;
 }
