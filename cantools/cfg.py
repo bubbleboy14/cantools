@@ -9,7 +9,8 @@ cfg = {
 	"rel": { # 0 = unset (uses rel's default)
 		"sleep": 0,
 		"turbo": 0,
-		"verbose": False
+		"verbose": False,
+		"loudlisten": False
 	},
 	"plugin": {
 		"modules": [],
