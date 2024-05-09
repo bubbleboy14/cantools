@@ -11,13 +11,15 @@ def init_basic():
 
 def init_rel():
     import rel
+    from rel.util import loudListen
     from cantools import config
     rcfg = config.rel
     if rcfg.sleep:
         rel.set_sleep(rcfg.sleep)
     if rcfg.turbo:
         rel.set_turbo(rcfg.turbo)
-    rcfg.verbose and rel.set_verbose(True)
+    rel.set_verbose(rcfg.verbose)
+    loudListen(rcfg.loudlisten)
 
 def init_gae():
     try:
