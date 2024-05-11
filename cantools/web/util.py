@@ -344,23 +344,31 @@ def fail(data="failed", html=False, err=None, noenc=False, exit=True):
         if DEBUG:
             # write it
             data = logdata
-        if config.web.shield and config.web.eflags:
-            ip = local("ip")
+        resp = local("response")
+        reqstring = local("request_string")
+        path = resp and resp.request.url or "can't find path!"
+        ip = local("ip") or (resp and resp.ip or "can't find ip!")
+        edump = "%s\n\n%s\n\n%s\n\n%s"%(path, ip, reqstring, logdata)
+        if config.web.shield:
             shield = local("shield")
-            for ef in config.web.eflags:
-                if ef in logdata:
-                    reason = '"%s" in traceback'%(ef,)
-                    logline = "%s - IP (%s) banned!"%(reason, ip)
-                    logdata = "%s\n\n%s"%(logline, logdata)
-                    shield.suss(ip, reason)
-                    log(logline)
+            if shield(reqstring, ip):
+                data = "nabra"
+            elif config.web.eflags:
+                samples = {
+                    "traceback": logdata,
+                    "request": reqstring
+                }
+                for sample in samples:
+                    for ef in config.web.eflags:
+                        if ef in samples[sample]:
+                            reason = '"%s" in %s'%(ef, sample)
+                            logline = "%s - IP (%s) banned!"%(reason, ip)
+                            edump = "%s\n\n%s"%(logline, edump)
+                            shield.suss(ip, reason)
+                            log(logline)
         if config.web.report:
             from cantools.web import email_admins
-            resp = local("response")
-            path = resp and resp.request.url or "can't find path!"
-            ip = resp and resp.ip or "can't find ip!"
-            email_admins("error encountered",
-                "%s\n\n%s\n\n%s\n\n%s"%(path, ip, local("request_string"), logdata))
+            email_admins("error encountered", edump)
     _header("Content-Type", "text/%s"%(html and "html" or "plain"))
     draw = processResponse(data, "0")
     dstring = (config.encode and not noenc) and enc(draw) or draw
