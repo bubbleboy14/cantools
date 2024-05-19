@@ -353,7 +353,7 @@ def fail(data="failed", html=False, err=None, noenc=False, exit=True):
             shield = local("shield")
             if shield(reqstring, ip):
                 data = "nabra"
-                reason = shield.ip(ip)["suss"]
+                reason = shield.ip(ip)["message"]
                 logline = "%s - IP (%s) banned!"%(reason, ip)
                 edump = "%s\n\n%s"%(logline, edump)
                 log(logline)
