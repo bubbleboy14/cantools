@@ -171,7 +171,7 @@ def cgi_get(key, choices=None, required=True, default=None, shield=False, decode
         required and fail('no value submitted for required field: "%s" [%s]'%(key, request))
     elif shield:
         ip = local("ip")
-        shield = local("shield")
+        shield = config.web.shield
         if shield(val, ip, fspath=True, count=False):
             log('cgi_get() shield bounced "%s" for "%s"'%(ip, shield.ip(ip)["message"]))
             fail()
@@ -349,27 +349,26 @@ def fail(data="failed", html=False, err=None, noenc=False, exit=True):
         path = resp and resp.request.url or "can't find path!"
         ip = local("ip") or (resp and resp.ip or "can't find ip!")
         edump = "%s\n\n%s\n\n%s\n\n%s"%(path, ip, reqstring, logdata)
-        if config.web.shield:
-            shield = local("shield")
-            if shield(reqstring, ip):
-                data = "nabra"
-                reason = shield.ip(ip)["message"]
-                logline = "%s - IP (%s) banned!"%(reason, ip)
-                edump = "%s\n\n%s"%(logline, edump)
-                log(logline)
-            elif config.web.eflags:
-                samples = {
-                    "traceback": logdata,
-                    "request": reqstring
-                }
-                for sample in samples:
-                    for ef in config.web.eflags:
-                        if ef in samples[sample]:
-                            reason = '"%s" in %s'%(ef, sample)
-                            logline = "%s - IP (%s) banned!"%(reason, ip)
-                            edump = "%s\n\n%s"%(logline, edump)
-                            shield.suss(ip, reason)
-                            log(logline)
+        shield = config.web.shield
+        if shield(reqstring, ip):
+            data = "nabra"
+            reason = shield.ip(ip)["message"]
+            logline = "%s - IP (%s) banned!"%(reason, ip)
+            edump = "%s\n\n%s"%(logline, edump)
+            log(logline)
+        elif config.web.eflags:
+            samples = {
+                "traceback": logdata,
+                "request": reqstring
+            }
+            for sample in samples:
+                for ef in config.web.eflags:
+                    if ef in samples[sample]:
+                        reason = '"%s" in %s'%(ef, sample)
+                        logline = "%s - IP (%s) banned!"%(reason, ip)
+                        edump = "%s\n\n%s"%(logline, edump)
+                        shield.suss(ip, reason)
+                        log(logline)
         if config.web.report:
             from cantools.web import email_admins
             email_admins("error encountered", edump)

@@ -50,9 +50,6 @@ class DController(SocketController):
 				self.modules[target] = self.handlers[rule]
 		self.handlers[rule](req and Response(req) or option)
 
-	def paperShield(self, path, ip, fspath=False, count=True):
-		self.logger.access('NOOP > paperShield("%s", "%s", fspath=%s, count=%s)'%(path, ip, fspath, count))
-
 	def blup(self):
 		wcfg = config.web
 		bl = wcfg.blacklist.obj()
@@ -62,6 +59,22 @@ class DController(SocketController):
 			from cantools.web import email_admins
 			email_admins("sketch IPs blacklisted", wcfg.blacklist.json())
 		wcfg.blacklister and wcfg.blacklister.update(bl)
+
+class PaperShield(object):
+	def __init__(self):
+		self.logger = logger_getter("PaperShield")
+		self.default = { "reason": "I'm just a paper shield!" }
+		self.ips = {}
+
+	def __call__(self, path, ip, fspath=False, count=True):
+		self.logger.access('NOOP > paperShield("%s", "%s", fspath=%s, count=%s)'%(path, ip, fspath, count))
+
+	def suss(self, ip, reason):
+		self.logger.access("suss(%s) -> %s"%(ip, reason))
+		self.ips[ip] = { "reason": reason }
+
+	def ip(self, ip):
+		return self.ips.get(ip, self.default)
 
 def setBlacklist():
 	bl = {}
@@ -90,7 +103,7 @@ def getController():
 			shield = Shield(config.web.blacklist, logger_getter, CTR.blup,
 				getattr(shfg, "limit", 400),
 				getattr(shfg, "interval", 2))
-		localvars.shield = shield or CTR.paperShield
+		config.web.update("shield", shield or PaperShield())
 		mempad = config.mempad
 
 		# web
