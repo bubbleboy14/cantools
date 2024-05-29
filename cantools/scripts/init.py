@@ -39,8 +39,9 @@ any need for the developer to know or do anything beyond 'ctinit -r'.
 
 import os, sys
 from optparse import OptionParser
+from fyg.util import confirm
 from cantools import config, include_plugin, mods_and_repos
-from cantools.util import log, error, cp, sym, mkdir, rm, py, cmd, read
+from cantools.util import log, error, cp, sym, mkdir, rm, py, cmd, output, read
 from cantools.util.package import pipper, refresh_plugins
 from .builder import build_all
 
@@ -266,11 +267,11 @@ class Builder(object):
 				cmd("svn propset svn:ignore -F _tmp %s"%(root,))
 				rm("_tmp")
 
-def update():
+def update(autodeps=False):
 	log("Updating cantools and managed plugins", important=True)
 	os.chdir(CTP)
 	log("retrieving latest cantools", 1)
-	cmd("git pull")
+	pullout = output("git pull")
 	if os.path.isdir(config.plugin.path):
 		dname, dirs, files = next(os.walk(config.plugin.path))
 		log("updating %s managed plugins"%(len(dirs),), 1)
@@ -279,14 +280,18 @@ def update():
 			log("retrieving latest %s"%(d,), 2)
 			cmd("git pull")
 	log("finished updates", 1)
-	if input("update cantools dependencies? [N/y] ").lower().startswith("y"):
+	if autodeps:
+		dodeps = "setup.py" in pullout
+		dodeps and log("setup file has changed!", important=True)
+	else:
+		dodeps = confirm("update cantools dependencies")
+	if dodeps:
 		os.chdir("%s/.."%(CTP,))
 		log("updating dependencies", important=True)
 		pipper(execute=True)
 		#py("setup.py install", True)
 		#log("restoring cantools develop status", important=True)
 		#py("setup.py develop", True)
-	log("goodbye")
 
 def admin():
 	log("compiling admin pages -- thanks for developing!!", important=True)
@@ -306,11 +311,13 @@ def parse_and_make():
 		dest="refresh_symlinks", default=False, help="add symlinks to project, create any missing directories, and configure version control path exclusion (if desired)")
 	parser.add_option("-u", "--update", action="store_true",
 		dest="update", default=False, help="update cantools and all managed plugins")
+	parser.add_option("-d", "--deps", action="store_true",
+		dest="deps", default=False, help="install dependencies if setup file has changed")
 	parser.add_option("-a", "--admin", action="store_true",
 		dest="admin", default=False, help="compile admin pages [ctdev only]")
 	options, args = parser.parse_args()
 	if options.update:
-		update()
+		update(options.deps)
 	elif options.admin:
 		admin()
 	elif options.plugins == "refresh":
