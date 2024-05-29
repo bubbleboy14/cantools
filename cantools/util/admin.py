@@ -124,8 +124,8 @@ def cleanup():
 		log("all clear!")
 
 def sysup(upit=False, upct=False, dpath="."):
-	from cantools.web import email_admins
 	os.chdir(dpath)
+	from cantools.web import email_admins
 	set_log("cron-sysup.log")
 	log("updating package index", important=True)
 	cmd("apt update", sudo=True)
