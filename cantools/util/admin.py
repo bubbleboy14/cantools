@@ -141,11 +141,15 @@ def sysup(upit=False, dpath="."):
 		kern and log("new kernel available!", important=True)
 		if upit == "auto":
 			upit = not kern
+		adrep = "%s upgrades %s"%(ulen, upit and "attempted" or "available")
 		if upit:
 			log("upgrading %s packages:\n\n%s"%(ulen, "\n".join(ulist)), important=True)
-			cmd("apt upgrade -y", sudo=True)
-		email_admins("system updates",
-			"%s upgrades %s"%(ulen, upit and "installed" or "available"))
+			uplines = output("apt upgrade -y", sudo=True).split("\n")
+			for line in uplines:
+				if line.endswith(" not upgraded."):
+					adrep = "%s\n\n%s"%(adrep, line)
+		log(adrep, important=True)
+		email_admins("system updates", adrep)
 	log("goodbye")
 	close_log()
 
@@ -270,7 +274,7 @@ class Creeper(object):
 
 	def creep(self):
 		self.duration += 1
-		current = int(output("free | grep Mem | awk '{print $3}'", True))
+		current = int(output("free | grep Mem | awk '{print $3}'", silent=True))
 		if self.last:
 			print("dur: %s ; %s"%(self.duration, self.calc(current - self.last)))
 		self.last = current
