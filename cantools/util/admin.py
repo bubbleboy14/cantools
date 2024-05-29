@@ -123,15 +123,16 @@ def cleanup():
 					rm(slog)
 		log("all clear!")
 
-def sysup(upit=False, dpath="."):
+def sysup(upit=False, upct=False, dpath="."):
 	from cantools.web import email_admins
 	os.chdir(dpath)
 	set_log("cron-sysup.log")
 	log("updating package index", important=True)
 	cmd("apt update", sudo=True)
 	alist = output("apt list --upgradable")
+	adrep = []
 	if alist.endswith("Listing..."):
-		log("no upgrades available")
+		adrep.append("no system updates available")
 	else:
 		ublock = alist.split("Listing...\n").pop()
 		ulist = ublock.split("\n")
@@ -141,13 +142,18 @@ def sysup(upit=False, dpath="."):
 		kern and log("new kernel available!", important=True)
 		if upit == "auto":
 			upit = not kern
-		adrep = "%s upgrades %s"%(ulen, upit and "attempted" or "available")
+		adrep.append("%s system updates %s"%(ulen, upit and "attempted" or "available"))
 		if upit:
 			log("upgrading %s packages:\n\n%s"%(ulen, "\n".join(ulist)), important=True)
 			uplines = output("apt upgrade -y", sudo=True).split("\n")
 			for line in uplines:
-				if line.endswith(" not upgraded."):
-					adrep = "%s\n\n%s"%(adrep, line)
+				line.endswith(" not upgraded.") and adrep.append(line)
+	if upct:
+		adrep.append("updating web framework and plugins")
+		if "setup file" in output("ctinit -du"):
+			adrep.append("updating dependencies")
+	if adrep:
+		adrep = "\n\n".join(adrep)
 		log(adrep, important=True)
 		email_admins("system updates", adrep)
 	log("goodbye")
