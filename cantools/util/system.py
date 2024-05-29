@@ -54,13 +54,18 @@ def rm(pname):
 def sed(fname, flag, replacement, target=None):
 	write(read(fname).replace(flag, replacement), target or fname)
 
-def cmd(cline, sudo=False, silent=False):
+def sudoed(cline, sudo=False):
 	if sudo and platform.system() != "Windows" and os.geteuid(): # !root
 		cline = "sudo %s"%(cline,)
+	return cline
+
+def cmd(cline, sudo=False, silent=False):
+	cline = sudoed(cline, sudo)
 	silent or log('issuing command: "%s"'%(cline,), 2)
 	subprocess.call(cline, shell=True)
 
-def output(cline, silent=False):
+def output(cline, sudo=False, silent=False):
+	cline = sudoed(cline, sudo)
 	silent or log('getting output for: "%s"'%(cline,), 2)
 	return getoutput(cline)
 
