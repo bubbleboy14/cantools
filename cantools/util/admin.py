@@ -123,6 +123,32 @@ def cleanup():
 					rm(slog)
 		log("all clear!")
 
+def sysup(upit=False, dpath="."):
+	from cantools.web import email_admins
+	os.chdir(dpath)
+	set_log("cron-sysup.log")
+	log("updating package index", important=True)
+	cmd("apt update", sudo=True)
+	alist = output("apt list --upgradable")
+	if alist.endswith("Listing..."):
+		log("no upgrades available")
+	else:
+		ublock = alist.split("Listing...\n").pop()
+		ulist = ublock.split("\n")
+		ulen = len(ulist)
+		kern = "linux" in ublock
+		log("%s upgrades available"%(ulen,))
+		kern and log("new kernel available!", important=True)
+		if upit == "auto":
+			upit = not kern
+		if upit:
+			log("upgrading %s packages:\n\n%s"%(ulen, "\n".join(ulist)), important=True)
+			cmd("apt upgrade -y", sudo=True)
+		email_admins("system updates",
+			"%s upgrades %s"%(ulen, upit and "installed" or "available"))
+	log("goodbye")
+	close_log()
+
 def vitals(dpath="/root", thresh=90):
 	from cantools.web import email_admins
 	os.chdir(dpath)
