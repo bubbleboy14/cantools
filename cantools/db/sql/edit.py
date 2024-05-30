@@ -1,6 +1,5 @@
 from datetime import datetime
 from .properties import KeyWrapper
-from .session import session
 
 def _trans_key(val):
     return KeyWrapper(val)
@@ -19,7 +18,7 @@ ETRANS = {
 def add_edit_transformation(ptype, func):
     ETRANS[ptype] = func
 
-def edit(data, session=session, blobifier=None):
+def edit(data, session=None, blobifier=None):
     from cantools.scripts.migrate import blobify
     from cantools.db import get, get_model
     haskey = "key" in data

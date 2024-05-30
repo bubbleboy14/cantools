@@ -2,7 +2,6 @@ import json
 from base64 import b64decode
 from datetime import datetime
 from sqlalchemy import func
-from .session import session
 from ..shared import *
 from six import string_types
 
@@ -61,7 +60,7 @@ def _join(modelName, altname, joinz, query):
             break
     query.join(get_model(altname), mod1.key == mod2attr)
 
-def get_page(modelName, limit, offset, order='index', filters={}, session=session, count=False, exporter="export"):
+def get_page(modelName, limit, offset, order='index', filters={}, session=None, count=False, exporter="export"):
     query = get_model(modelName).query(session=session)
     joinz = set()
     for key, obj in list(filters.items()):
@@ -82,7 +81,7 @@ def get_page(modelName, limit, offset, order='index', filters={}, session=sessio
         return query.count()
     return [getattr(d, exporter)() for d in query.fetch(limit, offset)]
 
-def getall(entity=None, query=None, keys_only=False, session=session):
+def getall(entity=None, query=None, keys_only=False, session=None):
     if query:
         res = query.all()
     elif entity:
@@ -100,7 +99,7 @@ def key2data(b64compkey):
         b64compkey = b64compkey.urlsafe()
     return json.loads(b64d(b64compkey))
 
-def get(b64compkey, session=session):
+def get(b64compkey, session=None):
     try:
         compkey = key2data(b64compkey)
     except:
@@ -108,7 +107,7 @@ def get(b64compkey, session=session):
         error("bad key: %s"%(b64compkey,))
     return modelsubs[compkey["model"]].query(session=session).query.get(compkey["index"])
 
-def get_multi(b64keys, session=session):
+def get_multi(b64keys, session=None):
     # b64keys can be Key instances or b64 key strings
     if b64keys and not isinstance(b64keys[0], string_types):
         b64keys = [k.urlsafe() for k in b64keys]
