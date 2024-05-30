@@ -7,7 +7,6 @@ from cantools.util import log
 from cantools.web import cgi_dump, set_pre_close
 
 metadata = MetaData()
-lastSession = None
 
 class Session(object):
 	def __init__(self, dbstring=config.db.main):
@@ -37,17 +36,31 @@ class Session(object):
 		return f
 
 	def _refresh(self):
-		global lastSession
-		lastSession = self
 		self.session = self.generator()
 		self.no_autoflush = self.session.no_autoflush
+
+class SessionManager(object):
+	def __init__(self):
+		self.sessions = {}
+
+	def name(self):
+		return threading.currentThread().getName()
+
+	def get(self):
+		name = self.name()
+		if name not in self.sessions:
+			self.sessions[name] = Session()
+		return self.sessions[name]
+
+	def close(self):
+		name = self.name()
+		self.get().generator.remove()
+		if name != "MainThread":
+			del self.sessions[name]
 
 def testSession():
 	return Session(config.db.test)
 
-def closeSession():
-	lastSession.generator.remove()
-
-set_pre_close(closeSession)
-
-session = Session()
+seshman = SessionManager()
+session = seshman.get()
+set_pre_close(seshman.close)
