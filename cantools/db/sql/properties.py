@@ -239,8 +239,6 @@ class KeyWrapper(object):
 
 	def get(self, session=None):
 		from cantools.db import get
-		if not session:
-			from cantools.db import session
 		return get(self.value, session)
 
 	def delete(self):
