@@ -142,9 +142,10 @@ def sysup(upit=False, upct=False, dpath="."):
 		kern and log("new kernel available!", important=True)
 		if upit == "auto":
 			upit = not kern
-		adrep.append("%s system updates %s"%(ulen, upit and "attempted" or "available"))
+		adrep.append("%s system updates %s:"%(ulen, upit and "attempted" or "available"))
+		adrep.append(ublock)
 		if upit:
-			log("upgrading %s packages:\n\n%s"%(ulen, "\n".join(ulist)), important=True)
+			log("upgrading %s packages"%(ulen,), important=True)
 			uplines = output("apt upgrade -y", sudo=True).split("\n")
 			for line in uplines:
 				line.endswith(" not upgraded.") and adrep.append(line)
