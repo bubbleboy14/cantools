@@ -41,25 +41,31 @@ class Session(object):
 
 class SessionManager(object):
 	def __init__(self):
-		self.sessions = {}
+		self.dbs = {}
 
 	def name(self):
 		return threading.currentThread().getName()
 
-	def get(self):
-		name = self.name()
-		if name not in self.sessions:
-			self.sessions[name] = Session()
-		return self.sessions[name]
+	def db(self, db=config.db.main):
+		if db not in self.dbs:
+			self.dbs[db] = {}
+		return self.dbs[db]
 
-	def close(self):
+	def get(self, db=config.db.main):
 		name = self.name()
-		self.get().generator.remove()
+		sessions = self.db(db)
+		if name not in sessions:
+			sessions[name] = Session(db)
+		return sessions[name]
+
+	def close(self, db=config.db.main):
+		name = self.name()
+		self.get(db).generator.remove()
 		if name != "MainThread":
-			del self.sessions[name]
+			del self.db(db)[name]
 
 def testSession():
-	return Session(config.db.test)
+	return seshman.get(config.db.test)
 
 seshman = SessionManager()
 session = seshman.get()
