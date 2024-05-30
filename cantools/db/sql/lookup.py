@@ -1,5 +1,5 @@
 from sqlalchemy import func
-from .model import session, get_model, put_multi, ForeignKey, String, Integer, ModelBase
+from .model import seshman, get_model, put_multi, ForeignKey, String, Integer, ModelBase
 
 class CTRefCount(ModelBase):
     target = ForeignKey()      # instance pointed at
@@ -24,27 +24,28 @@ class CTRefCount(ModelBase):
         fmod = get_model(fname)
         self.count = fmod.query(getattr(fmod, fkey) == self.target).count()
 
-def ref_counter(target, reference, session=session):
+def ref_counter(target, reference, session=None):
     return CTRefCount.query(CTRefCount.target == target,
         CTRefCount.reference == reference, session=session
     ).get() or CTRefCount(target=target, reference=reference)
 
-def inc_counter(target, reference, amount=1, session=session):
+def inc_counter(target, reference, amount=1, session=None):
     rc = ref_counter(target, reference, session)
     rc.inc(amount)
     return rc
 
-def dec_counter(target, reference, amount=1, session=session):
+def dec_counter(target, reference, amount=1, session=None):
     rc = ref_counter(target, reference, session)
     rc.dec(amount)
     return rc
 
-def refresh_counter(target, reference, session=session):
+def refresh_counter(target, reference, session=None):
     rc = ref_counter(target, reference, session)
     rc.refresh()
     return rc
 
-def refcount_subq(reference, session=session):
+def refcount_subq(reference, session=None):
+    session = session or seshman.get()
     if reference.count(".") == 2:
         rp = reference.split(".")
         t1 = get_model(rp[1])
