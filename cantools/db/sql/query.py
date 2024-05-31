@@ -4,7 +4,7 @@ from cantools.util import log, start_timer, end_timer
 from .properties import *
 from .getters import *
 from .setters import *
-from .session import session, testSession, metadata, Session
+from .session import session, seshman, testSession, metadata, Session
 from six import string_types
 
 _passthru = ["count", "all"]
@@ -14,7 +14,7 @@ class Query(object):
     def __init__(self, mod, *args, **kwargs):
         self.mod = mod
         self.schema = get_schema(mod)
-        self.session = kwargs.pop("session", session)
+        self.session = kwargs.pop("session", None) or seshman.get()
         self.query = kwargs.pop("query", self.session.query(mod))
         for fname in _passthru:
             setattr(self, fname, self._qpass(fname))

@@ -67,8 +67,9 @@ class ModelBase(with_metaclass(CTMeta, sa_dbase)):
         for prop in self._schema["_kinds"]:
             self._orig_fkeys[prop] = getattr(self, prop)
 
-    def handle_error(self, e, session=session, flag=" no such column: "):
+    def handle_error(self, e, session=None, flag=" no such column: "):
         log("Database operation failed: %s"%(e,), important=True)
+        session = session or seshman.get()
         raise_anyway = True
         stre = str(e)
         if flag in stre:
@@ -112,7 +113,7 @@ class ModelBase(with_metaclass(CTMeta, sa_dbase)):
     def __hash__(self):
         return self.key.__hash__()
 
-    def put(self, session=session):
+    def put(self, session=None):
         try:
             put_multi([self], session)
         except Exception as e:
@@ -143,11 +144,11 @@ class ModelBase(with_metaclass(CTMeta, sa_dbase)):
     def afterremove(self, session):
         pass
 
-    def rm(self, commit=True, session=session):
+    def rm(self, commit=True, session=None):
+        session = session or seshman.get()
         self.beforeremove(session)
         session.delete(self)
-        if commit:
-            session.commit()
+        commit and session.commit()
         self.afterremove(session)
 
     def collection(self, entity_model, property_name=None, fetch=True, keys_only=False, data=False):

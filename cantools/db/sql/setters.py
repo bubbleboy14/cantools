@@ -1,8 +1,9 @@
 from cantools.util import batch, log
+from .session import seshman
 from .edit import *
 from ..shared import ct_key
 
-def _init_entity(instance, session=session, preserve_timestamps=False):
+def _init_entity(instance, session=None, preserve_timestamps=False):
     from .lookup import inc_counter, dec_counter
     from cantools import config
     puts = []
@@ -32,7 +33,8 @@ def _init_entity(instance, session=session, preserve_timestamps=False):
                             puts.append(inc_counter(val, reference, session=session))
     return puts
 
-def init_multi(instances, session=session, preserve_timestamps=False):
+def init_multi(instances, session=None, preserve_timestamps=False):
+    session = session or seshman.get()
     if preserve_timestamps:
         log("initializing %s instances -- preserving timestamps!"%(len(instances),))
     lookups = []
@@ -44,12 +46,14 @@ def init_multi(instances, session=session, preserve_timestamps=False):
     for instance in instances:
         instance.key = instance.key or KeyWrapper(ct_key(instance.polytype, instance.index))
 
-def put_multi(instances, session=session, preserve_timestamps=False):
+def put_multi(instances, session=None, preserve_timestamps=False):
+    session = session or seshman.get()
     session.init()
     batch(instances, init_multi, session, preserve_timestamps)
     session.commit()
 
-def delete_multi(instances, session=session):
+def delete_multi(instances, session=None):
+    session = session or seshman.get()
     for instance in instances:
-        instance.rm(False)
+        instance.rm(False, session)
     session.commit()
