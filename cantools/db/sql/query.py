@@ -14,7 +14,7 @@ class Query(object):
     def __init__(self, mod, *args, **kwargs):
         self.mod = mod
         self.schema = get_schema(mod)
-        self.session = kwargs.pop("session", seshman.get())
+        self.session = kwargs.pop("session", None) or seshman.get()
         self.query = kwargs.pop("query", self.session.query(mod))
         for fname in _passthru:
             setattr(self, fname, self._qpass(fname))
