@@ -153,6 +153,10 @@ def sysup(upit=False, upct=False, dpath="."):
 		adrep.append("updating web framework and plugins")
 		if "setup file" in output("ctinit -du"):
 			adrep.append("updating dependencies")
+	if os.path.exists("/var/run/reboot-required"):
+		upaks = output("cat /var/run/reboot-required.pkgs", loud=True)
+		adrep.append("updates include: %s"%(upaks,))
+		adrep.append("system restart required!")
 	if adrep:
 		adrep = "\n\n".join(adrep)
 		log(adrep, important=True)
