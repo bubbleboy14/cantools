@@ -64,10 +64,12 @@ def cmd(cline, sudo=False, silent=False):
 	silent or log('issuing command: "%s"'%(cline,), 2)
 	subprocess.call(cline, shell=True)
 
-def output(cline, sudo=False, silent=False):
+def output(cline, sudo=False, silent=False, loud=False):
 	cline = sudoed(cline, sudo)
 	silent or log('getting output for: "%s"'%(cline,), 2)
-	return getoutput(cline)
+	output = getoutput(cline)
+	loud and log(output)
+	return output
 
 PYVER = sys.version_info[0] == 2 and "python" or "python3"
 
