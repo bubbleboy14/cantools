@@ -350,7 +350,7 @@ def fail(data="failed", html=False, err=None, noenc=False, exit=True):
         ip = local("ip") or (resp and resp.ip or "can't find ip!")
         edump = "%s\n\n%s\n\n%s\n\n%s"%(path, ip, reqstring, logdata)
         shield = config.web.shield
-        if shield(reqstring, ip):
+        if reqstring and shield(reqstring, ip):
             data = "nabra"
             reason = shield.ip(ip)["message"]
             logline = "%s - IP (%s) banned!"%(reason, ip)
@@ -358,9 +358,10 @@ def fail(data="failed", html=False, err=None, noenc=False, exit=True):
             log(logline)
         elif config.web.eflags:
             samples = {
-                "traceback": logdata,
-                "request": reqstring
+                "traceback": logdata
             }
+            if reqstring:
+                samples["request"] = reqstring
             for sample in samples:
                 for ef in config.web.eflags:
                     if ef in samples[sample]:
