@@ -271,8 +271,7 @@ def update(autodeps=False):
 	log("Updating cantools and managed plugins", important=True)
 	os.chdir(CTP)
 	log("retrieving latest cantools", 1)
-	pullout = output("git pull")
-	log(pullout)
+	pullout = output("git pull", loud=True)
 	if os.path.isdir(config.plugin.path):
 		dname, dirs, files = next(os.walk(config.plugin.path))
 		log("updating %s managed plugins"%(len(dirs),), 1)
