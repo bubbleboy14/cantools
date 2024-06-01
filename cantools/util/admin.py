@@ -164,13 +164,14 @@ def sysup(upit=False, upct=False, dpath="."):
 	log("goodbye")
 	close_log()
 
-def vitals(dpath="/root", thresh=90):
+def vitals(thresh=90, dpath="."):
 	from cantools.web import email_admins
 	os.chdir(dpath)
 	set_log("cron-vitals.log")
 	log("scanning vitals", important=True)
 	lz = []
 	hdrive = check()
+	thresh = int(thresh)
 	lz.append("hard drive usage: %s%%"%(hdrive,))
 	inodes = check("df -i")
 	lz.append("inode usage: %s%%"%(inodes,))
