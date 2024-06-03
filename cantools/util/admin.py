@@ -123,8 +123,8 @@ def cleanup():
 					rm(slog)
 		log("all clear!")
 
-def matchline(oline, start=None, end=None, sudo=False):
-	for line in output(oline, sudo=sudo).split("\n"):
+def matchline(oline, start=None, end=None, sudo=False, loud=True):
+	for line in output(oline, sudo=sudo, loud=loud).split("\n"):
 		if start and line.startswith(start):
 			return line
 		if end and line.endswith(end):
