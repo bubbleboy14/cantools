@@ -123,6 +123,13 @@ def cleanup():
 					rm(slog)
 		log("all clear!")
 
+def matchline(oline, start=None, end=None, sudo=False):
+	for line in output(oline, sudo=sudo).split("\n"):
+		if start and line.startswith(start):
+			return line
+		if end and line.endswith(end):
+			return line
+
 def sysup(upit=False, upct=False, dpath="."):
 	from cantools.web import email_admins
 	os.chdir(dpath)
@@ -146,13 +153,11 @@ def sysup(upit=False, upct=False, dpath="."):
 		adrep.append(ublock)
 		if upit:
 			log("upgrading %s packages"%(ulen,), important=True)
-			uplines = output("apt upgrade -y", sudo=True).split("\n")
-			for line in uplines:
-				line.endswith(" not upgraded.") and adrep.append(line)
+			adrep.append(matchline("apt upgrade -y", end=" not upgraded.", sudo=True))
 	if upct:
 		adrep.append("updating web framework and plugins")
-		if "setup file" in output("ctinit -du"):
-			adrep.append("updating dependencies")
+		fullupline = matchline("ctinit -du", "Successfully installed ")
+		fullupline and adrep.append(fullupline)
 	if os.path.exists("/var/run/reboot-required"):
 		upaks = output("cat /var/run/reboot-required.pkgs", loud=True)
 		adrep.append("updates include: %s"%(upaks,))
