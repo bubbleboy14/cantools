@@ -87,7 +87,12 @@ cfg = {
 		"blob": "blob",
 		"alter": False, # add new columns to tables - sqlite only!
 		"echo": False,
-		"public": True # read from db without credentials via _db.py web handler
+		"public": True, # read from db without credentials via _db.py web handler
+		"pool": {
+			"size": 10,
+			"overflow": 20,
+			"recycle": 7200
+		}
 	},
 	"pay": {
 		"merchant": None,
