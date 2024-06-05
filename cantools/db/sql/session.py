@@ -6,11 +6,14 @@ from cantools import config
 from cantools.util import log
 from cantools.web import cgi_dump, set_pre_close
 
+dcfg = config.db
+pcfg = dcfg.pool
 metadata = MetaData()
 
 class Session(object):
-	def __init__(self, dbstring=config.db.main):
-		self.engine = create_engine(dbstring, pool_recycle=7200, echo=config.db.echo)
+	def __init__(self, dbstring=dcfg.main):
+		self.engine = create_engine(dbstring, pool_size=pcfg.size,
+			max_overflow=pcfg.overflow, pool_recycle=pcfg.recycle, echo=dcfg.echo)
 		self.generator = scoped_session(sessionmaker(bind=self.engine), scopefunc=self._scope)
 		for fname in ["add", "add_all", "delete", "flush", "commit", "query"]:
 			setattr(self, fname, self._func(fname))
@@ -46,26 +49,26 @@ class SessionManager(object):
 	def name(self):
 		return threading.currentThread().getName()
 
-	def db(self, db=config.db.main):
+	def db(self, db=dcfg.main):
 		if db not in self.dbs:
 			self.dbs[db] = {}
 		return self.dbs[db]
 
-	def get(self, db=config.db.main):
+	def get(self, db=dcfg.main):
 		name = self.name()
 		sessions = self.db(db)
 		if name not in sessions:
 			sessions[name] = Session(db)
 		return sessions[name]
 
-	def close(self, db=config.db.main):
+	def close(self, db=dcfg.main):
 		name = self.name()
 		self.get(db).generator.remove()
 		if name != "MainThread":
 			del self.db(db)[name]
 
 def testSession():
-	return seshman.get(config.db.test)
+	return seshman.get(dcfg.test)
 
 seshman = SessionManager()
 session = seshman.get()
