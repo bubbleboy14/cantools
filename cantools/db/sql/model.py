@@ -67,30 +67,6 @@ class ModelBase(with_metaclass(CTMeta, sa_dbase)):
         for prop in self._schema["_kinds"]:
             self._orig_fkeys[prop] = getattr(self, prop)
 
-    def handle_error(self, e, session=None, flag=" no such column: "):
-        log("Database operation failed: %s"%(e,), important=True)
-        session = session or seshman.get()
-        raise_anyway = True
-        stre = str(e)
-        if flag in stre:
-            target = stre.split(flag)[1].split(None, 1)[0]
-            log("Missing column: %s"%(target,), important=True)
-            if config.db.alter:
-                if "." in target:
-                    tmod, tcol = target.split(".")
-                else:
-                    tcol = target
-                    tmod = self.polytype
-                if config.db.alter == "auto" or not input("Add missing column '%s' to table '%s' (sqlite-only!)? [Y/n] "%(tcol, tmod)).lower().startswith("n"):
-                    raise_anyway = False
-                    log("adding '%s' to '%s'"%(tcol, tmod))
-                    with session.engine.connect() as conn:
-                        result = conn.execute(text("ALTER TABLE %s ADD COLUMN %s"%(tmod, tcol)))
-            else:
-                log("To auto-update columns, add 'DB_ALTER = True' to your ct.cfg (sqlite only!)", important=True)
-        if raise_anyway:
-            error(e)
-
     def _defaults(self):
         for prop in self._schema["_kinds"]:
             if getattr(self, prop, None) is None:
@@ -117,7 +93,9 @@ class ModelBase(with_metaclass(CTMeta, sa_dbase)):
         try:
             put_multi([self], session)
         except Exception as e:
-            self.handle_error(e, session, "has no column named")
+            handle_error(e, session, self.polytype, "has no column named")
+            log("retrying put operation")
+            put_multi([self], session)
 
     def otherwith(self, prop, val):
         k = self._schema[prop]

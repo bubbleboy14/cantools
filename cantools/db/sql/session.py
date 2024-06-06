@@ -3,11 +3,35 @@ from sqlalchemy import create_engine, MetaData
 from sqlalchemy.orm import scoped_session, sessionmaker
 from rel import tick
 from cantools import config
-from cantools.util import log
+from cantools.util import log, error
 from cantools.web import cgi_dump, set_pre_close
 
 dcfg = config.db
 metadata = MetaData()
+
+def handle_error(self, e, session=None, polytype=None, flag=" no such column: "):
+    log("Database operation failed: %s"%(e,), important=True)
+    session = session or seshman.get()
+    raise_anyway = True
+    stre = str(e)
+    if flag in stre:
+        target = stre.split(flag)[1].split(None, 1)[0]
+        log("Missing column: %s"%(target,), important=True)
+        if config.db.alter:
+            if "." in target:
+                tmod, tcol = target.split(".")
+            else:
+                tcol = target
+                tmod = polytype
+            if config.db.alter == "auto" or not input("Add missing column '%s' to table '%s' (sqlite-only!)? [Y/n] "%(tcol, tmod)).lower().startswith("n"):
+                raise_anyway = False
+                log("adding '%s' to '%s'"%(tcol, tmod))
+                with session.engine.connect() as conn:
+                    result = conn.execute(text("ALTER TABLE %s ADD COLUMN %s"%(tmod, tcol)))
+        else:
+            log("To auto-update columns, add 'DB_ALTER = True' to your ct.cfg (sqlite only!)", important=True)
+    if raise_anyway:
+        error(e)
 
 def threadname():
 	return threading.currentThread().getName()

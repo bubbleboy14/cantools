@@ -4,7 +4,7 @@ from cantools.util import log, start_timer, end_timer
 from .properties import *
 from .getters import *
 from .setters import *
-from .session import session, seshman, testSession, metadata, Session
+from .session import session, seshman, testSession, metadata, Session, handle_error
 from six import string_types
 
 _passthru = ["count", "all"]
@@ -54,7 +54,7 @@ class Query(object):
             try:
                 res = getattr(self.query, fname)(*args, **kwargs)
             except Exception as e:
-                self.mod.handle_error(e, self.session)
+                handle_error(e, self.session)
                 log("retrying query operation")
                 res = getattr(self.query, fname)(*args, **kwargs)
             if "query" in config.log.allow:
