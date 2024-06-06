@@ -77,7 +77,8 @@ Session._id = 0
 
 class DataBase(Basic):
 	def __init__(self, db=dcfg.main):
-		self.engine = create_engine(db, pool_recycle=7200, echo=dcfg.echo)
+		self.engine = create_engine(db, pool_size=pcfg.size,
+			max_overflow=pcfg.overflow, pool_recycle=pcfg.recycle, echo=dcfg.echo)
 		metadata.create_all(self.engine)
 		self.sessions = {}
 		self.log("initialized")

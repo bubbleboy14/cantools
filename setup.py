@@ -27,7 +27,7 @@ setup(
         "yagmail >= 0.6.161",
         "requests >= 2.3.0",
 #        "jsmin >= 2.2.2",
-        "sqlalchemy >= 1.0.12",
+        "sqlalchemy >= 2.0.30",
 #        "psutil >= 5.0.1",
 #        "braintree >= 4.5.0",
         "six >= 1.12.0"
