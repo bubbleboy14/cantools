@@ -90,8 +90,8 @@ cfg = {
 		"public": True, # read from db without credentials via _db.py web handler
 		"pool": {
 			"size": 10,
-			"overflow": 20,
-			"recycle": 7200
+			"recycle": 30,
+			"overflow": 20
 		}
 	},
 	"pay": {
