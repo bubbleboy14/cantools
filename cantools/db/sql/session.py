@@ -96,7 +96,7 @@ class DataBase(Basic):
 		if thread in self.sessions:
 			self.sessions[thread].generator.remove()
 			if thread == "MainThread":
-				note = "ended"
+				note = "released"
 			else:
 				del self.sessions[thread]
 				note = "deleted"
