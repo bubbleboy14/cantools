@@ -9,22 +9,32 @@ from cantools.web import cgi_dump, set_pre_close
 dcfg = config.db
 metadata = MetaData()
 
-class Session(object):
-	def __init__(self, dbstring=dcfg.main):
-		self.engine = create_engine(dbstring, pool_recycle=7200, echo=dcfg.echo)
-		self.generator = scoped_session(sessionmaker(bind=self.engine), scopefunc=self._scope)
+def threadname():
+	return threading.currentThread().getName()
+
+class Basic(object): # move elsewhere?
+	def sig(self):
+		return self.__class__.__name__
+
+	def log(self, *msg):
+		if "db" in config.log.allow:
+			log("[db] session | %s :: %s"%(self.sig(), " ".join(msg)))
+
+class Session(Basic):
+	def __init__(self, engine):
+		Session._id += 1
+		self.id = Session._id
+		self.generator = scoped_session(sessionmaker(bind=engine), scopefunc=self._scope)
 		for fname in ["add", "add_all", "delete", "flush", "commit", "query"]:
 			setattr(self, fname, self._func(fname))
-		self._initialized_tables = False
 		self._refresh()
+		self.log("initialized")
 
-	def init(self):
-		if not self._initialized_tables:
-			metadata.create_all(self.engine)
-			self._initialized_tables = True
+	def sig(self):
+		return "Session(%s)"%(self.id,)
 
 	def _scope(self):
-		threadId = threading.currentThread().getName()
+		threadId = threadname()
 		if threadId == "MainThread":
 			threadId = tick()
 		return "%s%s"%(threadId, cgi_dump())
@@ -32,7 +42,6 @@ class Session(object):
 	def _func(self, fname):
 		def f(*args):
 			self._refresh()
-			self.init()
 			return getattr(self.session, fname)(*args)
 		return f
 
@@ -40,30 +49,50 @@ class Session(object):
 		self.session = self.generator()
 		self.no_autoflush = self.session.no_autoflush
 
-class SessionManager(object):
+Session._id = 0
+
+class DataBase(Basic):
+	def __init__(self, db=dcfg.main):
+		self.engine = create_engine(db, pool_recycle=7200, echo=dcfg.echo)
+		metadata.create_all(self.engine)
+		self.sessions = {}
+		self.log("initialized")
+
+	def session(self):
+		thread = threadname()
+		if thread not in self.sessions:
+			self.sessions[thread] = Session(self.engine)
+			self.log("session(%s) created!"%(thread,))
+		return self.sessions[thread]
+
+	def close(self):
+		thread = threadname()
+		if thread in self.sessions:
+			self.sessions[thread].generator.remove()
+			if thread == "MainThread":
+				note = "ended"
+			else:
+				del self.sessions[thread]
+				note = "deleted"
+		else:
+			note = "not found!"
+		self.log("close(%s)"%(thread,), "session", note)
+
+class SessionManager(Basic):
 	def __init__(self):
 		self.dbs = {}
-
-	def name(self):
-		return threading.currentThread().getName()
+		self.log("initialized")
 
 	def db(self, db=dcfg.main):
 		if db not in self.dbs:
-			self.dbs[db] = {}
+			self.dbs[db] = DataBase(db)
 		return self.dbs[db]
 
 	def get(self, db=dcfg.main):
-		name = self.name()
-		sessions = self.db(db)
-		if name not in sessions:
-			sessions[name] = Session(db)
-		return sessions[name]
+		return self.db(db).session()
 
 	def close(self, db=dcfg.main):
-		name = self.name()
-		self.get(db).generator.remove()
-		if name != "MainThread":
-			del self.db(db)[name]
+		self.db(db).close()
 
 def testSession():
 	return seshman.get(dcfg.test)
