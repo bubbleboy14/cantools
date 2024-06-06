@@ -17,8 +17,8 @@ class Basic(object): # move elsewhere?
 		return self.__class__.__name__
 
 	def log(self, *msg):
-		if "query" in config.log.allow:
-			log("%s :: %s"%(self.sig(), " ".join(msg)))
+		if "db" in config.log.allow:
+			log("[db] session | %s :: %s"%(self.sig(), " ".join(msg)))
 
 class Session(Basic):
 	def __init__(self, engine):
@@ -62,15 +62,21 @@ class DataBase(Basic):
 		thread = threadname()
 		if thread not in self.sessions:
 			self.sessions[thread] = Session(self.engine)
-			self.log("session created for", thread)
+			self.log("session(%s) created!"%(thread,))
 		return self.sessions[thread]
 
 	def close(self):
 		thread = threadname()
-		self.sessions[thread].generator.remove()
-		if thread != "MainThread":
-			del self.sessions[thread]
-		self.log("session closed for", thread)
+		if thread in self.sessions:
+			self.sessions[thread].generator.remove()
+			if thread == "MainThread":
+				note = "ended"
+			else:
+				del self.sessions[thread]
+				note = "deleted"
+		else:
+			note = "not found!"
+		self.log("close(%s)"%(thread,), "session", note)
 
 class SessionManager(Basic):
 	def __init__(self):
