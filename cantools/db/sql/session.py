@@ -7,13 +7,11 @@ from cantools.util import log
 from cantools.web import cgi_dump, set_pre_close
 
 dcfg = config.db
-pcfg = dcfg.pool
 metadata = MetaData()
 
 class Session(object):
 	def __init__(self, dbstring=dcfg.main):
-		self.engine = create_engine(dbstring, pool_size=pcfg.size,
-			max_overflow=pcfg.overflow, pool_recycle=pcfg.recycle, echo=dcfg.echo)
+		self.engine = create_engine(dbstring, pool_recycle=7200, echo=dcfg.echo)
 		self.generator = scoped_session(sessionmaker(bind=self.engine), scopefunc=self._scope)
 		for fname in ["add", "add_all", "delete", "flush", "commit", "query"]:
 			setattr(self, fname, self._func(fname))
