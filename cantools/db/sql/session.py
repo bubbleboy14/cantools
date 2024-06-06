@@ -44,6 +44,18 @@ class SessionManager(object):
 	def __init__(self):
 		self.dbs = {}
 
+	def log(self, msg):
+		if "query" in config.log.allow:
+			log("SessionManager(%s) :: %s"%(self.sig(), msg))
+
+	def sig(self):
+		dbs = 0
+		sessions = 0
+		for db in self.dbs:
+			dbs += 1
+			sessions += len(self.dbs[db].keys())
+		return "%s dbs; %s sessions"%(dbs, sessions)
+
 	def name(self):
 		return threading.currentThread().getName()
 
@@ -57,6 +69,7 @@ class SessionManager(object):
 		sessions = self.db(db)
 		if name not in sessions:
 			sessions[name] = Session(db)
+			self.log("creating session: %s"%(name,))
 		return sessions[name]
 
 	def close(self, db=dcfg.main):
@@ -64,6 +77,7 @@ class SessionManager(object):
 		self.get(db).generator.remove()
 		if name != "MainThread":
 			del self.db(db)[name]
+		self.log("destroying session: %s"%(name,))
 
 def testSession():
 	return seshman.get(dcfg.test)
