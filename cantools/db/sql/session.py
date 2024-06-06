@@ -7,6 +7,7 @@ from cantools.util import log, error
 from cantools.web import cgi_dump, set_pre_close
 
 dcfg = config.db
+pcfg = dcfg.pool
 metadata = MetaData()
 
 def handle_error(e, session=None, polytype=None, flag=" no such column: "):
