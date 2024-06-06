@@ -48,7 +48,6 @@ def init_multi(instances, session=None, preserve_timestamps=False):
 
 def put_multi(instances, session=None, preserve_timestamps=False):
     session = session or seshman.get()
-    session.init()
     batch(instances, init_multi, session, preserve_timestamps)
     session.commit()
 
