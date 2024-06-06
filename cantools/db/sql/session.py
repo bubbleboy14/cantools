@@ -9,7 +9,7 @@ from cantools.web import cgi_dump, set_pre_close
 dcfg = config.db
 metadata = MetaData()
 
-def handle_error(self, e, session=None, polytype=None, flag=" no such column: "):
+def handle_error(e, session=None, polytype=None, flag=" no such column: "):
     log("Database operation failed: %s"%(e,), important=True)
     session = session or seshman.get()
     raise_anyway = True
