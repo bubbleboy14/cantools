@@ -288,10 +288,7 @@ def update(autodeps=False):
 	if dodeps:
 		os.chdir("%s/.."%(CTP,))
 		log("updating dependencies", important=True)
-		pipper(execute=True)
-		#py("setup.py install", True)
-		#log("restoring cantools develop status", important=True)
-		#py("setup.py develop", True)
+		pipper(execute=True, force=autodeps)
 
 def admin():
 	log("compiling admin pages -- thanks for developing!!", important=True)
