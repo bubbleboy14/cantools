@@ -1,4 +1,5 @@
 import threading
+from sqlalchemy.pool import NullPool
 from sqlalchemy import create_engine, MetaData
 from sqlalchemy.orm import scoped_session, sessionmaker
 from rel import tick
@@ -78,8 +79,11 @@ Session._id = 0
 
 class DataBase(Basic):
 	def __init__(self, db=dcfg.main):
-		self.engine = create_engine(db, pool_size=pcfg.size,
-			max_overflow=pcfg.overflow, pool_recycle=pcfg.recycle, echo=dcfg.echo)
+		if pcfg.null:
+			self.engine = create_engine(db, poolclass=NullPool, echo=dcfg.echo)
+		else:
+			self.engine = create_engine(db, pool_size=pcfg.size,
+				max_overflow=pcfg.overflow, pool_recycle=pcfg.recycle, echo=dcfg.echo)
 		metadata.create_all(self.engine)
 		self.sessions = {}
 		self.log("initialized")

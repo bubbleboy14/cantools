@@ -89,6 +89,7 @@ cfg = {
 		"echo": False,
 		"public": True, # read from db without credentials via _db.py web handler
 		"pool": {
+			"null": True,
 			"size": 10,
 			"recycle": 30,
 			"overflow": 20
