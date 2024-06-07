@@ -14,7 +14,7 @@ def virtenv():
     return invenv
 
 def pipper(execute=False, force=False):
-    p = "pip3 install -e ."
+    p = "pip install -e ."
     valid = True
     notvenv = not virtenv()
     if managedpip() and notvenv:
@@ -25,7 +25,7 @@ def pipper(execute=False, force=False):
             valid = False
     if execute:
         if valid:
-            cmd(p, notvenv)
+            pymod(p, notvenv)
         else:
             log("aborting execution!")
     else:
