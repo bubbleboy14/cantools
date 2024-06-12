@@ -233,23 +233,31 @@ def askArch(path):
 	log("ok, i'm moving it to %s"%(newpath,))
 	os.rename(path, newpath)
 
-def askGet(path, user, domain, projpath, keyfile=None, isdir=False):
+def askGet(path, user, domain, basepath, projpath, keyfile=None, isdir=False):
 	if not confirm("should i get %s"%(path,), True):
 		return
 	askArch(path)
-	scp(user, domain, "/%s/%s/%s"%(user, projpath, path), keyfile, isdir)
+	scp(user, domain, "/%s/%s/%s"%(basepath, projpath, path), keyfile, isdir)
+
+def askBasePath(user):
+	if user == "root":
+		basepath = "root"
+	else:
+		basepath = "home/%s"%(user,)
+	return input("what's the base path? [default: %s] "%(basepath,)) or basepath
 
 def doGets(user, domain, projpath, keyfile):
-	askGet("data.db", user, domain, projpath, keyfile)
-	askGet("blob", user, domain, projpath, keyfile, True)
+	basepath = askBasePath(user)
+	askGet("data.db", user, domain, basepath, projpath, keyfile)
+	askGet("blob", user, domain, basepath, projpath, keyfile, True)
 	otherPath = input("anything else? [default: nah] ")
 	while otherPath:
-		askGet(otherPath, user, domain, projpath, keyfile,
+		askGet(otherPath, user, domain, basepath, projpath, keyfile,
 			input("is that a directory? [default: nope] "))
 		otherPath = input("anything else? [default: nah] ")
 
 def snap(domain):
-	doGets(input("what's the home directory? [default: root]: ") or "root",
+	doGets(input("what's the user? [default: root]: ") or "root",
 		domain, projpath(), input("what's the key file? [default: none] "))
 
 MODES = { "load": load, "dump": dump, "blobdiff": blobdiff, "snap": snap }
