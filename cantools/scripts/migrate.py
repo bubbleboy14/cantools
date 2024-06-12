@@ -20,6 +20,7 @@
 """
 
 import os, getpass, datetime
+from fyg.util import confirm
 from optparse import OptionParser
 from cantools import db
 from cantools.web import fetch, post
@@ -226,14 +227,14 @@ def scp(user, domain, path, keyfile=None, isdir=False):
 def askArch(path):
 	if not os.path.exists(path):
 		return
-	if input("%s exists - should i archive it? [Y/n] "%(path,)).lower().startswith("n"):
+	if not confirm("%s exists - should i archive it"%(path,), True):
 		return log("ok, i'm overwriting it!", important=True)
 	newpath = "%s%s"%(path, str(datetime.datetime.now()).split(" ").pop(0))
 	log("ok, i'm moving it to %s"%(newpath,))
 	os.rename(path, newpath)
 
 def askGet(path, user, domain, projpath, keyfile=None, isdir=False):
-	if input("should i get %s? [Y/n] "%(path,)).lower().startswith("n"):
+	if not confirm("should i get %s"%(path,), True):
 		return
 	askArch(path)
 	scp(user, domain, "/%s/%s/%s"%(user, projpath, path), keyfile, isdir)
