@@ -104,21 +104,21 @@ def plugdirs(cb, pdir=".ctplug", filt="ct", ask=True):
 def gc(pdir=".ctplug", filt="ct", ask=False):
 	plugdirs(lambda : cmd("git gc"), pdir, filt, ask)
 
-def cleanup():
-	if confirm("garbage collect git repos"):
+def cleanup(force=False):
+	if force or confirm("garbage collect git repos"):
 		gc()
-	if confirm("vacuum up old journals"):
+	if force or confirm("vacuum up old journals"):
 		cmd("journalctl --vacuum-size=50M")
-	if confirm("remove old packages"):
+	if force or confirm("remove old packages"):
 		cmd("apt autoremove")
-	if confirm("clean up screenlogs"):
+	if force or confirm("clean up screenlogs"):
 		slogs = output("du -a . | sort -n -r | head -n 20 | grep screenlog")
 		if slogs:
 			lines = slogs.split("\n")
 			paths = [l.split("\t").pop() for l in lines]
 			plen = len(paths)
 			log("founds %s screenlogs:\n\n%s"%(plen, "\n".join(paths)), important=True)
-			if plen and confirm("delete %s screenlogs"%(plen,)):
+			if plen and (force or confirm("delete %s screenlogs"%(plen,))):
 				for slog in paths:
 					rm(slog)
 		log("all clear!")
