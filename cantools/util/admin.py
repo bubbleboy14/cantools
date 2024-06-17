@@ -1,4 +1,4 @@
-import os, sys
+import os, sys, rel
 from cantools.util import cmd, output, error, log, set_log, close_log, read, write, confirm, rm
 
 def _starter(sname):
@@ -144,11 +144,7 @@ def sysup(upit=False, upct=False, dpath="."):
 		ublock = alist.split("Listing...\n").pop()
 		ulist = ublock.split("\n")
 		ulen = len(ulist)
-		kern = "linux" in ublock
 		log("%s upgrades available"%(ulen,))
-		kern and log("new kernel available!", important=True)
-		if upit == "auto":
-			upit = not kern
 		adrep.append("%s system updates %s:"%(ulen, upit and "attempted" or "available"))
 		adrep.append(ublock)
 		if upit:
@@ -162,6 +158,10 @@ def sysup(upit=False, upct=False, dpath="."):
 		upaks = output("cat /var/run/reboot-required.pkgs", loud=True)
 		adrep.append("updates include: %s"%(upaks,))
 		adrep.append("system restart required!")
+		if upit == "auto":
+			log("restarting system in 20 seconds!!!", important=True)
+			rel.timeout(20, lambda : cmd("reboot"))
+			adrep.append("system restarted!")
 	if adrep:
 		adrep = "\n\n".join(adrep)
 		log(adrep, important=True)
@@ -324,7 +324,6 @@ class Creeper(object):
 		return True
 
 	def start(self):
-		import rel
 		rel.signal(2, rel.abort)
 		rel.timeout(1, self.creep)
 		rel.dispatch()
