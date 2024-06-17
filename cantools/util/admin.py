@@ -169,6 +169,26 @@ def sysup(upit=False, upct=False, dpath="."):
 	log("goodbye")
 	close_log()
 
+def running(proc):
+	if not "active (running)" in output("service %s status"%(proc,)):
+		return log("%s isn't running!!!"%(proc,))
+	log("%s is running"%(proc,))
+	return True
+
+def upcheck(*procs):
+	from cantools.web import email_admins
+	set_log("cron-upcheck.log")
+	log("checking services: %s"%(", ".join(procs),), important=True)
+	restarts = []
+	for proc in procs:
+		if not running(proc):
+			restarts.append(proc)
+			log("restarting %s!"%(proc,), important=True)
+			cmd("service %s restart"%(proc,))
+	restarts and email_admins("services restarted", "\n\n".join(restarts))
+	log("goodbye")
+	close_log()
+
 def vitals(clean=False, thresh=90, dpath="."):
 	if clean == "False":
 		clean = False
