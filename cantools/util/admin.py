@@ -169,14 +169,16 @@ def sysup(upit=False, upct=False, dpath="."):
 	log("goodbye")
 	close_log()
 
-def vitals(thresh=90, dpath="."):
+def vitals(clean=False, thresh=90, dpath="."):
+	if clean == "False":
+		clean = False
+	thresh = int(thresh)
 	from cantools.web import email_admins
 	os.chdir(dpath)
 	set_log("cron-vitals.log")
 	log("scanning vitals", important=True)
 	lz = []
 	hdrive = check()
-	thresh = int(thresh)
 	lz.append("hard drive usage: %s%%"%(hdrive,))
 	inodes = check("df -i")
 	lz.append("inode usage: %s%%"%(inodes,))
@@ -186,6 +188,10 @@ def vitals(thresh=90, dpath="."):
 		log(l)
 	if hdrive > thresh or inodes > thresh or memuse > thresh:
 		log("threshold exceeded - notifying admins")
+		if hdrive > thresh and clean:
+			log("cleaning up!")
+			cleanup(True)
+			lz.append("cleaned up hard drive!")
 		email_admins("threshold exceeded", "\n".join(lz))
 	log("goodbye")
 	close_log()
