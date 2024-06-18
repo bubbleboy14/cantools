@@ -25,6 +25,8 @@ CT.require("CT.stream.Video");
 CT.require("CT.stream.Streamer");
 CT.require("CT.stream.Multiplexer");
 
+var vpv = "vp9";
+
 var stropts = CT.stream.opts = {
 	requiresInput: true,//CT.info.android,
 	requestedInput: false,
@@ -33,6 +35,7 @@ var stropts = CT.stream.opts = {
 	reset: 2000,
 	resetWait: 3000,
 	cutoff: 30000,
+	wakeup: 0,//1000,
 	resetLimit: "auto",
 	snoozes: 0,
 	width: 320,
@@ -43,8 +46,8 @@ var stropts = CT.stream.opts = {
 		CT.stream.opts.transcoder = cb;
 	},
 	codecs: {
-		av: 'video/webm; codecs="vp8,opus"',
-		video: 'video/webm; codecs="vp8"',
+		av: 'video/webm; codecs="' + vpv + ',opus"',
+		video: 'video/webm; codecs="' + vpv + '"',
 		audio: 'audio/webm; codecs="opus"'
 	},
 	startWaiting: function() {
