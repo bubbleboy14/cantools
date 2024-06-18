@@ -51,7 +51,9 @@ var stropts = CT.stream.opts = {
 		audio: 'audio/webm; codecs="opus"'
 	},
 	startWaiting: function() {
-		CT.stream.opts.waiting.forEach(function(w) { w.play(); });
+		CT.stream.opts.waiting.forEach(function(w) {
+			w.play().catch(() => CT.log("play rejected!"));
+		});
 		CT.stream.opts.waiting = [];
 	}
 };
