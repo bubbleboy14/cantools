@@ -28,7 +28,10 @@ CT.stream.Video = CT.Class({
 	setSourceBuffer: function() {
 		var mt = this.opts.mimeType;
 		this.log("setSourceBuffer - exists:", !!this.sourceBuffer, "mimeType", mt);
-		if (!this.sourceBuffer) {
+		if (this.mediaSource.readyState == "closed") {
+			this.log("mediaSource readyState is closed -- recreating");
+			this.setMediaSource();
+		} else if (!this.sourceBuffer) {
 			this.sourceBuffer = this.mediaSource.addSourceBuffer(mt);
 			this.sourceBuffer.mode = 'segments';
 			this.sourceBuffer.addEventListener("updateend", this._sourceUpdate);
@@ -177,6 +180,10 @@ CT.stream.Video = CT.Class({
 		this.video.on("error", this._error);
 	},
 	setMediaSource: function() {
+		if (this.mediaSource) {
+			this.mediaSource.removeEventListener("sourceopen", this._sourceOpen);
+			this.mediaSource.removeEventListener("error", this._error);
+		}
 		this.mediaSource = new MediaSource();
 		this.video.src = URL.createObjectURL(this.mediaSource);
 		this.mediaSource.addEventListener("sourceopen", this._sourceOpen);
@@ -233,8 +240,6 @@ CT.stream.Video = CT.Class({
 		this.sourceBuffer.removeEventListener("updateend", this._sourceUpdate);
 		this.sourceBuffer.removeEventListener("error", this._error);
 		delete this.sourceBuffer;
-		this.mediaSource.removeEventListener("sourceopen", this._sourceOpen);
-		this.mediaSource.removeEventListener("error", this._error);
 		this.setMediaSource();
 		if (this._buffers.length > 10)
 			this._buffers.length = 0;
@@ -291,7 +296,8 @@ CT.stream.Video = CT.Class({
 		else {
 			this.setMediaSource();
 			this.audio.build();
-			this._wakey = setInterval(this._wakeup, 1000);
+			if (CT.stream.opts.wakeup)
+				this._wakey = setInterval(this._wakeup, CT.stream.opts.wakeup);
 		}
 		opts.domset && document.body.appendChild(this.node);
 	},
