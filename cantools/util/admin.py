@@ -34,7 +34,7 @@ def pcheck(pname, target, starter):
 		cmd("killall screen; %s"%(starter,))
 		return True
 
-coremods = ["screen", "ctstart", "ctpubsub", "ctutil", "dez_reverse_proxy", "dez_websocket_proxy"]
+coremods = ["screen", "ctstart", "ctpubsub", "ctutil", "ctinit", "dez_reverse_proxy", "dez_websocket_proxy"]
 
 def binpath(bpath="/usr/bin/"):
 	log("checking %s core modules"%(len(coremods),), important=True)
