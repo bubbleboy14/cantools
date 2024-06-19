@@ -12,7 +12,7 @@ CT.stream.Video = CT.Class({
 		this.log("_sourceUpdate", this._buffers.length,
 			(this.sourceBuffer && this.sourceBuffer.updating));//, this.mediaSource.readyState);
 		if (this.video.error) {
-			this.log("ERROR - RESET video");
+			this.log("ERROR - RESET video", this.video.error);
 			this.reset();
 		} else if (this.sourceBuffer && !this.sourceBuffer.updating) {
 			if (this._buffers.length)
@@ -180,6 +180,11 @@ CT.stream.Video = CT.Class({
 		this.video.on("error", this._error);
 	},
 	setMediaSource: function() {
+		if (this.sourceBuffer) {
+			this.sourceBuffer.removeEventListener("updateend", this._sourceUpdate);
+			this.sourceBuffer.removeEventListener("error", this._error);
+			delete this.sourceBuffer;
+		}
 		if (this.mediaSource) {
 			this.mediaSource.removeEventListener("sourceopen", this._sourceOpen);
 			this.mediaSource.removeEventListener("error", this._error);
@@ -237,9 +242,6 @@ CT.stream.Video = CT.Class({
 		this.node.insertBefore(this.video, this.node.video);
 		CT.dom.remove(this.node.video);
 		this.node.video = this.video;
-		this.sourceBuffer.removeEventListener("updateend", this._sourceUpdate);
-		this.sourceBuffer.removeEventListener("error", this._error);
-		delete this.sourceBuffer;
 		this.setMediaSource();
 		if (this._buffers.length > 10)
 			this._buffers.length = 0;
