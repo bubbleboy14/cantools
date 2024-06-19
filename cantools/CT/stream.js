@@ -65,6 +65,8 @@ stropts.modes = {
 };
 stropts.mropts = {
 	mimeType: stropts.codecs.video, // for OSX
+	videoBitsPerSecond: 32000,
+	audioBitsPerSecond: 16000
 //	videoBitsPerSecond: 512000,
 //	audioBitsPerSecond: 32000
 };
