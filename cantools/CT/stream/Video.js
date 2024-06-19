@@ -311,6 +311,7 @@ CT.stream.Video = CT.Class({
 			opts.stream = vid.srcObject = vstream;
 			build();
 		});
+		CT.stream.util.current.adhoc = this;
 	},
 	init: function(opts) {
 		this.opts = opts = CT.merge(opts, {

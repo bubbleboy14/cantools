@@ -1,4 +1,5 @@
 var _sutil = CT.stream.util = {
+	current: {},
 	// for single channel av
 	blob_to_b64: function(blob, cb) {
 		blob ? _sutil.read(blob, cb) : cb();
@@ -120,6 +121,14 @@ var _sutil = CT.stream.util = {
 		}).then(_sutil._recorder(ondata, onrecorder))["catch"](onfail || function(err) {
 			CT.log.endTimer("record", "got error: " + err);
 		});
+	},
+	stop: function() {
+		var cur = _sutil.current;
+		if (cur.adhoc) {
+			CT.log("stopping adhoc video stream");
+			cur.adhoc.remove();
+			delete cur.adhoc;
+		}
 	},
 	tl: function(playchan, className) {
 		var p = "https://tl.fzn.party";
