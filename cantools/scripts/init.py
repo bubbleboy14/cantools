@@ -43,6 +43,7 @@ from fyg.util import confirm
 from cantools import config, include_plugin, mods_and_repos
 from cantools.util import log, error, cp, sym, mkdir, rm, py, cmd, output, read
 from cantools.util.package import pipper, refresh_plugins
+from cantools.util.admin import install
 from .builder import build_all
 
 try:
@@ -53,7 +54,7 @@ except NameError:
 CTP = __file__.rsplit(os.path.sep, 2)[0]
 
 class Builder(object):
-	def __init__(self, pname=None, cantools_path=CTP, web_backend="dez", refresh_symlinks=False):
+	def __init__(self, pname=None, cantools_path=CTP, web_backend="dez", refresh_symlinks=False, install_dependencies=False):
 		if not pname and not refresh_symlinks:
 			pname = input("project name? ")
 		log("Initializing %s Project: %s"%(web_backend, pname or "(refresh)"))
@@ -68,9 +69,11 @@ class Builder(object):
 			)
 		self.web_backend = web_backend
 		self.refresh_symlinks = refresh_symlinks
+		self.install_dependencies = install_dependencies
 		self.plugins = {}
 		self.pipper = None
 		self.installed = set()
+		self.install_sysdeps()
 		self.install_plugins()
 		if refresh_symlinks:
 			self.plugdirs()
@@ -133,6 +136,9 @@ class Builder(object):
 		if hasattr(init, "requires"):
 			log("installing %s ct dependencies"%(len(init.requires),), 3)
 			self._getplugs(*mods_and_repos(init.requires))
+		if self.install_dependencies and hasattr(init, "dependencies"):
+			log("installing %s system dependencies"%(len(init.dependencies),), 3)
+			install(*init.dependencies)
 
 	def _getplugs(self, plugs, repos=None):
 		for i in range(len(plugs)):
@@ -153,6 +159,12 @@ class Builder(object):
 		if pil:
 			log("Installing %s Plugins"%(pil,), 1)
 			self._getplugs(config.plugin.modules)
+
+	def install_sysdeps(self):
+		dlen = len(config.build.dependencies)
+		if dlen and self.install_dependencies:
+			log("Installing %s System Dependencies"%(dlen,), 1)
+			install(*config.build.dependencies)
 
 	def plugdirs(self):
 		log("Building Directories for %s Plugins"%(len(list(self.plugins.keys())),), important=True)
@@ -304,8 +316,10 @@ def parse_and_make():
 		help="where is cantools? (default: %s)"%(CTP,))
 	parser.add_option("-w", "--web_backend", dest="web_backend", default="dez",
 		help="web backend. options: dez, gae. (default: dez)")
-	parser.add_option("-r", "--refresh_symlinks", action="store_true",
-		dest="refresh_symlinks", default=False, help="add symlinks to project, create any missing directories, and configure version control path exclusion (if desired)")
+	parser.add_option("-r", "--refresh_symlinks", action="store_true", dest="refresh_symlinks", default=False,
+		help="add symlinks to project, create any missing directories, and configure version control path exclusion (if desired)")
+	parser.add_option("-i", "--install_dependencies", action="store_true", dest="install_dependencies",
+		default=False, help="install (via system package manager) non-Python dependencies")
 	parser.add_option("-u", "--update", action="store_true",
 		dest="update", default=False, help="update cantools and all managed plugins")
 	parser.add_option("-d", "--deps", action="store_true",
@@ -323,8 +337,8 @@ def parse_and_make():
 		if options.plugins:
 			for p in options.plugins.split("|"):
 				include_plugin(p)
-		Builder(len(args) and args[0], options.cantools_path,
-			options.web_backend, options.refresh_symlinks)
+		Builder(len(args) and args[0], options.cantools_path, options.web_backend,
+			options.refresh_symlinks, options.install_dependencies)
 	log("done! goodbye.")
 
 if __name__ == "__main__":
