@@ -119,6 +119,7 @@ cfg = {
 	},
 	"parse_error_segment_length": 100,
 	"build": {
+		"dependencies": [],
 		"include": [],
 		"exclude": [],
 		"notjs": [],
