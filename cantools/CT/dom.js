@@ -1337,7 +1337,7 @@ CT.dom = {
 			var sftar = n.firstChild.firstChild;
 			if (page) // hah
 				sftar = sftar.firstChild.firstChild.firstChild;
-			sftar.onclick();
+			(sftar.onclick || sftar.firstChild.onclick)();
 		}
 		return n;
 	},
