@@ -28,7 +28,7 @@ def installer():
 def install(*pkgs):
 	pacman = installer()
 	pline = " ".join(pkgs)
-	log("using %s to install %s"%(pline,), important=True)
+	log("using %s to install %s"%(pacman, pline), important=True)
 	cmd("%s install %s"%(pacman, pline), sudo=True)
 
 def certs(dpath="/root", sname=None):
