@@ -1,17 +1,35 @@
 import os, sys, rel
 from cantools.util import cmd, output, error, log, set_log, close_log, read, write, confirm, rm
 
+coremods = ["screen", "ctstart", "ctpubsub", "ctutil", "ctinit", "dez_reverse_proxy", "dez_websocket_proxy"]
+installers = ["apt", "yum", "pkg", "brew"]
+
 def _starter(sname):
 	starter = "screen -L -dm"
 	return sname and "%s -S %s"%(starter, sname) or starter
 
-def _which(names):
+def _which(*names):
 	success = True
 	for name in names:
 		if not output("which %s"%(name,)):
 			log("%s not in path!"%(name,))
 			success = False
 	return success
+
+def first(*names):
+	for name in names:
+		if _which(name):
+			log(name)
+			return name
+
+def installer():
+	return first(*installers)
+
+def install(*pkgs):
+	pacman = installer()
+	pline = " ".join(pkgs)
+	log("using %s to install %s"%(pline,), important=True)
+	cmd("%s install %s"%(pacman, pline), sudo=True)
 
 def certs(dpath="/root", sname=None):
 	os.chdir(dpath)
@@ -33,8 +51,6 @@ def pcheck(pname, target, starter):
 		log(output("screen -Q windows"), important=True)
 		cmd("killall screen; %s"%(starter,))
 		return True
-
-coremods = ["screen", "ctstart", "ctpubsub", "ctutil", "ctinit", "dez_reverse_proxy", "dez_websocket_proxy"]
 
 def binpath(bpath="/usr/bin/"):
 	log("checking %s core modules"%(len(coremods),), important=True)
@@ -62,7 +78,7 @@ def screener(ctnum=None, dpath="/root", drpnum=None, psnum=None, sname=None):
 	os.chdir(dpath)
 	set_log("scrn.log")
 	log("checking modules", important=True)
-	_which(coremods) or error("update your path!")
+	_which(*coremods) or error("update your path!")
 	starter = _starter(sname)
 	if ctnum and type(ctnum) is not int:
 		ctnum = ctnum.isdigit() and int(ctnum)
