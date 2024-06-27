@@ -175,9 +175,9 @@ def sysup(upit=False, upct=False, dpath="."):
 		adrep.append("updates include: %s"%(upaks,))
 		adrep.append("system restart required!")
 		if upit == "auto":
-			log("restarting system in 20 seconds!!!", important=True)
-			rel.timeout(20, lambda : os.system("sudo reboot"))
+			log("restarting system!!!", important=True)
 			adrep.append("system restarted!")
+			log(output("reboot"))
 	if adrep:
 		adrep = "\n\n".join(adrep)
 		log(adrep, important=True)
