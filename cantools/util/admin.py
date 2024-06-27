@@ -170,18 +170,28 @@ def sysup(upit=False, upct=False, dpath="."):
 		adrep.append("updating web framework and plugins")
 		fullupline = matchline("ctinit -du", "Successfully installed ")
 		fullupline and adrep.append(fullupline)
+	shouldReboot = False
 	if os.path.exists("/var/run/reboot-required"):
 		upaks = output("cat /var/run/reboot-required.pkgs", loud=True)
 		adrep.append("updates include: %s"%(upaks,))
 		adrep.append("system restart required!")
 		if upit == "auto":
-			adrep.append("restarting system: %s"%(output("reboot"),))
+			shouldReboot = True
+			adrep.append("restarting system!")
 	if adrep:
 		adrep = "\n\n".join(adrep)
 		log(adrep, important=True)
 		email_admins("system updates", adrep)
 	log("goodbye")
 	close_log()
+	shouldReboot and reboot()
+
+def reboot(wait=5):
+	log("rebooting in %s seconds!"%(wait,))
+	if wait:
+		import time
+		time.sleep(int(wait))
+	cmd("reboot")
 
 def running(proc):
 	if not "active (running)" in output("service %s status"%(proc,)):
