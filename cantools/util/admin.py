@@ -183,8 +183,8 @@ def sysup(upit=False, upct=False, dpath="."):
 		log(adrep, important=True)
 		email_admins("system updates", adrep)
 	log("goodbye")
-	close_log()
 	shouldReboot and reboot()
+	close_log()
 
 def reboot(wait=5):
 	log("rebooting in %s seconds!"%(wait,))
