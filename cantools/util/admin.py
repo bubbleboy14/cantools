@@ -180,9 +180,9 @@ def sysup(upit=False, upct=False, dpath="."):
 				log("can't find rebooter!")
 				adrep.append("rebooter not found :(")
 			else:
-				log("restarting system in 20 seconds!!!", important=True)
+				log("restarting system (via %s) in 20 seconds!!!"%(rebooter,), important=True)
+				adrep.append("system restarted via '%s'"%(rebooter,))
 				rel.timeout(20, lambda : cmd(rebooter))
-				adrep.append("system restarted!")
 	if adrep:
 		adrep = "\n\n".join(adrep)
 		log(adrep, important=True)
