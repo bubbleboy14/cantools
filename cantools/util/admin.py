@@ -176,7 +176,7 @@ def sysup(upit=False, upct=False, dpath="."):
 		adrep.append("system restart required!")
 		if upit == "auto":
 			log("restarting system in 20 seconds!!!", important=True)
-			rel.timeout(20, lambda : cmd("reboot"))
+			rel.timeout(20, lambda : os.system("reboot"))
 			adrep.append("system restarted!")
 	if adrep:
 		adrep = "\n\n".join(adrep)
