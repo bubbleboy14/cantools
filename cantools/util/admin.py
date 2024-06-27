@@ -175,9 +175,7 @@ def sysup(upit=False, upct=False, dpath="."):
 		adrep.append("updates include: %s"%(upaks,))
 		adrep.append("system restart required!")
 		if upit == "auto":
-			log("restarting system!!!", important=True)
-			adrep.append("system restarted!")
-			log(output("reboot"))
+			adrep.append("restarting system: %s"%(output("reboot"),))
 	if adrep:
 		adrep = "\n\n".join(adrep)
 		log(adrep, important=True)
