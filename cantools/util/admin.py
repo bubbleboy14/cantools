@@ -175,9 +175,14 @@ def sysup(upit=False, upct=False, dpath="."):
 		adrep.append("updates include: %s"%(upaks,))
 		adrep.append("system restart required!")
 		if upit == "auto":
-			log("restarting system in 20 seconds!!!", important=True)
-			rel.timeout(20, lambda : os.system("reboot"))
-			adrep.append("system restarted!")
+			rebooter = first("reboot", "/usr/sbin/reboot") # anywhere else?
+			if not rebooter:
+				log("can't find rebooter!")
+				adrep.append("rebooter not found :(")
+			else:
+				log("restarting system in 20 seconds!!!", important=True)
+				rel.timeout(20, lambda : cmd(rebooter))
+				adrep.append("system restarted!")
 	if adrep:
 		adrep = "\n\n".join(adrep)
 		log(adrep, important=True)
