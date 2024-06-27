@@ -82,6 +82,9 @@ CT.gesture = {
 		Move: "mousemove"
 	},
 	handlers: { drag: {}, swipe: {}, tap: {}, up: {}, down: {}, hold: {}, pinch: {}, hover: {}, wheel: {} },
+	setThreshold: function(eventName, constraint, val) {
+		CT.gesture.thresholds[eventName][constraint] = val;
+	},
 	tuneThresholds: function() {
 		if (!CT.info.iOs)
 			for (var gest in CT.gesture.thresholds)
@@ -195,9 +198,9 @@ CT.gesture = {
 				&& (diff.distance < t.tap.maxDistance) ) { // tap
 				v.tapCount += 1;
 				if (v.tapCount == t.tap.maxCount)
-					CT.gesture.triggerTap(node);
+					CT.gesture.triggerTap(node, pos);
 				else
-					v.tapTimeout = setTimeout(CT.gesture.triggerTap, t.tap.waitTime, node);
+					v.tapTimeout = setTimeout(CT.gesture.triggerTap, t.tap.waitTime, node, pos);
 			}
 		}
 		return CT.gesture.triggerUp(node, delayed);
@@ -322,11 +325,11 @@ CT.gesture = {
 		if (handlers) for (var i = 0; i < handlers.length; i++)
 			handlers[i](direction, distance, dx, dy, pixelsPerSecond);
 	},
-	triggerTap: function(node) {
+	triggerTap: function(node, pos) {
 		var v = node.gvars;
 		var handlers = CT.gesture.handlers.tap[node.gid];
 		if (handlers) for (var i = 0; i < handlers.length; i++)
-			handlers[i](v.tapCount);
+			handlers[i](v.tapCount, pos);
 		v.tapCount = 0;
 		v.tapTimeout = null;
 	},
