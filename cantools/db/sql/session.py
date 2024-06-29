@@ -50,6 +50,7 @@ class Session(Basic):
 	def __init__(self, engine):
 		Session._id += 1
 		self.id = Session._id
+		self.engine = engine
 		self.generator = scoped_session(sessionmaker(bind=engine), scopefunc=self._scope)
 		for fname in ["add", "add_all", "delete", "flush", "commit", "query"]:
 			setattr(self, fname, self._func(fname))
