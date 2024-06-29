@@ -47,11 +47,12 @@ class Basic(object): # move elsewhere?
 			log("[db] session | %s :: %s"%(self.sig(), " ".join(msg)))
 
 class Session(Basic):
-	def __init__(self, engine):
+	def __init__(self, database):
 		Session._id += 1
 		self.id = Session._id
-		self.engine = engine
-		self.generator = scoped_session(sessionmaker(bind=engine), scopefunc=self._scope)
+		self.database = database
+		self.engine = database.engine
+		self.generator = scoped_session(sessionmaker(bind=self.engine), scopefunc=self._scope)
 		for fname in ["add", "add_all", "delete", "flush", "commit", "query"]:
 			setattr(self, fname, self._func(fname))
 		self._refresh()
@@ -59,6 +60,11 @@ class Session(Basic):
 
 	def sig(self):
 		return "Session(%s)"%(self.id,)
+
+	def teardown(self):
+		self.engine = None
+		self.database = None
+		self.generator = None
 
 	def _scope(self):
 		threadId = threadname()
@@ -69,6 +75,7 @@ class Session(Basic):
 	def _func(self, fname):
 		def f(*args):
 			self._refresh()
+			self.database.init()
 			return getattr(self.session, fname)(*args)
 		return f
 
@@ -85,14 +92,19 @@ class DataBase(Basic):
 		else:
 			self.engine = create_engine(db, pool_size=pcfg.size,
 				max_overflow=pcfg.overflow, pool_recycle=pcfg.recycle, echo=dcfg.echo)
-		metadata.create_all(self.engine)
 		self.sessions = {}
+		self._ready = False
 		self.log("initialized")
+
+	def init(self):
+		if not self._ready:
+			self._ready = True
+			metadata.create_all(self.engine)
 
 	def session(self):
 		thread = threadname()
 		if thread not in self.sessions:
-			self.sessions[thread] = Session(self.engine)
+			self.sessions[thread] = Session(self)
 			self.log("session(%s) created!"%(thread,))
 		return self.sessions[thread]
 
@@ -103,6 +115,7 @@ class DataBase(Basic):
 			if thread == "MainThread":
 				note = "released"
 			else:
+				self.sessions[thread].teardown()
 				del self.sessions[thread]
 				note = "deleted"
 		else:
