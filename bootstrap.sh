@@ -57,11 +57,8 @@ elif echo $paman | grep apt; then
     echo updating repos
     $paman update
     echo installing other deps
-    $paman install --yes build-essential libssl-dev libffi-dev python3-dev python3-setuptools </dev/null
+    $paman install --yes build-essential libssl-dev libffi-dev python3-dev python3-setuptools python3-pip </dev/null
 fi
-
-echo ensuring pip present
-python3 -m ensurepip
 
 echo checking for cantools
 if pwd | grep cantools; then
