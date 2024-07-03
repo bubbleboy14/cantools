@@ -64,7 +64,8 @@ CT.key = {
 		CT.key._event.stopPropagation();
 	},
 	clear: function(character, noescape) {
-		var eu, ed, k = CT.key;
+		var eu, ed, k = CT.key, e, escapers = {},
+			ecfg = core.config.modals.escapers || [];
 		if (character) {
 			delete k._cbs[character];
 			delete k._downcbs[character];
@@ -72,10 +73,20 @@ CT.key = {
 			if (noescape) {
 				eu = k._cbs.ESCAPE;
 				ed = k._downcbs.ESCAPE;
+				for (e of ecfg) {
+					escapers[e] = {
+						up: k._cbs[e],
+						down: k._downcbs[e]
+					};
+				}
 			}
 			k._cbs = {};
 			k._downcbs = {};
-			noescape && (eu || ed) && k.on("ESCAPE", eu, ed);
+			if (noescape && (eu || ed)) {
+				k.on("ESCAPE", eu, ed);
+				for (e of ecfg)
+					k.on(e, escapers[e].up, escapers[e].down);
+			}
 		}
 	},
 	downs: function(chars) {
