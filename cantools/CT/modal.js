@@ -517,7 +517,8 @@ CT.modal.Prompt = CT.Class({
 			this.add(this.input);
 		}
 		this.node.appendChild(this.continueButton);
-		this.node.appendChild(CT.dom.button("Cancel", this.hide, this.opts.cancelButtonClass));
+		this.opts.noCancel || this.node.appendChild(CT.dom.button("Cancel",
+			this.hide, this.opts.cancelButtonClass));
 	},
 	init: function(opts) {
 		this.opts = CT.merge(opts, CT.modal._defaults.Prompt, this.opts);
