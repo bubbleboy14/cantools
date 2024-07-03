@@ -40,7 +40,7 @@ CT.key = {
 			character = CT.key._codes[code];
 		CT.data.append(CT.key._downs, character);
 		CT.key._event = e;
-		CT.key._downcbs[character] && CT.key._downcbs[character]();
+		CT.key._active(character) && CT.key._downcbs[character] && CT.key._downcbs[character]();
 	},
 	_onUp: function(e) {
 		e = e || window.event;
@@ -48,7 +48,14 @@ CT.key = {
 			character = CT.key._codes[code];
 		CT.data.remove(CT.key._downs, character);
 		CT.key._event = e;
-		CT.key._cbs[character] && CT.key._cbs[character]();
+		CT.key._active(character) && CT.key._cbs[character] && CT.key._cbs[character]();
+	},
+	_active: function(character) {
+		var az = CT.key._actives;
+		return !az || az.includes(character);
+	},
+	setActive: function(actives) {
+		CT.key._actives = actives;
 	},
 	preDe: function() {
 		CT.key._event.preventDefault();
