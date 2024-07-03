@@ -486,7 +486,10 @@ var CT = {
 		}
 	},
 	"initKeys": function() {
-		var mcfg = core.config.modals, escaper = k => CT.key.on(k, CT.modal.close);
+		var mcfg = core.config.modals, closer = function() {
+			CT.key.preDe();
+			CT.modal.close();
+		}, escaper = k => CT.key.on(k, null, closer);
 		mcfg.escape && escaper("ESCAPE");
 		mcfg.escapers && mcfg.escapers.forEach(escaper);
 	},
