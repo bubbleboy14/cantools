@@ -485,6 +485,11 @@ var CT = {
 				sload(scfg[sec])
 		}
 	},
+	"initKeys": function() {
+		var mcfg = core.config.modals, escaper = k => CT.key.on(k, CT.modal.close);
+		mcfg.escape && escaper("ESCAPE");
+		mcfg.escapers && mcfg.escapers.forEach(escaper);
+	},
 	"initCore": function() {
 		var cfg = core.config;
 		CT.initCSS();
@@ -507,7 +512,7 @@ var CT = {
 			cfg.modals.escape = true;
 		}
 		if (CT.modal) {
-			cfg.modals.escape && CT.key && CT.key.on("ESCAPE", CT.modal.close);
+			CT.key && CT.initKeys();
 			CT.modal.defaults(cfg.modals);
 		}
 		cfg.onload && cfg.onload();
