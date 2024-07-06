@@ -81,11 +81,12 @@ CT.stream.Video = CT.Class({
 				that.audio.node && CT.stream.opts.waiting.push(that.audio.node);
 				CT.stream.opts.requestedInput = true;
 				(new CT.modal.Prompt({
-					cb: CT.stream.opts.startWaiting,
+					defaultIndex: 0,
 					transition: "fade",
 					style: "single-choice",
 					data: [ "Play Stream" ],
-					prompt: "Ready to stream?"
+					prompt: "Ready to stream?",
+					cb: CT.stream.opts.startWaiting
 				})).show();
 			}
 			CT.data.append(CT.stream.opts.waiting, that.video);
