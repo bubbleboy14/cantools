@@ -98,9 +98,13 @@ CT.modal = {
 		return CT.modal.modal(CT.dom.img(src, className || "wm200p hm200p"), onhide);
 	},
 	close: function() {
-		if (CT.modal.latest) {
-			CT.modal.latest.hide();
+		var latest = CT.modal.latest;
+		if (latest) {
 			delete CT.modal.latest;
+			if (latest.continueButton)
+				latest.continueButton.onclick();
+			else
+				latest.hide();
 		}
 	}
 };
