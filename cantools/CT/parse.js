@@ -185,11 +185,20 @@ CT.parse = {
 	    }
 	    return [lcs, w];
 	},
+	"stripNums": function(s) {
+	    s = s || "";
+	    var newStr = '';
+	    for (var i = 0; i < s.length; i++) {
+	        if (!CT.parse._NUMS.includes(s.charAt(i)))
+	            newStr += s.charAt(i);
+	    }
+	    return newStr;
+	},
 	"stripToNums": function(s) {
 	    s = s || "";
 	    var newStr = '';
 	    for (var i = 0; i < s.length; i++) {
-	        if (CT.parse._NUMS.indexOf(s.charAt(i)) != -1)
+	        if (CT.parse._NUMS.includes(s.charAt(i)))
 	            newStr += s.charAt(i);
 	    }
 	    return newStr;
