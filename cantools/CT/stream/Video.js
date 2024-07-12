@@ -80,17 +80,26 @@ CT.stream.Video = CT.Class({
 			if (CT.stream.opts.requiresInput && !CT.stream.opts.requestedInput) {
 				that.audio.node && CT.stream.opts.waiting.push(that.audio.node);
 				CT.stream.opts.requestedInput = true;
-				(new CT.modal.Prompt({
-					defaultIndex: 0,
-					transition: "fade",
-					style: "single-choice",
-					data: [ "Play Stream" ],
-					prompt: "Ready to stream?",
-					cb: CT.stream.opts.startWaiting
-				})).show();
+				that.showPrompt();
 			}
 			CT.data.append(CT.stream.opts.waiting, that.video);
 		});
+	},
+	showPrompt: function() {
+		if (!this._prompt) {
+			this._prompt = new CT.modal.Prompt({
+				defaultIndex: 0,
+				transition: "fade",
+				style: "single-choice",
+				data: [ "Play Stream" ],
+				prompt: "Ready to stream?",
+				cb: CT.stream.opts.startWaiting
+			});
+		}
+		this._prompt.show();
+	},
+	hidePrompt: function() {
+		this._prompt && this._prompt.hide();
 	},
 	_miniRecorder: function() {
 		var rec = {
@@ -177,9 +186,10 @@ CT.stream.Video = CT.Class({
 	},
 	setVideo: function() {
 		this.video = this.opts.video || this._video(this.opts.stream);
+		this.video.on("play", this.hidePrompt);
 		this.video.on("canplay", this.start);
-		this.video.on("pause", this.start);
 		this.video.on("error", this._error);
+		this.video.on("pause", this.start);
 	},
 	setMediaSource: function() {
 		if (this.sourceBuffer) {
@@ -236,9 +246,10 @@ CT.stream.Video = CT.Class({
 	},
 	refresh: function() {
 		this.log("refreshing!");
+		this.video.removeEventListener("play", this.hidePrompt);
 		this.video.removeEventListener("canplay", this.start);
-		this.video.removeEventListener("pause", this.start);
 		this.video.removeEventListener("error", this._error);
+		this.video.removeEventListener("pause", this.start);
 		this.setVideo();
 		this.video.muted = !this.audio.active;
 		this.node.insertBefore(this.video, this.node.video);
