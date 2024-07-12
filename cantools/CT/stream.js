@@ -25,7 +25,7 @@ CT.require("CT.stream.Video");
 CT.require("CT.stream.Streamer");
 CT.require("CT.stream.Multiplexer");
 
-var vpv = "vp8";
+var vpv = "vp9";
 
 var stropts = CT.stream.opts = {
 	requiresInput: true,//CT.info.android,
@@ -57,14 +57,15 @@ var stropts = CT.stream.opts = {
 		CT.stream.opts.waiting = [];
 	}
 };
-if (CT.info.isFirefox)
-	stropts.codecs.video = stropts.codecs.av;
+//if (CT.info.isFirefox)
+//	stropts.codecs.video = stropts.codecs.av;
 stropts.modes = {
 	camera: stropts.codecs.av,
 	screenshare: stropts.codecs.video
 };
 stropts.mropts = {
-	mimeType: stropts.codecs.video, // for OSX
+	mimeType: stropts.codecs.av,
+//	mimeType: stropts.codecs.video, // for OSX?
 	videoBitsPerSecond: 32000,
 	audioBitsPerSecond: 16000
 //	videoBitsPerSecond: 512000,
