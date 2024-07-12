@@ -147,8 +147,9 @@ CT.stream.Video = CT.Class({
 	},
 	_snoozes: 0,
 	_wakeup: function() {
+		var e = this.video.error;
 		this.log("_wakeup", this.video.currentTime, this.video.duration,
-			this.video.paused, this.video.error);
+			this.video.paused, e && e.code, e && e.message);
 		if (this.video.error) {
 			this.log("_wakeup", "error - RESET!");
 			return this.reset();

@@ -25,7 +25,7 @@ CT.require("CT.stream.Video");
 CT.require("CT.stream.Streamer");
 CT.require("CT.stream.Multiplexer");
 
-var vpv = "vp9";
+var vpv = "vp8";
 
 var stropts = CT.stream.opts = {
 	requiresInput: true,//CT.info.android,
