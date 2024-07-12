@@ -84,7 +84,9 @@ var _sutil = CT.stream.util = {
 	},
 	_recorder: function(ondata, onrecorder) {
 		return function(stream) {
-			var segment = 0, recorder = new MediaRecorder(stream, CT.stream.opts.mropts);
+			var segment = 0, mroz = CT.stream.opts.mropts,
+				recorder = new MediaRecorder(stream, mroz);
+			CT.log("recording with opts: " + JSON.stringify(mroz));
 			recorder.ondataavailable = function(blobevent) {
 				CT.log("ondataavailable!! " + blobevent.data.size);
 				segment = (segment + 1) % CT.stream.opts.segments;
