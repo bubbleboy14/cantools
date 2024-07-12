@@ -48,7 +48,6 @@ var stropts = CT.stream.opts = {
 	codecs: {
 		av: 'video/webm; codecs="' + vpv + ',opus"',
 		video: 'video/webm; codecs="' + vpv + '"',
-		screen: 'video/webm; codecs="vp8"',
 		audio: 'audio/webm; codecs="opus"'
 	},
 	startWaiting: function() {
@@ -62,7 +61,7 @@ if (CT.info.isFirefox)
 	stropts.codecs.video = stropts.codecs.av;
 stropts.modes = {
 	camera: stropts.codecs.av,
-	screenshare: stropts.codecs.screen
+	screenshare: stropts.codecs.video
 };
 stropts.mropts = {
 	mimeType: stropts.codecs.video, // for OSX
