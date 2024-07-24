@@ -702,7 +702,7 @@
     right: 0px;
     bottom: 0px;
     background: rgba(0, 0, 0, 0.5);
-    z-index: 10000;
+    z-index: 10010;
 }
 .lightbox {
     position: fixed;
@@ -748,7 +748,7 @@
     overflow-y: auto;
 }
 .basicpopup {
-    z-index: 10001;
+    z-index: 10020;
     position: fixed;
     padding: 10px;
     max-height: 90%;
