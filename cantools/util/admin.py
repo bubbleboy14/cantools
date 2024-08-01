@@ -5,7 +5,7 @@ coremods = ["screen", "ctstart", "ctpubsub", "ctutil", "ctinit", "dez_reverse_pr
 installers = ["apt", "yum", "pkg", "brew"]
 
 def _starter(sname):
-	starter = "screen -L -dm"
+	starter = "screen -wipe ; screen -L -dm"
 	return sname and "%s -S %s"%(starter, sname) or starter
 
 def _which(*names):
