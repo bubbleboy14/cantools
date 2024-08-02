@@ -39,7 +39,7 @@ CT.key = {
 		var code = e.keyCode || e.which,
 			character = CT.key._codes[code];
 		CT.data.append(CT.key._downs, character);
-		CT.key._event = e;
+		CT.key._setEvent(e);
 		CT.key._active(character) && CT.key._downcbs[character] && CT.key._downcbs[character]();
 	},
 	_onUp: function(e) {
@@ -47,8 +47,12 @@ CT.key = {
 		var code = e.keyCode || e.which,
 			character = CT.key._codes[code];
 		CT.data.remove(CT.key._downs, character);
-		CT.key._event = e;
+		CT.key._setEvent(e);
 		CT.key._active(character) && CT.key._cbs[character] && CT.key._cbs[character]();
+	},
+	_setEvent: function(event) {
+		CT.key._event = event;
+		CT.key.capslocked = event.getModifierState("CapsLock");
 	},
 	_active: function(character) {
 		var az = CT.key._actives;
