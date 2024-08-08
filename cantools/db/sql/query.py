@@ -1,4 +1,3 @@
-from sqlalchemy import text
 from sqlalchemy.sql import func, elements
 from cantools.util import log, start_timer, end_timer
 from .properties import *

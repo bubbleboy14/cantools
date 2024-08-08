@@ -1,4 +1,5 @@
 import threading
+from sqlalchemy import text
 from sqlalchemy.pool import NullPool
 from sqlalchemy import create_engine, MetaData
 from sqlalchemy.orm import scoped_session, sessionmaker
