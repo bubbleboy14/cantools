@@ -3,6 +3,7 @@ from sqlalchemy import text
 from sqlalchemy.pool import NullPool
 from sqlalchemy import create_engine, MetaData
 from sqlalchemy.orm import scoped_session, sessionmaker
+from fyg.util import confirm
 from rel import tick
 from cantools import config
 from cantools.util import log, error
@@ -11,6 +12,15 @@ from cantools.web import cgi_dump, set_pre_close
 dcfg = config.db
 pcfg = dcfg.pool
 metadata = MetaData()
+
+def conn_ex(cmd):
+    log("issuing command: %s"%(cmd,), important=True)
+    with session.engine.connect() as conn:
+        conn.execute(text(cmd))
+
+def add_column(mod, col): # sqlite only
+    log("adding '%s' to '%s'"%(col, mod))
+    conn_ex("ALTER TABLE %s ADD COLUMN %s"%(mod, col))
 
 def handle_error(e, session=None, polytype=None, flag=" no such column: "):
     log("Database operation failed: %s"%(e,), important=True)
@@ -26,11 +36,11 @@ def handle_error(e, session=None, polytype=None, flag=" no such column: "):
             else:
                 tcol = target
                 tmod = polytype
-            if config.db.alter == "auto" or not input("Add missing column '%s' to table '%s' (sqlite-only!)? [Y/n] "%(tcol, tmod)).lower().startswith("n"):
+            if config.db.alter == "auto" or confirm("Add missing column '%s' to table '%s' (sqlite-only!)"%(tcol, tmod), True):
+                log("rolling back session")
+                session.rollback()
                 raise_anyway = False
-                log("adding '%s' to '%s'"%(tcol, tmod))
-                with session.engine.connect() as conn:
-                    result = conn.execute(text("ALTER TABLE %s ADD COLUMN %s"%(tmod, tcol)))
+                add_column(tmod, tcol)
         else:
             log("To auto-update columns, add 'DB_ALTER = True' to your ct.cfg (sqlite only!)", important=True)
     if raise_anyway:
@@ -54,7 +64,7 @@ class Session(Basic):
 		self.database = database
 		self.engine = database.engine
 		self.generator = scoped_session(sessionmaker(bind=self.engine), scopefunc=self._scope)
-		for fname in ["add", "add_all", "delete", "flush", "commit", "query"]:
+		for fname in ["add", "add_all", "delete", "flush", "commit", "query", "rollback"]:
 			setattr(self, fname, self._func(fname))
 		self._refresh()
 		self.log("initialized")
