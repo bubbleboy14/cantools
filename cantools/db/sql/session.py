@@ -20,7 +20,7 @@ def conn_ex(cmd):
 
 def add_column(mod, col): # sqlite only
     log("adding '%s' to '%s'"%(col, mod))
-    conn_ex("ALTER TABLE %s ADD COLUMN %s"%(mod, col))
+    conn_ex('ALTER TABLE "%s" ADD COLUMN "%s"'%(mod, col))
 
 def handle_error(e, session=None, polytype=None, flag=" no such column: "):
     log("Database operation failed: %s"%(e,), important=True)
