@@ -53,11 +53,12 @@ class DController(SocketController):
 	def blup(self):
 		wcfg = config.web
 		bl = wcfg.blacklist.obj()
-		self.logger.warn("saving %s IPs in black.list"%(len(bl.keys()),))
+		blen = len(bl.keys())
+		self.logger.warn("saving %s IPs in black.list"%(blen,))
 		write(bl, "black.list", isjson=True)
 		if wcfg.report:
 			from cantools.web import email_admins
-			email_admins("sketch IPs blacklisted", wcfg.blacklist.json())
+			email_admins("sketch IPs blacklisted", "sketch count: %s"%(blen,))
 		wcfg.blacklister and wcfg.blacklister.update(bl)
 
 class PaperShield(object):
