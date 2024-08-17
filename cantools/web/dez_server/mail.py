@@ -127,7 +127,10 @@ class Mailer(object):
 			admins = acfg.get(eset)
 		admins or log("(no admins specified)")
 		log("emailing admins (%s): %s"%(eset, subject), important=True)
-		log(body)
+		if len(body) > 100:
+			log(body[:100] + " ...")
+		else:
+			log(body)
 		for admin in admins:
 			self.mail(to=admin, subject=subject, body=body)
 
