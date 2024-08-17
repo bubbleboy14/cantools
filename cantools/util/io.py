@@ -16,7 +16,15 @@ def read(fname="_tmp", lines=False, isjson=False, default=None, binary=False):
         text = f.read()
     f.close()
     if isjson:
-        return json.loads(text)
+        try:
+            return json.loads(text)
+        except json.decoder.JSONDecodeError:
+            if len(text) > 500:
+                excerpt = text[:100] + " ... " + text[-100:]
+            else:
+                excerpt = text
+            print("io.read(%s) failed to JSON decode: %s"%(fname, excerpt))
+            return default
     return text
 
 def write(data, fname="_tmp", isjson=False, ispretty=False, binary=False, append=False, newline=False):
