@@ -85,7 +85,7 @@ def parse_url_parts(host, path, port, protocol):
 		port = protocol == "https" and 443 or 80
 	return host, path, port, protocol
 
-def fetch(host, path="/", port=None, asjson=False, cb=None, timeout=1, asyn=False, protocol="http", ctjson=False, qsp=None, fakeua=False):
+def fetch(host, path="/", port=None, asjson=False, cb=None, timeout=1, asyn=False, protocol="http", ctjson=False, qsp=None, fakeua=False, retries=5):
 	from cantools.util import log # gives us logger set in run_dez_webserver()
 	host, path, port, protocol = parse_url_parts(host, path, port, protocol)
 	if qsp:
@@ -108,7 +108,7 @@ def fetch(host, path="/", port=None, asjson=False, cb=None, timeout=1, asyn=Fals
 		gkwargs["timeout"] = timeout
 	furl = "%s://%s:%s%s"%(protocol, host, port, path)
 	log("fetch %s"%(furl,))
-	return syncreq(furl, "get", asjson, ctjson, rekwargs=gkwargs)
+	return syncreq(furl, "get", asjson, ctjson, retries, gkwargs)
 
 def post(host, path="/", port=80, data=None, protocol="http", asjson=False, ctjson=False, text=None, cb=None):
 	if ctjson:
@@ -134,7 +134,7 @@ def _dosyncreq(requester, url, asjson, ctjson, rekwargs):
 		return _ctjson(result)
 	return asjson and json.loads(result) or result
 
-def syncreq(url, method="get", asjson=False, ctjson=False, retries=3, rekwargs={}):
+def syncreq(url, method="get", asjson=False, ctjson=False, retries=5, rekwargs={}):
 	import time, requests
 	attempt = 1
 	requester = getattr(requests, method)
