@@ -53,8 +53,9 @@ CT.Browser = CT.Class({
 				hd = h && CT.data.get(h);
 			if (hd && hd.modelName == oz.modelName)
 				setTimeout(CT.dom.id("tl" + h).firstChild.onclick, 200); // wait a tick...
-			else
+			else if (oz.cancreate)
 				maker.trigger();
+			oz.cancreate || CT.dom.hide(maker);
 			if (oz.filter) {
 				CT.dom.setContent(maker.firstChild,
 					CT.dom.div("+", "biggest bold shiftup"));
@@ -128,6 +129,7 @@ CT.Browser = CT.Class({
 			nopts: {},
 			owner: true,
 			filter: true,
+			cancreate: true,
 			blurs: ["name please", "title", "what's it called?"]
 		});
 		setTimeout(this._.setup);
