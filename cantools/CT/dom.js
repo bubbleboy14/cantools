@@ -821,11 +821,13 @@ CT.dom = {
 		selectedClass = selectedClass || "grayback";
 		var n = CT.dom.node();
 		n._sel = null;
+		n.clickable = true;
 		n.value = multi ? [] : -1;
 		if (filter)
 			(fnode || n).appendChild(CT.dom.filter(nodes, null, null, typeof filter == "string" && filter));
 		nodes.forEach(function(node, i) {
 			node.onclick = function(e) {
+				if (!n.clickable) return;
 				if (!multi && n._sel)
 					n._sel.classList.remove(selectedClass);
 				n._sel = node;
