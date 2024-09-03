@@ -8,7 +8,7 @@ def prox():
 	url = cgi_get("url")
 	data = getmem(url, False)
 	if not data:
-		data = fetch(url, timeout=config.memcache.prox.timeout)
+		data = fetch(url, timeout=config.memcache.prox.timeout, fakeua=True)
 		if cgi_get("p2", default=False):
 			data = resizep2(data)
 		setmem(url, data, False)
