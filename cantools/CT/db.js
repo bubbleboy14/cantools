@@ -205,16 +205,21 @@ CT.db = {
 			}));
 		});
 	},
-	one: function(key, cb, exporter, nocache) {
+	one: function(key, cb, exporter, nocache, sync) {
 		if (CT.data.has(key) && !nocache)
 			return cb && cb(CT.data.get(key));
-		CT.net.post("/_db", {
-			action: "get",
-			key: key,
-			exporter: exporter || "export"
-		}, null, function(d) {
-			CT.data.add(d);
-			cb && cb(d);
+		return CT.net.post({
+			path: "/_db",
+			sync: sync,
+			params: {
+				action: "get",
+				key: key,
+				exporter: exporter || "export"
+			},
+			cb: function(d) {
+				CT.data.add(d);
+				cb && cb(d);
+			}
 		});
 	},
 	blobs: function(variety, cb) {
