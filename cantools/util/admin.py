@@ -274,6 +274,14 @@ def replace(flag, swap, ext="md"):
 def json2abi(fname):
 	write(read(fname, isjson=True)['abi'], fname.replace("json", "abi"), isjson=True)
 
+def enc(fname):
+	from cantools.web import enc as wenc
+	write(wenc(read(fname)), fname.replace("txt", "enc"))
+
+def dec(fname):
+	from cantools.web import dec as wdec
+	write(wdec(read(fname)), fname.replace("enc", "txt"))
+
 def ushort(url):
 	from cantools import config
 	csl = config.shortlinker
