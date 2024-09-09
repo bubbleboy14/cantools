@@ -211,6 +211,7 @@ CT.db = {
 		return CT.net.post({
 			path: "/_db",
 			sync: sync,
+			syncParse: sync,
 			params: {
 				action: "get",
 				key: key,
