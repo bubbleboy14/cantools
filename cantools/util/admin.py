@@ -31,6 +31,25 @@ def install(*pkgs):
 	log("using %s to install %s"%(pacman, pline), important=True)
 	cmd("%s install %s"%(pacman, pline), sudo=True)
 
+def snapinstall(pkg, classic=False):
+	iline = "snap install %s"%(pkg,)
+	if classic:
+		iline = "%s --classic"
+	cmd(iline, sudo=True)
+
+def simplecfg(fname):
+	data = {}
+	for line in read(fname).split("\n"):
+		if line.startswith("#"):
+			continue
+		variety = "normal"
+		if ":" in line:
+			variety, line = line.split(":", 1)
+		if variety not in data:
+			data[variety] = []
+		data[variety].append(line)
+	return data
+
 def certs(dpath="/root", sname=None):
 	os.chdir(dpath)
 	set_log("cron-certs.log")
