@@ -1,5 +1,5 @@
 """
-### Usage: ctmigrate [load|dump|blobdiff|snap] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME] [--skip=SKIP] [--tables=TABLES] [--cutoff=CUTOFF] [-n]
+### Usage: ctmigrate [load|dump|blobdiff|snap|deps] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME] [--skip=SKIP] [--tables=TABLES] [--cutoff=CUTOFF] [-n]
 
 ### Options:
     -h, --help            show this help message and exit
@@ -25,6 +25,7 @@ from optparse import OptionParser
 from cantools import db
 from cantools.web import fetch, post
 from cantools.util import error, log, mkdir, cmd
+from cantools.util.admin import install, snapinstall, simplecfg
 
 LIMIT = 500
 
@@ -260,10 +261,23 @@ def snap(domain):
 	doGets(input("what's the user? [default: root]: ") or "root",
 		domain, projpath(), input("what's the key file? [default: none] "))
 
-MODES = { "load": load, "dump": dump, "blobdiff": blobdiff, "snap": snap }
+def deps():
+	if not os.path.exists("deps.cfg"):
+		return log("configuration file not found: deps.cfg")
+	cfg = simplecfg("deps.cfg")
+	if "normal" in cfg:
+		install(*cfg["normal"])
+	if "snap" in cfg:
+		for pkg in cfg["snap"]:
+			snapinstall(pkg)
+	if "clasnap" in cfg:
+		for pkg in cfg["clasnap"]:
+			snapinstall(pkg, True)
+
+MODES = { "load": load, "dump": dump, "blobdiff": blobdiff, "snap": snap, "deps": deps }
 
 def go():
-	parser = OptionParser("ctmigrate [load|dump|blobdiff|snap] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME] [--skip=SKIP] [--tables=TABLES] [--cutoff=CUTOFF] [-n]")
+	parser = OptionParser("ctmigrate [load|dump|blobdiff|snap|deps] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME] [--skip=SKIP] [--tables=TABLES] [--cutoff=CUTOFF] [-n]")
 	parser.add_option("-d", "--domain", dest="domain", default="localhost",
 		help="domain of target server (default: localhost)")
 	parser.add_option("-p", "--port", dest="port", default=8080,
@@ -286,6 +300,8 @@ def go():
 	if mode in MODES:
 		if mode == "blobdiff":
 			blobdiff(int(options.cutoff))
+		elif mode == "deps":
+			deps()
 		elif mode == "snap":
 			snap(options.domain)
 		else:
