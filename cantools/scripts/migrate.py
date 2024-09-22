@@ -25,7 +25,7 @@ from optparse import OptionParser
 from cantools import db
 from cantools.web import fetch, post
 from cantools.util import error, log, mkdir, cmd
-from cantools.util.admin import install, snapinstall, simplecfg
+from cantools.util.admin import install, snapinstall, simplecfg, enc, dec
 
 LIMIT = 500
 
@@ -205,14 +205,17 @@ def dump(host, port, session, binary, skip=[], tables=None):
 	log("saving %s records to sqlite dump file"%(len(puts),))
 	db.put_multi(puts, session=session, preserve_timestamps=True)
 
+def zipit(fname, remove=False):
+	cmd("zip -r %s.zip %s"%(fname,))
+	remove or cmd("rm -rf %s"%(fname,))
+
 def blobdiff(cutoff):
 	bz = os.listdir("blob")
 	mkdir("blobdiff")
 	for b in bz:
 		if int(b) > cutoff:
 			cmd("cp blob/%s blobdiff/%s"%(b, b))
-	cmd("zip -r blobdiff.zip blobdiff")
-	cmd("rm -rf blobdiff")
+	zipit("blobdiff", True)
 
 def projpath():
 	path = os.path.join(*os.path.abspath(".").rsplit("/", 2)[1:])
@@ -251,6 +254,7 @@ def doGets(user, domain, projpath, keyfile):
 	basepath = askBasePath(user)
 	askGet("data.db", user, domain, basepath, projpath, keyfile)
 	askGet("blob", user, domain, basepath, projpath, keyfile, True)
+	askGet("pack.zip", user, domain, basepath, projpath, keyfile)
 	otherPath = input("anything else? [default: nah] ")
 	while otherPath:
 		askGet(otherPath, user, domain, basepath, projpath, keyfile,
@@ -275,13 +279,36 @@ def deps():
 
 class Packer(object):
 	def __init__(self):
+		self.index = 0
 		self.cfg = simplecfg("pack.cfg")
+
+	def basic(self):
+		if "basic" not in self.cfg:
+			return log("no basic items")
+		for fname in self.cfg["basic"]:
+			enc(fname, str(self.index))
+			self.index += 1
+
+	def unbasic(self):
+		if "basic" not in self.cfg:
+			return log("no basic items")
+		for fname in self.cfg["basic"]:
+			dec(str(self.index), fname)
+			self.index += 1
 
 	def pack(self):
 		if not self.cfg: return
+		mkdir("pack")
+		os.chdir("pack")
+		self.basic()
+		os.chdir("..")
+		zipit("pack", True)
 
 	def unpack(self):
 		if not self.cfg: return
+		cmd("unzip pack.zip")
+		os.chdir("pack")
+		self.unbasic()
 
 def pack():
 	Packer().pack()
