@@ -205,9 +205,10 @@ def dump(host, port, session, binary, skip=[], tables=None):
 	log("saving %s records to sqlite dump file"%(len(puts),))
 	db.put_multi(puts, session=session, preserve_timestamps=True)
 
-def zipit(fname, remove=False):
-	cmd("zip -r %s.zip %s"%(fname,))
-	remove or cmd("rm -rf %s"%(fname,))
+def zipit(fname, oname=None, remove=False):
+	oname = oname or "%s.zip"%(fname,)
+	cmd("zip -r %s %s"%(oname, fname))
+	remove and cmd("rm -rf %s"%(fname,))
 
 def blobdiff(cutoff):
 	bz = os.listdir("blob")
@@ -215,7 +216,7 @@ def blobdiff(cutoff):
 	for b in bz:
 		if int(b) > cutoff:
 			cmd("cp blob/%s blobdiff/%s"%(b, b))
-	zipit("blobdiff", True)
+	zipit("blobdiff", remove=True)
 
 def projpath():
 	path = os.path.join(*os.path.abspath(".").rsplit("/", 2)[1:])
@@ -309,12 +310,23 @@ class Packer(object):
 				dec(str(self.index), fname)
 			self.index += 1
 
+	def zip(self):
+		for fname in self.confset("zip"):
+			zipit(fname, str(self.index))
+			self.index += 1
+
+	def unzip(self):
+		for fname in self.confset("zip"):
+			cmd("unzip %s -d %s"%(str(self.index), fname))
+			self.index += 1
+
 	def pack(self):
 		if not self.cfg: return
 		mkdir("pack")
 		os.chdir("pack")
 		self.basic()
 		self.multi()
+		self.zip()
 		os.chdir("..")
 		zipit("pack", True)
 
@@ -324,6 +336,7 @@ class Packer(object):
 		os.chdir("pack")
 		self.unbasic()
 		self.unmulti()
+		self.unzip()
 
 def pack():
 	Packer().pack()
