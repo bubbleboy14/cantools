@@ -295,17 +295,21 @@ def replace(flag, swap, ext="md"):
 def json2abi(fname):
 	write(read(fname, isjson=True)['abi'], fname.replace("json", "abi"), isjson=True)
 
-def enc(fname, oname=None):
+def enc(fname, oname=None, nowrite=False):
 	from cantools.web import enc as wenc
 	oname = oname or fname.replace("txt", "enc")
-	log("enc(%s -> %s)"%(fname, oname))
-	write(wenc(read(fname)), oname)
+	log("enc(%s -> %s) nowrite=%s"%(fname, oname, nowrite))
+	enced = wenc(read(fname))
+	nowrite or write(enced, oname)
+	return enced
 
-def dec(fname, oname=None):
+def dec(fname, oname=None, nowrite=False):
 	from cantools.web import dec as wdec
 	oname = oname or fname.replace("enc", "txt")
-	log("dec(%s -> %s)"%(fname, oname))
-	write(wdec(read(fname)), oname)
+	log("dec(%s -> %s) nowrite=%s"%(fname, oname, nowrite))
+	deced = wdec(read(fname))
+	nowrite or write(deced, oname)
+	return deced
 
 def ushort(url):
 	from cantools import config
