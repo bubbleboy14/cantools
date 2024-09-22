@@ -264,8 +264,8 @@ def snap(domain):
 def deps():
 	cfg = simplecfg("deps.cfg")
 	if not cfg: return
-	if "normal" in cfg:
-		install(*cfg["normal"])
+	if "basic" in cfg:
+		install(*cfg["basic"])
 	if "snap" in cfg:
 		for pkg in cfg["snap"]:
 			snapinstall(pkg)
@@ -292,7 +292,7 @@ def unpack():
 MODES = { "load": load, "dump": dump, "blobdiff": blobdiff, "snap": snap, "deps": deps, "pack": pack, "unpack": unpack }
 
 def go():
-	parser = OptionParser("ctmigrate [load|dump|blobdiff|snap|deps] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME] [--skip=SKIP] [--tables=TABLES] [--cutoff=CUTOFF] [-n]")
+	parser = OptionParser("ctmigrate [load|dump|blobdiff|snap|deps|pack|unpack] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME] [--skip=SKIP] [--tables=TABLES] [--cutoff=CUTOFF] [-n]")
 	parser.add_option("-d", "--domain", dest="domain", default="localhost",
 		help="domain of target server (default: localhost)")
 	parser.add_option("-p", "--port", dest="port", default=8080,
