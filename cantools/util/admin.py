@@ -297,11 +297,15 @@ def json2abi(fname):
 
 def enc(fname, oname=None):
 	from cantools.web import enc as wenc
-	write(wenc(read(fname)), oname or fname.replace("txt", "enc"))
+	oname = oname or fname.replace("txt", "enc")
+	log("enc(%s -> %s)"%(fname, oname))
+	write(wenc(read(fname)), oname)
 
 def dec(fname, oname=None):
 	from cantools.web import dec as wdec
-	write(wdec(read(fname)), oname or fname.replace("enc", "txt"))
+	oname = oname or fname.replace("enc", "txt")
+	log("dec(%s -> %s)"%(fname, oname))
+	write(wdec(read(fname)), oname)
 
 def ushort(url):
 	from cantools import config
