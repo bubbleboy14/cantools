@@ -282,17 +282,19 @@ class Packer(object):
 		self.index = 0
 		self.cfg = simplecfg("pack.cfg")
 
+	def confset(self, name):
+		if name in self.cfg:
+			return self.cfg[name]
+		log("no %s items"%(name,))
+		return []
+
 	def basic(self):
-		if "basic" not in self.cfg:
-			return log("no basic items")
-		for fname in self.cfg["basic"]:
+		for fname in self.confset("basic"):
 			enc(fname, str(self.index))
 			self.index += 1
 
 	def unbasic(self):
-		if "basic" not in self.cfg:
-			return log("no basic items")
-		for fname in self.cfg["basic"]:
+		for fname in self.confset("basic"):
 			dec(str(self.index), fname)
 			self.index += 1
 
