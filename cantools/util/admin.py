@@ -38,6 +38,8 @@ def snapinstall(pkg, classic=False):
 	cmd(iline, sudo=True)
 
 def simplecfg(fname):
+	if not os.path.exists(fname):
+		return log("configuration file not found: %s"%(fname,))
 	data = {}
 	for line in read(fname).split("\n"):
 		if line.startswith("#"):
