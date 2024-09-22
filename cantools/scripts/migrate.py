@@ -262,9 +262,8 @@ def snap(domain):
 		domain, projpath(), input("what's the key file? [default: none] "))
 
 def deps():
-	if not os.path.exists("deps.cfg"):
-		return log("configuration file not found: deps.cfg")
 	cfg = simplecfg("deps.cfg")
+	if not cfg: return
 	if "normal" in cfg:
 		install(*cfg["normal"])
 	if "snap" in cfg:
@@ -274,7 +273,23 @@ def deps():
 		for pkg in cfg["clasnap"]:
 			snapinstall(pkg, True)
 
-MODES = { "load": load, "dump": dump, "blobdiff": blobdiff, "snap": snap, "deps": deps }
+class Packer(object):
+	def __init__(self):
+		self.cfg = simplecfg("pack.cfg")
+
+	def pack(self):
+		if not self.cfg: return
+
+	def unpack(self):
+		if not self.cfg: return
+
+def pack():
+	Packer().pack()
+
+def unpack():
+	Packer().unpack()
+
+MODES = { "load": load, "dump": dump, "blobdiff": blobdiff, "snap": snap, "deps": deps, "pack": pack, "unpack": unpack }
 
 def go():
 	parser = OptionParser("ctmigrate [load|dump|blobdiff|snap|deps] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME] [--skip=SKIP] [--tables=TABLES] [--cutoff=CUTOFF] [-n]")
@@ -300,10 +315,10 @@ def go():
 	if mode in MODES:
 		if mode == "blobdiff":
 			blobdiff(int(options.cutoff))
-		elif mode == "deps":
-			deps()
 		elif mode == "snap":
 			snap(options.domain)
+		elif mode in ["deps", "pack", "unpack"]:
+			MODES[mode]()
 		else:
 			port = int(options.port)
 			session = db.Session("sqlite:///%s"%(options.filename,))
