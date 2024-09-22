@@ -298,11 +298,23 @@ class Packer(object):
 			dec(str(self.index), fname)
 			self.index += 1
 
+	def multi(self):
+		for fline in self.confset("multi"):
+			enc(fline.split("|").pop(0), str(self.index))
+			self.index += 1
+
+	def unmulti(self):
+		for fline in self.confset("multi"):
+			for fname in fline.split("|"):
+				dec(str(self.index), fname)
+			self.index += 1
+
 	def pack(self):
 		if not self.cfg: return
 		mkdir("pack")
 		os.chdir("pack")
 		self.basic()
+		self.multi()
 		os.chdir("..")
 		zipit("pack", True)
 
@@ -311,6 +323,7 @@ class Packer(object):
 		cmd("unzip pack.zip")
 		os.chdir("pack")
 		self.unbasic()
+		self.unmulti()
 
 def pack():
 	Packer().pack()
