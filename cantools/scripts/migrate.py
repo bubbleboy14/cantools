@@ -289,44 +289,38 @@ class Packer(object):
 		log("no %s items"%(name,))
 		return []
 
-	def basic(self):
-		for fname in self.confset("basic"):
-			enc(fname, str(self.index))
+	def proc(self, name, reverse=False):
+		fun = getattr(self, reverse and "un%s"%(name,) or name)
+		for fname in self.confset(name):
+			fun(fname, str(self.index))
 			self.index += 1
 
-	def unbasic(self):
-		for fname in self.confset("basic"):
-			dec(str(self.index), fname)
-			self.index += 1
+	def basic(self, fname, oname):
+		enc(fname, oname)
 
-	def multi(self):
-		for fline in self.confset("multi"):
-			enc(fline.split("|").pop(0), str(self.index))
-			self.index += 1
+	def unbasic(self, fname, oname):
+		dec(oname, fname)
 
-	def unmulti(self):
-		for fline in self.confset("multi"):
-			for fname in fline.split("|"):
-				dec(str(self.index), fname)
-			self.index += 1
+	def multi(self, fline, oname):
+		enc(fline.split("|").pop(0), oname)
 
-	def zip(self):
-		for fname in self.confset("zip"):
-			zipit(fname, str(self.index))
-			self.index += 1
+	def unmulti(self, fline, oname):
+		for fname in fline.split("|"):
+			dec(oname, fname)
 
-	def unzip(self):
-		for fname in self.confset("zip"):
-			cmd("unzip %s -d %s"%(str(self.index), fname))
-			self.index += 1
+	def zip(self, fname, oname):
+		zipit(fname, oname)
+
+	def unzip(self, fname, oname):
+		cmd("unzip %s -d %s"%(oname, fname))
 
 	def pack(self):
 		if not self.cfg: return
 		mkdir("pack")
 		os.chdir("pack")
-		self.basic()
-		self.multi()
-		self.zip()
+		self.proc("basic")
+		self.proc("multi")
+		self.proc("zip")
 		os.chdir("..")
 		zipit("pack", True)
 
@@ -334,9 +328,9 @@ class Packer(object):
 		if not self.cfg: return
 		cmd("unzip pack.zip")
 		os.chdir("pack")
-		self.unbasic()
-		self.unmulti()
-		self.unzip()
+		self.proc("basic", True)
+		self.proc("multi", True)
+		self.proc("zip", True)
 
 def pack():
 	Packer().pack()
