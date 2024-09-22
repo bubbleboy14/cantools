@@ -44,7 +44,7 @@ def simplecfg(fname):
 	for line in read(fname).split("\n"):
 		if line.startswith("#"):
 			continue
-		variety = "normal"
+		variety = "basic"
 		if ":" in line:
 			variety, line = line.split(":", 1)
 		if variety not in data:
