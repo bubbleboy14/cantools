@@ -210,6 +210,16 @@ def zipit(fname, oname=None, remove=False):
 	cmd("zip -r %s %s"%(oname, fname))
 	remove and cmd("rm -rf %s"%(fname,))
 
+def dumpit(user, dname=None):
+	dname = dname or "dbz.sql"
+	log("dumping databases to %s"%(dname,))
+	cmd("mysqldump -u %s -p --all-databases > %s"%(user, dname))
+
+def undumpit(user, dname=None):
+	dname = dname or "dbz.sql"
+	log("undumping databases from %s"%(dname,))
+	cmd("mysql -u %s -p < %s"%(user, dname))
+
 def blobdiff(cutoff):
 	bz = os.listdir("blob")
 	mkdir("blobdiff")
@@ -314,6 +324,12 @@ class Packer(object):
 	def unzip(self, fname, oname):
 		cmd("unzip %s -d %s"%(oname, fname))
 
+	def mysql(self, uname, oname):
+		dumpit(uname, oname)
+
+	def unmysql(self, uname, oname):
+		undumpit(uname, oname)
+
 	def pack(self):
 		if not self.cfg: return
 		mkdir("pack")
@@ -321,6 +337,7 @@ class Packer(object):
 		self.proc("basic")
 		self.proc("multi")
 		self.proc("zip")
+		self.proc("mysql")
 		os.chdir("..")
 		zipit("pack", True)
 
@@ -331,6 +348,7 @@ class Packer(object):
 		self.proc("basic", True)
 		self.proc("multi", True)
 		self.proc("zip", True)
+		self.proc("mysql", True)
 
 def pack():
 	Packer().pack()
