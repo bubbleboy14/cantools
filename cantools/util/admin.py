@@ -295,21 +295,27 @@ def replace(flag, swap, ext="md"):
 def json2abi(fname):
 	write(read(fname, isjson=True)['abi'], fname.replace("json", "abi"), isjson=True)
 
-def enc(fname, oname=None, nowrite=False):
+def enc(fname, oname=None, nowrite=False, asdata=False, nolog=False):
 	from cantools.web import enc as wenc
 	oname = oname or fname.replace("txt", "enc")
-	log("enc(%s -> %s) nowrite=%s"%(fname, oname, nowrite))
-	enced = wenc(read(fname))
+	nolog or log("enc(%s -> %s) nowrite=%s"%(asdata and "data" or fname, oname, nowrite))
+	enced = wenc(asdata and fname or read(fname))
 	nowrite or write(enced, oname)
 	return enced
 
-def dec(fname, oname=None, nowrite=False):
+def dec(fname, oname=None, nowrite=False, asdata=False, nolog=False):
 	from cantools.web import dec as wdec
 	oname = oname or fname.replace("enc", "txt")
-	log("dec(%s -> %s) nowrite=%s"%(fname, oname, nowrite))
-	deced = wdec(read(fname))
+	nolog or log("dec(%s -> %s) nowrite=%s"%(asdata and "data" or fname, oname, nowrite))
+	deced = wdec(asdata and fname or read(fname))
 	nowrite or write(deced, oname)
 	return deced
+
+def qenc(fname, asdata=False):
+	log(enc(fname, nowrite=True, asdata=asdata, nolog=True))
+
+def qdec(fname, asdata=False):
+	log(dec(fname, nowrite=True, asdata=asdata, nolog=True))
 
 def ushort(url):
 	from cantools import config
