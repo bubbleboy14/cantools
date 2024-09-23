@@ -334,7 +334,10 @@ class Packer(object):
 			dec(oname, fname)
 
 	def zip(self, fname, oname):
-		zipit(fname, oname)
+		if "/" in fname:
+			jumpzip(fname, oname)
+		else:
+			zipit(fname, oname)
 
 	def unzip(self, fname, oname):
 		cmd("unzip %s -d %s"%(oname, fname))
@@ -373,12 +376,19 @@ def pack(dryrun=False):
 def unpack(dryrun=False):
 	Packer(dryrun).unpack()
 
-def jumpsnap(domain, path, grabPack=True):
+def dofrom(path, fun):
 	opath = os.path.abspath(".")
 	os.chdir(path)
-	snap(domain)
+	fun()
 	os.chdir(opath)
+
+def jumpsnap(domain, path, grabPack=True):
+	dofrom(path, lambda : snap(domain))
 	grabPack and cmd("mv %s ."%(os.path.join(path, "pack.zip"),))
+
+def jumpzip(fname, oname):
+	fpath, fname = fname.rsplit("/", 1)
+	dofrom(fpath, lambda : zipit(fname, oname))
 
 def doinstall(dryrun=False):
 	cfg = simplecfg("install.cfg", True) or []
