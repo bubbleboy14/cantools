@@ -400,7 +400,7 @@ def doinstall(dryrun=False):
 MODES = { "load": load, "dump": dump, "blobdiff": blobdiff, "snap": snap, "deps": deps, "pack": pack, "unpack": unpack, "install": doinstall }
 
 def go():
-	parser = OptionParser("ctmigrate [load|dump|blobdiff|snap|deps|pack|unpack|install] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME] [--skip=SKIP] [--tables=TABLES] [--cutoff=CUTOFF] [-n]")
+	parser = OptionParser("ctmigrate [load|dump|blobdiff|snap|deps|pack|unpack|install] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME] [--skip=SKIP] [--tables=TABLES] [--cutoff=CUTOFF] [-nr]")
 	parser.add_option("-d", "--domain", dest="domain", default="localhost",
 		help="domain of target server (default: localhost)")
 	parser.add_option("-p", "--port", dest="port", default=8080,
