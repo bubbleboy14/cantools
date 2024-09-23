@@ -42,7 +42,7 @@ def simplecfg(fname, sequential=False):
 		return log("configuration file not found: %s"%(fname,))
 	data = [] if sequential else {}
 	for line in read(fname).split("\n"):
-		if line.startswith("#"):
+		if not line or line.startswith("#"):
 			continue
 		variety = "basic"
 		if ":" in line:
