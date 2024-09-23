@@ -420,7 +420,10 @@ def go():
 	options, args = parser.parse_args()
 	if not args:
 		error("no mode specified -- must be 'ctmigrate load' or 'ctmigrate dump'")
-	import model # model loads schema
+	try:
+		import model # model loads schema
+	except:
+		log("no model found - proceeding without schema")
 	mode = args[0]
 	if mode in MODES:
 		if mode == "blobdiff":
