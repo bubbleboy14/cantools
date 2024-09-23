@@ -276,17 +276,26 @@ def snap(domain):
 	doGets(input("what's the user? [default: root]: ") or "root",
 		domain, projpath(), input("what's the key file? [default: none] "))
 
-def deps():
+def deps(dryrun=False):
 	cfg = simplecfg("deps.cfg")
 	if not cfg: return
 	if "basic" in cfg:
-		install(*cfg["basic"])
+		if dryrun:
+			log("install %s"%(" ".join(cfg["basic"]),))
+		else:
+			install(*cfg["basic"])
 	if "snap" in cfg:
 		for pkg in cfg["snap"]:
-			snapinstall(pkg)
+			if dryrun:
+				log("snap %s"%(pkg,))
+			else:
+				snapinstall(pkg)
 	if "clasnap" in cfg:
 		for pkg in cfg["clasnap"]:
-			snapinstall(pkg, True)
+			if dryrun:
+				log("clasnap %s"%(pkg,))
+			else:
+				snapinstall(pkg, True)
 
 packs = ["basic", "multi", "zip", "crontab", "mysql"]
 
@@ -394,9 +403,7 @@ def go():
 			blobdiff(int(options.cutoff))
 		elif mode == "snap":
 			snap(options.domain)
-		elif mode == "deps":
-			deps()
-		elif mode in ["pack", "unpack"]:
+		elif mode in ["deps", "pack", "unpack"]:
 			MODES[mode](options.dryrun)
 		else:
 			port = int(options.port)
