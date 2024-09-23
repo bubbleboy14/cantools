@@ -358,7 +358,7 @@ class Packer(object):
 		for psub in packs:
 			self.proc(psub)
 		os.chdir("..")
-		zipit("pack", True)
+		zipit("pack", remove=True)
 
 	def unpack(self):
 		if not self.cfg: return
