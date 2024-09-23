@@ -289,8 +289,9 @@ def deps():
 			snapinstall(pkg, True)
 
 class Packer(object):
-	def __init__(self):
+	def __init__(self, dryrun=False):
 		self.index = 0
+		self.dryrun = dryrun
 		self.cfg = simplecfg("pack.cfg")
 
 	def confset(self, name):
@@ -300,9 +301,12 @@ class Packer(object):
 		return []
 
 	def proc(self, name, reverse=False):
-		fun = getattr(self, reverse and "un%s"%(name,) or name)
+		funame = reverse and "un%s"%(name,) or name
+		preposition = reverse and "from" or "to"
+		fun = getattr(self, funame)
 		for fname in self.confset(name):
-			fun(fname, str(self.index))
+			log("%s %s %s %s"%(funame, fname, preposition, self.index))
+			self.dryrun or fun(fname, str(self.index))
 			self.index += 1
 
 	def basic(self, fname, oname):
@@ -350,11 +354,11 @@ class Packer(object):
 		self.proc("zip", True)
 		self.proc("mysql", True)
 
-def pack():
-	Packer().pack()
+def pack(dryrun=False):
+	Packer(dryrun).pack()
 
-def unpack():
-	Packer().unpack()
+def unpack(dryrun=False):
+	Packer(dryrun).unpack()
 
 MODES = { "load": load, "dump": dump, "blobdiff": blobdiff, "snap": snap, "deps": deps, "pack": pack, "unpack": unpack }
 
@@ -374,6 +378,8 @@ def go():
 		help="dump these tables - use '|' as separator, such as 'table1|table2|table3' (default: all)")
 	parser.add_option("-n", "--no_binary", dest="binary", action="store_false",
 		default=True, help="disable binary download")
+	parser.add_option("-r", "--dry_run", dest="dryrun", action="store_true",
+		default=False, help="pack/unpack dry run")
 	options, args = parser.parse_args()
 	if not args:
 		error("no mode specified -- must be 'ctmigrate load' or 'ctmigrate dump'")
@@ -384,8 +390,10 @@ def go():
 			blobdiff(int(options.cutoff))
 		elif mode == "snap":
 			snap(options.domain)
-		elif mode in ["deps", "pack", "unpack"]:
-			MODES[mode]()
+		elif mode == "deps":
+			deps()
+		elif mode in ["pack", "unpack"]:
+			MODES[mode](options.dryrun)
 		else:
 			port = int(options.port)
 			session = db.Session("sqlite:///%s"%(options.filename,))
