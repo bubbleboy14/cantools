@@ -24,7 +24,7 @@ from fyg.util import confirm
 from optparse import OptionParser
 from cantools import db
 from cantools.web import fetch, post
-from cantools.util import error, log, mkdir, cmd
+from cantools.util import error, log, mkdir, cmd, output
 from cantools.util.admin import install, snapinstall, simplecfg, enc, dec
 
 LIMIT = 500
@@ -288,6 +288,8 @@ def deps():
 		for pkg in cfg["clasnap"]:
 			snapinstall(pkg, True)
 
+packs = ["basic", "multi", "zip", "crontab", "mysql"]
+
 class Packer(object):
 	def __init__(self, dryrun=False):
 		self.index = 0
@@ -328,6 +330,12 @@ class Packer(object):
 	def unzip(self, fname, oname):
 		cmd("unzip %s -d %s"%(oname, fname))
 
+	def crontab(self, nothing, oname):
+		enc(output("crontab -l"), oname, asdata=True)
+
+	def uncrontab(self, nothing, oname):
+		cmd("ctutil admin qdec %s | crontab -"%(oname,))
+
 	def mysql(self, uname, oname):
 		dumpit(uname or "root", oname)
 
@@ -338,10 +346,8 @@ class Packer(object):
 		if not self.cfg: return
 		mkdir("pack")
 		os.chdir("pack")
-		self.proc("basic")
-		self.proc("multi")
-		self.proc("zip")
-		self.proc("mysql")
+		for psub in packs:
+			self.proc(psub)
 		os.chdir("..")
 		zipit("pack", True)
 
@@ -349,10 +355,8 @@ class Packer(object):
 		if not self.cfg: return
 		cmd("unzip pack.zip")
 		os.chdir("pack")
-		self.proc("basic", True)
-		self.proc("multi", True)
-		self.proc("zip", True)
-		self.proc("mysql", True)
+		for psub in packs:
+			self.proc(psub, True)
 
 def pack(dryrun=False):
 	Packer(dryrun).pack()
