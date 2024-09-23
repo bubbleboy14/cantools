@@ -373,10 +373,34 @@ def pack(dryrun=False):
 def unpack(dryrun=False):
 	Packer(dryrun).unpack()
 
-MODES = { "load": load, "dump": dump, "blobdiff": blobdiff, "snap": snap, "deps": deps, "pack": pack, "unpack": unpack }
+def jumpsnap(domain, path, grabPack=True):
+	opath = os.path.abspath(".")
+	os.chdir(path)
+	snap(domain)
+	os.chdir(opath)
+	grabPack and cmd("mv %s ."%(os.path.join(path, "pack.zip"),))
+
+def doinstall(dryrun=False):
+	cfg = simplecfg("install.cfg", True) or []
+	confirm("install dependencies", True) and deps(dryrun)
+	for step in cfg:
+		v = step["variety"]
+		line = step["line"]
+		if dryrun:
+			log("install %s %s"%(v, line))
+		elif v == "basic":
+			cmd(line)
+		elif v == "snap":
+			if "@" in line:
+				jumpsnap(*line.split("@"))
+			else:
+				snap(line)
+	confirm("unpack pack", True) and unpack(dryrun)
+
+MODES = { "load": load, "dump": dump, "blobdiff": blobdiff, "snap": snap, "deps": deps, "pack": pack, "unpack": unpack, "install": doinstall }
 
 def go():
-	parser = OptionParser("ctmigrate [load|dump|blobdiff|snap|deps|pack|unpack] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME] [--skip=SKIP] [--tables=TABLES] [--cutoff=CUTOFF] [-n]")
+	parser = OptionParser("ctmigrate [load|dump|blobdiff|snap|deps|pack|unpack|install] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME] [--skip=SKIP] [--tables=TABLES] [--cutoff=CUTOFF] [-n]")
 	parser.add_option("-d", "--domain", dest="domain", default="localhost",
 		help="domain of target server (default: localhost)")
 	parser.add_option("-p", "--port", dest="port", default=8080,
@@ -392,7 +416,7 @@ def go():
 	parser.add_option("-n", "--no_binary", dest="binary", action="store_false",
 		default=True, help="disable binary download")
 	parser.add_option("-r", "--dry_run", dest="dryrun", action="store_true",
-		default=False, help="pack/unpack dry run")
+		default=False, help="deps/pack/unpack/install dry run")
 	options, args = parser.parse_args()
 	if not args:
 		error("no mode specified -- must be 'ctmigrate load' or 'ctmigrate dump'")
@@ -403,7 +427,7 @@ def go():
 			blobdiff(int(options.cutoff))
 		elif mode == "snap":
 			snap(options.domain)
-		elif mode in ["deps", "pack", "unpack"]:
+		elif mode in ["deps", "pack", "unpack", "install"]:
 			MODES[mode](options.dryrun)
 		else:
 			port = int(options.port)
