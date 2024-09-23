@@ -37,19 +37,22 @@ def snapinstall(pkg, classic=False):
 		iline = "%s --classic"
 	cmd(iline, sudo=True)
 
-def simplecfg(fname):
+def simplecfg(fname, sequential=False):
 	if not os.path.exists(fname):
 		return log("configuration file not found: %s"%(fname,))
-	data = {}
+	data = [] if sequential else {}
 	for line in read(fname).split("\n"):
 		if line.startswith("#"):
 			continue
 		variety = "basic"
 		if ":" in line:
 			variety, line = line.split(":", 1)
-		if variety not in data:
-			data[variety] = []
-		data[variety].append(line)
+		if sequential:
+			data.append({"variety": variety, "line": line})
+		else:
+			if variety not in data:
+				data[variety] = []
+			data[variety].append(line)
 	return data
 
 def certs(dpath="/root", sname=None):
