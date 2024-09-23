@@ -37,17 +37,22 @@ def snapinstall(pkg, classic=False):
 		iline = "%s --classic"
 	cmd(iline, sudo=True)
 
-def simplecfg(fname):
-	data = {}
+def simplecfg(fname, sequential=False):
+	if not os.path.exists(fname):
+		return log("configuration file not found: %s"%(fname,))
+	data = [] if sequential else {}
 	for line in read(fname).split("\n"):
-		if line.startswith("#"):
+		if not line or line.startswith("#"):
 			continue
-		variety = "normal"
+		variety = "basic"
 		if ":" in line:
 			variety, line = line.split(":", 1)
-		if variety not in data:
-			data[variety] = []
-		data[variety].append(line)
+		if sequential:
+			data.append({"variety": variety, "line": line})
+		else:
+			if variety not in data:
+				data[variety] = []
+			data[variety].append(line)
 	return data
 
 def certs(dpath="/root", sname=None):
@@ -293,13 +298,27 @@ def replace(flag, swap, ext="md"):
 def json2abi(fname):
 	write(read(fname, isjson=True)['abi'], fname.replace("json", "abi"), isjson=True)
 
-def enc(fname, oname=None):
+def enc(fname, oname=None, nowrite=False, asdata=False, nolog=False):
 	from cantools.web import enc as wenc
-	write(wenc(read(fname)), oname or fname.replace("txt", "enc"))
+	oname = oname or fname.replace("txt", "enc")
+	nolog or log("enc(%s -> %s) nowrite=%s"%(asdata and "data" or fname, oname, nowrite))
+	enced = wenc(asdata and fname or read(fname))
+	nowrite or write(enced, oname)
+	return enced
 
-def dec(fname, oname=None):
+def dec(fname, oname=None, nowrite=False, asdata=False, nolog=False):
 	from cantools.web import dec as wdec
-	write(wdec(read(fname)), oname or fname.replace("enc", "txt"))
+	oname = oname or fname.replace("enc", "txt")
+	nolog or log("dec(%s -> %s) nowrite=%s"%(asdata and "data" or fname, oname, nowrite))
+	deced = wdec(asdata and fname or read(fname))
+	nowrite or write(deced, oname)
+	return deced
+
+def qenc(fname, asdata=False):
+	log(enc(fname, nowrite=True, asdata=asdata, nolog=True))
+
+def qdec(fname, asdata=False):
+	log(dec(fname, nowrite=True, asdata=asdata, nolog=True))
 
 def ushort(url):
 	from cantools import config

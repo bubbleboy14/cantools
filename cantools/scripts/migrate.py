@@ -24,8 +24,8 @@ from fyg.util import confirm
 from optparse import OptionParser
 from cantools import db
 from cantools.web import fetch, post
-from cantools.util import error, log, mkdir, cmd
-from cantools.util.admin import install, snapinstall, simplecfg
+from cantools.util import error, log, mkdir, cmd, output
+from cantools.util.admin import install, snapinstall, simplecfg, enc, dec
 
 LIMIT = 500
 
@@ -205,14 +205,28 @@ def dump(host, port, session, binary, skip=[], tables=None):
 	log("saving %s records to sqlite dump file"%(len(puts),))
 	db.put_multi(puts, session=session, preserve_timestamps=True)
 
+def zipit(fname, oname=None, remove=False):
+	oname = oname or "%s.zip"%(fname,)
+	cmd("zip -r %s %s"%(oname, fname))
+	remove and cmd("rm -rf %s"%(fname,))
+
+def dumpit(user, dname=None):
+	dname = dname or "dbz.sql"
+	log("dumping databases to %s"%(dname,))
+	cmd("mysqldump -u %s -p --all-databases > %s"%(user, dname))
+
+def undumpit(user, dname=None):
+	dname = dname or "dbz.sql"
+	log("undumping databases from %s"%(dname,))
+	cmd("mysql -u %s -p < %s"%(user, dname))
+
 def blobdiff(cutoff):
 	bz = os.listdir("blob")
 	mkdir("blobdiff")
 	for b in bz:
 		if int(b) > cutoff:
 			cmd("cp blob/%s blobdiff/%s"%(b, b))
-	cmd("zip -r blobdiff.zip blobdiff")
-	cmd("rm -rf blobdiff")
+	zipit("blobdiff", remove=True)
 
 def projpath():
 	path = os.path.join(*os.path.abspath(".").rsplit("/", 2)[1:])
@@ -251,6 +265,7 @@ def doGets(user, domain, projpath, keyfile):
 	basepath = askBasePath(user)
 	askGet("data.db", user, domain, basepath, projpath, keyfile)
 	askGet("blob", user, domain, basepath, projpath, keyfile, True)
+	askGet("pack.zip", user, domain, basepath, projpath, keyfile)
 	otherPath = input("anything else? [default: nah] ")
 	while otherPath:
 		askGet(otherPath, user, domain, basepath, projpath, keyfile,
@@ -261,23 +276,142 @@ def snap(domain):
 	doGets(input("what's the user? [default: root]: ") or "root",
 		domain, projpath(), input("what's the key file? [default: none] "))
 
-def deps():
-	if not os.path.exists("deps.cfg"):
-		return log("configuration file not found: deps.cfg")
+def deps(dryrun=False):
 	cfg = simplecfg("deps.cfg")
-	if "normal" in cfg:
-		install(*cfg["normal"])
+	if not cfg: return
+	if "basic" in cfg:
+		if dryrun:
+			log("install %s"%(" ".join(cfg["basic"]),))
+		else:
+			install(*cfg["basic"])
 	if "snap" in cfg:
 		for pkg in cfg["snap"]:
-			snapinstall(pkg)
+			if dryrun:
+				log("snap %s"%(pkg,))
+			else:
+				snapinstall(pkg)
 	if "clasnap" in cfg:
 		for pkg in cfg["clasnap"]:
-			snapinstall(pkg, True)
+			if dryrun:
+				log("clasnap %s"%(pkg,))
+			else:
+				snapinstall(pkg, True)
 
-MODES = { "load": load, "dump": dump, "blobdiff": blobdiff, "snap": snap, "deps": deps }
+packs = ["basic", "multi", "zip", "crontab", "mysql"]
+
+class Packer(object):
+	def __init__(self, dryrun=False):
+		self.index = 0
+		self.dryrun = dryrun
+		self.cfg = simplecfg("pack.cfg")
+
+	def confset(self, name):
+		if name in self.cfg:
+			return self.cfg[name]
+		log("no %s items"%(name,))
+		return []
+
+	def proc(self, name, reverse=False):
+		funame = reverse and "un%s"%(name,) or name
+		preposition = reverse and "to" or "from"
+		fun = getattr(self, funame)
+		for fname in self.confset(name):
+			log("%s %s %s %s"%(funame, self.index, preposition, fname))
+			self.dryrun or fun(fname, str(self.index))
+			self.index += 1
+
+	def basic(self, fname, oname):
+		enc(fname, oname)
+
+	def unbasic(self, fname, oname):
+		dec(oname, fname)
+
+	def multi(self, fline, oname):
+		enc(fline.split("|").pop(0), oname)
+
+	def unmulti(self, fline, oname):
+		for fname in fline.split("|"):
+			dec(oname, fname)
+
+	def zip(self, fname, oname):
+		if "/" in fname:
+			jumpzip(fname, oname)
+		else:
+			zipit(fname, oname)
+
+	def unzip(self, fname, oname):
+		cmd("unzip %s -d %s"%(oname, fname.rsplit("/", 1).pop(0)))
+
+	def crontab(self, nothing, oname):
+		enc(output("crontab -l"), oname, asdata=True)
+
+	def uncrontab(self, nothing, oname):
+		cmd("ctutil admin qdec %s | crontab -"%(oname,))
+
+	def mysql(self, uname, oname):
+		dumpit(uname or "root", oname)
+
+	def unmysql(self, uname, oname):
+		undumpit(uname or "root", oname)
+
+	def pack(self):
+		if not self.cfg: return
+		mkdir("pack")
+		os.chdir("pack")
+		for psub in packs:
+			self.proc(psub)
+		os.chdir("..")
+		zipit("pack", remove=True)
+
+	def unpack(self):
+		if not self.cfg: return
+		cmd("unzip pack.zip")
+		os.chdir("pack")
+		for psub in packs:
+			self.proc(psub, True)
+
+def pack(dryrun=False):
+	Packer(dryrun).pack()
+
+def unpack(dryrun=False):
+	Packer(dryrun).unpack()
+
+def dofrom(path, fun):
+	opath = os.path.abspath(".")
+	os.chdir(path)
+	fun()
+	os.chdir(opath)
+
+def jumpsnap(domain, path, grabPack=True):
+	dofrom(path, lambda : snap(domain))
+	grabPack and cmd("mv %s ."%(os.path.join(path, "pack.zip"),))
+
+def jumpzip(fline, oname):
+	fpath, fname = fline.rsplit("/", 1)
+	dofrom(fpath, lambda : zipit(fname))
+	cmd("mv %s.zip %s"%(fline, oname))
+
+def doinstall(dryrun=False):
+	cfg = simplecfg("install.cfg", True) or []
+	confirm("install dependencies", True) and deps(dryrun)
+	for step in cfg:
+		v = step["variety"]
+		line = step["line"]
+		if dryrun:
+			log("install %s %s"%(v, line))
+		elif v == "basic":
+			cmd(line)
+		elif v == "snap":
+			if "@" in line:
+				jumpsnap(*line.split("@"))
+			else:
+				snap(line)
+	confirm("unpack pack", True) and unpack(dryrun)
+
+MODES = { "load": load, "dump": dump, "blobdiff": blobdiff, "snap": snap, "deps": deps, "pack": pack, "unpack": unpack, "install": doinstall }
 
 def go():
-	parser = OptionParser("ctmigrate [load|dump|blobdiff|snap|deps] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME] [--skip=SKIP] [--tables=TABLES] [--cutoff=CUTOFF] [-n]")
+	parser = OptionParser("ctmigrate [load|dump|blobdiff|snap|deps|pack|unpack|install] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME] [--skip=SKIP] [--tables=TABLES] [--cutoff=CUTOFF] [-nr]")
 	parser.add_option("-d", "--domain", dest="domain", default="localhost",
 		help="domain of target server (default: localhost)")
 	parser.add_option("-p", "--port", dest="port", default=8080,
@@ -292,18 +426,23 @@ def go():
 		help="dump these tables - use '|' as separator, such as 'table1|table2|table3' (default: all)")
 	parser.add_option("-n", "--no_binary", dest="binary", action="store_false",
 		default=True, help="disable binary download")
+	parser.add_option("-r", "--dry_run", dest="dryrun", action="store_true",
+		default=False, help="deps/pack/unpack/install dry run")
 	options, args = parser.parse_args()
 	if not args:
 		error("no mode specified -- must be 'ctmigrate load' or 'ctmigrate dump'")
-	import model # model loads schema
+	try:
+		import model # model loads schema
+	except:
+		log("no model found - proceeding without schema")
 	mode = args[0]
 	if mode in MODES:
 		if mode == "blobdiff":
 			blobdiff(int(options.cutoff))
-		elif mode == "deps":
-			deps()
 		elif mode == "snap":
 			snap(options.domain)
+		elif mode in ["deps", "pack", "unpack", "install"]:
+			MODES[mode](options.dryrun)
 		else:
 			port = int(options.port)
 			session = db.Session("sqlite:///%s"%(options.filename,))
