@@ -340,7 +340,7 @@ class Packer(object):
 			zipit(fname, oname)
 
 	def unzip(self, fname, oname):
-		cmd("unzip %s -d %s"%(oname, fname))
+		cmd("unzip %s -d %s"%(oname, fname.rsplit("/", 1).pop(0)))
 
 	def crontab(self, nothing, oname):
 		enc(output("crontab -l"), oname, asdata=True)
@@ -386,9 +386,10 @@ def jumpsnap(domain, path, grabPack=True):
 	dofrom(path, lambda : snap(domain))
 	grabPack and cmd("mv %s ."%(os.path.join(path, "pack.zip"),))
 
-def jumpzip(fname, oname):
-	fpath, fname = fname.rsplit("/", 1)
-	dofrom(fpath, lambda : zipit(fname, oname))
+def jumpzip(fline, oname):
+	fpath, fname = fline.rsplit("/", 1)
+	dofrom(fpath, lambda : zipit(fname))
+	cmd("mv %s.zip %s"%(fline, oname))
 
 def doinstall(dryrun=False):
 	cfg = simplecfg("install.cfg", True) or []
