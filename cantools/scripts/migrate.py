@@ -302,10 +302,10 @@ class Packer(object):
 
 	def proc(self, name, reverse=False):
 		funame = reverse and "un%s"%(name,) or name
-		preposition = reverse and "from" or "to"
+		preposition = reverse and "to" or "from"
 		fun = getattr(self, funame)
 		for fname in self.confset(name):
-			log("%s %s %s %s"%(funame, fname, preposition, self.index))
+			log("%s %s %s %s"%(funame, self.index, preposition, fname))
 			self.dryrun or fun(fname, str(self.index))
 			self.index += 1
 
@@ -329,10 +329,10 @@ class Packer(object):
 		cmd("unzip %s -d %s"%(oname, fname))
 
 	def mysql(self, uname, oname):
-		dumpit(uname, oname)
+		dumpit(uname or "root", oname)
 
 	def unmysql(self, uname, oname):
-		undumpit(uname, oname)
+		undumpit(uname or "root", oname)
 
 	def pack(self):
 		if not self.cfg: return
