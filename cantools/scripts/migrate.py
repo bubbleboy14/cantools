@@ -276,44 +276,38 @@ def snap(domain):
 	doGets(input("what's the user? [default: root]: ") or "root",
 		domain, projpath(), input("what's the key file? [default: none] "))
 
+def drylog(cfg):
+	for variety in cfg:
+		for line in cfg[variety]:
+			log("%s: %s"%(variety, line), 1)
+
 def deps(dryrun=False):
 	cfg = simplecfg("deps.cfg")
 	if not cfg: return
 	log("installing dependencies", important=True)
+	if dryrun:
+		return drylog(cfg)
 	if "basic" in cfg:
-		if dryrun:
-			log("install %s"%(" ".join(cfg["basic"]),), 1)
-		else:
-			install(*cfg["basic"])
+		install(*cfg["basic"])
 	if "snap" in cfg:
 		for pkg in cfg["snap"]:
-			if dryrun:
-				log("snap %s"%(pkg,), 1)
-			else:
-				snapinstall(pkg)
+			snapinstall(pkg)
 	if "clasnap" in cfg:
 		for pkg in cfg["clasnap"]:
-			if dryrun:
-				log("clasnap %s"%(pkg,), 1)
-			else:
-				snapinstall(pkg, True)
+			snapinstall(pkg, True)
 
 def accounts(dryrun=False):
 	cfg = simplecfg("accounts.cfg")
 	if not cfg: return
 	log("setting up accounts", important=True)
+	if dryrun:
+		return drylog(cfg)
 	if "basic" in cfg: # system-level
 		for uline in cfg["basic"]:
-			if dryrun:
-				log("system %s"%(uline,), 1)
-			else:
-				pass
+			pass
 	if "mysql" in cfg:
 		for uline in cfg["mysql"]:
-			if dryrun:
-				log("mysql %s"%(uline,), 1)
-			else:
-				pass
+			pass
 
 packs = ["basic", "multi", "zip", "crontab", "mysql"]
 
