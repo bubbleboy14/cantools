@@ -25,7 +25,7 @@ from optparse import OptionParser
 from cantools import db
 from cantools.web import fetch, post
 from cantools.util import error, log, mkdir, cmd, output, write
-from cantools.util.admin import install, snapinstall, simplecfg, enc, dec
+from cantools.util.admin import install, snapinstall, simplecfg, enc, dec, qdec
 
 LIMIT = 500
 
@@ -304,7 +304,9 @@ def accounts(dryrun=False):
 		return drylog(cfg)
 	if "basic" in cfg: # system-level
 		for uline in cfg["basic"]:
-			pass
+			u, p = uline.split("@")
+			p = qdec(p, asdata=True)
+			cmd('useradd -p "%s" %s'%(p, u), sudo=True)
 	if "mysql" in cfg:
 		for uline in cfg["mysql"]:
 			pass
