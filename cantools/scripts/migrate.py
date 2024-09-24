@@ -24,7 +24,7 @@ from fyg.util import confirm
 from optparse import OptionParser
 from cantools import db
 from cantools.web import fetch, post
-from cantools.util import error, log, mkdir, cmd, output
+from cantools.util import error, log, mkdir, cmd, output, write
 from cantools.util.admin import install, snapinstall, simplecfg, enc, dec
 
 LIMIT = 500
@@ -279,23 +279,41 @@ def snap(domain):
 def deps(dryrun=False):
 	cfg = simplecfg("deps.cfg")
 	if not cfg: return
+	log("installing dependencies", important=True)
 	if "basic" in cfg:
 		if dryrun:
-			log("install %s"%(" ".join(cfg["basic"]),))
+			log("install %s"%(" ".join(cfg["basic"]),), 1)
 		else:
 			install(*cfg["basic"])
 	if "snap" in cfg:
 		for pkg in cfg["snap"]:
 			if dryrun:
-				log("snap %s"%(pkg,))
+				log("snap %s"%(pkg,), 1)
 			else:
 				snapinstall(pkg)
 	if "clasnap" in cfg:
 		for pkg in cfg["clasnap"]:
 			if dryrun:
-				log("clasnap %s"%(pkg,))
+				log("clasnap %s"%(pkg,), 1)
 			else:
 				snapinstall(pkg, True)
+
+def accounts(dryrun=False):
+	cfg = simplecfg("accounts.cfg")
+	if not cfg: return
+	log("setting up accounts", important=True)
+	if "basic" in cfg: # system-level
+		for uline in cfg["basic"]:
+			if dryrun:
+				log("system %s"%(uline,), 1)
+			else:
+				pass
+	if "mysql" in cfg:
+		for uline in cfg["mysql"]:
+			if dryrun:
+				log("mysql %s"%(uline,), 1)
+			else:
+				pass
 
 packs = ["basic", "multi", "zip", "crontab", "mysql"]
 
@@ -305,10 +323,13 @@ class Packer(object):
 		self.dryrun = dryrun
 		self.cfg = simplecfg("pack.cfg")
 
+	def log(self, msg, level=0, important=False):
+		log("Packer: %s"%(msg,), level, important)
+
 	def confset(self, name):
 		if name in self.cfg:
 			return self.cfg[name]
-		log("no %s items"%(name,))
+		self.log("no %s items"%(name,))
 		return []
 
 	def proc(self, name, reverse=False):
@@ -316,7 +337,7 @@ class Packer(object):
 		preposition = reverse and "to" or "from"
 		fun = getattr(self, funame)
 		for fname in self.confset(name):
-			log("%s %s %s %s"%(funame, self.index, preposition, fname))
+			self.log("%s %s %s %s"%(funame, self.index, preposition, fname))
 			self.dryrun or fun(fname, str(self.index))
 			self.index += 1
 
@@ -356,6 +377,7 @@ class Packer(object):
 
 	def pack(self):
 		if not self.cfg: return
+		self.log("packing", important=True)
 		mkdir("pack")
 		os.chdir("pack")
 		for psub in packs:
@@ -365,6 +387,7 @@ class Packer(object):
 
 	def unpack(self):
 		if not self.cfg: return
+		self.log("unpacking", important=True)
 		cmd("unzip pack.zip")
 		os.chdir("pack")
 		for psub in packs:
@@ -382,6 +405,11 @@ def dofrom(path, fun):
 	fun()
 	os.chdir(opath)
 
+def withtmp(fdata, fun):
+	write(fdata)
+	fun()
+	os.remove("_tmp")
+
 def jumpsnap(domain, path, grabPack=True):
 	dofrom(path, lambda : snap(domain))
 	grabPack and cmd("mv %s ."%(os.path.join(path, "pack.zip"),))
@@ -393,12 +421,13 @@ def jumpzip(fline, oname):
 
 def doinstall(dryrun=False):
 	cfg = simplecfg("install.cfg", True) or []
+	log("running installation", important=True)
 	confirm("install dependencies", True) and deps(dryrun)
 	for step in cfg:
 		v = step["variety"]
 		line = step["line"]
 		if dryrun:
-			log("install %s %s"%(v, line))
+			log("install %s %s"%(v, line), 1)
 		elif v == "basic":
 			cmd(line)
 		elif v == "snap":
@@ -406,12 +435,13 @@ def doinstall(dryrun=False):
 				jumpsnap(*line.split("@"))
 			else:
 				snap(line)
+	confirm("setup accounts", True) and accounts(dryrun)
 	confirm("unpack pack", True) and unpack(dryrun)
 
-MODES = { "load": load, "dump": dump, "blobdiff": blobdiff, "snap": snap, "deps": deps, "pack": pack, "unpack": unpack, "install": doinstall }
+MODES = { "load": load, "dump": dump, "blobdiff": blobdiff, "snap": snap, "accounts": accounts, "deps": deps, "pack": pack, "unpack": unpack, "install": doinstall }
 
 def go():
-	parser = OptionParser("ctmigrate [load|dump|blobdiff|snap|deps|pack|unpack|install] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME] [--skip=SKIP] [--tables=TABLES] [--cutoff=CUTOFF] [-nr]")
+	parser = OptionParser("ctmigrate [load|dump|blobdiff|snap|accounts|deps|pack|unpack|install] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME] [--skip=SKIP] [--tables=TABLES] [--cutoff=CUTOFF] [-nr]")
 	parser.add_option("-d", "--domain", dest="domain", default="localhost",
 		help="domain of target server (default: localhost)")
 	parser.add_option("-p", "--port", dest="port", default=8080,
@@ -427,7 +457,7 @@ def go():
 	parser.add_option("-n", "--no_binary", dest="binary", action="store_false",
 		default=True, help="disable binary download")
 	parser.add_option("-r", "--dry_run", dest="dryrun", action="store_true",
-		default=False, help="deps/pack/unpack/install dry run")
+		default=False, help="accounts/deps/pack/unpack/install dry run")
 	options, args = parser.parse_args()
 	if not args:
 		error("no mode specified -- must be 'ctmigrate load' or 'ctmigrate dump'")
@@ -441,7 +471,7 @@ def go():
 			blobdiff(int(options.cutoff))
 		elif mode == "snap":
 			snap(options.domain)
-		elif mode in ["deps", "pack", "unpack", "install"]:
+		elif mode in ["accounts", "deps", "pack", "unpack", "install"]:
 			MODES[mode](options.dryrun)
 		else:
 			port = int(options.port)
