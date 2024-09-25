@@ -314,11 +314,15 @@ def dec(fname, oname=None, nowrite=False, asdata=False, nolog=False):
 	nowrite or write(deced, oname)
 	return deced
 
-def qenc(fname, asdata=False):
-	log(enc(fname, nowrite=True, asdata=asdata, nolog=True))
+def qenc(fname, asdata=False, nolog=True):
+	enced = enc(fname, nowrite=True, asdata=asdata, nolog=nolog)
+	log(enced)
+	return enced
 
-def qdec(fname, asdata=False):
-	log(dec(fname, nowrite=True, asdata=asdata, nolog=True))
+def qdec(fname, asdata=False, nolog=True):
+	deced = dec(fname, nowrite=True, asdata=asdata, nolog=nolog)
+	log(deced)
+	return deced
 
 def ushort(url):
 	from cantools import config
