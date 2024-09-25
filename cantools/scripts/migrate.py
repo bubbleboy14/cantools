@@ -309,7 +309,7 @@ def accounts(dryrun=False):
 			cmd('useradd -p "%s" %s'%(p, u), sudo=True)
 	if "mysql" in cfg:
 		for uline in cfg["mysql"]:
-			pass
+			log("mysql account creation unimplemented: %s"%(uline,))
 
 packs = ["basic", "multi", "zip", "crontab", "mysql"]
 
@@ -401,7 +401,7 @@ def dofrom(path, fun):
 	fun()
 	os.chdir(opath)
 
-def withtmp(fdata, fun):
+def withtmp(fdata, fun): # currently unused!
 	write(fdata)
 	fun()
 	os.remove("_tmp")
