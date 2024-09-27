@@ -404,3 +404,68 @@ class Creeper(object):
 
 def memcreep(total=120, mid=40, short=10):
 	Creeper(int(total), int(mid), int(short))
+
+# ccbill stuff...
+
+def _getmems(fname, simple=True, count=False, xls=False, tsv=False):
+	from cantools.util.data import getcsv, gettsv, getxls
+	members = {}
+	if xls:
+		rows = getxls(read(fname))
+	elif tsv:
+		rows = gettsv(read(fname))
+	else:
+		rows = getcsv(fname)
+	for row in rows:
+		if simple:
+			members[row[14].lower()] = row[3]
+		else: # diff (obsolete?) report format...
+			members[row[8]] = count or {
+				"date": row[13],
+				"status": row[15],
+				"initial_price": row[16],
+				"initial_period": row[17],
+				"recurring_price": row[18],
+				"recurring_period": row[19],
+				"rebills": row[20]
+			}
+	if count:
+		return len(list(members.keys()))
+	return members
+
+def getCCmems(fname="active-members.csv", simple=True, count=False):
+	try:
+		mems = _getmems(fname, simple, count)
+	except:
+		log("getmems: csv read failed - trying tsv")
+		try:
+			mems = _getmems(fname, simple, count, tsv=True)
+		except:
+			log("getmems: tsv read failed - trying xls")
+			mems = _getmems(fname, simple, count, xls=True)
+	return mems
+
+def ccbreport(fpath):
+	from cantools.web import fetch
+	from cantools.util import cp
+	from cantools import config
+	username = config.cache("datalink username? ")
+	password = config.cache("datalink password? ")
+	accnum = config.cache("datalink account number? ")
+	data = fetch("datalink.ccbill.com", "/data/main.cgi", timeout=10, protocol="https", qsp={
+		"clientSubacc": "0000",
+		"username": username,
+		"password": password,
+		"clientAccnum": accnum,
+		"transactionTypes": "ACTIVEMEMBERS"
+	}).decode()
+	cp(data, fpath)
+
+def ccbmems():
+	fn = str(datetime.datetime.now()).split(" ").pop(0).replace("-", "") + ".csv"
+	fp = os.path.join("activemembers", fn)
+	log("checking for ccbill report at %s"%(fp,))
+	if not os.path.exists(fp):
+		log("file not present - acquiring from ccbill")
+		ccbreport(fp)
+	return getCCmems(fp)
