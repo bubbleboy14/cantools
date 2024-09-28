@@ -405,6 +405,12 @@ class Creeper(object):
 def memcreep(total=120, mid=40, short=10):
 	Creeper(int(total), int(mid), int(short))
 
+def phpver():
+	if not _which("php"): return
+	v = output("php -v")[4:7]
+	log(v)
+	return v
+
 # ccbill stuff...
 
 def _getmems(fname, simple=True, count=False, xls=False, tsv=False):
