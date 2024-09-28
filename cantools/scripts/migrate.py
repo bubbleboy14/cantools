@@ -311,7 +311,7 @@ def accounts(dryrun=False):
 		for uline in cfg["mysql"]:
 			log("mysql account creation unimplemented: %s"%(uline,))
 
-packs = ["basic", "multi", "zip", "crontab", "mysql", "sym", "rephp"]
+packs = ["basic", "multi", "zip", "crontab", "mysql", "rephp", "sym"]
 
 class Packer(object):
 	def __init__(self, dryrun=False):
