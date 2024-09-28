@@ -311,6 +311,25 @@ def accounts(dryrun=False):
 		for uline in cfg["mysql"]:
 			log("mysql account creation unimplemented: %s"%(uline,))
 
+def owners(dryrun=False):
+	cfg = simplecfg("owners.cfg")
+	if not cfg: return
+	log("assigning owners", important=True)
+	if dryrun:
+		return drylog(cfg)
+	if "basic" in cfg:
+		for oline in cfg["basic"]:
+			o, p = oline.split("@")
+			cmd("chown %s:%s %s"%(o, o, p), sudo=True)
+	if "user" in cfg:
+		for oline in cfg["basic"]:
+			o, p = oline.split("@")
+			cmd("chown %s: %s"%(o, p), sudo=True)
+	if "group" in cfg:
+		for oline in cfg["basic"]:
+			o, p = oline.split("@")
+			cmd("chown :%s %s"%(o, p), sudo=True)
+
 packs = ["basic", "multi", "zip", "crontab", "mysql", "rephp", "sym"]
 
 class Packer(object):
@@ -446,8 +465,9 @@ def doinstall(dryrun=False):
 				snap(line)
 	confirm("setup accounts", True) and accounts(dryrun)
 	confirm("unpack pack", True) and unpack(dryrun)
+	confirm("update owners", True) and owners(dryrun)
 
-MODES = { "load": load, "dump": dump, "blobdiff": blobdiff, "snap": snap, "accounts": accounts, "deps": deps, "pack": pack, "unpack": unpack, "install": doinstall }
+MODES = { "load": load, "dump": dump, "blobdiff": blobdiff, "snap": snap, "accounts": accounts, "deps": deps, "pack": pack, "unpack": unpack, "owners": owners, "install": doinstall }
 
 def go():
 	parser = OptionParser("ctmigrate [load|dump|blobdiff|snap|accounts|deps|pack|unpack|install] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME] [--skip=SKIP] [--tables=TABLES] [--cutoff=CUTOFF] [-nr]")
@@ -480,7 +500,7 @@ def go():
 			blobdiff(int(options.cutoff))
 		elif mode == "snap":
 			snap(options.domain)
-		elif mode in ["accounts", "deps", "pack", "unpack", "install"]:
+		elif mode in ["accounts", "deps", "pack", "unpack", "owners", "install"]:
 			MODES[mode](options.dryrun)
 		else:
 			port = int(options.port)
