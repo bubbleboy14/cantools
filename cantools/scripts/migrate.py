@@ -25,7 +25,7 @@ from optparse import OptionParser
 from cantools import db
 from cantools.web import fetch, post
 from cantools.util import error, log, mkdir, cmd, output, write, sym
-from cantools.util.admin import install, snapinstall, simplecfg, enc, dec, qdec
+from cantools.util.admin import install, snapinstall, simplecfg, enc, dec, qdec, phpver
 
 LIMIT = 500
 
@@ -311,7 +311,7 @@ def accounts(dryrun=False):
 		for uline in cfg["mysql"]:
 			log("mysql account creation unimplemented: %s"%(uline,))
 
-packs = ["basic", "multi", "zip", "crontab", "mysql", "sym"]
+packs = ["basic", "multi", "zip", "crontab", "mysql", "sym", "rephp"]
 
 class Packer(object):
 	def __init__(self, dryrun=False):
@@ -377,6 +377,12 @@ class Packer(object):
 	def unsym(self, fline, oname):
 		src, dest = fline.split("@")
 		sym(src, dest)
+
+	def rephp(self, fname, oname):
+		enc(fname, oname, replace=("php%s"%(phpver(),), "php_PVER_"))
+
+	def unrephp(self, fname, oname):
+		dec(oname, fname, replace=("php_PVER_", "php%s"%(phpver(),)))
 
 	def pack(self):
 		if not self.cfg: return
