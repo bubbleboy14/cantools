@@ -298,19 +298,26 @@ def replace(flag, swap, ext="md"):
 def json2abi(fname):
 	write(read(fname, isjson=True)['abi'], fname.replace("json", "abi"), isjson=True)
 
-def enc(fname, oname=None, nowrite=False, asdata=False, nolog=False):
+def enc(fname, oname=None, nowrite=False, asdata=False, nolog=False, replace=None):
 	from cantools.web import enc as wenc
 	oname = oname or fname.replace("txt", "enc")
 	nolog or log("enc(%s -> %s) nowrite=%s"%(asdata and "data" or fname, oname, nowrite))
-	enced = wenc(asdata and fname or read(fname))
+	data = asdata and fname or read(fname)
+	if replace: # tuple
+		rfrom, rto = replace
+		data = data.replace(rfrom, rto)
+	enced = wenc(data)
 	nowrite or write(enced, oname)
 	return enced
 
-def dec(fname, oname=None, nowrite=False, asdata=False, nolog=False):
+def dec(fname, oname=None, nowrite=False, asdata=False, nolog=False, replace=None):
 	from cantools.web import dec as wdec
 	oname = oname or fname.replace("enc", "txt")
 	nolog or log("dec(%s -> %s) nowrite=%s"%(asdata and "data" or fname, oname, nowrite))
 	deced = wdec(asdata and fname or read(fname))
+	if replace: # tuple
+		rfrom, rto = replace
+		deced = deced.replace(rfrom, rto)
 	nowrite or write(deced, oname)
 	return deced
 
