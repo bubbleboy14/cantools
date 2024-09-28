@@ -375,7 +375,7 @@ class Packer(object):
 		self.log("sym(%s->%s) - noop"%(fline, oname))
 
 	def unsym(self, fline, oname):
-		src, dest = fline.split(":")
+		src, dest = fline.split("@")
 		sym(src, dest)
 
 	def pack(self):
