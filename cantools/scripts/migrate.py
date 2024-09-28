@@ -24,7 +24,7 @@ from fyg.util import confirm
 from optparse import OptionParser
 from cantools import db
 from cantools.web import fetch, post
-from cantools.util import error, log, mkdir, cmd, output, write
+from cantools.util import error, log, mkdir, cmd, output, write, sym
 from cantools.util.admin import install, snapinstall, simplecfg, enc, dec, qdec
 
 LIMIT = 500
@@ -311,7 +311,7 @@ def accounts(dryrun=False):
 		for uline in cfg["mysql"]:
 			log("mysql account creation unimplemented: %s"%(uline,))
 
-packs = ["basic", "multi", "zip", "crontab", "mysql"]
+packs = ["basic", "multi", "zip", "crontab", "mysql", "sym"]
 
 class Packer(object):
 	def __init__(self, dryrun=False):
@@ -370,6 +370,13 @@ class Packer(object):
 
 	def unmysql(self, uname, oname):
 		undumpit(uname or "root", oname)
+
+	def sym(self, fline, oname):
+		self.log("sym(%s->%s) - noop"%(fline, oname))
+
+	def unsym(self, fline, oname):
+		src, dest = fline.split(":")
+		sym(src, dest)
 
 	def pack(self):
 		if not self.cfg: return
