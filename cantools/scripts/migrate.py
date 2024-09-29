@@ -433,11 +433,6 @@ def dofrom(path, fun):
 	fun()
 	os.chdir(opath)
 
-def withtmp(fdata, fun): # currently unused!
-	write(fdata)
-	fun()
-	os.remove("_tmp")
-
 def jumpsnap(domain, path, grabPack=True):
 	dofrom(path, lambda : snap(domain))
 	grabPack and cmd("mv %s ."%(os.path.join(path, "pack.zip"),))

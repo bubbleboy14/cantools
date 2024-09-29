@@ -418,6 +418,26 @@ def phpver():
 	log(v)
 	return v
 
+def withtmp(fdata, fun):
+	write(fdata)
+	fun()
+	os.remove("_tmp")
+
+def whilestopped(proc, fun):
+	cmd("systemctl stop %s"%(proc,), sudo=True)
+	fun()
+	cmd("systemctl start %s"%(proc,), sudo=True)
+
+# mysql stuff...
+
+def mysqltmp(fdata, fun):
+	withtmp(fdata, lambda : whilestopped("mysql", fun))
+
+def mysqlreset(hostname="localhost", user="root", password=None):
+	password = password or input("password? ")
+	mysqltmp("ALTER USER '%s'@'%s' IDENTIFIED BY '%s';"%(user, hostname, password),
+		lambda : cmd("mysqld -init-file=_tmp", sudo=True))
+
 # ccbill stuff...
 
 def _getmems(fname, simple=True, count=False, xls=False, tsv=False):
