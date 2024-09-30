@@ -418,10 +418,11 @@ def phpver():
 	log(v)
 	return v
 
-def withtmp(fdata, fun):
-	write(fdata)
+def withtmp(fdata, fun, owner=None, fname="_tmp"):
+	write(fdata, fname)
+	owner and cmd("chown %s:%s %s"%(owner, owner, fname), True)
 	fun()
-	os.remove("_tmp")
+	os.remove(fname)
 
 def whilestopped(proc, fun):
 	cmd("systemctl stop %s"%(proc,), sudo=True)
@@ -430,11 +431,11 @@ def whilestopped(proc, fun):
 
 # mysql stuff...
 
-def mysqltmp(fdata, fun):
-	withtmp(fdata, lambda : whilestopped("mysql", fun))
+def mysqltmp(fdata, fun, user="mysql"):
+	withtmp(fdata, lambda : whilestopped("mysql", fun), user)
 
 def mysqlreset(hostname="localhost", user="root", password=None):
-	password = password or input("password? ")
+	password = password or input("new password? ")
 	mysqltmp("ALTER USER '%s'@'%s' IDENTIFIED BY '%s';"%(user, hostname, password),
 		lambda : cmd("mysqld -init-file=_tmp", sudo=True))
 
