@@ -424,20 +424,39 @@ def withtmp(fdata, fun, owner=None, fname="_tmp"):
 	fun()
 	os.remove(fname)
 
-def whilestopped(proc, fun):
-	cmd("systemctl stop %s"%(proc,), sudo=True)
+def whilestopped(proc, fun, sycon="systemctl", starter="start"):
+	if sycon == "service":
+		conline = "service " + proc + " %s"
+	else: # systemctl
+		conline = "systemctl %s " + proc
+	cmd(conline%("stop",), sudo=True)
 	fun()
-	cmd("systemctl start %s"%(proc,), sudo=True)
+	cmd(conline%(starter,), sudo=True)
 
 # mysql stuff...
 
-def mysqltmp(fdata, fun, user="mysql"):
-	withtmp(fdata, lambda : whilestopped("mysql", fun), user)
+MYSQL_ALTERP = "ALTER USER '%s'@'%s' IDENTIFIED BY '%s';"
+MYSQL_RESET = """use %s;
+update user set authentication_string=password('%s') where user='%s';
+flush privileges;
+quit;"""
+
+def mysqltmp(fdata, fun, owner="mysql", sycon="systemctl", starter="start"):
+	withtmp(fdata, lambda : whilestopped("mysql", fun, sycon, starter), owner)
+
+def mysqlsafe(fname, user="root"):
+	cmd("mysqld_safe --skip-grant-tables &", sudo=True)
+	cmd("mysql -u %s < %s"%(user, fname))
 
 def mysqlreset(hostname="localhost", user="root", password=None):
-	password = password or input("new password? ")
-	mysqltmp("ALTER USER '%s'@'%s' IDENTIFIED BY '%s';"%(user, hostname, password),
+	password = password or input("new password for '%s' user? "%(user,))
+	mysqltmp(MYSQL_ALTERP%(user, hostname, password),
 		lambda : cmd("mysqld -init-file=_tmp", sudo=True))
+
+def mysqlresetnp(database="mysql", user="root", password=None):
+	password = password or input("new password for '%s' user? "%(user,))
+	mysqltmp(MYSQL_RESET%(database, password, user), lambda : mysqlsafe(user),
+		sycon="service", starter="restart")
 
 # ccbill stuff...
 
