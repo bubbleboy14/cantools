@@ -451,7 +451,7 @@ def mysqlsafe(fname, user="root"):
 def mysqlreset(hostname="localhost", user="root", password=None):
 	password = password or input("new password for '%s' user? "%(user,))
 	mysqltmp(MYSQL_ALTERP%(user, hostname, password),
-		lambda : cmd("mysqld -init-file=_tmp", sudo=True))
+		lambda : cmd("mysqld -init-file=_tmp &", sudo=True))
 
 def mysqlresetnp(database="mysql", user="root", password=None):
 	password = password or input("new password for '%s' user? "%(user,))
