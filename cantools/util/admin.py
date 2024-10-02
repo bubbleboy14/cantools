@@ -455,7 +455,7 @@ def mysqlreset(hostname="localhost", user="root", password=None):
 
 def mysqlresetnp(database="mysql", user="root", password=None):
 	password = password or input("new password for '%s' user? "%(user,))
-	mysqltmp(MYSQL_RESET%(database, password, user), lambda : mysqlsafe(user),
+	mysqltmp(MYSQL_RESET%(database, password, user), lambda : mysqlsafe("_tmp", user),
 		sycon="service", starter="restart")
 
 # ccbill stuff...
