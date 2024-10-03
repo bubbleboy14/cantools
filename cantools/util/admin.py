@@ -436,8 +436,7 @@ def whilestopped(proc, fun, sycon="systemctl", starter="start"):
 
 MYSQL_ALTERP = "ALTER USER '%s'@'%s' IDENTIFIED BY '%s';"
 MYSQL_RESET = """flush privileges;
-ALTER USER '%s'@'%s' IDENTIFIED BY '%s';
-quit;"""
+ALTER USER '%s'@'%s' IDENTIFIED BY '%s';"""
 
 def mysqltmp(fdata, fun, owner="mysql", sycon="systemctl", starter="start"):
 	withtmp(fdata, lambda : whilestopped("mysql", fun, sycon, starter), owner)
