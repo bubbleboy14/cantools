@@ -448,6 +448,7 @@ def mysqlsafe(fname):
 #	output("mysqld_safe --skip-grant-tables &", loud=True)
 	cmd("mysqld --skip-grant-tables --skip-networking &")
 	cmd("mysql < %s"%(fname,))
+	cmd("killall mysqld")
 
 def mysqlreset(hostname="localhost", user="root", password=None):
 	password = password or input("new password for '%s' user? "%(user,))
@@ -456,8 +457,8 @@ def mysqlreset(hostname="localhost", user="root", password=None):
 
 def mysqlresetnp(database="mysql", user="root", password=None):
 	password = password or input("new password for '%s' user? "%(user,))
-	mysqltmp(MYSQL_RESET%(database, password, user), lambda : mysqlsafe("_tmp"),
-		sycon="service", starter="restart")
+	mysqltmp(MYSQL_RESET%(database, password, user),
+		lambda : mysqlsafe("_tmp"), sycon="service")
 
 # ccbill stuff...
 
