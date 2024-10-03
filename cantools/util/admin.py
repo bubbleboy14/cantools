@@ -445,7 +445,8 @@ def mysqltmp(fdata, fun, owner="mysql", sycon="systemctl", starter="start"):
 	withtmp(fdata, lambda : whilestopped("mysql", fun, sycon, starter), owner)
 
 def mysqlsafe(fname, user="root"):
-	output("mysqld_safe --skip-grant-tables &", loud=True)
+#	output("mysqld_safe --skip-grant-tables &", loud=True)
+	output("mysqld --skip-grant-tables --skip-networking &", loud=True)
 	output("mysql -u %s < %s"%(user, fname), loud=True)
 
 def mysqlreset(hostname="localhost", user="root", password=None):
