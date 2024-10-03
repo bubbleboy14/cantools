@@ -445,13 +445,13 @@ def mysqltmp(fdata, fun, owner="mysql", sycon="systemctl", starter="start"):
 	withtmp(fdata, lambda : whilestopped("mysql", fun, sycon, starter), owner)
 
 def mysqlsafe(fname, user="root"):
-	cmd("mysqld_safe --skip-grant-tables &", sudo=True)
-	cmd("mysql -u %s < %s"%(user, fname))
+	output("mysqld_safe --skip-grant-tables &", loud=True)
+	output("mysql -u %s < %s"%(user, fname), loud=True)
 
 def mysqlreset(hostname="localhost", user="root", password=None):
 	password = password or input("new password for '%s' user? "%(user,))
 	mysqltmp(MYSQL_ALTERP%(user, hostname, password),
-		lambda : cmd("mysqld -init-file=_tmp &", sudo=True))
+		lambda : output("mysqld -init-file=_tmp", sudo=True, loud=True))
 
 def mysqlresetnp(database="mysql", user="root", password=None):
 	password = password or input("new password for '%s' user? "%(user,))
