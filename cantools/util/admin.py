@@ -444,19 +444,19 @@ quit;"""
 def mysqltmp(fdata, fun, owner="mysql", sycon="systemctl", starter="start"):
 	withtmp(fdata, lambda : whilestopped("mysql", fun, sycon, starter), owner)
 
-def mysqlsafe(fname, user="root"):
+def mysqlsafe(fname):
 #	output("mysqld_safe --skip-grant-tables &", loud=True)
-	output("mysqld --skip-grant-tables --skip-networking &", loud=True)
-	output("mysql -u %s < %s"%(user, fname), loud=True)
+	cmd("mysqld --skip-grant-tables --skip-networking &")
+	cmd("mysql < %s"%(fname,))
 
 def mysqlreset(hostname="localhost", user="root", password=None):
 	password = password or input("new password for '%s' user? "%(user,))
 	mysqltmp(MYSQL_ALTERP%(user, hostname, password),
-		lambda : output("mysqld -init-file=_tmp", sudo=True, loud=True))
+		lambda : cmd("mysqld -init-file=_tmp"))
 
 def mysqlresetnp(database="mysql", user="root", password=None):
 	password = password or input("new password for '%s' user? "%(user,))
-	mysqltmp(MYSQL_RESET%(database, password, user), lambda : mysqlsafe("_tmp", user),
+	mysqltmp(MYSQL_RESET%(database, password, user), lambda : mysqlsafe("_tmp"),
 		sycon="service", starter="restart")
 
 # ccbill stuff...
