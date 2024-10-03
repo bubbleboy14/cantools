@@ -435,9 +435,8 @@ def whilestopped(proc, fun, sycon="systemctl", starter="start"):
 # mysql stuff...
 
 MYSQL_ALTERP = "ALTER USER '%s'@'%s' IDENTIFIED BY '%s';"
-MYSQL_RESET = """use %s;
-update user set authentication_string=password('%s') where user='%s';
-flush privileges;
+MYSQL_RESET = """flush privileges;
+ALTER USER '%s'@'%s' IDENTIFIED BY '%s';
 quit;"""
 
 def mysqltmp(fdata, fun, owner="mysql", sycon="systemctl", starter="start"):
@@ -455,9 +454,9 @@ def mysqlreset(hostname="localhost", user="root", password=None):
 	mysqltmp(MYSQL_ALTERP%(user, hostname, password),
 		lambda : cmd("mysqld -init-file=_tmp"))
 
-def mysqlresetnp(database="mysql", user="root", password=None):
+def mysqlresetnp(hostname="localhost", user="root", password=None):
 	password = password or input("new password for '%s' user? "%(user,))
-	mysqltmp(MYSQL_RESET%(database, password, user),
+	mysqltmp(MYSQL_RESET%(user, hostname, password),
 		lambda : mysqlsafe("_tmp"), sycon="service")
 
 # ccbill stuff...
