@@ -437,7 +437,8 @@ def whilestopped(proc, fun, sycon="systemctl", starter="start"):
 MYSQL_ALTERP = "ALTER USER '%s'@'%s' IDENTIFIED BY '%s';"
 MYSQL_RESET = """flush privileges;
 ALTER USER '%s'@'%s' IDENTIFIED BY '%s';"""
-MYSQL_CREATE_USER = """CREATE USER '%s'@'%s' IDENTIFIED BY '%s';
+MYSQL_CREATE_USER = """FLUSH PRIVILEGES;
+CREATE USER '%s'@'%s' IDENTIFIED BY '%s';
 GRANT ALL PRIVILEGES ON *.* TO '%s'@'%s' WITH GRANT OPTION;
 FLUSH PRIVILEGES;"""
 
