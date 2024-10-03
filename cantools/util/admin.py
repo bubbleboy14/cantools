@@ -1,4 +1,4 @@
-import os, sys, rel
+import os, sys, rel, time
 from cantools.util import cmd, output, error, log, set_log, close_log, read, write, confirm, rm
 
 coremods = ["screen", "ctstart", "ctpubsub", "ctutil", "ctinit", "dez_reverse_proxy", "dez_websocket_proxy"]
@@ -213,7 +213,6 @@ def sysup(upit=False, upct=False, dpath="."):
 def reboot(wait=5):
 	log("rebooting in %s seconds!"%(wait,))
 	if wait:
-		import time
 		time.sleep(int(wait))
 	cmd("reboot")
 
@@ -447,6 +446,7 @@ def mysqltmp(fdata, fun, owner="mysql", sycon="systemctl", starter="start"):
 def mysqlsafe(fname):
 #	output("mysqld_safe --skip-grant-tables &", loud=True)
 	cmd("mysqld --skip-grant-tables --skip-networking &")
+	time.sleep(0.5)
 	cmd("mysql < %s"%(fname,))
 	cmd("killall mysqld")
 
