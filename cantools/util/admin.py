@@ -437,6 +437,9 @@ def whilestopped(proc, fun, sycon="systemctl", starter="start"):
 MYSQL_ALTERP = "ALTER USER '%s'@'%s' IDENTIFIED BY '%s';"
 MYSQL_RESET = """flush privileges;
 ALTER USER '%s'@'%s' IDENTIFIED BY '%s';"""
+MYSQL_CREATE_USER = """CREATE USER '%s'@'%s' IDENTIFIED BY '%s';
+GRANT ALL PRIVILEGES ON *.* TO '%s'@'%s' WITH GRANT OPTION;
+FLUSH PRIVILEGES;"""
 
 def mysqltmp(fdata, fun, owner="mysql", sycon="systemctl", starter="start"):
 	withtmp(fdata, lambda : whilestopped("mysql", fun, sycon, starter), owner)
@@ -448,14 +451,19 @@ def mysqlsafe(fname="_tmp"):
 	cmd("mysql < %s"%(fname,))
 	cmd("killall mysqld")
 
-def mysqlreset(hostname="127.0.0.1", user="root", password=None):
+def mysqlreset(user="root", hostname="localhost", password=None):
 	password = password or input("new password for '%s' user? "%(user,))
 	mysqltmp(MYSQL_ALTERP%(user, hostname, password),
 		lambda : cmd("mysqld -init-file=_tmp"))
 
-def mysqlresetnp(hostname="127.0.0.1", user="root", password=None):
+def mysqlresetnp(user="root", hostname="localhost", password=None):
 	password = password or input("new password for '%s' user? "%(user,))
 	mysqltmp(MYSQL_RESET%(user, hostname, password), mysqlsafe, sycon="service")
+
+def mysqluser(user="root", hostname="localhost", password=None):
+	password = password or input("new password for '%s' user? "%(user,))
+	mysqltmp(MYSQL_CREATE_USER%(user, hostname, password,
+		user, hostname), mysqlsafe, sycon="service")
 
 # ccbill stuff...
 
