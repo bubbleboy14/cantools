@@ -428,9 +428,9 @@ def whilestopped(proc, fun, sycon="systemctl", starter="start"):
 		conline = "service " + proc + " %s"
 	else: # systemctl
 		conline = "systemctl %s " + proc
-	cmd(conline%("stop",), sudo=True)
+	cmd(conline%("stop",))
 	fun()
-	cmd(conline%(starter,), sudo=True)
+	cmd(conline%(starter,))
 
 # mysql stuff...
 
