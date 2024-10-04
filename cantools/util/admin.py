@@ -482,7 +482,7 @@ def mysqlexists(user="root", hostname="localhost"):
 	log("user not found :(", important=True)
 
 def mysqlcheck(user="root", hostname="localhost"):
-	mysqltmp(MYSQL_USERS, mysqlexists)
+	mysqltmp(MYSQL_USERS, lambda : mysqlexists(user, hostname))
 
 # ccbill stuff...
 
