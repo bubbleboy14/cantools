@@ -205,19 +205,23 @@ def dump(host, port, session, binary, skip=[], tables=None):
 	log("saving %s records to sqlite dump file"%(len(puts),))
 	db.put_multi(puts, session=session, preserve_timestamps=True)
 
-def zipit(fname, oname=None, remove=False):
+def zipit(fname, oname=None, remove=False, keepsyms=False):
+	log("zipping up %s"%(fname,), important=True)
+	if keepsyms == "ask":
+		keepsyms = confirm("keep symlinks", True)
+	ops = keepsyms and "ry" or "r"
 	oname = oname or "%s.zip"%(fname,)
-	cmd("zip -r %s %s"%(oname, fname))
+	cmd("zip -%s %s %s"%(ops, oname, fname))
 	remove and cmd("rm -rf %s"%(fname,))
 
 def dumpit(user, dname=None):
 	dname = dname or "dbz.sql"
-	log("dumping databases to %s"%(dname,))
+	log("dumping databases to %s"%(dname,), important=True)
 	cmd("mysqldump -u %s -p --all-databases > %s"%(user, dname))
 
 def undumpit(user, dname=None):
 	dname = dname or "dbz.sql"
-	log("undumping databases from %s"%(dname,))
+	log("undumping databases from %s"%(dname,), important=True)
 	cmd("mysql -u %s -p < %s"%(user, dname))
 
 def blobdiff(cutoff):
@@ -371,9 +375,9 @@ class Packer(object):
 
 	def zip(self, fname, oname):
 		if "/" in fname:
-			jumpzip(fname, oname)
+			jumpzip(fname, oname, keepsyms="ask")
 		else:
-			zipit(fname, oname)
+			zipit(fname, oname, keepsyms="ask")
 
 	def unzip(self, fname, oname):
 		cmd("unzip %s -d %s"%(oname, fname.rsplit("/", 1).pop(0)))
@@ -437,9 +441,9 @@ def jumpsnap(domain, path, grabPack=True):
 	dofrom(path, lambda : snap(domain))
 	grabPack and cmd("mv %s ."%(os.path.join(path, "pack.zip"),))
 
-def jumpzip(fline, oname):
+def jumpzip(fline, oname, keepsyms=False):
 	fpath, fname = fline.rsplit("/", 1)
-	dofrom(fpath, lambda : zipit(fname))
+	dofrom(fpath, lambda : zipit(fname, keepsyms=keepsyms))
 	cmd("mv %s.zip %s"%(fline, oname))
 
 def doinstall(dryrun=False):
