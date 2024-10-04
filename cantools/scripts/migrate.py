@@ -446,37 +446,39 @@ def jumpzip(fline, oname, keepsyms=False):
 	dofrom(fpath, lambda : zipit(fname, keepsyms=keepsyms))
 	cmd("mv %s.zip %s"%(fline, oname))
 
-def finish(dryrun=False):
-	cfg = simplecfg("finish.cfg", True) or []
-	log("finishing installation", important=True)
+def runcfg(name, cbs, dryrun=False):
+	cfg = simplecfg("%s.cfg"%(name,), True) or []
 	for step in cfg:
 		v = step["variety"]
 		line = step["line"]
 		if dryrun:
-			log("finish %s %s"%(v, line), 1)
+			log("%s %s %s"%(name, v, line), 1)
+		elif v in cbs:
+			cbs[v](line)
 		elif v == "basic":
 			cmd(line)
-		elif v == "cert":
-			cmd("certbot certonly --standalone -d %s"%(" -d ".join(line.split("|")),))
+		else:
+			error("unrecognized mode ('%s') for line: %s"%(v, line))
+
+def certer(line):
+	cmd("certbot certonly --standalone -d %s"%(" -d ".join(line.split("|")),))
+
+def finish(dryrun=False):
+	log("finishing installation", important=True)
+	runcfg("finish", { "cert": certer }, dryrun)
 	if not running("cron"):
 		confirm("start cron") and cmd("service cron start")
 
+def snapper(line):
+	if "@" in line:
+		jumpsnap(*line.split("@"))
+	else:
+		snap(line)
+
 def doinstall(dryrun=False):
-	cfg = simplecfg("install.cfg", True) or []
 	log("running installation", important=True)
 	confirm("install dependencies", True) and deps(dryrun)
-	for step in cfg:
-		v = step["variety"]
-		line = step["line"]
-		if dryrun:
-			log("install %s %s"%(v, line), 1)
-		elif v == "basic":
-			cmd(line)
-		elif v == "snap":
-			if "@" in line:
-				jumpsnap(*line.split("@"))
-			else:
-				snap(line)
+	runcfg("install", { "snap": snapper }, dryrun)
 	confirm("setup accounts", True) and accounts(dryrun)
 	confirm("unpack pack", True) and unpack(dryrun)
 	confirm("update owners", True) and owners(dryrun)
