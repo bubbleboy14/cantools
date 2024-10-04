@@ -231,7 +231,7 @@ def upcheck(*procs):
 		if not running(proc):
 			restarts.append(proc)
 			log("restarting %s!"%(proc,), important=True)
-			cmd("service %s restart"%(proc,))
+			servicer(proc)
 	restarts and email_admins("services restarted", "\n\n".join(restarts))
 	log("goodbye")
 	close_log()
@@ -423,14 +423,19 @@ def withtmp(fdata, fun, owner=None, fname="_tmp"):
 	fun()
 	os.remove(fname)
 
-def whilestopped(proc, fun, sycon="systemctl", starter="start"):
+def servicer(proc, action="restart", sycon="service", ask=False):
+	if ask and not confirm("%s %s"%(action, proc)):
+		return
 	if sycon == "service":
 		conline = "service " + proc + " %s"
 	else: # systemctl
 		conline = "systemctl %s " + proc
-	cmd(conline%("stop",))
+	cmd(conline%(action,))
+
+def whilestopped(proc, fun, sycon="service", starter="start"):
+	servicer(proc, "stop", sycon)
 	fun()
-	cmd(conline%(starter,))
+	servicer(proc, starter, sycon)
 
 # mysql stuff...
 
@@ -441,16 +446,18 @@ MYSQL_CREATE_USER = """FLUSH PRIVILEGES;
 CREATE USER '%s'@'%s' IDENTIFIED BY '%s';
 GRANT ALL PRIVILEGES ON *.* TO '%s'@'%s' WITH GRANT OPTION;
 FLUSH PRIVILEGES;"""
+MYSQL_USERS = """select User,Host from mysql.user;"""
 
-def mysqltmp(fdata, fun, owner="mysql", sycon="systemctl", starter="start"):
+def mysqltmp(fdata, fun, owner="mysql", sycon="service", starter="start"):
 	withtmp(fdata, lambda : whilestopped("mysql", fun, sycon, starter), owner)
 
 def mysqlsafe(fname="_tmp"):
 #	output("mysqld_safe --skip-grant-tables &", loud=True)
 	cmd("mysqld --skip-grant-tables --skip-networking &")
 	time.sleep(0.5)
-	cmd("mysql < %s"%(fname,))
+	o = output("mysql < %s"%(fname,), loud=True)
 	cmd("killall mysqld")
+	return o
 
 def mysqlreset(user="root", hostname="localhost", password=None):
 	password = password or input("new password for '%s' user? "%(user,))
@@ -459,12 +466,23 @@ def mysqlreset(user="root", hostname="localhost", password=None):
 
 def mysqlresetnp(user="root", hostname="localhost", password=None):
 	password = password or input("new password for '%s' user? "%(user,))
-	mysqltmp(MYSQL_RESET%(user, hostname, password), mysqlsafe, sycon="service")
+	mysqltmp(MYSQL_RESET%(user, hostname, password), mysqlsafe)
 
 def mysqluser(user="root", hostname="localhost", password=None):
 	password = password or input("new password for '%s' user? "%(user,))
-	mysqltmp(MYSQL_CREATE_USER%(user, hostname, password,
-		user, hostname), mysqlsafe, sycon="service")
+	mysqltmp(MYSQL_CREATE_USER%(user, hostname,
+		password, user, hostname), mysqlsafe)
+
+def mysqlexists(user="root", hostname="localhost"):
+	log("checking for user '%s' at hostname '%s'"%(user, hostname), important=True)
+	for uline in mysqlsafe().split("\n"):
+		u, h = uline.split("\t")
+		if u == user and h == hostname:
+			return log("user found!", important=True)
+	log("user not found :(", important=True)
+
+def mysqlcheck(user="root", hostname="localhost"):
+	mysqltmp(MYSQL_USERS, mysqlexists)
 
 # ccbill stuff...
 

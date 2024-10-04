@@ -25,7 +25,7 @@ from optparse import OptionParser
 from cantools import db
 from cantools.web import fetch, post
 from cantools.util import error, log, mkdir, cmd, output, write, sym
-from cantools.util.admin import install, snapinstall, simplecfg, enc, dec, qdec, phpver, running
+from cantools.util.admin import install, snapinstall, simplecfg, enc, dec, qdec, phpver, running, servicer
 
 LIMIT = 500
 
@@ -466,8 +466,7 @@ def certer(line):
 def finish(dryrun=False):
 	log("finishing installation", important=True)
 	runcfg("finish", { "cert": certer }, dryrun)
-	if not running("cron"):
-		confirm("start cron") and cmd("service cron start")
+	running("cron") or servicer("cron", "start", ask=True)
 
 def snapper(line):
 	if "@" in line:
@@ -486,7 +485,7 @@ def doinstall(dryrun=False):
 		finish(dryrun)
 	else:
 		log("ok, deferring final steps - type 'ctmigrate finish' to complete the installation", important=True)
-		running("cron") and confirm("stop cron") and cmd("service cron stop")
+		running("cron") and servicer("cron", "stop", ask=True)
 
 MODES = { "load": load, "dump": dump, "blobdiff": blobdiff, "snap": snap, "accounts": accounts, "deps": deps, "pack": pack, "unpack": unpack, "owners": owners, "finish": finish, "install": doinstall }
 
