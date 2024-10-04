@@ -25,7 +25,7 @@ from optparse import OptionParser
 from cantools import db
 from cantools.web import fetch, post
 from cantools.util import error, log, mkdir, cmd, output, write, sym
-from cantools.util.admin import install, snapinstall, simplecfg, enc, dec, qdec, phpver
+from cantools.util.admin import install, snapinstall, simplecfg, enc, dec, qdec, phpver, running
 
 LIMIT = 500
 
@@ -446,6 +446,21 @@ def jumpzip(fline, oname, keepsyms=False):
 	dofrom(fpath, lambda : zipit(fname, keepsyms=keepsyms))
 	cmd("mv %s.zip %s"%(fline, oname))
 
+def finish(dryrun=False):
+	cfg = simplecfg("finish.cfg", True) or []
+	log("finishing installation", important=True)
+	for step in cfg:
+		v = step["variety"]
+		line = step["line"]
+		if dryrun:
+			log("finish %s %s"%(v, line), 1)
+		elif v == "basic":
+			cmd(line)
+		elif v == "cert":
+			cmd("certbot certonly --standalone -d %s"%(" -d ".join(line.split("|")),))
+	if not running("cron"):
+		confirm("start cron") and cmd("service cron start")
+
 def doinstall(dryrun=False):
 	cfg = simplecfg("install.cfg", True) or []
 	log("running installation", important=True)
@@ -465,8 +480,13 @@ def doinstall(dryrun=False):
 	confirm("setup accounts", True) and accounts(dryrun)
 	confirm("unpack pack", True) and unpack(dryrun)
 	confirm("update owners", True) and owners(dryrun)
+	if confirm("finish off installation"):
+		finish(dryrun)
+	else:
+		log("ok, deferring final steps - type 'ctmigrate finish' to complete the installation", important=True)
+		running("cron") and confirm("stop cron") and cmd("service cron stop")
 
-MODES = { "load": load, "dump": dump, "blobdiff": blobdiff, "snap": snap, "accounts": accounts, "deps": deps, "pack": pack, "unpack": unpack, "owners": owners, "install": doinstall }
+MODES = { "load": load, "dump": dump, "blobdiff": blobdiff, "snap": snap, "accounts": accounts, "deps": deps, "pack": pack, "unpack": unpack, "owners": owners, "finish": finish, "install": doinstall }
 
 def go():
 	parser = OptionParser("ctmigrate [load|dump|blobdiff|snap|accounts|deps|pack|unpack|install] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME] [--skip=SKIP] [--tables=TABLES] [--cutoff=CUTOFF] [-nr]")
@@ -499,7 +519,7 @@ def go():
 			blobdiff(int(options.cutoff))
 		elif mode == "snap":
 			snap(options.domain)
-		elif mode in ["accounts", "deps", "pack", "unpack", "owners", "install"]:
+		elif mode in ["accounts", "deps", "pack", "unpack", "owners", "finish", "install"]:
 			MODES[mode](options.dryrun)
 		else:
 			port = int(options.port)
