@@ -10,6 +10,16 @@ ipac()
     fi
 }
 
+epip()
+{
+    pypath=$(python3 -c "import sysconfig; print(sysconfig.get_path('stdlib'))")
+    if [ -f ${pypath}/EXTERNALLY-MANAGED ]; then
+        pip3 install -e . --break-system-packages
+    else
+        pip3 install -e .
+    fi
+}
+
 echo determining platform
 if echo OSTYPE | grep darwin; then
     echo you have a mac!
@@ -63,7 +73,7 @@ fi
 echo checking for cantools
 if pwd | grep cantools; then
     echo installing right here right now
-    pip3 install -e .
+    epip
 else
     python3 -c 'import cantools' || {
         echo "cloning (and hiding) and installing cantools"
@@ -72,7 +82,7 @@ else
         cd .ct
         git clone https://github.com/bubbleboy14/cantools.git
         cd cantools
-        pip3 install -e .
+        epip
         echo cantools installed
     }
 fi
