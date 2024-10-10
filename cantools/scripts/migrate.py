@@ -23,7 +23,6 @@ import os, getpass, datetime
 from fyg.util import confirm
 from optparse import OptionParser
 from cantools import db
-from cantools.web import fetch, post
 from cantools.util import error, log, mkdir, cmd, output, write, sym
 from cantools.util.admin import install, snapinstall, simplecfg, enc, dec, qdec, phpver, running, servicer
 
@@ -39,6 +38,7 @@ def load(host, port, session, filters={}, protocol="http", tables=None):
 	log("finished loading data from sqlite dump file")
 
 def load_model(model, host, port, session, filters={}, protocol="http", pw=None, action="put", blobifier=None):
+	from cantools.web import post
 #	log("retrieving %s entities"%(model,), important=True) # too spammy
 	mod = db.get_model(model)
 	def push(data):
@@ -152,6 +152,7 @@ def blobificator(host=None, port=None, dpref=None):
 	return dpref + "/_db?action=blob&key=%s&property=%s"
 
 def blobify(d, blobifier, extant=None):
+	from cantools.web import fetch
 	for key, prop in list(db.get_schema(d["modelName"]).items()):
 		if prop == "blob" and d[key]:
 			entkey = d.get("gaekey", d["key"])
@@ -169,6 +170,7 @@ def getblobs(host, port):
 		blobify(d, blobifier)
 
 def dump(host, port, session, binary, skip=[], tables=None):
+	from cantools.web import fetch
 	log("dumping database at %s:%s"%(host, port), important=True)
 	mods = {}
 	schemas = db.get_schema()
