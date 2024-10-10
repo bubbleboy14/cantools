@@ -279,6 +279,8 @@ def doGets(user, domain, projpath, keyfile):
 		otherPath = input("anything else? [default: nah] ")
 
 def snap(domain):
+	if domain == "ask":
+		domain = input("what's the snap domain? ")
 	doGets(input("what's the user? [default: root]: ") or "root",
 		domain, projpath(), input("what's the key file? [default: none] "))
 
