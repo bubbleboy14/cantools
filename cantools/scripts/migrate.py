@@ -24,7 +24,7 @@ from fyg.util import confirm
 from optparse import OptionParser
 from cantools import db
 from cantools.util import error, log, mkdir, cmd, output, write, sym
-from cantools.util.admin import install, snapinstall, simplecfg, enc, dec, qdec, phpver, running, servicer
+from cantools.util.admin import install, snapinstall, simplecfg, enc, dec, qdec, phpver, running, servicer, mysqlcheck
 
 LIMIT = 500
 
@@ -394,7 +394,12 @@ class Packer(object):
 		dumpit(uname or "root", oname)
 
 	def unmysql(self, uname, oname):
-		undumpit(uname or "root", oname)
+		uname = uname or "root"
+		hostname = "localhost"
+		if "@" in uname:
+			uname, hostname = uname.split("@")
+		mysqlcheck(uname, hostname, "ask")
+		undumpit(uname, oname)
 
 	def sym(self, fline, oname):
 		self.log("sym(%s->%s) - noop"%(fline, oname))
