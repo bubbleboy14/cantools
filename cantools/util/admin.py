@@ -469,20 +469,25 @@ def mysqlresetnp(user="root", hostname="localhost", password=None):
 	mysqltmp(MYSQL_RESET%(user, hostname, password), mysqlsafe)
 
 def mysqluser(user="root", hostname="localhost", password=None):
+	log("creating mysql user: %s@%s"%(user, hostname), important=True)
 	password = password or input("new password for '%s' user? "%(user,))
 	mysqltmp(MYSQL_CREATE_USER%(user, hostname,
 		password, user, hostname), mysqlsafe)
 
-def mysqlexists(user="root", hostname="localhost"):
+def mysqlexists(user="root", hostname="localhost", ensure=False):
 	log("checking for user '%s' at hostname '%s'"%(user, hostname), important=True)
 	for uline in mysqlsafe().split("\n"):
 		u, h = uline.split("\t")
 		if u == user and h == hostname:
-			return log("user found!", important=True)
+			log("user found!", important=True)
+			return True
 	log("user not found :(", important=True)
+	if ensure == "ask":
+		ensure = confirm("create %s@%s mysql user", True)
+	ensure and mysqluser(user, hostname)
 
-def mysqlcheck(user="root", hostname="localhost"):
-	mysqltmp(MYSQL_USERS, lambda : mysqlexists(user, hostname))
+def mysqlcheck(user="root", hostname="localhost", ensure=False):
+	mysqltmp(MYSQL_USERS, lambda : mysqlexists(user, hostname, ensure))
 
 # ccbill stuff...
 
