@@ -314,7 +314,7 @@ def accounts(dryrun=False):
 		for uline in cfg["basic"]:
 			u, p = uline.split("@")
 			p = qdec(p, asdata=True)
-			cmd('useradd -p "%s" %s'%(p, u), sudo=True)
+			cmd('useradd -m -p "%s" %s'%(p, u), sudo=True)
 	if "mysql" in cfg:
 		for uline in cfg["mysql"]:
 			log("mysql account creation unimplemented: %s"%(uline,))
