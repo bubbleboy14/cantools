@@ -19,7 +19,7 @@ class Mailer(object):
 		self.cbs = {}
 		self.churning = False
 		if not addr:
-			log('no email address configured')
+			pass#log('no email address configured')
 		elif config.gmailer or "gmail.com" in addr:
 			import yagmail
 			if self.name:

@@ -322,12 +322,12 @@ def dec(fname, oname=None, nowrite=False, asdata=False, nolog=False, replace=Non
 
 def qenc(fname, asdata=False, nolog=True):
 	enced = enc(fname, nowrite=True, asdata=asdata, nolog=nolog)
-	log(enced)
+	print(enced)
 	return enced
 
 def qdec(fname, asdata=False, nolog=True):
 	deced = dec(fname, nowrite=True, asdata=asdata, nolog=nolog)
-	log(deced)
+	print(deced)
 	return deced
 
 def ushort(url):

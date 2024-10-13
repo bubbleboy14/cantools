@@ -17,7 +17,7 @@ def run():
 	module = args.pop(0)
 	args or error("what function?")
 	function = args.pop(0)
-	log("calling %s.%s(%s)"%(module, function, ", ".join(args)))
+	#log("calling %s.%s(%s)"%(module, function, ", ".join(args)))
 	getattr(getattr(util, module), function)(*args)
 
 if __name__ == "__main__":

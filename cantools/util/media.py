@@ -7,7 +7,7 @@ from .io import read, write
 try:
 	from PIL import Image
 except:
-	print("no PIL.Image")
+	pass#print("no PIL.Image")
 
 #
 # general
