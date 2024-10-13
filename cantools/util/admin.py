@@ -34,7 +34,7 @@ def install(*pkgs):
 def snapinstall(pkg, classic=False):
 	iline = "snap install %s"%(pkg,)
 	if classic:
-		iline = "%s --classic"
+		iline = "%s --classic"%(iline,)
 	cmd(iline, sudo=True)
 
 def simplecfg(fname, sequential=False):
