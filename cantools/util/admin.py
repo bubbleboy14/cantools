@@ -483,7 +483,7 @@ def mysqlexists(user="root", hostname="localhost", ensure=False):
 			return True
 	log("user not found :(", important=True)
 	if ensure == "ask":
-		ensure = confirm("create %s@%s mysql user", True)
+		ensure = confirm("create %s@%s mysql user"%(user, hostname), True)
 	ensure and mysqluser(user, hostname)
 
 def mysqlcheck(user="root", hostname="localhost", ensure=False):
