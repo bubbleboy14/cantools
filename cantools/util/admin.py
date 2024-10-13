@@ -451,9 +451,9 @@ MYSQL_USERS = """select User,Host from mysql.user;"""
 def mysqltmp(fdata, fun, owner="mysql", sycon="service", starter="start"):
 	withtmp(fdata, lambda : whilestopped("mysql", fun, sycon, starter), owner)
 
-def mysqlsafe(fname="_tmp"):
+def mysqlsafe(fname="_tmp", user="root"):
 #	output("mysqld_safe --skip-grant-tables &", loud=True)
-	cmd("mysqld --skip-grant-tables --skip-networking -u mysql &")
+	cmd("mysqld --skip-grant-tables --skip-networking -u %s &"%(user,))
 	time.sleep(0.5)
 	o = output("mysql < %s"%(fname,), loud=True)
 	cmd("killall mysqld")
