@@ -453,7 +453,7 @@ def mysqltmp(fdata, fun, owner="mysql", sycon="service", starter="start"):
 
 def mysqlsafe(fname="_tmp"):
 #	output("mysqld_safe --skip-grant-tables &", loud=True)
-	cmd("mysqld --skip-grant-tables --skip-networking &")
+	cmd("mysqld --skip-grant-tables --skip-networking -u mysql &")
 	time.sleep(0.5)
 	o = output("mysql < %s"%(fname,), loud=True)
 	cmd("killall mysqld")
