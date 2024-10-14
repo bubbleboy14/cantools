@@ -436,6 +436,7 @@ class Packer(object):
 		os.chdir("pack")
 		for psub in packs:
 			self.proc(psub, True)
+		os.chdir("..")
 
 def pack(dryrun=False):
 	Packer(dryrun).pack()
