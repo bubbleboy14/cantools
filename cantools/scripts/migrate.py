@@ -319,24 +319,27 @@ def accounts(dryrun=False):
 		for uline in cfg["mysql"]:
 			log("mysql account creation unimplemented: %s"%(uline,))
 
-def owners(dryrun=False):
+def owners(dryrun=False, recursive=True):
 	cfg = simplecfg("owners.cfg")
 	if not cfg: return
 	log("assigning owners", important=True)
 	if dryrun:
 		return drylog(cfg)
+	chowner = "chown"
+	if recursive:
+		chowner = "%s -R"%(chowner,)
 	if "basic" in cfg:
 		for oline in cfg["basic"]:
 			o, p = oline.split("@")
-			cmd("chown %s:%s %s"%(o, o, p), sudo=True)
+			cmd("%s %s:%s %s"%(chowner, o, o, p), sudo=True)
 	if "user" in cfg:
 		for oline in cfg["basic"]:
 			o, p = oline.split("@")
-			cmd("chown %s: %s"%(o, p), sudo=True)
+			cmd("%s %s: %s"%(chowner, o, p), sudo=True)
 	if "group" in cfg:
 		for oline in cfg["basic"]:
 			o, p = oline.split("@")
-			cmd("chown :%s %s"%(o, p), sudo=True)
+			cmd("%s :%s %s"%(chowner, o, p), sudo=True)
 
 packs = ["basic", "multi", "zip", "crontab", "mysql", "rephp", "sym"]
 
