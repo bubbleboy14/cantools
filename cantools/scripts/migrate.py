@@ -476,9 +476,16 @@ def runcfg(name, cbs, dryrun=False):
 def certer(line):
 	cmd("certbot certonly --standalone -d %s"%(" -d ".join(line.split("|")),))
 
+def servset(line):
+	for service in line.split("|"):
+		servicer(service)
+
 def finish(dryrun=False):
 	log("finishing installation", important=True)
-	runcfg("finish", { "cert": certer }, dryrun)
+	runcfg("finish", {
+		"cert": certer,
+		"services": servset
+	}, dryrun)
 	running("cron") or servicer("cron", "start", ask=True)
 
 def snapper(line):
