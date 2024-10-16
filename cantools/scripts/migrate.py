@@ -221,10 +221,13 @@ def dumpit(user, dname=None):
 	log("dumping databases to %s"%(dname,), important=True)
 	cmd("mysqldump -u %s -p --all-databases > %s"%(user, dname))
 
-def undumpit(user, dname=None):
+def undumpit(user, dname=None, noautocommit=True):
 	dname = dname or "dbz.sql"
 	log("undumping databases from %s"%(dname,), important=True)
-	cmd("mysql -u %s -p < %s"%(user, dname))
+	if noautocommit:
+		cmd('mysql -u %s -p -e "SET autocommit=0; SOURCE %s; COMMIT;"'%(user, dname))
+	else:
+		cmd("mysql -u %s -p < %s"%(user, dname))
 
 def blobdiff(cutoff):
 	bz = os.listdir("blob")
