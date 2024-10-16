@@ -304,6 +304,16 @@ def deps(dryrun=False):
 		for pkg in cfg["clasnap"]:
 			snapinstall(pkg, True)
 
+def usergroup(cfg):
+	if "user" in cfg:
+		for oline in cfg["user"]:
+			o, p = oline.split("@")
+			cmd("%s %s: %s"%(chowner, o, p), sudo=True)
+	if "group" in cfg:
+		for oline in cfg["group"]:
+			o, p = oline.split("@")
+			cmd("%s :%s %s"%(chowner, o, p), sudo=True)
+
 def accounts(dryrun=False):
 	cfg = simplecfg("accounts.cfg")
 	if not cfg: return
@@ -318,6 +328,7 @@ def accounts(dryrun=False):
 	if "mysql" in cfg:
 		for uline in cfg["mysql"]:
 			log("mysql account creation unimplemented: %s"%(uline,))
+	usergroup(cfg) # for pre-unpack permissions
 
 def owners(dryrun=False, recursive=True):
 	cfg = simplecfg("owners.cfg")
@@ -332,14 +343,7 @@ def owners(dryrun=False, recursive=True):
 		for oline in cfg["basic"]:
 			o, p = oline.split("@")
 			cmd("%s %s:%s %s"%(chowner, o, o, p), sudo=True)
-	if "user" in cfg:
-		for oline in cfg["basic"]:
-			o, p = oline.split("@")
-			cmd("%s %s: %s"%(chowner, o, p), sudo=True)
-	if "group" in cfg:
-		for oline in cfg["basic"]:
-			o, p = oline.split("@")
-			cmd("%s :%s %s"%(chowner, o, p), sudo=True)
+	usergroup(cfg)
 
 packs = ["basic", "multi", "zip", "crontab", "mysql", "rephp", "sym"]
 
