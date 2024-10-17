@@ -348,7 +348,7 @@ def owners(dryrun=False, recursive=True):
 		return drylog(cfg)
 	usergroup(cfg, recursive=recursive)
 
-packs = ["basic", "multi", "zip", "crontab", "mysql", "rephp", "sym"]
+packs = ["mysql", "basic", "multi", "zip", "rephp", "sym", "crontab"]
 
 class Packer(object):
 	def __init__(self, dryrun=False):
