@@ -14,6 +14,7 @@ CT.Browser = CT.Class({
 			} else {
 				_.items.push(dfull);
 				_.tlist.postAdd(dfull, true);
+				this.onFresh && this.onFresh(dfull);
 			}
 			cb && cb();
 		},
