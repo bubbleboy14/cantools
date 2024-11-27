@@ -268,9 +268,10 @@ CT.db = {
 			CT.db._pagerLimit, "rcol", "data", key));
 		o.post_pager && o.post_pager(key, modelName);
 	},
-	streamer: function(modelName, order, filters, builder, pnode, cname) {
-		var offset = 0, cont = CT.dom.div(null, cname), refiller = CT.dom.refiller(function() {
+	streamer: function(modelName, order, filters, builder, pnode, cname, modalize) {
+		var offset = 0, cont = CT.dom.div(null, cname), refill = function() {
 			CT.db.get(modelName, function(mods) {
+				isfirst = !offset;
 				for (mod of mods)
 					cont.appendChild(builder(mod));
 				if (mods.length == chunk) {
@@ -280,9 +281,13 @@ CT.db = {
 					CT.dom.remove(refiller);
 				else
 					CT.dom.setContent(cont, "nothing yet!", "centered");
+				isfirst && modalize && CT.modal.modal(n);
 			}, chunk, offset, order, filters);
-		}), mod, chunk = CT.db._pagerLimit, n = CT.dom.div([cont, refiller]);
+		}, refiller = CT.dom.refiller(refill), n = CT.dom.div([
+			cont, refiller
+		]), mod, isfirst, chunk = CT.db._pagerLimit;
 		pnode && CT.dom.setContent(pnode, n);
+		modalize && refill();
 		return n;
 	}
 };
