@@ -1292,6 +1292,10 @@ CT.dom = {
 		return n;
 	},
 
+	"refiller": function(refill) {
+		return CT.dom.div(null, null, null, { onvisible: refill });
+	},
+
 	"iconSelector": function(items, selectFirst, page, onclick, searchable) {
 		var cur, maker = function(i) {
 			var img = CT.dom.img(i.img || i.url || i.item || i, "padded margined round", function() {
@@ -1537,7 +1541,7 @@ CT.dom = {
 	"addContent": function(targetNode, content, withClass) {
 		if (typeof content == "function")
 			content = content();
-		if (Array.isArray(content))
+		if (Array.isArray(content) || withClass)
 			content = CT.dom.div(content, withClass);
 		if (typeof targetNode == "string")
 			targetNode = CT.dom.id(targetNode, true);
