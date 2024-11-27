@@ -267,6 +267,23 @@ CT.db = {
 			CT.db._refill(modelName, order, filters),
 			CT.db._pagerLimit, "rcol", "data", key));
 		o.post_pager && o.post_pager(key, modelName);
+	},
+	streamer: function(modelName, order, filters, builder, pnode, cname) {
+		var offset = 0, cont = CT.dom.div(null, cname), refiller = CT.dom.refiller(function() {
+			CT.db.get(modelName, function(mods) {
+				for (mod of mods)
+					cont.appendChild(builder(mod));
+				if (mods.length == chunk) {
+					offset += chunk;
+					cont.appendChild(refiller);
+				} else if (offset)
+					CT.dom.remove(refiller);
+				else
+					CT.dom.setContent(cont, "nothing yet!", "centered");
+			}, chunk, offset, order, filters);
+		}), mod, chunk = CT.db._pagerLimit, n = CT.dom.div([cont, refiller]);
+		pnode && CT.dom.setContent(pnode, n);
+		return n;
 	}
 };
 
