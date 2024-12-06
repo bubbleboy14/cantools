@@ -131,27 +131,31 @@ var _sutil = CT.stream.util = {
 			cur.adhoc.remove();
 			delete cur.adhoc;
 		}
-	},
-	tl: function(playchan, className) {
-		var p = "https://tl.fzn.party";
-		if (playchan) // playchan = playlist[] or channel""
-			p += "#" + (Array.isArray(playchan) ? playchan.join("~") : ("~" + playchan));
-		return CT.dom.iframe(p, className || "fullv noborder");
 	}
 };
 
-var FTEST = false;
+var FTEST = true;
+var TTEST = true;
 var fpz = {
-	host: "fzn.party",
-	bpath: "/CT/bridge.js"
+	host: "fzn.party"
+}, tpz = {
+	host: "tl.fzn.party"
 };
+fpz.bpath = tpz.bpath = "/CT/bridge.js";
 if (FTEST) {
 	fpz.host = "localhost:5555";
 	fpz.bpath = "/js" + fpz.bpath;
 }
+if (TTEST) {
+	tpz.host = "localhost:8081";
+	tpz.bpath = "/js" + tpz.bpath;
+}
 fpz.fullhost = "https://" + fpz.host;
 fpz.stream = fpz.fullhost + "/stream#";
 fpz.bridge = fpz.fullhost + fpz.bpath;
+
+tpz.fullhost = "https://" + tpz.host;
+tpz.bridge = tpz.fullhost + tpz.bpath;
 
 CT.stream.util.fzn = {
 	_: {
@@ -213,24 +217,54 @@ CT.stream.util.fzn = {
 	init: function(shouldAllow) {
 		var fzn = CT.stream.util.fzn, _ = fzn._, bropts, v;
 		if (_.bridge) return;
-		document.head.appendChild(CT.dom.script(_.paths.bridge, null, null, function() {
-			bropts = {
-				widget: "/stream/vidsrc.html",
-				senders: ["subscribe", "stream", "push", "error"],
-				receivers: {
-					clip: function(data) {
-						_.vids[data.channel].bufferer(data.data);
-					},
-					mode: function(data) {
-						_.vids[data.channel].setEncoding(data.mode);
-					}
+		bropts = {
+			widget: "/stream/vidsrc.html",
+			senders: ["subscribe", "stream", "push", "error"],
+			receivers: {
+				clip: function(data) {
+					_.vids[data.channel].bufferer(data.data);
+				},
+				mode: function(data) {
+					_.vids[data.channel].setEncoding(data.mode);
 				}
-			};
-			if (shouldAllow)
-				bropts.allow = "microphone; camera";
-			_.bridge = PMB.bridge(bropts);
+			}
+		};
+		if (shouldAllow)
+			bropts.allow = "microphone; camera";
+		CT.initBridge(_.paths.bridge, bropts, function(bridge) {
+			_.bridge = bridge;
 			for (v in _.vids)
 				fzn.start(_.vids[v]);
-		}));
+		});
+	}
+};
+
+CT.stream.util.tl = {
+	_: {
+		paths: tpz
+	},
+	framed: function(playchan, className) {
+		var p = CT.stream.util.tl._.base;
+		if (playchan) // playchan = playlist[] or channel""
+			p += "#" + (Array.isArray(playchan) ? playchan.join("~") : ("~" + playchan));
+		return CT.dom.iframe(p, className || "fullv noborder");
+	},
+	rand: function(cb, channel) {
+		var tl = CT.stream.util.tl, _ = tl._;
+		_.onrand = cb || CT.log;
+		tl.init(channel);
+	},
+	init: function(data) {
+		var tl = CT.stream.util.tl, _ = tl._;
+		if (_.bridge) return _.bridge.send(data);
+		CT.initBridge(_.paths.bridge, {
+			widget: "/blog/rander.html",
+			receivers: {
+				rand: p => _.onrand(_.fullhost + p)
+			}
+		}, function(bridge) {
+			_.bridge = bridge;
+			_.bridge.send(data)
+		});
 	}
 };
