@@ -522,6 +522,10 @@ var CT = {
 		}
 		cfg.onload && cfg.onload();
 	},
+	"initBridge": function(bpath, bropts, onbridge) {
+		CT.dom.head(CT.dom.script(bpath, null, null,
+			() => onbridge(PMB.bridge(bropts))));
+	},
 	"setVal": function(k, v) {
 		CT._.vals[k] = v;
 	},
