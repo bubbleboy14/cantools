@@ -260,7 +260,7 @@ CT.stream.util.tl = {
 		CT.initBridge(_.paths.bridge, {
 			widget: "/blog/rander.html",
 			receivers: {
-				rand: p => _.onrand(_.fullhost + p)
+				rand: p => _.onrand(_.paths.fullhost + p)
 			}
 		}, function(bridge) {
 			_.bridge = bridge;
