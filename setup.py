@@ -23,7 +23,7 @@ setup(
     install_requires = [
         "fyg >= 0.1.4",
         "rel >= 0.4.9.19",
-        "dez >= 0.10.10.24",
+        "dez >= 0.10.10.25",
         "yagmail >= 0.6.161",
         "requests >= 2.3.0",
 #        "jsmin >= 2.2.2",
