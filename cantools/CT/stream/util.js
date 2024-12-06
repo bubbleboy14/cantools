@@ -249,9 +249,11 @@ CT.stream.util.tl = {
 			p += "#" + (Array.isArray(playchan) ? playchan.join("~") : ("~" + playchan));
 		return CT.dom.iframe(p, className || "fullv noborder");
 	},
-	rand: function(cb, channel) {
+	rand: function(channel, cb) {
 		var tl = CT.stream.util.tl, _ = tl._;
 		_.onrand = cb || CT.log;
+		if (channel == "surf") // means "no channel"
+			channel = null;
 		tl.init(channel);
 	},
 	init: function(data) {
