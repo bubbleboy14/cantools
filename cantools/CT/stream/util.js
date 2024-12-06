@@ -134,8 +134,8 @@ var _sutil = CT.stream.util = {
 	}
 };
 
-var FTEST = true;
-var TTEST = true;
+var FTEST = false;
+var TTEST = false;
 var fpz = {
 	host: "fzn.party"
 }, tpz = {
