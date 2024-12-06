@@ -244,7 +244,7 @@ CT.stream.util.tl = {
 		paths: tpz
 	},
 	framed: function(playchan, className) {
-		var p = CT.stream.util.tl._.base;
+		var p = CT.stream.util.tl._.paths.fullhost;
 		if (playchan) // playchan = playlist[] or channel""
 			p += "#" + (Array.isArray(playchan) ? playchan.join("~") : ("~" + playchan));
 		return CT.dom.iframe(p, className || "fullv noborder");
