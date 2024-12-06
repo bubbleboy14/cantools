@@ -21,7 +21,7 @@ class CTWebBase(HTTPApplication):
         isprod = config.mode == "production"
         HTTPApplication.__init__(self, bind_address, port, logger_getter, "dez/cantools",
             config.ssl.certfile, config.ssl.keyfile, config.ssl.cacerts,
-            isprod, config.web.rollz, isprod, whitelist, blacklist, shield, mempad)
+            isprod, config.web.rollz, isprod, whitelist, blacklist, shield, mempad, config.web.xorigin)
         self.memcache = get_memcache()
         self.handlers = {}
         for key, val in list(static.items()):
