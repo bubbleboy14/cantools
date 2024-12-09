@@ -19,7 +19,7 @@ window.PMB = {
 			var _ = PMB._, bridges = _.bridges, i, b;
 			for (i = 0; i < bridges.length; i++) {
 				b = bridges[i];
-				if (event.source == b.iframe.contentWindow) // better way?
+				if (event.origin == b.iframe._targetOrigin) // better way?
 					return b;
 			}
 		},
@@ -47,7 +47,7 @@ window.PMB = {
 		},
 		iframe: function(opts) {
 			var ifr = document.createElement("iframe"),
-				loc = PMB._.location();
+				loc = opts.tar || PMB._.location();
 			opts.allow && ifr.setAttribute("allow", opts.allow);
 			ifr._targetOrigin = loc;
 			ifr.src = loc + opts.widget;
@@ -62,8 +62,8 @@ window.PMB = {
 			return ifr;
 		},
 		location: function() {
-			var i, p, s = document.getElementsByTagName("script"),
-				flag = "/CT/bridge.js", flen = flag.length;
+			var s = document.getElementsByTagName("script"),
+				i, p, flag = "/CT/bridge.js";
 			for (i = 0; i < s.length; i++) {
 				p = s[i].src;
 				if (p.endsWith(flag))

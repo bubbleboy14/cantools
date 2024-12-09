@@ -523,8 +523,12 @@ var CT = {
 		cfg.onload && cfg.onload();
 	},
 	"initBridge": function(bpath, bropts, onbridge) {
-		CT.dom.head(CT.dom.script(bpath, null, null,
-			() => onbridge(PMB.bridge(bropts))));
+		var bridger = () => onbridge(PMB.bridge(bropts));
+		if (window.PMB) {
+			bropts.tar = bpath.slice(0, bpath.indexOf("/", 8));
+			return bridger();
+		}
+		CT.dom.head(CT.dom.script(bpath, null, null, bridger));
 	},
 	"setVal": function(k, v) {
 		CT._.vals[k] = v;
