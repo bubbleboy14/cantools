@@ -635,15 +635,18 @@ CT.dom = {
 					oval = opts.value[sname];
 			}
 			return CT.dom.checkStruct(s, oval, opts.single, opts.parent);
-		}));
+		})), anychecked;
 		tree.value = function() {
+			anychecked = false;
 			CT.dom.each(tree, function(sub) {
 				if (sub.isChecked())
 					vals[sub._name] = sub._subs ? sub._subs.value() : true;
 				else
 					vals[sub._name] = false;
+				anychecked = anychecked || vals[sub._name];
 			});
-			return vals;
+			if (!opts.required || anychecked)
+				return vals;
 		};
 		return tree;
 	},
