@@ -558,7 +558,7 @@ CT.dom = {
 		var cbname = cbid+"checkbox";
 		if (namesuff)
 			cbname += namesuff;
-		var cb = CT.dom.checkbox(cbname, ischecked);
+		var cb = n._cb = CT.dom.checkbox(cbname, ischecked);
 		n.appendChild(cb);
 		if (onclick) {
 			cb.onclick = function() {
@@ -576,7 +576,7 @@ CT.dom = {
 		return n;
 	},
 	"checkStruct": function(struct, value, single, parent) {
-		var name = struct.name || (struct.other && "Other") || struct;
+		var name = struct.name || (struct.other && "Other") || struct, hc;
 		var cb = CT.dom.checkboxAndLabel(name, !!value, null, null, null, function(cbinput) {
 			CT.log(name + ": " + cbinput.checked);
 			if (cbinput.checked) {
@@ -584,10 +584,21 @@ CT.dom = {
 				single && CT.dom.each(cb.parentNode, function(sib) {
 					(sib == cb) || sib.setChecked(false);
 				});
-			} else if (cb._subs)
-				CT.dom.each(cb._subs, (s) => s.setChecked(false));
+			} else {
+				if (cb._subs)
+					CT.dom.each(cb._subs, (s) => s.setChecked(false));
+				if (parent && !parent.hasChecked())
+					parent._cb.checked = false; // too recursive -> parent.setChecked(false);
+			}
 		}, CT.data.random(1000));
 		cb._name = name;
+		cb.hasChecked = function() {
+			hc = false;
+			CT.dom.each(cb._subs, function(s) {
+				hc = hc || s.isChecked();
+			});
+			return hc;
+		};
 		if (struct.other) {
 			if (value)
 				cb._name = value;
@@ -613,7 +624,7 @@ CT.dom = {
 		return cb;
 	},
 	"checkTree": function(opts) {
-		var struct, vals = {}, snames = [], tree = CT.dom.div(opts.structure.map(function(s) {
+		var vals = {}, snames = [], tree = CT.dom.div(opts.structure.map(function(s) {
 			var oval, sname = s.name || s;
 			snames.push(sname);
 			if (opts.value) {
