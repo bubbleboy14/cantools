@@ -19,6 +19,7 @@ class DController(SocketController):
 		SocketController.__init__(self, *args, **kwargs)
 		self.handlers = {}
 		self.modules = {}
+		self.blcount = 0
 		self.logger.info("cantools: %s"%(__version__,))
 		self.logger.info("Python: %s"%(sys.version.split(' ')[0],))
 		self.logger.info("System: " + " > ".join([part for part in platform.uname() if part]))
@@ -56,7 +57,8 @@ class DController(SocketController):
 		blen = len(bl.keys())
 		self.logger.warn("saving %s IPs in black.list"%(blen,))
 		write(bl, "black.list", isjson=True)
-		if wcfg.report:
+		if wcfg.report and self.blcount != blen:
+			self.blcount = blen
 			from cantools.web import email_admins
 			email_admins("sketch IPs blacklisted", "sketch count: %s"%(blen,))
 		wcfg.blacklister and wcfg.blacklister.update(bl)
