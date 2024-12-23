@@ -20,6 +20,7 @@ class DController(SocketController):
 		self.handlers = {}
 		self.modules = {}
 		self.blcount = 0
+		self.blchunk = getattr(config.web.shield, "chunk", 5)
 		self.logger.info("cantools: %s"%(__version__,))
 		self.logger.info("Python: %s"%(sys.version.split(' ')[0],))
 		self.logger.info("System: " + " > ".join([part for part in platform.uname() if part]))
@@ -59,8 +60,9 @@ class DController(SocketController):
 		write(bl, "black.list", isjson=True)
 		if wcfg.report and self.blcount != blen:
 			self.blcount = blen
-			from cantools.web import email_admins
-			email_admins("sketch IPs blacklisted", "sketch count: %s"%(blen,))
+			if not blen % self.blchunk:
+				from cantools.web import email_admins
+				email_admins("sketch IPs blacklisted", "sketch count: %s"%(blen,))
 		wcfg.blacklister and wcfg.blacklister.update(bl)
 
 class PaperShield(object):
