@@ -46,11 +46,14 @@ if not CUSTOM and not AUTO:
 def space(data):
     return "    " + data.replace("\n", "\n    ")
 
+def bt2ds(t):
+    return t.split('"""')[1].strip()
+
 def dsBack(cmd):
     cpath = os.path.join(BPATH, "%s.py"%(ALTS.get(cmd, cmd),))
     log(cpath, 2)
     bdata = read(cpath)
-    fdata = ISPLUGIN and space(bdata) or "## ct%s\n%s"%(cmd, bdata[4:].split('\n"""')[0])
+    fdata = ISPLUGIN and space(bdata) or "## ct%s\n%s"%(cmd, bt2ds(bdata))
     WEB[-1]["children"].append({
         "name": cmd,
         "content": fdata
@@ -127,7 +130,7 @@ def customChunk(path, fnames):
         elif fname.endswith(".js"):
             fdata = fdata[3:].split("\n*/")[0]
         elif fname.endswith(".py"):
-            fdata = fdata[4:].split('\n"""')[0]
+            fdata = bt2ds(fdata)
         f.append("### %s\n%s"%(fname, fdata))
         kids.append({
             "name": fname,
