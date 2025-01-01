@@ -241,7 +241,41 @@ CT.stream.util.fzn = {
 
 CT.stream.util.tl = {
 	_: {
-		paths: tpz
+		paths: tpz,
+		rand: function(p) {
+			var _ = CT.stream.util.tl._;
+			_.onrand(_.paths.fullhost + p);
+		},
+		list: function(pdata) { // do something w/ pdata.tagged[]...
+			var _ = CT.stream.util.tl._;
+			_.onlist(pdata.all);
+		},
+		request: function(action, channel, cb) {
+			var tl = CT.stream.util.tl, _ = tl._;
+			_["on" + action] = cb || CT.log;
+			if (channel == "surf") // means "no channel"
+				channel = null;
+			_.chan = channel;
+			tl.send(action, channel);
+		},
+		name2url: function(name) {
+			var _ = CT.stream.util.tl._, vpref = "/v/";
+			if (_.chan)
+				vpref += _.chan + "/";
+			return _.paths.fullhost + vpref + name;
+		},
+		lister: function(cb) {
+			return names => cb(names.map(CT.stream.util.tl._.name2url));
+		},
+		picker: function(cb) {
+			return function(names) {
+				CT.modal.choice({
+					prompt: "please select a video",
+					data: names.map(n => n.split(".").shift()),
+					cb: name => cb(CT.stream.util.tl._.name2url(name + ".mp4"))
+				});
+			};
+		}
 	},
 	framed: function(playchan, className) {
 		var p = CT.stream.util.tl._.paths.fullhost;
@@ -250,23 +284,29 @@ CT.stream.util.tl = {
 		return CT.dom.iframe(p, className || "fullv noborder");
 	},
 	rand: function(channel, cb) {
-		var tl = CT.stream.util.tl, _ = tl._;
-		_.onrand = cb || CT.log;
-		if (channel == "surf") // means "no channel"
-			channel = null;
-		tl.init(channel);
+		CT.stream.util.tl._.request("rand", channel, cb);
 	},
-	init: function(data) {
+	list: function(channel, cb) {
+		var _ = CT.stream.util.tl._;
+		_.request("list", channel, _.lister(cb));
+	},
+	pick: function(channel, cb) {
+		var _ = CT.stream.util.tl._;
+		_.request("list", channel, _.picker(cb));
+	},
+	send: function(sender, data) {
 		var tl = CT.stream.util.tl, _ = tl._;
-		if (_.bridge) return _.bridge.send(data);
+		if (_.bridge) return _.bridge[sender](data);
 		CT.initBridge(_.paths.bridge, {
 			widget: "/blog/rander.html",
+			senders: ["rand", "list"],
 			receivers: {
-				rand: p => _.onrand(_.paths.fullhost + p)
+				rand: _.rand,
+				list: _.list
 			}
 		}, function(bridge) {
 			_.bridge = bridge;
-			_.bridge.send(data)
+			_.bridge[sender](data);
 		});
 	}
 };
