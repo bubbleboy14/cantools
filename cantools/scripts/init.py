@@ -97,7 +97,7 @@ class Builder(object):
 		log("installing plugin", important=True)
 #		cmd("python setup.py install", True) # unnecessary right?
 #		py("setup.py develop", True)
-		cmd(self.pipper, True)
+		self.pipper()
 #		os.chdir("%s/.."%(self.ctroot,))
 #		log("restoring cantools develop status", important=True)
 #		py("setup.py develop", True)

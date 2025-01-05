@@ -23,14 +23,16 @@ def pipper(execute=False, force=False):
             p += " --break-system-packages --use-pep517"
         else:
             valid = False
-    if execute:
+    def dopip():
         if valid:
             pymod(p, notvenv)
         else:
-            log("aborting execution!")
+            log("pip skip!")
+    if execute:
+        dopip()
     else:
         log(p)
-    return p
+    return dopip
 
 def pushv(version):
     cmd("git add -u")
@@ -112,7 +114,7 @@ def refresh_plugins():
     pcmd = pipper()
     def refresher():
         cmd("git pull")
-        cmd(pcmd, True)
+        pcmd()
     from cantools.util.admin import plugdirs
     plugdirs(refresher, input("search directory? [default: .ctplug] ") or ".ctplug",
         input("filter by preface? [suggested: ct] "))
