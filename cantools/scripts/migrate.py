@@ -24,7 +24,7 @@ from fyg.util import confirm
 from optparse import OptionParser
 from cantools import db
 from cantools.util import error, log, mkdir, cmd, output, write, sym
-from cantools.util.admin import install, snapinstall, simplecfg, enc, dec, qdec, phpver, running, servicer, mysqlcheck
+from cantools.util.admin import install, snapinstall, simplecfg, enc, dec, qdec, phpver, running, servicer, mysqlcheck, zipit
 
 LIMIT = 500
 
@@ -206,15 +206,6 @@ def dump(host, port, session, binary, skip=[], tables=None):
 		puts += [mod(**db.dprep(c)) for c in mods[model]]
 	log("saving %s records to sqlite dump file"%(len(puts),))
 	db.put_multi(puts, session=session, preserve_timestamps=True)
-
-def zipit(fname, oname=None, remove=False, keepsyms=False):
-	log("zipping up %s"%(fname,), important=True)
-	if keepsyms == "ask":
-		keepsyms = confirm("keep symlinks", True)
-	ops = keepsyms and "ry" or "r"
-	oname = oname or "%s.zip"%(fname,)
-	cmd("zip -%s %s %s"%(ops, oname, fname))
-	remove and cmd("rm -rf %s"%(fname,))
 
 def dumpit(user, dname=None):
 	dname = dname or "dbz.sql"

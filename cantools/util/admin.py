@@ -98,6 +98,15 @@ def postup():
 	refresh_plugins()
 	binpath()
 
+def zipit(fname, oname=None, remove=False, keepsyms=False):
+	log("zipping up %s"%(fname,), important=True)
+	if keepsyms == "ask":
+		keepsyms = confirm("keep symlinks", True)
+	ops = keepsyms and "ry" or "r"
+	oname = oname or "%s.zip"%(fname,)
+	cmd("zip -%s %s %s"%(ops, oname, fname))
+	remove and cmd("rm -rf %s"%(fname,))
+
 def screener(ctnum=None, dpath="/root", drpnum=None, psnum=None, sname=None):
 	os.chdir(dpath)
 	set_log("scrn.log")
