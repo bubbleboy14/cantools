@@ -29,7 +29,7 @@ def getcsv_from_data(data, unquote=False): # deprecated! doesn't work _that_ wel
 def getcsv(fname):
 	import csv
 	d = []
-	f = open(fname, "rU")
+	f = open(fname, "r")
 	reader = csv.reader(f)
 	for row in reader:
 		d.append(row)
