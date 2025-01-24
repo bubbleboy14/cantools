@@ -505,10 +505,36 @@ def doinstall(dryrun=False):
 		log("ok, deferring final steps - type 'ctmigrate finish' to complete the installation", important=True)
 		running("cron") and servicer("cron", "stop", ask=True)
 
-MODES = { "load": load, "dump": dump, "blobdiff": blobdiff, "snap": snap, "accounts": accounts, "deps": deps, "pack": pack, "unpack": unpack, "owners": owners, "finish": finish, "install": doinstall }
+def prolog(pman, data, dryrun=False):
+	if not data:
+		log("no %s packages installed!"%(pman,), important=True)
+	elif dryrun:
+		log("%s profile:\n\n%s"%(pnam, data))
+	else:
+		write(data, "%s.profile"%(pman,))
+
+def profile(dryrun=False):
+	log("system package profiler", important=True)
+	if confirm("profile aptitude", True):
+		ilist = output("apt list --installed").split("Listing...\n").pop()
+		apro = "\n".join([line.split("/").pop(0) for line in ilist.split("\n")])
+		prolog("apt", apro, dryrun)
+	if confirm("profile snap", True):
+		snas = []
+		clas = []
+		for line in output("snap list").split("\n")[1:]:
+			name = line.split(" ").pop(0)
+			if "classic" in line:
+				clas.append(name)
+			else:
+				snas.append(name)
+		prolog("snap", "\n".join(snas), dryrun)
+		prolog("clasnap", "\n".join(clas), dryrun)
+
+MODES = { "load": load, "dump": dump, "blobdiff": blobdiff, "snap": snap, "accounts": accounts, "deps": deps, "pack": pack, "unpack": unpack, "owners": owners, "finish": finish, "install": doinstall, "profile": profile }
 
 def go():
-	parser = OptionParser("ctmigrate [load|dump|blobdiff|snap|accounts|deps|pack|unpack|owners|finish|install] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME] [--skip=SKIP] [--tables=TABLES] [--cutoff=CUTOFF] [-nr]")
+	parser = OptionParser("ctmigrate [load|dump|blobdiff|snap|accounts|deps|pack|unpack|owners|finish|install|profile] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME] [--skip=SKIP] [--tables=TABLES] [--cutoff=CUTOFF] [-nr]")
 	parser.add_option("-d", "--domain", dest="domain", default="localhost",
 		help="domain of target server (default: localhost)")
 	parser.add_option("-p", "--port", dest="port", default=8080,
@@ -538,7 +564,7 @@ def go():
 			blobdiff(int(options.cutoff))
 		elif mode == "snap":
 			snap(options.domain)
-		elif mode in ["accounts", "deps", "pack", "unpack", "owners", "finish", "install"]:
+		elif mode in ["accounts", "deps", "pack", "unpack", "owners", "finish", "install", "profile"]:
 			MODES[mode](options.dryrun)
 		else:
 			port = int(options.port)
