@@ -283,6 +283,17 @@ def drylog(cfg):
 		for line in cfg[variety]:
 			log("%s: %s"%(variety, line), 1)
 
+def prodeps(pman):
+	cfg = simplecfg("%s.profile"%(pman,))
+	bcfg = cfg and cfg.get("basic")
+	if not bcfg:
+		return
+	if pman == "apt": # else snap or snap classic
+		return install(*bcfg)
+	isclas = pman == "clasnap"
+	for pkg in bcfg:
+		snapinstall(pkg, isclas)
+
 def deps(dryrun=False):
 	cfg = simplecfg("deps.cfg")
 	if not cfg: return
@@ -297,6 +308,9 @@ def deps(dryrun=False):
 	if "clasnap" in cfg:
 		for pkg in cfg["clasnap"]:
 			snapinstall(pkg, True)
+	if "pro" in cfg:
+		for pman in cfg["pro"]:
+			prodeps(pman)
 
 def usergroup(cfg, recursive=True, nobasic=False):
 	chowner = "chown"
@@ -509,7 +523,7 @@ def prolog(pman, data, dryrun=False):
 	if not data:
 		log("no %s packages installed!"%(pman,), important=True)
 	elif dryrun:
-		log("%s profile:\n\n%s"%(pnam, data))
+		log("%s profile:\n\n%s"%(pman, data))
 	else:
 		write(data, "%s.profile"%(pman,))
 
