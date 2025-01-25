@@ -1,5 +1,5 @@
 """
-### Usage: ctmigrate [load|dump|blobdiff|snap|deps] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME] [--skip=SKIP] [--tables=TABLES] [--cutoff=CUTOFF] [-n]
+### Usage: ctmigrate [load|dump|blobdiff|snap|accounts|deps|pack|unpack|owners|finish|install|profile] [--domain=DOMAIN] [--port=PORT] [--filename=FILENAME] [--skip=SKIP] [--tables=TABLES] [--cutoff=CUTOFF] [-nr]
 
 ### Options:
     -h, --help            show this help message and exit
@@ -17,6 +17,8 @@
                           dump these tables - use '|' as separator, such as
                           'table1|table2|table3' (default: all)
     -n, --no_binary       disable binary download
+    -r, --dry_run         accounts/deps/pack/unpack/owners/finish/install/profile
+                          dry run
 """
 
 import os, getpass, datetime
@@ -564,7 +566,7 @@ def go():
 	parser.add_option("-n", "--no_binary", dest="binary", action="store_false",
 		default=True, help="disable binary download")
 	parser.add_option("-r", "--dry_run", dest="dryrun", action="store_true",
-		default=False, help="accounts/deps/pack/unpack/owners/finish/install dry run")
+		default=False, help="accounts/deps/pack/unpack/owners/finish/install/profile dry run")
 	options, args = parser.parse_args()
 	if not args:
 		error("no mode specified -- must be 'ctmigrate load' or 'ctmigrate dump'")
