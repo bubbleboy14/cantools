@@ -532,8 +532,10 @@ def prolog(pman, data, dryrun=False):
 def profile(dryrun=False):
 	log("system package profiler", important=True)
 	if confirm("profile aptitude", True):
-		ilist = output("apt list --installed").split("Listing...\n").pop()
-		apro = "\n".join([line.split("/").pop(0) for line in ilist.split("\n")])
+		ilist = output("apt list --installed").split("Listing...\n").pop().split("\n")
+		if not confirm("allow local packages"):
+			ilist = list(filter(lambda i : not i.endswith("local]"), ilist))
+		apro = "\n".join([line.split("/").pop(0) for line in ilist])
 		prolog("apt", apro, dryrun)
 	if confirm("profile snap", True):
 		snas = []
