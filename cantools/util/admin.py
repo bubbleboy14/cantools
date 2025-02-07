@@ -350,6 +350,20 @@ def ushort(url):
 	print("code:", code)
 	return "https://%s?k=%s"%(csl, code)
 
+# ai module?
+DDGS = None
+def ddgs():
+	global DDGS
+	if not DDGS:
+		import duckduckgo_search
+		DDGS = duckduckgo_search.DDGS()
+	return DDGS
+
+def ai(prompt, model="o3-mini", timeout=30):
+	resp = ddgs().chat(prompt, model, int(timeout))
+	print(resp)
+	return resp
+
 class Creeper(object):
 	def __init__(self, total=120, mid=40, short=10):
 		self.total = total
