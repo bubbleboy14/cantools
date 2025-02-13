@@ -23,12 +23,19 @@ def log_kernel():
 	log(json.dumps(rel.report()), "kernel")
 	return True
 
+TMSNAP = None
+
 def log_tracemalloc():
+	global TMSNAP
 	import tracemalloc
 	from cantools.util import log
 	snapshot = tracemalloc.take_snapshot()
-	lines = snapshot.statistics("lineno")
 	log("[LINEMALLOC START]", important=True)
+	if TMSNAP:
+		lines = snapshot.compare_to(TMSNAP, 'lineno')
+	else:
+		lines = snapshot.statistics("lineno")
+	TMSNAP = snapshot
 	for line in lines[:10]:
 		log(line)
 	log("[LINEMALLOC END]", important=True)
