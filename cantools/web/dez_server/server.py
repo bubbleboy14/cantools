@@ -23,6 +23,17 @@ def log_kernel():
 	log(json.dumps(rel.report()), "kernel")
 	return True
 
+def log_tracemalloc():
+	import tracemalloc
+	from cantools.util import log
+	snapshot = tracemalloc.take_snapshot()
+	lines = snapshot.statistics("lineno")
+	log("[LINEMALLOC START]", important=True)
+	for line in lines[:10]:
+		log(line)
+	log("[LINEMALLOC END]", important=True)
+	return True
+
 def quit():
 	from cantools.util import log
 	if config.web.errlog:
@@ -38,7 +49,12 @@ def run_dez_webserver():
 	if config.web.log:
 		set_log(os.path.join("logs", config.web.log))
 	init_rel()
-	if "kernel" in config.log.allow:
+	clog = config.log
+	if clog.tracemalloc:
+		import tracemalloc
+		tracemalloc.start()
+		rel.timeout(clog.tracemalloc, log_tracemalloc)
+	if "kernel" in clog.allow:
 		rel.timeout(1, log_kernel)
 	set_error(fail)
 	if config.fdup:

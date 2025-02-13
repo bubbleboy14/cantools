@@ -3,6 +3,7 @@ import os
 cfg = {
 	"log": {
 		"timestamp": True,
+		"tracemalloc": False,
 		"allow": ["info", "log", "warn", "error"] # access,info,log,warn,error,detail,db,query,kernel
 	},
 	"mempad": 0, # 0 = unset (uses dez's default)
