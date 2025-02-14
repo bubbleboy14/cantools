@@ -362,9 +362,11 @@ def ddgs():
 def ai(prompt, model="o3-mini", strip=False, shorten=False, timeout=30):
 	resp = ddgs().chat(prompt, model, int(timeout))
 	print(resp)
+	if shorten:
+		resp = resp.split("\n").pop(0)
+		print("shortened to:")
+		print(resp)
 	if strip:
-		if shorten:
-			resp = resp.split("\n").pop(0)
 		resp = resp.replace("\n", " ")
 		while " <" in resp and "> " in resp:
 			resp = resp[:resp.index(" <") + 1] + resp[resp.index("> ") + 1:]
