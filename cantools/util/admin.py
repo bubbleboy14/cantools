@@ -365,7 +365,9 @@ def ai(prompt, model="o3-mini", timeout=30, strip=False):
 	if strip:
 		resp = resp.replace("\n", " ")
 		while " <" in resp and "> " in resp:
-			resp = resp[:resp.index(" <") + 1] + resp[resp.index("> ") + 1]
+			resp = resp[:resp.index(" <") + 1] + resp[resp.index("> ") + 1:]
+		while "```" in resp:
+			resp = resp[:resp.index(" ```") + 4] + resp[resp.index("``` ") + 3:]
 		print("stripped to:")
 		print(resp)
 	return resp
