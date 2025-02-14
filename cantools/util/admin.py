@@ -359,9 +359,15 @@ def ddgs():
 		DDGS = duckduckgo_search.DDGS()
 	return DDGS
 
-def ai(prompt, model="o3-mini", timeout=30):
+def ai(prompt, model="o3-mini", timeout=30, strip=False):
 	resp = ddgs().chat(prompt, model, int(timeout))
 	print(resp)
+	if strip:
+		resp = resp.replace("\n", " ")
+		while " <" in resp and "> " in resp:
+			resp = resp[:resp.index(" <") + 1] + resp[resp.index("> ") + 1]
+		print("stripped to:")
+		print(resp)
 	return resp
 
 class Creeper(object):
