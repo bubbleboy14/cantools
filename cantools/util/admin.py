@@ -352,6 +352,12 @@ def ushort(url):
 
 # ai module?
 DDGS = None
+delimiases = {
+	True: "\n",
+	"LINE": "\n",
+	"PARAGRAPH": "\n",
+	"SENTENCE": "."
+}
 def ddgs():
 	global DDGS
 	if not DDGS:
@@ -363,8 +369,8 @@ def ai(prompt, model="o3-mini", strip=False, shorten=False, timeout=30):
 	resp = ddgs().chat(prompt, model, int(timeout))
 	print(resp)
 	if shorten:
-		if shorten == True or shorten == "LINE":
-			shorten = "\n"
+		if shorten in delimiases:
+			shorten = delimiases[shorten]
 		resp = resp.split(shorten).pop(0)
 		print("shortened to:")
 		print(resp)
