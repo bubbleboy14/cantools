@@ -353,10 +353,13 @@ def ushort(url):
 # ai module?
 DDGS = None
 delimiases = {
+	"False": False,
 	True: "\n",
+	"True": "\n",
 	"LINE": "\n",
 	"PARAGRAPH": "\n",
-	"SENTENCE": "."
+	"SENTENCE": ".",
+	"PHRASE": [".", "!", "?"]
 }
 def ddgs():
 	global DDGS
@@ -365,13 +368,16 @@ def ddgs():
 		DDGS = duckduckgo_search.DDGS()
 	return DDGS
 
-def ai(prompt, model="o3-mini", strip=False, shorten=False, timeout=30):
+def ai(prompt, model="o3-mini", shorten=False, strip=False, timeout=30):
 	resp = ddgs().chat(prompt, model, int(timeout))
 	print(resp)
+	if shorten in delimiases:
+		shorten = delimiases[shorten]
 	if shorten:
-		if shorten in delimiases:
-			shorten = delimiases[shorten]
-		resp = resp.split(shorten).pop(0)
+		if type(shorten) is not list:
+			shorten = [shorten]
+		for sho in shorten:
+			resp = resp.split(sho).pop(0)
 		print("shortened to:")
 		print(resp)
 	if strip:
