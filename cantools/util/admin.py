@@ -1,4 +1,4 @@
-import os, sys, rel, time, datetime
+import os, sys, rel, time, datetime, random
 from cantools.util import cmd, output, error, log, set_log, close_log, read, write, confirm, rm
 
 coremods = ["screen", "ctstart", "ctpubsub", "ctutil", "ctinit", "dez_reverse_proxy", "dez_websocket_proxy"]
@@ -369,7 +369,17 @@ def ddgs():
 	return DDGS
 
 def ai(prompt, model="o3-mini", shorten=False, strip=False, timeout=30):
-	resp = ddgs().chat(prompt, model, int(timeout))
+	try:
+		resp = ddgs().chat(prompt, model, int(timeout))
+	except:
+		resp = random.choice([
+			"i'm confused",
+			"you broke me",
+			"you're killing me bro",
+			"that question ruined me",
+			"your words somehow fried my circuits",
+			"i literally don't know how to answer that"
+		])
 	print(resp)
 	if shorten in delimiases:
 		shorten = delimiases[shorten]
