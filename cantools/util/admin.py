@@ -381,7 +381,7 @@ def ai(prompt, model="o3-mini", shorten=False, strip=False, timeout=30):
 		print("shortened to:")
 		print(resp)
 	if strip:
-		resp = resp.replace("\n", " ")
+		resp = resp.replace("\n", " ").replace(" & ", " and ")
 		while " <" in resp and "> " in resp:
 			resp = resp[:resp.index(" <") + 1] + resp[resp.index("> ") + 1:]
 		while "```" in resp:
