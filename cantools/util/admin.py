@@ -363,7 +363,9 @@ def ai(prompt, model="o3-mini", strip=False, shorten=False, timeout=30):
 	resp = ddgs().chat(prompt, model, int(timeout))
 	print(resp)
 	if shorten:
-		resp = resp.split("\n").pop(0)
+		if shorten == True or shorten == "LINE":
+			shorten = "\n"
+		resp = resp.split(shorten).pop(0)
 		print("shortened to:")
 		print(resp)
 	if strip:
