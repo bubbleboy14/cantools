@@ -30,6 +30,8 @@ def _apply_filter(query, key, obj, modelName, joinz):
         query.filter(prop.contains(val))
     elif comp == "lacks":
         query.filter(~prop.contains(val))
+    elif comp == "mod":
+        query.filter(prop % val == 0)
     elif comp.startswith("near"): # lat/lng
         mdist = 10
         if "_" in comp:
