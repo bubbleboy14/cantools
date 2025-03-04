@@ -1,4 +1,5 @@
 import rel, smtplib, imaplib
+from email import message_from_bytes
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from ..util import config, log, strip_html
@@ -156,7 +157,7 @@ class Reader(object):
 
 	def fetch(self, num, mparts="(RFC822)"):
 		typ, data = self.conn.fetch(num, mparts)
-		return data
+		return message_from_bytes(data[0][1])
 
 	def inbox(self, count=1, criteria="UNSEEN", critarg=None, mailbox="inbox"):
 		self.conn.login(self.addr, config.cache("email password? "))
@@ -165,6 +166,7 @@ class Reader(object):
 		msgs = []
 		for num in ids:
 			msgs.append(self.fetch(num))
+		self.conn.close()
 		self.conn.logout()
 		return msgs
 
