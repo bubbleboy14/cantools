@@ -164,7 +164,7 @@ class Reader(object):
 		ids = self.ids(criteria, critarg)[:count]
 		msgs = []
 		for num in ids:
-			msgs.push(self.fetch(num))
+			msgs.append(self.fetch(num))
 		self.conn.logout()
 		return msgs
 
