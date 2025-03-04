@@ -1,4 +1,4 @@
-import rel, smtplib
+import rel, smtplib, imaplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from ..util import config, log, strip_html
@@ -141,3 +141,32 @@ mailer = Mailer(config.mailer, config.mailername)
 send_mail = mailer.mail
 email_admins = mailer.admins
 email_reportees = mailer.reportees
+
+class Reader(object):
+	def __init__(self, addr):
+		self.addr = addr
+		if addr:
+			self.isgmail = config.gmailer or addr.endswith("@gmail.com")
+			self.domain = self.isgmail and "imap.gmail.com" or addr.split("@").pop()
+			self.conn = imaplib.IMAP4_SSL(self.domain)
+
+	def ids(self, criteria="UNSEEN", critarg=None):
+		typ, msgids = self.conn.search(None, criteria, critarg)
+		return msgids[0].split()
+
+	def fetch(self, num, mparts="(RFC822)"):
+		typ, data = self.conn.fetch(num, mparts)
+		return data
+
+	def inbox(self, count=1, criteria="UNSEEN", critarg=None, mailbox="inbox"):
+		self.conn.login(self.addr, config.cache("email password? "))
+		self.conn.select(mailbox)
+		ids = self.ids(criteria, critarg)[:count]
+		msgs = []
+		for num in ids:
+			msgs.push(self.fetch(num))
+		self.conn.logout()
+		return msgs
+
+reader = Reader(config.mailer)
+check_inbox = reader.inbox
