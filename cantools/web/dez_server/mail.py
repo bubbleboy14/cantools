@@ -184,5 +184,11 @@ class Reader(object):
 		self.disconnect()
 		return msgs
 
+	def view(count=1, criteria="UNSEEN", critarg=None, mailbox="inbox"):
+		for msg in self.inbox(count, criteria, critarg, mailbox):
+			print("\n\nfrom:", msg['from'])
+			print("subject:", msg['subject'])
+			print("\nbody:", self.read(msg))
+
 reader = Reader(config.mailer)
 check_inbox = reader.inbox
