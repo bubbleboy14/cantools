@@ -163,7 +163,7 @@ class Reader(object):
 		bod = msg
 		if msg.is_multipart():
 			for part in msg.walk():
-				if part.get_content_type == "text/plain":
+				if part.get_content_type() == "text/plain":
 					bod = part
 		return bod.get_payload(decode=True).decode()
 
