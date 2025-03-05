@@ -149,7 +149,16 @@ class Reader(object):
 		if addr:
 			self.isgmail = config.gmailer or addr.endswith("@gmail.com")
 			self.domain = self.isgmail and "imap.gmail.com" or addr.split("@").pop()
-			self.conn = imaplib.IMAP4_SSL(self.domain)
+
+	def connect(self, mailbox="inbox"):
+		self.conn = imaplib.IMAP4_SSL(self.domain)
+		self.conn.login(self.addr, config.cache("email password? "))
+		self.conn.select(mailbox)
+
+	def disconnect(self):
+		self.conn.close()
+		self.conn.logout()
+		self.conn = None
 
 	def ids(self, criteria="UNSEEN", critarg=None):
 		typ, msgids = self.conn.search(None, criteria, critarg)
@@ -168,14 +177,11 @@ class Reader(object):
 		return bod.get_payload(decode=True).decode()
 
 	def inbox(self, count=1, criteria="UNSEEN", critarg=None, mailbox="inbox"):
-		self.conn.login(self.addr, config.cache("email password? "))
-		self.conn.select(mailbox)
-		ids = self.ids(criteria, critarg)[:count]
 		msgs = []
-		for num in ids:
+		self.connect(mailbox)
+		for num in self.ids(criteria, critarg)[:count]:
 			msgs.append(self.fetch(num))
-		self.conn.close()
-		self.conn.logout()
+		self.disconnect()
 		return msgs
 
 reader = Reader(config.mailer)
