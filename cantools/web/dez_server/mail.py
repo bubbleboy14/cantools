@@ -162,7 +162,7 @@ class Reader(object):
 
 	def ids(self, criteria="UNSEEN", critarg=None):
 		typ, msgids = self.conn.search(None, criteria, critarg)
-		return msgids[0].split()
+		return msgids[0].split()[::-1]
 
 	def fetch(self, num, mparts="(RFC822)"):
 		typ, data = self.conn.fetch(num, mparts)
