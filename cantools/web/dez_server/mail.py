@@ -159,6 +159,14 @@ class Reader(object):
 		typ, data = self.conn.fetch(num, mparts)
 		return message_from_bytes(data[0][1])
 
+	def read(self, msg):
+		bod = msg
+		if msg.is_multipart():
+			for part in msg.walk():
+				if part.get_content_type == "text/plain":
+					bod = part
+		return bod.get_payload(decode=True).decode()
+
 	def inbox(self, count=1, criteria="UNSEEN", critarg=None, mailbox="inbox"):
 		self.conn.login(self.addr, config.cache("email password? "))
 		self.conn.select(mailbox)
