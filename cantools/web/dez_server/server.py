@@ -50,7 +50,7 @@ def log_openfiles():
 	if not PROC:
 		import psutil
 		PROC = psutil.Process(os.getpid())
-	log("OPEN FILE COUNT: %s"%(PROC.open_files(),), important=True)
+	log("OPEN FILE COUNT: %s"%(len(PROC.open_files()),), important=True)
 
 def quit():
 	from cantools.util import log
