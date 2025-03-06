@@ -51,6 +51,7 @@ def log_openfiles():
 		import psutil
 		PROC = psutil.Process(os.getpid())
 	log("OPEN FILE COUNT: %s"%(len(PROC.open_files()),), important=True)
+	return True
 
 def quit():
 	from cantools.util import log
