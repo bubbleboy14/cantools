@@ -12,10 +12,11 @@ def fdup():
 	from cantools.util import log # gives us logger set in run_dez_webserver()
 	log("checking the number of file descriptors allowed on your system", important=True)
 	soft, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
-	log("soft: %s. hard: %s"%(soft, hard))
-	if soft != hard:
-		log("increasing soft limit to hard limit")
-		resource.setrlimit(resource.RLIMIT_NOFILE, (hard, hard))
+	half = int(hard / 2)
+	log("soft: %s. hard: %s. half: %s"%(soft, hard, half))
+	if soft < half:
+		log("increasing soft limit to half of hard limit")
+		resource.setrlimit(resource.RLIMIT_NOFILE, (half, hard))
 		log("new limits! soft: %s. hard: %s"%resource.getrlimit(resource.RLIMIT_NOFILE))
 
 def log_kernel():
