@@ -42,6 +42,16 @@ def log_tracemalloc():
 	log("[LINEMALLOC END]", important=True)
 	return True
 
+PROC = None
+
+def log_openfiles():
+	global PROC
+	from cantools.util import log
+	if not PROC:
+		import psutil
+		PROC = psutil.Process(os.getpid())
+	log("OPEN FILE COUNT: %s"%(PROC.open_files(),), important=True)
+
 def quit():
 	from cantools.util import log
 	if config.web.errlog:
@@ -58,6 +68,8 @@ def run_dez_webserver():
 		set_log(os.path.join("logs", config.web.log))
 	init_rel()
 	clog = config.log
+	if clog.openfiles:
+		rel.timeout(clog.openfiles, log_openfiles)
 	if clog.tracemalloc:
 		import tracemalloc
 		tracemalloc.start()

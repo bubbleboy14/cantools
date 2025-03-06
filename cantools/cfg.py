@@ -3,6 +3,7 @@ import os
 cfg = {
 	"log": {
 		"timestamp": True,
+		"openfiles": False,
 		"tracemalloc": False,
 		"allow": ["info", "log", "warn", "error"] # access,info,log,warn,error,detail,db,query,kernel
 	},
