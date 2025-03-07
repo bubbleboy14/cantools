@@ -50,7 +50,11 @@ def log_openfiles():
 	if not PROC:
 		import psutil
 		PROC = psutil.Process(os.getpid())
-	log("OPEN FILE COUNT: %s"%(len(PROC.open_files()),), important=True)
+	ofz = PROC.open_files()
+	if config.log.oflist:
+		log("OPEN FILES: %s"%(ofz,), important=True)
+	else:
+		log("OPEN FILE COUNT: %s"%(len(ofz),), important=True)
 	return True
 
 def quit():
