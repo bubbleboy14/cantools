@@ -166,8 +166,7 @@ def post(host, path="/", port=80, data=None, protocol="http", asjson=False, ctjs
 	return syncreq(url, "post", asjson, ctjson, rekwargs=kwargs)
 
 def _dosyncreq(requester, url, asjson, ctjson, rekwargs):
-	with requester(url, **rekwargs) as response:
-		result = response.content
+	result = requester(url, **rekwargs).content
 	if ctjson:
 		return _ctjson(result)
 	return asjson and json.loads(result) or result
