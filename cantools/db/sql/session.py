@@ -71,6 +71,7 @@ class Session(Basic):
 
 	def teardown(self):
 		self.engine = None
+		self.session = None
 		self.database = None
 		self.generator = None
 
