@@ -51,7 +51,7 @@ def threadname():
 
 class Basic(object): # move elsewhere?
 	def sig(self):
-		return self.__class__.__name__
+		return "%s(%s)"%(self.__class__.__name__, self.id)
 
 	def log(self, *msg):
 		if "db" in config.log.allow:
@@ -68,9 +68,6 @@ class Session(Basic):
 			setattr(self, fname, self._func(fname))
 		self._refresh()
 		self.log("initialized")
-
-	def sig(self):
-		return "Session(%s)"%(self.id,)
 
 	def teardown(self):
 		self.engine = None
@@ -94,10 +91,10 @@ class Session(Basic):
 		self.session = self.generator()
 		self.no_autoflush = self.session.no_autoflush
 
-Session._id = 0
-
 class DataBase(Basic):
 	def __init__(self, db=dcfg.main):
+		DataBase._id += 1
+		self.id = DataBase._id
 		if pcfg.null:
 			self.engine = create_engine(db, poolclass=NullPool, echo=dcfg.echo)
 		else:
@@ -135,6 +132,8 @@ class DataBase(Basic):
 
 class SessionManager(Basic):
 	def __init__(self):
+		SessionManager._id += 1
+		self.id = SessionManager._id
 		self.dbs = {}
 		self.log("initialized")
 
@@ -148,6 +147,8 @@ class SessionManager(Basic):
 
 	def close(self, db=dcfg.main):
 		self.db(db).close()
+
+Session._id = DataBase._id = SessionManager._id = 0
 
 def testSession():
 	return seshman.get(dcfg.test)
