@@ -39,9 +39,10 @@ def load(host, port, session, filters={}, protocol="http", tables=None):
 		load_model(model, host, port, session, filters=filters, protocol=protocol, pw=pw)
 	log("finished loading data from sqlite dump file")
 
-def load_model(model, host, port, session, filters={}, protocol="http", pw=None, action="put", blobifier=None):
+def load_model(model, host, port, session=None, filters={}, protocol="http", pw=None, action="put", blobifier=None):
 	from cantools.web import post
 #	log("retrieving %s entities"%(model,), important=True) # too spammy
+	session = session or db.seshman.get()
 	mod = db.get_model(model)
 	def push(data):
 		log(post(host, "/_db", port, {
