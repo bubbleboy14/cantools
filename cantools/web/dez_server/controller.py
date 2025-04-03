@@ -92,7 +92,7 @@ def setBlacklist():
 			bsaved = {}
 			for line in read("black.list", lines=True):
 				bsaved[line.strip()] = "legacy ban"
-		bl.update(bsaved)
+		bsaved and bl.update(bsaved)
 	config.web.update("blacklist", bl)
 
 def getController():
