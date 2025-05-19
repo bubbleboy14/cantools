@@ -64,6 +64,10 @@ CT.cal = {
 			pfunc(appz.daily, tslot);
 		else if (tslot.schedule == "weekly")
 			pfunc(appz.weekly[day], tslot);
+		else if (tslot.schedule == "biweekly (even)")
+			pfunc(appz.biweekly_even[day], tslot);
+		else if (tslot.schedule == "biweekly (odd)")
+			pfunc(appz.biweekly_odd[day], tslot);
 		else if (tslot.schedule == "offday") {
 			aod = appz.offday[day];
 			if (!aod[tslot.taskkey])
@@ -183,6 +187,13 @@ CT.cal.Cal = CT.Class({
 				})
 			});
 		},
+		slotter: function(col, date, day, week) {
+			var sweek = slot => Math.ceil(slot.when.getDate() / 7),
+				sameweek = slot => (sweek(slot) == week),
+				altweek = (week % 2) ? col.biweekly_odd : col.biweekly_even;
+			return col.daily.slice().concat(col.weekly[day].slice()).concat((col.monthly_date[date] ||
+				[]).slice()).concat(col.monthly_day[day].filter(sameweek)).concat(altweek[day].slice());
+		},
 		oflo: function(s) {
 			var w = s.when;
 			return Math.max(0, w.getHours() + w.getMinutes() / 60 + s.duration - 24);
@@ -202,27 +213,18 @@ CT.cal.Cal = CT.Class({
 	},
 	day: function(date, month, year) {
 		var _ = this._, opts = this.opts, tname, n, tk, dayslots, appz = _.appointments, commz = _.commitments,
-			dobj = new Date(year, month, date), day = dobj.getDay(), week = Math.ceil(date / 7);
-			slots = appz.daily.slice().concat(appz.weekly[day].slice()).concat((appz.monthly_date[date] || []).slice()),
-			cslots = commz.daily.slice().concat(commz.weekly[day].slice()).concat((commz.monthly_date[date] || []).slice()),
+			dobj = new Date(year, month, date), day = dobj.getDay(), week = Math.ceil(date / 7),
+			slots = _.slotter(appz, date, day, week), cslots = _.slotter(commz, date, day, week),
 			emoyeda = appz.exception[month][year][date] || {},
 			cemoyeda = commz.exception[month][year][date] || {},
 			oncers = appz.once[month][year][date] || {},
 			concers = commz.once[month][year][date] || {},
-			mday = appz.monthly_day[day], cmday = commz.monthly_day[day],
 			offday = appz.offday[day], overflow = _.overflow;
 
 		for (tname in oncers)
 			slots = slots.concat(oncers[tname]);
 		for (tname in concers)
 			cslots = cslots.concat(concers[tname]);
-
-		slots = slots.concat(mday.filter(function(slot) {
-			return Math.ceil(slot.when.getDate() / 7) == week;
-		}));
-		cslots = cslots.concat(cmday.filter(function(slot) {
-			return Math.ceil(slot.when.getDate() / 7) == week;
-		}));
 
 		slots.sort(function(a, b) {
 			return a.when.toTimeString() > b.when.toTimeString() ? 1 : -1;
@@ -408,6 +410,8 @@ CT.cal.Cal = CT.Class({
 			appz = _[aname] = {};
 			appz.daily = [];
 			appz.weekly = CT.cal.days.map(function(d) { return []; });
+			appz.biweekly_even = CT.cal.days.map(function(d) { return []; });
+			appz.biweekly_odd = CT.cal.days.map(function(d) { return []; });
 			appz.offday = CT.cal.days.map(function(d) { return {}; });
 			appz.once = CT.cal.months.map(function(m) { return {}; });
 			appz.exception = CT.cal.months.map(function(m) { return {}; });
