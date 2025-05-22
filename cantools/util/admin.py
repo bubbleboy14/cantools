@@ -65,7 +65,7 @@ def certs(dpath="/root", sname=None):
 
 def pcount(pname):
 	log("checking count: %s"%(pname,), important=True)
-	num = int(output("ps -ef | grep %s | wc -l"%(pname,)))
+	num = int(output("ps -ef | grep %s | egrep -v 'pcount|grep' | wc -l"%(pname,)))
 	log("%s count: %s"%(pname, num), 1)
 	return num
 
