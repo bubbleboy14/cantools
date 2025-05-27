@@ -5,6 +5,8 @@ coremods = ["screen", "ctstart", "ctpubsub", "ctutil", "ctinit", "dez_reverse_pr
 installers = ["apt", "yum", "pkg", "brew"]
 
 def _starter(sname):
+	if sname == "None":
+		sname = None
 	starter = "screen -wipe ; screen -L -dm"
 	return sname and "%s -S %s"%(starter, sname) or starter
 
@@ -107,7 +109,20 @@ def zipit(fname, oname=None, remove=False, keepsyms=False):
 	cmd("zip -%s %s %s"%(ops, oname, fname))
 	remove and cmd("rm -rf %s"%(fname,))
 
-def screener(ctnum=None, dpath="/root", drpnum=None, psnum=None, sname=None):
+def termap(term, default=1):
+	m = {}
+	terms = term.split("|")
+	for key in terms:
+		if ":" in key:
+			key, val = key.split(":")
+			val = int(val)
+		else:
+			val = default
+		m[key] = val
+	print(m)
+	return m
+
+def screener(ctnum=None, dpath="/root", drpnum=None, psnum=None, sname=None, tmap=None):
 	os.chdir(dpath)
 	set_log("scrn.log")
 	log("checking modules", important=True)
@@ -123,7 +138,10 @@ def screener(ctnum=None, dpath="/root", drpnum=None, psnum=None, sname=None):
 		log("no screen! restarting", 1)
 		cmd(starter)
 	else:
-		pcheck("ctstart", ctnum, starter) or pcheck("dez_reverse_proxy", drpnum, starter) or pcheck("ctpubsub", psnum, starter)
+		restarted = pcheck("ctstart", ctnum, starter) or pcheck("dez_reverse_proxy", drpnum, starter) or pcheck("ctpubsub", psnum, starter)
+		if tmap:
+			for k, v in tmap.items():
+				restarted = restarted or pcheck(k, v, starter)
 	log("goodbye", important=True)
 	close_log()
 
