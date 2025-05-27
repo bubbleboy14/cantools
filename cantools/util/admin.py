@@ -140,7 +140,7 @@ def screener(ctnum=None, dpath="/root", drpnum=None, psnum=None, sname=None, tma
 	else:
 		restarted = pcheck("ctstart", ctnum, starter) or pcheck("dez_reverse_proxy", drpnum, starter) or pcheck("ctpubsub", psnum, starter)
 		if tmap:
-			for k, v in tmap.items():
+			for k, v in termap(tmap).items():
 				restarted = restarted or pcheck(k, v, starter)
 	log("goodbye", important=True)
 	close_log()
