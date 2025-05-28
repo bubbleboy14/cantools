@@ -115,9 +115,16 @@ var _sutil = CT.stream.util = {
 			onrecorder && onrecorder(recorder, stream);
 		};
 	},
-	record: function(ondata, onrecorder, onfail, mediaType, deviceId) {
+	record: function(ondata, onrecorder, onfail, mediaType, deviceId, displaySurface) {
 		CT.log.startTimer("record", "(attempt)");
-		var vo = deviceId && { deviceId: deviceId } || true;
+		var vo = true;
+		if (deviceId || displaySurface) {
+			vo = {};
+			if (deviceId)
+				vo.deviceId = deviceId;
+			if (displaySurface)
+				vo.displaySurface = displaySurface;
+		}
 		navigator.mediaDevices[mediaType || "getUserMedia"]({
 			audio: true, video: vo
 		}).then(_sutil._recorder(ondata, onrecorder))["catch"](onfail || function(err) {
