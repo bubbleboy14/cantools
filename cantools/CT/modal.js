@@ -279,6 +279,7 @@ CT.modal.Modal = CT.Class({
 		this.removables.push(node);
 	},
 	hide: function() {
+		if (!this.visible) return this.log("already hidden!");
 		this.node.hide();
 		if (this.node.backdrop)
 			CT.dom.remove(this.node.backdrop);
