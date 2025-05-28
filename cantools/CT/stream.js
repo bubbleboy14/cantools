@@ -25,7 +25,7 @@ CT.require("CT.stream.Video");
 CT.require("CT.stream.Streamer");
 CT.require("CT.stream.Multiplexer");
 
-var vpv = "vp9";
+var vpv = MediaRecorder.isTypeSupported("vp9") ? "vp9" : "vp8";
 
 var stropts = CT.stream.opts = {
 	requiresInput: true,//CT.info.android,
@@ -41,14 +41,24 @@ var stropts = CT.stream.opts = {
 	width: 320,
 	height: 240,
 	waiting: [],
-	transcoder: null, // set to func, such as web hook procedure
-	setTranscoder: function(cb) {
-		CT.stream.opts.transcoder = cb;
-	},
 	codecs: {
 		av: 'video/webm; codecs="' + vpv + ',opus"',
 		video: 'video/webm; codecs="' + vpv + '"',
 		audio: 'audio/webm; codecs="opus"'
+	},
+	transcoder: null, // set to func, such as web hook procedure
+	setTranscoder: function(cb) {
+		CT.stream.opts.transcoder = cb;
+	},
+	doPrompt: function(name, sub) {
+		return new CT.modal.Prompt({
+			defaultIndex: 0,
+			transition: "fade",
+			style: "single-choice",
+			data: [ sub || "Play Stream" ],
+			prompt: name || "Ready to stream?",
+			cb: CT.stream.opts.startWaiting
+		});
 	},
 	startWaiting: function() {
 		CT.stream.opts.waiting.forEach(function(w) {

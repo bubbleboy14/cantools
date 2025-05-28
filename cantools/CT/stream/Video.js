@@ -86,16 +86,7 @@ CT.stream.Video = CT.Class({
 		});
 	},
 	showPrompt: function() {
-		if (!this._prompt) {
-			this._prompt = new CT.modal.Prompt({
-				defaultIndex: 0,
-				transition: "fade",
-				style: "single-choice",
-				data: [ "Play Stream" ],
-				prompt: "Ready to stream?",
-				cb: CT.stream.opts.startWaiting
-			});
-		}
+		this._prompt = this._prompt || CT.stream.opts.doPrompt();
 		this._prompt.show();
 	},
 	hidePrompt: function() {
