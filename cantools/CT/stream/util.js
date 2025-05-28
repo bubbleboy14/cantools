@@ -125,9 +125,9 @@ var _sutil = CT.stream.util = {
 			if (displaySurface)
 				vo.displaySurface = displaySurface;
 		}
-		navigator.mediaDevices[mediaType || "getUserMedia"]({
+		CT.stream.opts.getter({
 			audio: true, video: vo
-		}).then(_sutil._recorder(ondata, onrecorder))["catch"](onfail || function(err) {
+		}, mediaType).then(_sutil._recorder(ondata, onrecorder))["catch"](onfail || function(err) {
 			CT.log.endTimer("record", "got error: " + err);
 		});
 	},
