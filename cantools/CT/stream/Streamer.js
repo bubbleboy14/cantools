@@ -20,7 +20,7 @@ CT.stream.Streamer = CT.Class({ // primarily useful for testing
 	init: function(opts) {
 		this.opts = CT.merge(opts, {
 			channel: "test",
-			video: new CT.stream.Video(opts.vopts)
+			video: new CT.stream.Video(opts && opts.vopts)
 		});
 	}
 });
