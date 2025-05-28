@@ -50,14 +50,14 @@ var stropts = CT.stream.opts = {
 	setTranscoder: function(cb) {
 		CT.stream.opts.transcoder = cb;
 	},
-	doPrompt: function(name, sub) {
+	doPrompt: function(name, sub, cb) {
 		return new CT.modal.Prompt({
 			defaultIndex: 0,
 			transition: "fade",
 			style: "single-choice",
 			data: [ sub || "Play Stream" ],
 			prompt: name || "Ready to stream?",
-			cb: CT.stream.opts.startWaiting
+			cb: cb || CT.stream.opts.startWaiting
 		});
 	},
 	startWaiting: function() {
