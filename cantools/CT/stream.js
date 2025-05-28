@@ -41,6 +41,12 @@ var stropts = CT.stream.opts = {
 	width: 320,
 	height: 240,
 	waiting: [],
+	mode: "camera",
+	getter: "getUserMedia",
+	getters: {
+		camera: "getUserMedia",
+		screenshare: "getDisplayMedia"
+	},
 	codecs: {
 		av: 'video/webm; codecs="' + vpv + ',opus"',
 		video: 'video/webm; codecs="' + vpv + '"',
@@ -49,6 +55,13 @@ var stropts = CT.stream.opts = {
 	transcoder: null, // set to func, such as web hook procedure
 	setTranscoder: function(cb) {
 		CT.stream.opts.transcoder = cb;
+	},
+	setMode: function(m) {
+		stropts.mode = m;
+		stropts.mropts.mimeType = stropts.modes[m];
+	},
+	getter: function(opts, m) {
+		return navigator.mediaDevices[stropts.getters[m || stropts.mode]](opts);
 	},
 	doPrompt: function(name, sub, cb) {
 		return new CT.modal.Prompt({
