@@ -327,7 +327,8 @@ CT.stream.Video = CT.Class({
 			videoClass: null,
 			videoId: null,
 			watermark: null,
-			mimeType: CT.stream.opts.codecs.av,
+//			mimeType: CT.stream.opts.codecs.av,
+			mimeType: CT.stream.opts.mropts.mimeType,
 			activeAudio: false,
 			onreset: null,
 			buttons: [], // only checked when frame is false
