@@ -9,16 +9,23 @@ CT.stream.Video = CT.Class({
 		this.setSourceBuffer();
 	},
 	_sourceUpdate: function() {
+		var msrstate = this.mediaSource.readyState;
 		this.log("_sourceUpdate", this._buffers.length,
-			(this.sourceBuffer && this.sourceBuffer.updating));//, this.mediaSource.readyState);
+			(this.sourceBuffer && this.sourceBuffer.updating), msrstate);
 		if (this.video.error) {
 			this.log("ERROR - RESET video", this.video.error);
 			this.reset();
+		} else if (msrstate == "closed") {
+			this.log("mediaSource readyState closed - recreating!");
+			this.setMediaSource();
 		} else if (this.sourceBuffer && !this.sourceBuffer.updating) {
 			if (this._buffers.length)
 				this.sourceBuffer.appendBuffer(this._buffers.shift());
-			else if (this.mediaSource.readyState == "open")
+			else if (msrstate == "open") {
+//				this.log("mediaSource readyState open - SKIPPING STREAM END!");
+				this.log("mediaSource readyState open - ending stream!");
 				this.mediaSource.endOfStream();
+			}
 		}
 	},
 	_error: function(e) {
