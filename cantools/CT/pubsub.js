@@ -242,7 +242,7 @@ CT.pubsub = {
 		CT.pubsub._.ws = new WebSocket(CT.pubsub._.protocol + "://" + host + ":" + port);
 		for (var action in CT.pubsub._.on)
 			CT.pubsub._.ws["on" + action] = CT.pubsub._.on[action];
-		window.addEventListener("beforeunload", function() {
+		window.addEventListener(CT.info.isFirefox ? "unload" : "beforeunload", function() {
 			onbeforeunload && onbeforeunload();
 			CT.pubsub._.write({ "action": "close" });
 		});
