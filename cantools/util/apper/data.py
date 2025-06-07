@@ -114,6 +114,16 @@ TEMPLATES = {
             'mdpi': '48x48',
             'hdpi': '72x72',
             'xhdpi': '96x96'
+        },
+        "env": {
+            "JAVA_HOME": {
+                "locater": "cacerts|grep jvm",
+                "splitter": "/lib/security"
+            },
+            "ANDROID_HOME": {
+                "locater": "android-sdk",
+                "splitter": "\n"
+            }
         }
     }
 }

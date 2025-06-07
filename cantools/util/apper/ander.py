@@ -1,6 +1,7 @@
 import os
 from fyg.util import confirm, selnum
 from cantools.util import log, cmd, output, mkdir, cp
+from cantools.util.system import envget, envset
 from cantools.util.admin import _which, javaver
 from cantools.util.io import ask
 from .data import TEMPLATES
@@ -48,8 +49,16 @@ class Android(object):
 			mkdir(wpath)
 			cmd(self.tmps["icons"]%(ipath, v, wpath))
 
+	def chenv(self):
+		for name, cfg in self.tmps["env"].items():
+			if not envget(name):
+				log("%s not set!"%(name,))
+				envset(name, ask("%s location"%(name,),
+					output("locate %s"%(cfg["locater"],)).split(cfg["splitter"]).pop(0)))
+
 	def apk(self):
 		if not confirm("build apk", True): return
+		self.chenv()
 		self.setMode(selnum(["debug", "release"]))
 		gcmd = self.debug and "assembleDebug" or "assemble"
 		if confirm("add stacktrace flag"):
@@ -66,13 +75,13 @@ class Android(object):
 		cmd("adb install build/outputs/apk/%s/%s.apk"%(self.mode, aname))
 
 def android(url=None):
-	if not _which("convert", "gradle", "adb"):
+	if not _which("java", "gradle", "adb", "convert"):
 		return log("build aborted!")
 	url = url or ask("url", "http://ct.mkult.co")
 	if "://" not in url:
 		url = "https://%s"%(url,)
 	parts = url.split("://").pop().split("/").pop(0).split(".")
+	name = ask("name", parts[0])
 	parts.reverse()
-	name = ask("name", parts[1])
 	pname = ask("package name", ".".join(parts))
 	Android(name, pname, url)
