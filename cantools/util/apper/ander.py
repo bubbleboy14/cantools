@@ -2,13 +2,8 @@ import os
 from fyg.util import confirm, selnum
 from cantools.util import log, cmd, output, mkdir, cp
 from cantools.util.admin import _which, javaver
+from cantools.util.io import ask
 from .data import TEMPLATES
-
-def ask(question, default=None):
-	q = "%s? "%(question,)
-	if default:
-		q = "%s [default: %s] "%(q, default)
-	return input(q) or default
 
 class Android(object):
 	def __init__(self, name, package, url):
