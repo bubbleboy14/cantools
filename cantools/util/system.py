@@ -71,6 +71,13 @@ def output(cline, sudo=False, silent=False, loud=False):
 	loud and log(output)
 	return output
 
+def envget(name):
+	return output("echo $%s"%(name,))
+
+def envset(name, val):
+	os.environ[name] = val
+	#cmd("export %s=%s"%(name, val))
+
 PYVER = sys.version_info[0] == 2 and "python" or "python3"
 
 def py(cline, sudo=False):
