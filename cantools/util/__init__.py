@@ -5,6 +5,7 @@ from .system import cp, sym, mkdir, sed, rm, py, pymod, cmd, output, indir
 from .data import getxls, gettsv, getcsv, getcsv_from_data, flatten, arr2csv, batch, token
 from .media import transcode, segment, hlsify, shouldMoveMoov, crop, resizep2, thumb, dlp
 from .admin import certs, screener
+from .apper import android
 
 def init_basic():
     os.path.isdir("emails") and sys.path.append("emails")

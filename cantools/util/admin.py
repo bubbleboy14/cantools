@@ -495,6 +495,12 @@ def phpver():
 	log(v)
 	return v
 
+def javaver():
+	if not _which("javac"): return
+	v = output("javac -version")[6:8]
+	log(v)
+	return v
+
 def withtmp(fdata, fun, owner=None, fname="_tmp"):
 	write(fdata, fname)
 	owner and cmd("chown %s:%s %s"%(owner, owner, fname), True)

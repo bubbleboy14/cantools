@@ -37,3 +37,9 @@ def write(data, fname="_tmp", isjson=False, ispretty=False, binary=False, append
 def writejson(data, fname): # fname doesn't include .json extension
     write(data, "%s.json"%(fname,), True)
     write(data, "%s-pretty.json"%(fname,), True, True)
+
+def ask(question, default=None):
+    q = "%s? "%(question,)
+    if default:
+        q = "%s [default: %s] "%(q, default)
+    return input(q) or default
