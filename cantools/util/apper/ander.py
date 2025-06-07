@@ -48,7 +48,7 @@ class Android(object):
 		if not confirm("build apk", True): return
 		self.debug = selnum(["debug", "release"]) == "debug"
 		gcmd = self.debug and "buildDebug" or "build"
-		if confirm("add stacktrace flag (recommended)", True):
+		if confirm("add stacktrace flag"):
 			gcmd = "%s --stacktrace"%(gcmd,)
 		if confirm("specify trustStore cacerts", True):
 			tsca = selnum(output("locate cacerts | grep java").split("\n"))

@@ -87,13 +87,9 @@ repositories {
 apply plugin: 'com.android.application'
 
 android {
-    namespace "%s"
+    namespace = "%s"
 
     compileSdkVersion 34
-
-    defaultConfig {
-        targetSdk 34
-    }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_%s
