@@ -91,6 +91,10 @@ android {
 
     compileSdkVersion 34
 
+    defaultConfig {
+        targetSdk = 34
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_%s
         targetCompatibility JavaVersion.VERSION_%s
