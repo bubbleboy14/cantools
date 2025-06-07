@@ -12,7 +12,7 @@ class Android(object):
 		self.package = package
 		self.dir = package.replace(".", "/")
 		self.tmps = TEMPLATES["android"]
-		self.bmode = "debug"
+		self.setMode()
 		self.dirs()
 		self.files()
 		self.icons()
@@ -20,6 +20,10 @@ class Android(object):
 		self.apk()
 		self.install()
 		log("goodbye")
+
+	def setMode(self, mode="debug"):
+		self.mode = mode
+		self.debug = mode == "debug"
 
 	def dirs(self):
 		if not confirm("assemble directory hierarchy", True): return
@@ -46,8 +50,8 @@ class Android(object):
 
 	def apk(self):
 		if not confirm("build apk", True): return
-		self.debug = selnum(["debug", "release"]) == "debug"
-		gcmd = self.debug and "buildDebug" or "build"
+		self.setMode(selnum(["debug", "release"]))
+		gcmd = self.debug and "assembleDebug" or "assemble"
 		if confirm("add stacktrace flag"):
 			gcmd = "%s --stacktrace"%(gcmd,)
 		if confirm("specify trustStore cacerts", True):
@@ -59,7 +63,7 @@ class Android(object):
 	def install(self):
 		if not confirm("install on device"): return
 		aname = self.debug and "%s-debug"%(self.name,) or self.name
-		cmd("adb install build/outputs/apk/%s.apk"%(aname,))
+		cmd("adb install build/outputs/apk/%s/%s.apk"%(self.mode, aname))
 
 def android(url=None):
 	if not _which("convert", "gradle", "adb"):
