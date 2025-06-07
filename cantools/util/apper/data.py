@@ -103,17 +103,17 @@ android {
 }"""
 
 TEMPLATES = {
-	"android": {
-		"manifest": AMAN,
-		"activity": AMAC,
-		"gradle": ABG,
-		"icons": "convert -background none %s -resize %s %s/ic_launcher.png",
+    "android": {
+        "manifest": AMAN,
+        "activity": AMAC,
+        "gradle": ABG,
+        "icons": "convert -background none %s -resize %s %s/ic_launcher.png",
         "tstore": "%s -Djavax.net.ssl.trustStore=%s -Djavax.net.ssl.trustStorePassword=%s",
-		"isizes": {
-			'ldpi': '36x36',
-			'mdpi': '48x48',
-			'hdpi': '72x72',
-			'xhdpi': '96x96'
-		}
-	}
+        "isizes": {
+            'ldpi': '36x36',
+            'mdpi': '48x48',
+            'hdpi': '72x72',
+            'xhdpi': '96x96'
+        }
+    }
 }
