@@ -20,7 +20,7 @@ AMAN = """<?xml version="1.0" encoding="utf-8"?>
             android:name="%s.MainActivity"
             android:configChanges="orientation|screenSize"
             android:label="%s"
-            android:exported="false" >
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -48,6 +48,7 @@ public class MainActivity extends Activity {
         getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         mWebView = new WebView(this);
         mWebView.getSettings().setJavaScriptEnabled(true);
+        mWebView.getSettings().setDomStorageEnabled(true);
         mWebView.loadUrl("%s");
         mWebView.setWebViewClient(new WebViewClient() {
             @Override

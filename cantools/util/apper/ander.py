@@ -33,7 +33,7 @@ class Android(object):
 	def files(self):
 		if not confirm("create project files", True): return
 		jv = javaver()
-		cp(self.tmps["manifest"]%(self.name, self.name, self.name),
+		cp(self.tmps["manifest"]%(self.name, self.package, self.name),
 			"%s/src/main/AndroidManifest.xml"%(self.name))
 		cp(self.tmps["activity"]%(self.package, self.url),
 			"%s/src/main/java/%s/MainActivity.java"%(self.name, self.dir))
