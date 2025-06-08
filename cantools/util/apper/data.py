@@ -9,8 +9,11 @@ AMAN = """<?xml version="1.0" encoding="utf-8"?>
 
     <uses-sdk />
 
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.INTERNET" />
-    
+    <uses-permission android:name="android.permission.CAMERA" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -23,7 +26,6 @@ AMAN = """<?xml version="1.0" encoding="utf-8"?>
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -32,23 +34,31 @@ AMAN = """<?xml version="1.0" encoding="utf-8"?>
 """
 
 AMAC = """package %s;
+import android.Manifest;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Window;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
- 
+import android.webkit.WebChromeClient;
+import android.webkit.PermissionRequest;
+import android.content.pm.PackageManager;
+import androidx.core.content.ContextCompat;
+
 public class MainActivity extends Activity {
     private WebView mWebView;
- 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MainActivity thaz = this;
         getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         mWebView = new WebView(this);
+        mWebView.getSettings().setMediaPlaybackRequiresUserGesture(false);
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.getSettings().setDomStorageEnabled(true);
+        mWebView.getSettings().setUseWideViewPort(true);
         mWebView.loadUrl("%s");
         mWebView.setWebViewClient(new WebViewClient() {
             @Override
@@ -57,10 +67,29 @@ public class MainActivity extends Activity {
                 return true;
             }
         });
- 
+        mWebView.setWebChromeClient(new WebChromeClient(){
+            // Need to accept permissions to use the camera
+            @Override
+            public void onPermissionRequest(final PermissionRequest request) {
+                // grants permission for app. video not showing
+                if (ContextCompat.checkSelfPermission(thaz, Manifest.permission.CAMERA)
+                    != PackageManager.PERMISSION_GRANTED
+                ) {
+                    requestPermissions(new String[]{Manifest.permission.CAMERA}, 1010);
+                }
+
+                if (ContextCompat.checkSelfPermission(thaz, Manifest.permission.RECORD_AUDIO)
+                    != PackageManager.PERMISSION_GRANTED
+                ) {
+                    requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, 1010);
+                }
+
+                request.grant(request.getResources()); // is this right?
+            }
+        });
         this.setContentView(mWebView);
     }
- 
+
     @Override
     public boolean onKeyDown(final int keyCode, final KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_BACK) && mWebView.canGoBack()) {
@@ -87,6 +116,10 @@ repositories {
 
 apply plugin: 'com.android.application'
 
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+}
+
 android {
     namespace = "%s"
 
@@ -94,6 +127,7 @@ android {
 
     defaultConfig {
         targetSdk = 34
+        minSdkVersion = 14
     }
 
     compileOptions {
@@ -102,11 +136,15 @@ android {
     }
 }"""
 
+AGP = """android.useAndroidX=true
+android.enableJetifier=true"""
+
 TEMPLATES = {
     "android": {
         "manifest": AMAN,
         "activity": AMAC,
         "gradle": ABG,
+        "properties": AGP,
         "icons": "convert -background none %s -resize %s %s/ic_launcher.png",
         "tstore": "%s -Djavax.net.ssl.trustStore=%s -Djavax.net.ssl.trustStorePassword=%s",
         "isizes": {

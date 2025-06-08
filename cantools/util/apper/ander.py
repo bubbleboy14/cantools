@@ -40,6 +40,7 @@ class Android(object):
 			"%s/src/main/java/%s/MainActivity.java"%(self.name, self.dir))
 		cp(self.tmps["gradle"]%(self.package, jv, jv),
 			"%s/build.gradle"%(self.name,))
+		cp(self.tmps["properties"], "%s/gradle.properties"%(self.name,))
 
 	def icons(self):
 		if not confirm("generate icons", True): return
