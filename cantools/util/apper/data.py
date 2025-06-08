@@ -9,6 +9,7 @@ AMAN = """<?xml version="1.0" encoding="utf-8"?>
 
     <uses-sdk />
 
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
@@ -75,9 +76,15 @@ public class MainActivity extends Activity {
                     != PackageManager.PERMISSION_GRANTED
                 ) {
                     requestPermissions(new String[]{Manifest.permission.CAMERA}, 1010);
-                } else {
-                    request.grant(request.getResources());
                 }
+
+                if (ContextCompat.checkSelfPermission(thaz, Manifest.permission.RECORD_AUDIO)
+                    != PackageManager.PERMISSION_GRANTED
+                ) {
+                    requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, 1010);
+                }
+
+                request.grant(request.getResources()); // is this right?
             }
         });
         this.setContentView(mWebView);
