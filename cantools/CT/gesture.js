@@ -16,7 +16,7 @@ CT.gesture = {
 	preventDefault: true,
 	thresholds: {
 		joy: {
-			maxDistance: 20
+			maxDistance: 40
 		},
 		swipe: {
 			minDistance: 35,
@@ -226,7 +226,7 @@ CT.gesture = {
 				&& (diff.distance > t.swipe.minDistance) ) // swipe
 				CT.gesture.triggerSwipe(node, diff.direction,
 					diff.distance, diff.x, diff.y,
-					CT.gesture.pixelsPerSecond(diff.distance, timeDiff, "swipe"));
+					CT.gesture.pixelsPerSecond(diff.distance, timeDiff, "swipe"), v);
 			else if ( (timeDiff < t.tap.maxTime)
 				&& (diff.distance < t.tap.maxDistance) ) { // tap
 				v.tapCount += 1;
@@ -366,11 +366,11 @@ CT.gesture = {
 		if (handlers) for (var i = 0; i < handlers.length; i++)
 			handlers[i](normalizedDistance, midpoint);
 	},
-	triggerSwipe: function(node, direction, distance, dx, dy, pixelsPerSecond) {
+	triggerSwipe: function(node, direction, distance, dx, dy, pixelsPerSecond, v) {
 		var handlers = CT.gesture.handlers.swipe[node.gid];
 		hasSwiped = true;
 		if (handlers) for (var i = 0; i < handlers.length; i++)
-			handlers[i](direction, distance, dx, dy, pixelsPerSecond);
+			handlers[i](direction, distance, dx, dy, pixelsPerSecond, v);
 	},
 	triggerTap: function(node, pos) {
 		var v = node.gvars;
