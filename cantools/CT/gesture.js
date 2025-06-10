@@ -12,8 +12,12 @@ The main one to look out for is listen, defined below.
 
 CT.gesture = {
 	gid: 0,
+	_joy: false,
 	preventDefault: true,
 	thresholds: {
+		joy: {
+			maxDistance: 20
+		},
 		swipe: {
 			minDistance: 35,
 			maxTime: 400,
@@ -81,7 +85,7 @@ CT.gesture = {
 		Stop: "mouseup",
 		Move: "mousemove"
 	},
-	handlers: { drag: {}, swipe: {}, tap: {}, up: {}, down: {}, hold: {}, pinch: {}, hover: {}, wheel: {} },
+	handlers: { joy: {}, drag: {}, swipe: {}, tap: {}, up: {}, down: {}, hold: {}, pinch: {}, hover: {}, wheel: {} },
 	setThreshold: function(eventName, constraint, val) {
 		CT.gesture.thresholds[eventName][constraint] = val;
 	},
@@ -95,6 +99,34 @@ CT.gesture = {
 					else if (suffix == "DP")
 						CT.gesture.thresholds[gest][constraint] *= 2;
 				}
+	},
+	setJoy: function(active) {
+		var j = CT.gesture._joy = active,
+			nclass = "abs mosthigh notouch round translucent hidden";
+		if (active) {
+			j = CT.gesture._joy = {
+				start: CT.dom.div(null, nclass + " w50p h50p redback"),
+				last: CT.dom.div(null, nclass + " w30p h30p blueback")
+			};
+			CT.dom.doWhenNodeExists("ctmain", function() {
+				j.last._offer = 15;
+				j.start._offer = 25;
+				CT.dom.addBody(j.last);
+				CT.dom.addBody(j.start);
+			});
+		}
+	},
+	joyStart: function() {
+		var n, j = CT.gesture._joy;
+		if (j)
+			for (n in j)
+				CT.dom.show(j[n]);
+	},
+	joyStop: function() {
+		var n, j = CT.gesture._joy;
+		if (j)
+			for (n in j)
+				CT.dom.hide(j[n]);
 	},
 	getPos: function(e) {
 		if (e.x == undefined) {
@@ -189,6 +221,7 @@ CT.gesture = {
 		v.active = !!(e.touches && e.touches.length);
 
 		if (!v.active && !v.iosPinching) { // last finger raised
+			CT.gesture.joyStop();
 			if ( (timeDiff < t.swipe.maxTime)
 				&& (diff.distance > t.swipe.minDistance) ) // swipe
 				CT.gesture.triggerSwipe(node, diff.direction,
@@ -206,16 +239,30 @@ CT.gesture = {
 		return CT.gesture.triggerUp(node, delayed);
 	},
 	onMove: function(e, node) {
-		var v = node.gvars, pos = CT.gesture.getPos(e);
+		var v = node.gvars, pos = CT.gesture.getPos(e), tmd,
+			pdiff, diff, rval, tdiff, now, psnap, jnode, jstyle;
 		if (v.active) {
-			var pdiff,
-				diff = CT.gesture.getDiff(v.lastPos, pos),
-				now = Date.now(),
-				tdiff = now - v.dragTime;
+			now = Date.now();
 			v.lastPos = pos;
 			v.dragTime = now;
 			if (!CT.gesture.isMulti(e)) {
-				var rval = CT.info.mobile && CT.gesture.triggerHover(node, pos);
+				rval = CT.info.mobile && CT.gesture.triggerHover(node, pos);
+				if (CT.gesture._joy) {
+					tmd = CT.gesture.thresholds.joy.maxDistance;
+					for (psnap in CT.gesture._joy) {
+						jnode = CT.gesture._joy[psnap];
+						jstyle = jnode.style;
+						jstyle.top = (v[psnap + "Pos"].y - jnode._offer) + "px";
+						jstyle.left = (v[psnap + "Pos"].x - jnode._offer) + "px";
+					}
+					CT.gesture.joyStart();
+					return CT.gesture.triggerJoy(node,
+						Math.max(-tmd, Math.min(tmd, v.lastPos.x - v.startPos.x)),
+						Math.max(-tmd, Math.min(tmd, v.lastPos.y - v.startPos.y)),
+						v.startPos, v.lastPos) || rval;
+				}
+				tdiff = now - v.dragTime;
+				diff = CT.gesture.getDiff(v.lastPos, pos);
 				return CT.gesture.triggerDrag(node, diff.direction,
 					diff.distance, diff.x, diff.y,
 					CT.gesture.pixelsPerSecond(diff.distance, tdiff, "drag")) || rval;
@@ -332,6 +379,13 @@ CT.gesture = {
 			handlers[i](v.tapCount, pos);
 		v.tapCount = 0;
 		v.tapTimeout = null;
+	},
+	triggerJoy: function(node, dx, dy, startPos, lastPos) {
+		var returnVal = false;
+		var handlers = CT.gesture.handlers.joy[node.gid];
+		if (handlers) for (var i = 0; i < handlers.length; i++)
+			returnVal = handlers[i](dx, dy, startPos, lastPos) || returnVal;
+		return returnVal;
 	},
 	triggerDrag: function(node, direction, distance, dx, dy, pixelsPerSecond) {
 		var returnVal = false;

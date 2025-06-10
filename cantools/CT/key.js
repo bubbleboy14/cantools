@@ -40,7 +40,7 @@ CT.key = {
 			character = CT.key._codes[code];
 		CT.data.append(CT.key._downs, character);
 		CT.key._setEvent(e);
-		CT.key._active(character) && CT.key._downcbs[character] && CT.key._downcbs[character]();
+		CT.key.trig(character, true);
 	},
 	_onUp: function(e) {
 		e = e || window.event;
@@ -48,7 +48,7 @@ CT.key = {
 			character = CT.key._codes[code];
 		CT.data.remove(CT.key._downs, character);
 		CT.key._setEvent(e);
-		CT.key._active(character) && CT.key._cbs[character] && CT.key._cbs[character]();
+		CT.key.trig(character);
 	},
 	_setEvent: function(event) {
 		CT.key._event = event;
@@ -66,6 +66,10 @@ CT.key = {
 	},
 	stopProp: function() {
 		CT.key._event.stopPropagation();
+	},
+	trig: function(char, down) {
+		var k = CT.key, cbs = down ? k._downcbs : k._cbs;
+		k._active(char) && cbs[char] && cbs[char]();
 	},
 	clear: function(character, noescape) {
 		var eu, ed, k = CT.key, e, escapers = {},
