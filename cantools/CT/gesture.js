@@ -101,15 +101,18 @@ CT.gesture = {
 				}
 	},
 	setJoy: function(active) {
-		CT.gesture._joy = active;
+		var j = CT.gesture._joy = active,
+			nclass = "abs mosthigh notouch round translucent hidden";
 		if (active) {
-			CT.gesture._joy = {
-				start: CT.dom.div(null, "abs mosthigh notouch w50p h50p redback round hidden"),
-				last: CT.dom.div(null, "abs mosthigh notouch w30p h30p blueback round hidden")
+			j = CT.gesture._joy = {
+				start: CT.dom.div(null, nclass + " w50p h50p redback"),
+				last: CT.dom.div(null, nclass + " w30p h30p blueback")
 			};
 			CT.dom.doWhenNodeExists("ctmain", function() {
-				CT.dom.addBody(CT.gesture._joy.start);
-				CT.dom.addBody(CT.gesture._joy.last);
+				j.last._offer = 15;
+				j.start._offer = 25;
+				CT.dom.addBody(j.last);
+				CT.dom.addBody(j.start);
 			});
 		}
 	},
@@ -237,7 +240,7 @@ CT.gesture = {
 	},
 	onMove: function(e, node) {
 		var v = node.gvars, pos = CT.gesture.getPos(e), tmd,
-			pdiff, diff, rval, tdiff, now, psnap, jstyle;
+			pdiff, diff, rval, tdiff, now, psnap, jnode, jstyle;
 		if (v.active) {
 			now = Date.now();
 			v.lastPos = pos;
@@ -247,9 +250,10 @@ CT.gesture = {
 				if (CT.gesture._joy) {
 					tmd = CT.gesture.thresholds.joy.maxDistance;
 					for (psnap in CT.gesture._joy) {
-						jstyle = CT.gesture._joy[psnap].style;
-						jstyle.top = (v[psnap + "Pos"].y - 25) + "px";
-						jstyle.left = (v[psnap + "Pos"].x - 25) + "px";
+						jnode = CT.gesture._joy[psnap];
+						jstyle = jnode.style;
+						jstyle.top = (v[psnap + "Pos"].y - jnode._offer) + "px";
+						jstyle.left = (v[psnap + "Pos"].x - jnode._offer) + "px";
 					}
 					CT.gesture.joyStart();
 					return CT.gesture.triggerJoy(node,
