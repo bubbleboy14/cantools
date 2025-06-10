@@ -105,12 +105,12 @@ CT.gesture = {
 			nclass = "abs mosthigh notouch round translucent hidden";
 		if (active) {
 			j = CT.gesture._joy = {
-				start: CT.dom.div(null, nclass + " w50p h50p redback"),
-				last: CT.dom.div(null, nclass + " w30p h30p blueback")
+				start: CT.dom.div(null, nclass + " w80p h80p redback"),
+				last: CT.dom.div(null, nclass + " w50p h50p blueback")
 			};
 			CT.dom.doWhenNodeExists("ctmain", function() {
-				j.last._offer = 15;
-				j.start._offer = 25;
+				j.last._offer = 25;
+				j.start._offer = 40;
 				CT.dom.addBody(j.last);
 				CT.dom.addBody(j.start);
 			});
