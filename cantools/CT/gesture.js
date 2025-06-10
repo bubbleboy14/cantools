@@ -16,7 +16,7 @@ CT.gesture = {
 	preventDefault: true,
 	thresholds: {
 		joy: {
-			maxDistance: 40
+			maxDistance: 60
 		},
 		swipe: {
 			minDistance: 35,
