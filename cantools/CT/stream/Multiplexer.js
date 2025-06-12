@@ -31,6 +31,10 @@ CT.stream.Multiplexer = CT.Class({
 				this.opts.onstop();
 		}
 	},
+	sub: function(channel, user, meta) {
+		var oz = this.opts, chan = this.channels[channel], vid = chan[oz.user];
+		vid && oz.onsub && oz.onsub();
+	},
 	stop: function() {
 		for (var chan in this.channels)
 			this.leave(chan);
@@ -122,8 +126,9 @@ CT.stream.Multiplexer = CT.Class({
 			node: document.body,
 			autoconnect: true,
 			singlechannel: false,
-			onstart: null,
+			onsub: null,
 			onstop: null,
+			onstart: null,
 			onerror: null,
 			wserror: null,
 			chat: true,
@@ -151,6 +156,7 @@ CT.stream.Multiplexer = CT.Class({
 		this.channels = {}; // each channel can carry multiple video streams
 		CT.pubsub.set_cb("message", this.update);
 		CT.pubsub.set_cb("meta", this.meta);
+		CT.pubsub.set_cb("join", this.sub);
 		if (opts.closeunsubs)
 			CT.pubsub.set_cb("leave", this.unsub);
 		opts.wserror && CT.pubsub.set_cb("wserror", opts.wserror);
