@@ -1747,4 +1747,10 @@ div.mce-fullscreen {
     #ctheader.hamburgize #hambo {
         display: block;
     }
+    .ctlist {
+        width: 20%;
+    }
+    .ctcontent {
+        left: 20%;
+    }
 }
