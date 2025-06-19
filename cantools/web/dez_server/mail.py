@@ -176,6 +176,11 @@ class Reader(object):
 					bod = part
 		return bod.get_payload(decode=True).decode()
 
+	def show(self, msg):
+		print("\n\nfrom:", msg['from'])
+		print("subject:", msg['subject'])
+		print("\nbody:", self.read(msg))
+
 	def inbox(self, count=1, criteria="UNSEEN", critarg=None, mailbox="inbox"):
 		msgs = []
 		self.connect(mailbox)
@@ -186,9 +191,57 @@ class Reader(object):
 
 	def view(self, count=1, criteria="UNSEEN", critarg=None, mailbox="inbox"):
 		for msg in self.inbox(count, criteria, critarg, mailbox):
-			print("\n\nfrom:", msg['from'])
-			print("subject:", msg['subject'])
-			print("\nbody:", self.read(msg))
+			self.show(msg)
 
 reader = Reader(config.mailer)
 check_inbox = reader.inbox
+
+class Scanner(object):
+	def __init__(self, reader=reader):
+		self.scanners = {}
+		self.reader = reader
+		self.ticker = rel.timeout(None, self.tick)
+
+	def log(self, *msg):
+		log("Scanner : %s"%(" ".join(msg),))
+
+	def criteria(self, sender=None, subject=None, unseen=True):
+		crits = []
+		if sender:
+			crits.append('FROM "%s"'%(sender,))
+		if subject:
+			crits.append('SUBJECT "%s"'%(subject,))
+		if unseen:
+			crits.append("UNSEEN")
+		return "(%s)"%(" ".join(crits),)
+
+	def scan(self, sender=None, subject=None, unseen=True, count=1, mailbox="inbox"):
+		return self.check(self.criteria(sender, subject, unseen), count, mailbox)
+
+	def check(self, crit="UNSEEN", count=1, mailbox="inbox"):
+		self.log("scanning", mailbox, "for", crit)
+		return self.reader.inbox(count, crit, mailbox=mailbox)
+
+	def tick(self):
+		for crit, scanner in self.scanners.items():
+			msgs = self.check(crit, scanner["count"], scanner["mailbox"])
+			if msgs:
+				for msg in msgs:
+					scanner["cb"](msg)
+				del self.scanners[crit]
+		return self.scanners # Falsy when empty
+
+	def on(self, scanopts, cb=None, count=1, mailbox="inbox"):
+		if not self.scanners:
+			self.log("starting scanner")
+			self.ticker.add(config.mailscantick)
+		crit = self.criteria(scanopts)
+		self.log("watching for", crit)
+		self.scanners[crit] = {
+			"count": count,
+			"mailbox": mailbox,
+			"cb": cb or self.reader.show
+		}
+
+scanner = Scanner(reader)
+on_mail = scanner.on

@@ -108,6 +108,7 @@ cfg = {
 	"gmailer": False,
 	"mailer": None, # (override w/ MAILER)
 	"mailhtml": True,
+	"mailscantick": 2,
 	"pubsub": {
 		"host": "localhost",
 		"port": 8888,
