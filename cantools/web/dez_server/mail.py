@@ -223,12 +223,15 @@ class Scanner(object):
 		return self.reader.inbox(count, crit, mailbox=mailbox)
 
 	def tick(self):
+		founds = []
 		for crit, scanner in self.scanners.items():
 			msgs = self.check(crit, scanner["count"], scanner["mailbox"])
 			if msgs:
 				for msg in msgs:
 					scanner["cb"](msg)
-				del self.scanners[crit]
+				founds.push(crit)
+		for found in founds:
+			del self.scanners[found]
 		return self.scanners # Falsy when empty
 
 	def on(self, scanopts, cb=None, count=1, mailbox="inbox"):
