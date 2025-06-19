@@ -235,7 +235,7 @@ class Scanner(object):
 		if not self.scanners:
 			self.log("starting scanner")
 			self.ticker.add(config.mailscantick)
-		crit = self.criteria(scanopts)
+		crit = self.criteria(**scanopts)
 		self.log("watching for", crit)
 		self.scanners[crit] = {
 			"count": count,
