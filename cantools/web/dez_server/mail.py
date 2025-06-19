@@ -229,7 +229,7 @@ class Scanner(object):
 			if msgs:
 				for msg in msgs:
 					scanner["cb"](msg)
-				founds.push(crit)
+				founds.append(crit)
 		for found in founds:
 			del self.scanners[found]
 		return self.scanners # Falsy when empty
