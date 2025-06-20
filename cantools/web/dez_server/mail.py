@@ -177,9 +177,11 @@ class Reader(object):
 		return bod.get_payload(decode=True).decode()
 
 	def show(self, msg):
+		body = self.read(msg)
 		print("\n\nfrom:", msg['from'])
 		print("subject:", msg['subject'])
-		print("\nbody:", self.read(msg))
+		print("\nbody:", body)
+		return body
 
 	def inbox(self, count=1, criteria="UNSEEN", critarg=None, mailbox="inbox"):
 		msgs = []
