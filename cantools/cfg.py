@@ -43,6 +43,7 @@ cfg = {
 		"protocol": "http",
 		"log": None,
 		"contacts": [],
+		"reportees": [],
 		"whitelist": [],
 		"monitor": {
 			"interval": 5,
@@ -108,6 +109,7 @@ cfg = {
 	"gmailer": False,
 	"mailer": None, # (override w/ MAILER)
 	"mailhtml": True,
+	"mailoud": False,
 	"mailscantick": 2,
 	"pubsub": {
 		"host": "localhost",
