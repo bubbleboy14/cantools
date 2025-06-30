@@ -155,11 +155,11 @@ TEMPLATES = {
         },
         "env": {
             "JAVA_HOME": {
-                "locater": "cacerts|grep jvm",
+                "locater": "cacerts|grep jvm/java-_JV_-",
                 "splitter": "/lib/security"
             },
             "ANDROID_HOME": {
-                "locater": "android-sdk",
+                "locater": "/lib/android-sdk",
                 "splitter": "\n"
             }
         }

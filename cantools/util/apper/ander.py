@@ -53,12 +53,12 @@ class Android(object):
 
 	def files(self):
 		if not self.conf("create project files", True): return
-		jv = javaver()
+		self.jv = javaver()
 		cp(self.tmps["manifest"]%(self.name, self.package, self.name),
 			"%s/src/main/AndroidManifest.xml"%(self.name))
 		cp(self.tmps["activity"]%(self.package, self.url),
 			"%s/src/main/java/%s/MainActivity.java"%(self.name, self.dir))
-		cp(self.tmps["gradle"]%(self.package, jv, jv),
+		cp(self.tmps["gradle"]%(self.package, self.jv, self.jv),
 			"%s/build.gradle"%(self.name,))
 		cp(self.tmps["properties"], "%s/gradle.properties"%(self.name,))
 
@@ -75,7 +75,8 @@ class Android(object):
 			if not envget(name):
 				log("%s not set!"%(name,))
 				envset(name, self.ask("%s location"%(name,),
-					output("locate %s"%(cfg["locater"],)).split(cfg["splitter"]).pop(0)))
+					output("locate %s"%(cfg["locater"].replace("_JV_",
+						self.jv),)).split(cfg["splitter"]).pop(0)))
 
 	def apk(self):
 		if not self.conf("build apk", True): return
