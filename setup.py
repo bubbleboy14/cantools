@@ -21,10 +21,10 @@ setup(
     ],
     zip_safe = False,
     install_requires = [
-        "fyg >= 0.1.5",
+        "fyg >= 0.1.6",
         "rel >= 0.4.9.20",
         "dez >= 0.10.10.31",
-        "catmail >= 0.1.5",
+        "catmail >= 0.1.6",
         "requests >= 2.3.0",
 #        "jsmin >= 2.2.2",
         "sqlalchemy >= 2.0.30",
