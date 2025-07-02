@@ -19,7 +19,7 @@ class Kvox(object):
 
 	def token2visemes(self, token, visemes):
 		self.log("token2visemes", token.text, token.phonemes, token.start_ts, token.end_ts)
-		phos = token.phonemes
+		phos = token.text # phonemes are full of unicode....
 		step = 1000 * (token.end_ts - token.start_ts) / len(phos)
 		t = 1000 * token.start_ts
 		for pho in phos:
