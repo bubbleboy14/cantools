@@ -41,7 +41,7 @@ class Kvox(object):
 		import soundfile as sf
 		pipeline = self.getpipe(lang_code)
 		nothing, tokens = pipeline.g2p(text)
-		for result in pipeline.generate_from_tokens(tokens=tokens, voice=voice, speed=int(speed)):
+		for result in pipeline.generate_from_tokens(tokens=tokens, voice=voice, speed=float(speed)):
 			self.log(result.phonemes)
 			vz = self.tokens2visemes(result.tokens)
 			vname = "%s.json"%(filename,)
