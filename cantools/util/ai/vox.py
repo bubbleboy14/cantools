@@ -1,4 +1,23 @@
-KPZ = {}
+
+class Kvox(object):
+	def __init__(self):
+		self.kpipes = {}
+
+	def getpipe(self, lang_code):
+		from kokoro import KPipeline
+		if lang_code not in self.kpipes:
+			self.kpipes[lang_code] = KPipeline(lang_code=lang_code)
+		return self.kpipes[lang_code]
+
+	def __call__(self, text, voice="af_heart", speed=1, lang_code='a', filename="tts", filetype="wav"):
+		import soundfile as sf
+		pipeline = self.getpipe(lang_code)
+		generator = pipeline(text, voice=voice, speed=int(speed))
+		for i, (gs, ps, audio) in enumerate(generator):
+			print(i, gs, ps)
+			sf.write("%s%s.%s"%(filename, i, filetype), audio, 24000)
+
+kvox = Kvox()
 VAGENT = None
 
 def vagent():
@@ -6,19 +25,8 @@ def vagent():
 	if not VAGENT:
 		from venvr import getagent
 		VAGENT = getagent("kovo", ["kokoro", "soundfile"])
-		VAGENT.register(kvox)
+		VAGENT.register(Kvox)
 	return VAGENT
-
-def kvox(text, voice="af_heart", speed=1, lang_code='a', filename="tts", filetype="wav", kcache={}):
-	from kokoro import KPipeline
-	import soundfile as sf
-	if lang_code not in kcache:
-		kcache[lang_code] = KPipeline(lang_code=lang_code)
-	pipeline = kcache[lang_code]
-	generator = pipeline(text, voice=voice, speed=int(speed))
-	for i, (gs, ps, audio) in enumerate(generator):
-		print(i, gs, ps)
-		sf.write("%s%s.%s"%(filename, i, filetype), audio, 24000)
 
 def vox(text, voice="af_heart", speed=1, lang_code='a', filename="tts", filetype="wav"):
 	try:
@@ -27,4 +35,4 @@ def vox(text, voice="af_heart", speed=1, lang_code='a', filename="tts", filetype
 		kvox(text, voice, speed, lang_code, filename, filetype, KPZ)
 	except:
 		print("no kokoro - using venvr")
-		vagent().run("kvox", text, voice, speed, lang_code, filename, filetype)
+		vagent().run("Kvox", text, voice, speed, lang_code, filename, filetype)
