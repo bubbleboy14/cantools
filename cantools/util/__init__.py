@@ -3,7 +3,7 @@ from .io import read, write, writejson, confirm
 from .reporting import set_log, close_log, log, set_error, error, start_timer, end_timer
 from .system import cp, sym, mkdir, sed, rm, py, pymod, cmd, output, indir
 from .data import getxls, gettsv, getcsv, getcsv_from_data, flatten, arr2csv, batch, token
-from .media import transcode, segment, hlsify, shouldMoveMoov, crop, resizep2, thumb, dlp
+from .media import transcode, segment, hlsify, shouldMoveMoov, crop, resizep2, thumb, dlp, repitch
 from .admin import certs, screener
 from .apper import android
 from .ai import tox, vox
