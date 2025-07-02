@@ -48,7 +48,7 @@ class Kvox(object):
 			aname = "%s.%s"%(filename, filetype)
 			self.log("writing", vname)
 			with open(vname, "w") as f:
-				f.write("\n".join([json.dumps(v) for v in vz]))
+				f.write("%s\n"%("\n".join([json.dumps(v) for v in vz]),))
 			self.log("writing", aname)
 			sf.write(aname, result.audio, 24000)
 
