@@ -6,6 +6,7 @@ from .data import getxls, gettsv, getcsv, getcsv_from_data, flatten, arr2csv, ba
 from .media import transcode, segment, hlsify, shouldMoveMoov, crop, resizep2, thumb, dlp
 from .admin import certs, screener
 from .apper import android
+from .ai import tox, vox
 
 def init_basic():
     os.path.isdir("emails") and sys.path.append("emails")
