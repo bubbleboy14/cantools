@@ -36,29 +36,20 @@ class Kvox(object):
 		visemes.append(self.vi(t, "sil"))
 		return visemes
 
-	def __call__(self, text, voice="af_heart", speed=1, lang_code='a', filename="tts", filetype="wav"):
-		import json
-		import soundfile as sf
+	def __call__(self, text, voice="af_heart", speed=1, lang_code='a', filename="tts"):
+		import json, soundfile
 		pipeline = self.getpipe(lang_code)
 		nothing, tokens = pipeline.g2p(text)
 		for result in pipeline.generate_from_tokens(tokens=tokens, voice=voice, speed=float(speed)):
 			self.log(result.phonemes)
 			vz = self.tokens2visemes(result.tokens)
 			vname = "%s.json"%(filename,)
-			aname = "%s.%s"%(filename, filetype)
+			aname = "%s.mp3"%(filename,)
 			self.log("writing", vname)
 			with open(vname, "w") as f:
 				f.write("%s\n"%("\n".join([json.dumps(v) for v in vz]),))
 			self.log("writing", aname)
-			sf.write(aname, result.audio, 24000)
-
-	def __call__NOPHOTS(self, text, voice="af_heart", speed=1, lang_code='a', filename="tts", filetype="wav"):
-		import soundfile as sf
-		pipeline = self.getpipe(lang_code)
-		generator = pipeline(text, voice=voice, speed=int(speed))
-		for i, (gs, ps, audio) in enumerate(generator):
-			print(i, gs, ps)
-			sf.write("%s%s.%s"%(filename, i, filetype), audio, 24000)
+			soundfile.write(aname, result.audio, 24000)
 
 VAGENT = None
 kvox = Kvox()
@@ -77,11 +68,11 @@ def vagent():
 		VAGENT.register(Kvox)
 	return VAGENT
 
-def vox(text, voice="af_heart", speed=1, lang_code='a', filename="tts", filetype="wav"):
+def vox(text, voice="af_heart", speed=1, lang_code='a', filename="tts"):
 	try:
 		import kokoro
 		print("found kokoro")
-		kvox(text, voice, speed, lang_code, filename, filetype, KPZ)
+		kvox(text, voice, speed, lang_code, filename)
 	except:
 		print("no kokoro - using venvr")
-		vagent().run("Kvox", text, voice, speed, lang_code, filename, filetype)
+		vagent().run("Kvox", text, voice, speed, lang_code, filename)
