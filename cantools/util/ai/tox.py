@@ -1,3 +1,5 @@
+import random
+
 DDGS = None
 delimiases = {
 	"False": False,
