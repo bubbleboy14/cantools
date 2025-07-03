@@ -1,10 +1,11 @@
 
 class Kvox(object):
-	def __init__(self):
+	def __init__(self, log=print):
+		self.logger = log
 		self.kpipes = {}
 
 	def log(self, *msg):
-		print("Kvox", *msg)
+		self.logger("Kvox", *msg)
 
 	def getpipe(self, lang_code):
 		from kokoro import KPipeline
