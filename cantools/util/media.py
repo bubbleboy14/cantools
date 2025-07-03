@@ -112,6 +112,12 @@ def hlsify(blobpath, check=False):
 # audio (ffmpeg)
 #
 
+def repitch(fname, pitch, ext="mp3"):
+	log("repitch", pitch, fname)
+	cmd('ffmpeg -i %s.%s -af "rubberband=pitch=%s" %s-tmp.%s'%(fname,
+		ext, pitch, fname, ext))
+	cmd("mv %s-tmp.%s %s.%s"%(fname, ext, fname, ext))
+
 def mp3ize(ext=".wav", path="."):
 	fnames = os.listdir(path)
 	log("you asked for it! scanning %s files for %s"%(len(fnames), ext), important=True)
