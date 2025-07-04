@@ -2,5 +2,5 @@
 
 gmodels = [] # ...
 
-def g4f(statement, identity):
+def g4free(statement, identity):
 	pass
