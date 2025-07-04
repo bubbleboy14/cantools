@@ -1,4 +1,4 @@
-from .tox import tox, fzn, duck, pb
+from .tox import tox, g4f, fzn, duck, pb
 from .vox import vox, kvoices
 
 def tellme(prompt, voice="random", identity="gpt-4o-mini", filename="tts", unsaid=False, silent=False):
