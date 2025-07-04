@@ -1,9 +1,8 @@
-from .tox import tox
+from .tox import tox, fzn, ddg, pb
 from .vox import vox, kvoices
 
-def tellme(prompt, voice="random", model="o3-mini", filename="tts", full=False, unstripped=False, unsaid=False, silent=False):
-	print("tellme(%s, %s, %s)"%(voice, model, filename), prompt)
-	resp = tox(prompt, model, not full, not unstripped)
-	print(resp)
+def tellme(prompt, voice="random", identity="Anonymous", filename="tts", unsaid=False, silent=False):
+	print("tellme(%s, %s, %s)"%(voice, identity, filename), prompt)
+	resp = tox(prompt, identity)
 	unsaid or vox(resp, voice, filename=filename, say=not silent)
 	return resp
