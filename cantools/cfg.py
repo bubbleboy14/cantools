@@ -21,6 +21,10 @@ cfg = {
 	},
 	"geo": {
 		"test": False,
+		"where": {
+			"nom": True,
+			"ua": "cantools geo query"
+		},
 		"zip": "google", # google|geonames
 		"user": {
 			"geonames": ["demo"],

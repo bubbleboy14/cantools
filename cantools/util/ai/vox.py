@@ -1,3 +1,5 @@
+import random
+from ..system import cmd
 
 class Kvox(object):
 	def __init__(self, log=print):
@@ -69,7 +71,9 @@ def vagent():
 		VAGENT.register(Kvox)
 	return VAGENT
 
-def vox(text, voice="af_heart", speed=1, lang_code='a', filename="tts"):
+def vox(text, voice="af_heart", speed=1, lang_code='a', filename="tts", say=False):
+	if voice == "random":
+		voice = random.choice(kvoices)
 	try:
 		import kokoro
 		print("found kokoro")
@@ -77,3 +81,4 @@ def vox(text, voice="af_heart", speed=1, lang_code='a', filename="tts"):
 	except:
 		print("no kokoro - using venvr")
 		vagent().run("Kvox", text, voice, speed, lang_code, filename)
+	say and cmd("mplayer %s.mp3"%(filename,))

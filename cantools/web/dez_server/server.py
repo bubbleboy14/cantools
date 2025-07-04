@@ -137,7 +137,10 @@ def fetch(host, path="/", port=None, asjson=False, cb=None, timeout=1, asyn=Fals
 	gkwargs = {}
 	headers = {}
 	if fakeua:
-		headers['User-Agent'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36'
+		if type(fakeua) is str:
+			headers['User-Agent'] = fakeua
+		else:
+			headers['User-Agent'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36'
 		gkwargs["headers"] = headers
 	if asyn or cb: # asyn w/o cb works, will just log
 		secure = protocol == "https"

@@ -48,6 +48,7 @@ class Geo(object):
 	}
 
 	def __init__(self):
+		self.wherecache = {} # TODO : persist!
 		self.cache = read("%s.json"%(zcpath,), isjson=True, default={})
 		for addr in self.cache:
 			self.cache[addr]["count"] = 0
@@ -84,11 +85,30 @@ class Geo(object):
 		return result
 
 	def where(self, place):
-		results = self._fetch("where", place)
-		if not results:
-			return "space"
-		places = results[0]["address_components"]
-		return len(places) > 1 and places[1]["long_name"] or "earth"
+		place = place.title()
+		if place not in self.wherecache:
+			if config.geo.where.nom:
+				res = fetch("https://nominatim.openstreetmap.org/search", asjson=True, qsp={
+					"limit": 1,
+					"format": "json",
+					"q": place.replace(" ", "%%20")
+				}, fakeua=config.geo.where.ua)
+				if res:
+					places = res[0]["display_name"].split(", ")
+					curplace = places.pop(0)
+					while places:
+						self.wherecache[curplace] = places[0]
+						curplace = places.pop(0)
+					self.wherecache[curplace] = "earth"
+				else:
+					self.wherecache[place] = "earth"
+			else:
+				results = self._fetch("where", place)
+				if not results:
+					return "space"
+				places = results[0]["address_components"]
+				self.wherecache[place] = len(places) > 1 and places[1]["long_name"] or "earth"
+		return self.wherecache[place]
 
 	def address2latlng(self, address):
 		if self._no_cache(address):
