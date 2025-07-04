@@ -1,4 +1,5 @@
 import random
+from datetime import datetime
 
 def nosay():
 	return random.choice([
@@ -10,9 +11,24 @@ def nosay():
 		"i literally don't know how to answer that"
 	])
 
+def notyet():
+	return random.choice([
+		"slow down",
+		"not so fast",
+		"wait a minute",
+		"take your time",
+		"slow your roll",
+		"i need a moment",
+		"hold your horses"
+	])
+
 # ddg
-DDGS = None
-DUX = ["o3-mini", "gpt-4o-mini", "claude-3-haiku", "llama-3.1-70b", "mixtral-8x7b"]
+DDGAI = {
+	"bot": None,
+	"last": None
+}
+DUX = ["gpt-4o-mini", "llama-3.3-70b", "claude-3-haiku", "o3-mini", "mistral-small-3"]
+OLDUX = ["o3-mini", "gpt-4o-mini", "claude-3-haiku", "llama-3.1-70b", "mixtral-8x7b"]
 delimiases = {
 	"False": False,
 	True: "\n",
@@ -22,15 +38,24 @@ delimiases = {
 	"SENTENCE": ".",
 	"PHRASE": [".", "!", "?"]
 }
-def ddgs():
-	global DDGS
-	if not DDGS:
-		import duckduckgo_search
-		DDGS = duckduckgo_search.DDGS()
-	return DDGS
-def ddg(prompt, model="o3-mini", shorten=False, strip=False, timeout=30):
+
+def ddgai():
+	if not DDGAI["bot"]:
+		from duckai import DuckAI
+		DDGAI["bot"] = DuckAI()
+	return DDGAI["bot"]
+
+def toosoon():
+	now = datetime.now()
+	if DDGAI["last"] and (now - DDGAI["last"]).seconds < 15:
+		return True
+	DDGAI["last"] = now
+
+def duck(prompt, model="gpt-4o-mini", shorten=False, strip=False, timeout=30):
+	if toosoon():
+		return notyet()
 	try:
-		resp = ddgs().chat(prompt, model, int(timeout))
+		resp = ddgai().chat(prompt, model, int(timeout))
 	except:
 		resp = nosay()
 	print(resp)
@@ -85,5 +110,5 @@ def fzn(statement, identity="Anonymous", name=None, mood=None, asker=None, optio
 # wrapper
 def tox(statement, identity="Anonymous", name=None, mood=None, asker=None, options=None, shorten=True, strip=True):
 	if identity in DUX:
-		return ddg(statement, identity, shorten, strip)
+		return duck(statement, identity, shorten, strip)
 	return fzn(statement, identity, name, mood, asker, options)
