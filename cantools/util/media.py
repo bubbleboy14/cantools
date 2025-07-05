@@ -113,7 +113,7 @@ def hlsify(blobpath, check=False):
 #
 
 def repitch(fname, pitch, ext="mp3"):
-	log("repitch", pitch, fname)
+	log("repitch(%s, %s, %s)"%(pitch, fname, ext))
 	cmd('ffmpeg -i %s.%s -af "rubberband=pitch=%s" %s-tmp.%s'%(fname,
 		ext, pitch, fname, ext))
 	cmd("mv %s-tmp.%s %s.%s"%(fname, ext, fname, ext))
