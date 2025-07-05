@@ -166,7 +166,7 @@ def cgi_load(force=False):
 
 def cgi_get(key, choices=None, required=True, default=None, shield=False, decode=False, base64=False):
     request = local("request")
-    val = request.get(key, default) or default
+    val = request.get(key, default)
     if val is None:
         required and fail('no value submitted for required field: "%s" [%s]'%(key, request))
     elif shield:
