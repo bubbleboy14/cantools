@@ -25,7 +25,7 @@ setup(
         "fyg >= 0.1.6",
         "rel >= 0.4.9.20",
         "dez >= 0.10.10.36",
-        "catmail >= 0.1.8",
+        "catmail >= 0.1.9",
         "requests >= 2.3.0",
 #        "jsmin >= 2.2.2",
         "sqlalchemy >= 2.0.30",
