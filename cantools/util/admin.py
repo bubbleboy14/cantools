@@ -123,7 +123,7 @@ def termap(term, default=1):
 	return m
 
 def dedchek(logname="screenlog.0", flag="server not ready"):
-	ldata = read(logname)
+	ldata = read(logname, default="")
 	count = len(ldata.split(flag)) - 1
 	set_log("dedchek.log")
 	log("dedchek: %s"%(count,), important=True)
