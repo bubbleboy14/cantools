@@ -134,7 +134,7 @@ def dedchek(logname="screenlog.0", flag="server not ready"):
 			"rotating log!",
 			"restarting screen!"
 		]))
-		tstamp = str(datetime.datetime.now())
+		tstamp = str(datetime.datetime.now()).replace(" ", "_")
 		dname = "%sarchive"%(logname,)
 		if not os.path.isdir(dname):
 			cmd("mkdir %s"%(dname,))
