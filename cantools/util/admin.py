@@ -4,7 +4,7 @@ from cantools.util import cmd, output, error, log, set_log, close_log, read, wri
 coremods = ["screen", "ctstart", "ctpubsub", "ctutil", "ctinit", "dez_reverse_proxy", "dez_websocket_proxy"]
 installers = ["apt", "yum", "pkg", "brew"]
 
-def _starter(sname):
+def _starter(sname=None):
 	if sname == "None":
 		sname = None
 	starter = "screen -wipe ; screen -L -dm"
