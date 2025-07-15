@@ -122,6 +122,27 @@ def termap(term, default=1):
 	print(m)
 	return m
 
+def dedchek(logname="screenlog.0", flag="server not ready"):
+	ldata = read(logname)
+	count = len(ldata.split(flag)) - 1
+	set_log("dedchek.log")
+	log("dedchek: %s"%(count,), important=True)
+	if count:
+		from cantools.web import email_admins
+		email_admins("dedchek", "\n\n".join([
+			"unresponsive count: %s"%(count,),
+			"rotating log!",
+			"restarting screen!"
+		]))
+		tstamp = str(datetime.datetime.now())
+		dname = "%sarchive"%(logname,)
+		if not os.path.isdir(dname):
+			cmd("mkdir %s"%(dname,))
+		cmd("mv %s %s"%(logname, os.path.join(dname, tstamp)))
+		cmd("killall screen; %s"%(_starter(),))
+	log("goodbye", important=True)
+	close_log()
+
 def screener(ctnum=None, dpath="/root", drpnum=None, psnum=None, sname=None, tmap=None):
 	os.chdir(dpath)
 	set_log("scrn.log")
