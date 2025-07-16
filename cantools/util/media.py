@@ -1,9 +1,8 @@
 from __future__ import absolute_import # for io.BytesIO
 from io import BytesIO
 import os, magic
-from .system import cmd, output, cp, rm, mkdir
-from .reporting import log
-from .io import read, write
+from fyg.util import log, read, write, rm
+from .system import cmd, output, cp, mkdir
 try:
 	from PIL import Image
 except:
