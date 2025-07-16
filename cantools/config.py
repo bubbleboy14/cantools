@@ -1,7 +1,7 @@
 import os
 from fyg import Config, PCache, config as confyg
 from databae import config as dbcfg
-from .util import read, write
+from fyg.util import read
 from .cfg import cfg
 
 pc = PCache(".ctp")
