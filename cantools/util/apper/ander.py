@@ -1,9 +1,8 @@
 import os
-from fyg.util import confirm, selnum
-from cantools.util import log, cmd, output, mkdir, cp
+from fyg.util import log, ask, confirm, selnum
+from cantools.util import cmd, output, mkdir, cp
 from cantools.util.system import envget, envset
 from cantools.util.admin import _which, javaver
-from cantools.util.io import ask
 from .data import TEMPLATES
 
 class Android(object):

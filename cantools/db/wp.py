@@ -1,5 +1,5 @@
 import pymysql, time
-from cantools.util import log, read, error
+from fyg.util import log, read, error
 
 class DBWrapper(object):
 	def __init__(self):

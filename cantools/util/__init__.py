@@ -1,8 +1,8 @@
 import os, sys
-from .io import read, write, writejson, confirm
-from .reporting import set_log, close_log, log, set_error, error, start_timer, end_timer
-from .system import cp, sym, mkdir, sed, rm, py, pymod, cmd, output, indir
-from .data import getxls, gettsv, getcsv, getcsv_from_data, flatten, arr2csv, batch, token
+from fyg.util import read, write, writejson, confirm, batch, indir, rm # backwards compat
+from fyg.util.reporting import set_log, close_log, log, set_error, error, start_timer, end_timer
+from .system import cp, sym, mkdir, sed, py, pymod, cmd, output
+from .data import getxls, gettsv, getcsv, getcsv_from_data, flatten, arr2csv, token
 from .media import transcode, segment, hlsify, shouldMoveMoov, crop, resizep2, thumb, dlp, repitch
 from .admin import certs, screener
 from .apper import android

@@ -1,5 +1,5 @@
-from cantools.db import get_model, get_schema, put_multi
-from cantools.util import log
+from databae import get_model, get_schema, put_multi
+from fyg.util import log
 
 def index(kind, i=0): # be careful with this!
 	kinds = kind == "*" and list(get_schema().keys()) or [kind]

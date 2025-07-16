@@ -43,7 +43,7 @@ Run this in 'index' mode on a database with lots of missing index values.
 
 from getpass import getpass
 from optparse import OptionParser
-from cantools.util import error, log, batch
+from fyg.util import log, error, batch
 from cantools.db import get_schema, get_model, put_multi, delete_multi, unpad_key
 from cantools.web import fetch
 from cantools import config
