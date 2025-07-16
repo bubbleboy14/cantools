@@ -49,7 +49,12 @@ def upv(oldver, newver, pname, fnames=None):
     for fname in fnames:
         if os.path.exists(fname):
             log("updating: %s"%(fname,), 1)
-            write(read(fname).replace(oldver, newver), fname)
+            txt = read(fname)
+            if fname == "setup.py": # extra careful
+                txt = txt.replace('version="%s"'%(oldver,), 'version="%s"'%(newver,))
+            else:
+                txt = txt.replace(oldver, newver)
+            write(txt, fname)
 
 def incv(curver):
     log("current version: %s"%(curver,))
