@@ -22,10 +22,11 @@
 """
 
 import os, getpass, datetime
-from fyg.util import confirm
 from optparse import OptionParser
+from databae.util import blobify
+from fyg.util import log, error, write, confirm
 from cantools import db
-from cantools.util import error, log, mkdir, cmd, output, write, sym
+from cantools.util import mkdir, cmd, output, sym
 from cantools.util.admin import install, snapinstall, simplecfg, enc, dec, qdec, phpver, running, servicer, mysqlcheck, zipit
 
 LIMIT = 500
@@ -153,18 +154,6 @@ def blobificator(host=None, port=None, dpref=None):
 	dpref = dpref or "%s://%s:%s"%((port == 443) and "https" or "http",
 		host, port)
 	return dpref + "/_db?action=blob&key=%s&property=%s"
-
-def blobify(d, blobifier, extant=None):
-	from cantools.web import fetch
-	for key, prop in list(db.get_schema(d["modelName"]).items()):
-		if prop == "blob" and d[key]:
-			entkey = d.get("gaekey", d["key"])
-			if extant and getattr(extant, key): # skip if some blob is present.........
-				log("%s.%s: already blobbed"%(d["modelName"], key))
-				del d[key]
-			else:
-				log("fetching %s.%s (%s.%s)"%(d["modelName"], key, entkey, d[key]))
-				d[key] = fetch(blobifier%(entkey, key))
 
 def getblobs(host, port):
 	log("retrieving binaries stored on %s records"%(len(blobs),), important=True)

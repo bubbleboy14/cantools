@@ -4,9 +4,15 @@ from ..config import config
 if config.web.server == "gae":
 	from .gae.model import *
 elif config.web.server == "dez":
-	from .sql.model import *
-	from .sql.lookup import inc_counter, dec_counter, refresh_counter, refcount_subq
-	from .sql import lookup
+	from rel import tick
+	from databae import *
+	from cantools.web import set_pre_close, cgi_dump
+	def scoper(threadId):
+		if threadId == "MainThread":
+			threadId = tick()
+		return "%s%s"%(threadId, cgi_dump())
+	set_scoper(scoper)
+	set_pre_close(seshman.close)
 else:
-	from cantools import util
-	util.error("no data backend specified")
+	from fyg.util import error
+	error("no data backend specified")

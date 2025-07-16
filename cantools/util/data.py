@@ -56,13 +56,6 @@ def flatten(obj):
 def arr2csv(arr):
 	return "\n".join([",".join(flatten(arr[0])[0])] + [",".join([str(i) for i in flatten(obj)[1]]) for obj in arr])
 
-def batch(dlist, f, *args, **kwargs):
-	chunk = kwargs.pop("chunk", 1000)
-	i = 0
-	while i < len(dlist):
-		f(dlist[i:i+chunk], *args, **kwargs)
-		i += chunk
-
 def token(n=10):
 	import random, string
 	samp = string.ascii_letters + string.digits

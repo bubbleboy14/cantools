@@ -22,13 +22,14 @@ setup(
     zip_safe = False,
     install_requires = [
         "venvr >= 0.1.5.1",
-        "fyg >= 0.1.6",
+        "fyg >= 0.1.7",
         "rel >= 0.4.9.20",
         "dez >= 0.10.10.37",
         "catmail >= 0.1.9",
+        "databae >= 0.1",
         "requests >= 2.3.0",
 #        "jsmin >= 2.2.2",
-        "sqlalchemy >= 2.0.30",
+#        "sqlalchemy >= 2.0.30",
 #        "psutil >= 5.0.1",
 #        "braintree >= 4.5.0",
         "six >= 1.12.0"

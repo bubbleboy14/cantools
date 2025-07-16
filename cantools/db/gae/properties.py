@@ -1,5 +1,5 @@
 from google.appengine.ext import ndb
-from ..shared import *
+from databae.util import *
 
 # column properties
 Integer = ndb.IntegerProperty

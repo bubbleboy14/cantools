@@ -3,8 +3,7 @@ try:
 	from commands import getoutput   # py2
 except:
 	from subprocess import getoutput # py3
-from .reporting import log
-from .io import read, write
+from fyg.util import log, read, write, rm
 
 def cp(content, fname): # more write than copy, buuuut...
 	log("writing %s"%(fname,), 2)
@@ -37,19 +36,6 @@ def mkdir(pname, recursive=False):
 		os.makedirs(pname)
 	else:
 		os.mkdir(pname)
-
-def rm(pname):
-	if os.path.islink(pname):
-		log("removing symlink: %s"%(pname,), 2)
-		os.remove(pname)
-	elif os.path.isdir(pname):
-		log("removing folder: %s"%(pname,), 2)
-		os.rmdir(pname)
-	elif os.path.exists(pname):
-		log("removing file: %s"%(pname,), 2)
-		os.remove(pname)
-	else:
-		log("can't remove file (doesn't exist): %s"%(pname,), 2)
 
 def sed(fname, flag, replacement, target=None):
 	write(read(fname).replace(flag, replacement), target or fname)
@@ -85,8 +71,3 @@ def py(cline, sudo=False):
 
 def pymod(mod, sudo=False):
 	py("-m %s"%(mod,), sudo)
-
-def indir(data, path):
-	for f in [os.path.join(path, p) for p in os.listdir(path)]:
-		if os.path.isfile(f) and data == read(f, binary=True):
-			return os.path.split(f)[-1]

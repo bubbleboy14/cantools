@@ -1,7 +1,7 @@
-import os, json, getpass
-from base64 import b64encode, b64decode
-from fyg import Config, PCache
-from .util import read, write
+import os
+from fyg import Config, PCache, config as confyg
+from databae import config as dbcfg
+from fyg.util import read
 from .cfg import cfg
 
 pc = PCache(".ctp")
@@ -91,8 +91,14 @@ for key, val in items:
 				c = c.sub(part)
 		c.update(target, val)
 
-config.db.update("main", config.db[config.web.server])
 config.update("cache", pc)
+config.db.update("main", config.db[config.web.server])
+for prop in ["deep", "flush", "timestamp", "allow"]:
+	confyg.log.update(prop, config.log[prop])
+for prop in ["cache", "refcount", "main", "test", "blob", "alter", "echo"]:
+	dbcfg.update(prop, config.db[prop])
+for prop in ["null", "size", "recycle", "overflow"]:
+	dbcfg.pool.update(prop, config.db.pool[prop])
 
 # set protocol based on certs
 if config.ssl.certfile:

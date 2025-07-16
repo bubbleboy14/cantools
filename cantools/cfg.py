@@ -2,6 +2,8 @@ import os
 
 cfg = {
 	"log": {
+		"deep": False,
+		"flush": False,
 		"timestamp": True,
 		"openfiles": False,
 		"tracemalloc": False,
