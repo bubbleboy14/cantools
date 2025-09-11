@@ -143,6 +143,15 @@ def dedchek(logname="screenlog.0", flag="server not ready"):
 	log("goodbye", important=True)
 	close_log()
 
+def islocked(pname): # eg "dpkg" or "apt/lists"
+	unlocked = "Lock acquired"
+	lpath = "/var/lib/%s/lock"%(pname,)
+	log("testing %s lock at %s"%(pname, lpath))
+	fbase = "flock --timeout 0 --exclusive --nonblock"
+	fcmd = '%s %s -c "echo %s" || echo Lock is held'%(fbase, lpath, unlocked)
+	op = output(fcmd, sudo=True, silent=True, loud=True)
+	return op != unlocked
+
 def screener(ctnum=None, dpath="/root", drpnum=None, psnum=None, sname=None, tmap=None):
 	os.chdir(dpath)
 	set_log("scrn.log")
@@ -223,6 +232,8 @@ def sysup(upit=False, upct=False, dpath="."):
 	os.chdir(dpath)
 	set_log("cron-sysup.log")
 	log("updating package index", important=True)
+	if islocked("dpkg") or islocked("apt/lists"):
+		email_admins("can't update package list", "dpkg or apt/lists file is locked :(")
 	cmd("apt update", sudo=True)
 	alist = output("apt list --upgradable")
 	adrep = []
