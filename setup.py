@@ -12,7 +12,6 @@ setup(
         'cantools',
         'cantools.db',
         'cantools.db.gae',
-        'cantools.db.sql',
         'cantools.scripts',
         'cantools.scripts.pubsub',
         'cantools.util',
