@@ -82,6 +82,8 @@
 .hmin1-2 { min-height: 50%; }
 .wmin1-2 { min-width: 50%; }
 .hmin200p { min-height: 200px; }
+.hmin250p { min-height: 250px; }
+.hmin300p { min-height: 300px; }
 .hmin400p { min-height: 400px; }
 .wmin200p { min-width: 200px; }
 .wmin400p { min-width: 400px; }
