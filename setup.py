@@ -20,7 +20,7 @@ setup(
     ],
     zip_safe = False,
     install_requires = [
-        "venvr >= 0.1.5.3",
+        "venvr >= 0.1.5.4",
         "fyg >= 0.1.7.2",
         "rel >= 0.4.9.20",
         "dez >= 0.10.10.38",
