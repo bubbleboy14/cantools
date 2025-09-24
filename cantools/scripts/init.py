@@ -248,7 +248,7 @@ class Builder(object):
 				for dname, fnames in list(mod.init.syms.items()):
 					for fname in fnames:
 						sym(os.path.join(mod.__ct_mod_path__, dname, fname),
-							os.path.join(dname, fname))
+							os.path.join(dname, fname.strip("./")))
 
 	def vcignore(self):
 		log("configuring version control path exclusion", 1)
