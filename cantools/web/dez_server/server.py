@@ -96,7 +96,8 @@ def respond(*args, **kwargs):
 
 def _ctjson(result):
 	from cantools.util import log # gives us logger set in run_dez_webserver()
-	result = result.decode()
+	if hasattr(result, "decode"):
+		result = result.decode()
 	code = result[0]
 	if code not in "0123":
 		log("response encoded:")
