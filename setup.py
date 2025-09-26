@@ -20,10 +20,10 @@ setup(
     ],
     zip_safe = False,
     install_requires = [
-        "venvr >= 0.1.5.6",
+        "venvr >= 0.1.5.7",
         "fyg >= 0.1.7.2",
-        "rel >= 0.4.9.20",
-        "dez >= 0.10.10.40",
+        "rel >= 0.4.9.21",
+        "dez >= 0.10.10.41",
         "catmail >= 0.1.9.1",
         "databae >= 0.1.4.6",
         "requests >= 2.3.0",
