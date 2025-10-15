@@ -23,7 +23,7 @@ CT.Browser = CT.Class({
 		},
 		load: function(d) {
 			var _ = this._, oz = this.opts, fview = this.firstview;
-			if (d.name)
+			if (d.name || !oz.mustName)
 				return this.view(d);
 			CT.dom.setContent(_.nodes.content, CT.dom.div([
 				CT.dom.div(oz.opener || ("what's this " + oz.modelName + " called?"), "bigger centered"),
@@ -133,6 +133,7 @@ CT.Browser = CT.Class({
 			owner: true,
 			filter: true,
 			cancreate: true,
+			mustName: true,
 			blurs: ["name please", "title", "what's it called?"]
 		});
 		setTimeout(this._.setup);
