@@ -25,7 +25,7 @@ setup(
         "rel >= 0.4.9.21",
         "dez >= 0.10.10.42",
         "catmail >= 0.1.9.1",
-        "databae >= 0.1.4.7",
+        "databae >= 0.1.4.8",
         "requests >= 2.3.0",
 #        "jsmin >= 2.2.2",
 #        "sqlalchemy >= 2.0.30",
