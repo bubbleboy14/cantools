@@ -95,7 +95,7 @@ config.update("cache", pc)
 config.db.update("main", config.db[config.web.server])
 for prop in ["deep", "flush", "timestamp", "allow"]:
 	confyg.log.update(prop, config.log[prop])
-for prop in ["cache", "refcount", "main", "test", "blob", "alter", "echo"]:
+for prop in ["cache", "refcount", "main", "test", "blob", "alter", "echo", "stringsize", "flatkeysize", "indexkeys"]:
 	dbcfg.update(prop, config.db[prop])
 for prop in ["null", "size", "recycle", "overflow"]:
 	dbcfg.pool.update(prop, config.db.pool[prop])
