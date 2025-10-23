@@ -99,7 +99,10 @@ cfg = {
 		"public": True, # read from db without credentials via _db.py web handler
 		"stringsize": 500,
 		"flatkeysize": 80,
-		"indexkeys": False,
+		"index": {
+			"key": False,
+			"named": False
+		},
 		"pool": {
 			"null": True,
 			"size": 10,

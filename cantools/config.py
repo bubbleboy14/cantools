@@ -57,7 +57,7 @@ for line in lines:
 		items.append([key, val])
 
 for key, val in items:
-	if key in ["ENCODE", "DB_ECHO", "DB_PUBLIC", "DB_REFCOUNT", "DB_CACHE", "DB_POOL_NULL", "DB_INDEXKEYS", "GEO_TEST", "REL_VERBOSE", "REL_LOUDLISTEN", "MEMCACHE_REQUEST", "MEMCACHE_DB", "PUBSUB_ECHO", "PUBSUB_META", "PUBSUB_B64", "SSL_VERIFY", "ADMIN_MONITOR_LOG", "WEB_XORIGIN", "LOG_TIMESTAMP", "BUILD_PROD_CLOSURE", "BUILD_PROD_B64", "GMAILER", "MAILHTML", "MAILOUD"]:
+	if key in ["ENCODE", "DB_ECHO", "DB_PUBLIC", "DB_REFCOUNT", "DB_CACHE", "DB_POOL_NULL", "DB_INDEX_KEYS", "DB_INDEX_NAMED", "GEO_TEST", "REL_VERBOSE", "REL_LOUDLISTEN", "MEMCACHE_REQUEST", "MEMCACHE_DB", "PUBSUB_ECHO", "PUBSUB_META", "PUBSUB_B64", "SSL_VERIFY", "ADMIN_MONITOR_LOG", "WEB_XORIGIN", "LOG_TIMESTAMP", "BUILD_PROD_CLOSURE", "BUILD_PROD_B64", "GMAILER", "MAILHTML", "MAILOUD"]:
 		val = val == "True"
 	elif key in ["PUBSUB_HISTORY", "MEMPAD", "WEB_SHIELD_CHUNK", "WEB_SHIELD_LIMIT", "WEB_SHIELD_INTERVAL", "MEMCACHE_PROX_TIMEOUT", "DB_POOL_SIZE", "DB_POOL_OVERFLOW", "DB_POOL_RECYCLE", "DB_STRINGSIZE", "DB_FLATKEYSIZE", "LOG_OPENFILES", "LOG_TRACEMALLOC", "MAILSCANTICK"]:
 		val = int(val)
@@ -95,8 +95,10 @@ config.update("cache", pc)
 config.db.update("main", config.db[config.web.server])
 for prop in ["deep", "flush", "timestamp", "allow"]:
 	confyg.log.update(prop, config.log[prop])
-for prop in ["cache", "refcount", "main", "test", "blob", "alter", "echo", "stringsize", "flatkeysize", "indexkeys"]:
+for prop in ["cache", "refcount", "main", "test", "blob", "alter", "echo", "stringsize", "flatkeysize"]:
 	dbcfg.update(prop, config.db[prop])
+for prop in ["key", "named"]:
+	dbcfg.index.update(prop, config.db.index[prop])
 for prop in ["null", "size", "recycle", "overflow"]:
 	dbcfg.pool.update(prop, config.db.pool[prop])
 
