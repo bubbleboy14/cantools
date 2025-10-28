@@ -1,6 +1,6 @@
 import json, gc, os, inspect, threading, psutil
 from tinyweb import *
-from tinyweb import config as tinyfyg
+from tinyweb.config import config as tinyfyg
 from tinyweb.daemons import WebBase, addWeb, logger_getter
 from ..util import init_rel
 from cantools import config
@@ -52,7 +52,11 @@ class Admin(WebBase):
         self.daemon.respond(req, report)
 
 def run_tw():
-	setcfg()
 	init_rel()
 	addWeb("admin", Admin, config.admin)
 	run_dez_webserver()
+
+setcfg()
+
+from tinyweb.mail import send_mail, email_admins, email_reportees, mailer, reader, check_inbox, scanner, on_mail
+from tinyweb.sms import send_sms
