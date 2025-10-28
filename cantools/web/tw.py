@@ -13,8 +13,6 @@ A_STATIC = {
 A_CB = { "/admin": "admin", "/_db": "_db" }
 
 def setcfg():
-	config.admin.update("pw",
-		config.cache("admin password? ", overwrite=config.newpass))
 	for prop in ["cache", "encode", "mempad", "web", "cron", "scrambler"]:
 		tinyfyg.update(prop, config[prop])
 	for prop in ["contacts", "reportees"]:
@@ -54,6 +52,8 @@ class Admin(WebBase):
 def run_tw():
 	init_rel()
 	addWeb("admin", Admin, config.admin)
+	config.admin.update("pw",
+		config.cache("admin password? ", overwrite=config.newpass))
 	run_dez_webserver()
 
 setcfg()
