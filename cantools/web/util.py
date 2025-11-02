@@ -2,10 +2,9 @@ import re, os, sys, ast, json, time
 from urllib.parse import urlencode
 from urllib.request import urlopen, Request
 from dez.http.static import StaticStore
-from tinyweb.util import local
+from tinyweb.util import local, send_file
+from tinyweb.config import config as tinyfyg
 from cantools import config
-
-DEBUG = True
 
 # request functions
 def deUnicodeDict(d):
@@ -16,58 +15,9 @@ def deUnicodeDict(d):
         n[str(v)] = deUnicodeDict(d[v])
     return n
 
-def trysavedresponse(key=None):
-    key = key or local("request_string")
-    response = getmem(key, False)
-    response and _write(response, exit=True)
-
 def setcachedefault(shouldCache=True):
-    # deprecated -- should set via config.memcache.update("requst", [bool])
     config.memcache.update("request", shouldCache)
-
-def _headers(headers):
-    for k, v in list(headers.items()):
-        _header(k, v)
-    if config.web.server == "gae":
-        _send("")
-
-def send_pdf(data, title=None):
-    if title:
-        _headers({
-            "Content-Type": 'application/pdf; name="%s.pdf"'%(title,),
-            "Content-Disposition": 'attachment; filename="%s.pdf"'%(title,)
-        })
-    else:
-        _headers({"Content-Type": "application/pdf"})
-    _send(data)
-    _close()
-
-def send_image(data):
-    _headers({"Content-Type": "image/png"})
-    _send(data)
-    _close()
-
-FILETYPES = {"pdf": "application/pdf", "img": "image/png", "ico": "image/ico", "html": "text/html"}
-
-def send_file(data, file_type=None, detect=False, headers={}):
-    if detect:
-        import magic
-        file_type = data and magic.from_buffer(data, True)
-    if file_type:
-        headers["Content-Type"] = FILETYPES.get(file_type, file_type)
-    _headers(headers)
-    _send(data)
-    _close()
-
-def send_text(data, dtype="html", fname=None, exit=True, headers={}):
-    headers["Content-Type"] = "text/%s"%(dtype,)
-    if fname:
-        headers['Content-Disposition'] = 'attachment; filename="%s.%s"'%(fname, dtype)
-    _headers(headers)
-    _write(data, exit)
-
-def send_xml(data):
-    send_text(data, "xml")
+    tinyfyg.update("memcache", shouldCache)
 
 # misc
 def verify_recaptcha(cresponse, pkey):
