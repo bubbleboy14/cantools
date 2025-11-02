@@ -21,6 +21,7 @@ def setcfg():
 		tinyfyg.ssl.update(prop, config.ssl[prop])
 	for prop in ["oflist", "openfiles", "tracemalloc", "allow"]:
 		tinyfyg.log.update(prop, config.log[prop])
+	tinyfyg.update("memcache", config.memcache.request)
 	tmfg = tinyfyg.mail
 	tmfg.update("mailer", config.mailer)
 	tmfg.update("gmailer", config.gmailer)
