@@ -140,7 +140,7 @@ CT.db = {
 			}
 		});
 	},
-	get: function(modelName, cb, limit, offset, order, filters, sync, count, exporter) {
+	get: function(modelName, cb, limit, offset, order, filters, sync, count, exporter, pw) {
 		var f, v, qdata = {
 			"action": "get",
 			"modelName": modelName,
@@ -152,6 +152,8 @@ CT.db = {
 			qdata.order = order;
 		if (exporter)
 			qdata.exporter = exporter;
+		if (pw)
+			qdata.pw = pw;
 		if (filters) {
 			for (f in filters) {
 				v = filters[f];

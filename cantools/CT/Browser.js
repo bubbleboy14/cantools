@@ -81,7 +81,7 @@ CT.Browser = CT.Class({
 				return _.build(oz.items);
 			CT.db.get(oz.modelName, oz.prebuild || _.build, null, null, null, oz.owner && {
 				owner: user.core.get("key") // requires user module
-			}, false, undefined, oz.exporter);
+			}, false, undefined, oz.exporter, oz.pw);
 		}
 	},
 	namer: function(d, classes) {
@@ -130,6 +130,7 @@ CT.Browser = CT.Class({
 			parent: "ctmain",
 			exporter: "export",
 			modelName: null, // REQUIRED
+			pw: null,
 			nopts: {},
 			owner: true,
 			filter: true,

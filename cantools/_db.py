@@ -69,7 +69,7 @@ def response():
 			keys = cgi_get("keys", required=False)
 			exporter = cgi_get("exporter", default="export")
 			if mname:
-				order = cgi_get("order", default="index")
+				order = cgi_get("order", required=False)
 				if config.web.server == "gae":
 					order = getattr(get_model(mname), order)
 				res = get_page(mname, int(cgi_get("limit")), int(cgi_get("offset")), order,
