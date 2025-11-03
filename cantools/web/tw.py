@@ -1,7 +1,7 @@
 import json, gc, os, inspect, threading, psutil
-from tinyweb import *
-from tinyweb.config import config as tinyfyg
-from tinyweb.daemons import WebBase, addWeb, logger_getter
+from babyweb import *
+from babyweb.config import config as tinyfyg
+from babyweb.daemons import WebBase, addWeb, logger_getter
 from ..util import init_rel
 from cantools import config
 
@@ -59,5 +59,5 @@ def run_tw():
 
 setcfg()
 
-from tinyweb.mail import send_mail, email_admins, email_reportees, mailer, reader, check_inbox, scanner, on_mail
-from tinyweb.sms import send_sms
+from babyweb.mail import send_mail, email_admins, email_reportees, mailer, reader, check_inbox, scanner, on_mail
+from babyweb.sms import send_sms

@@ -2,8 +2,8 @@ import re, os, sys, ast, json, time
 from urllib.parse import urlencode
 from urllib.request import urlopen, Request
 from dez.http.static import StaticStore
-from tinyweb.util import local, send_file
-from tinyweb.config import config as tinyfyg
+from babyweb.util import local, send_file
+from babyweb.config import config as tinyfyg
 from cantools import config
 
 # request functions
