@@ -1,4 +1,4 @@
-from .util import config
+from cantools import config
 
 if config.web.server == "gae":
 	from .gae_server import *
