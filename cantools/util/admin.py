@@ -295,11 +295,12 @@ def upcheck(*procs):
 	log("goodbye")
 	close_log()
 
-def vitals(clean=False, thresh=90, dpath="."):
+def vitals(clean=False, thresh=90, dpath=".", conlim=0):
+	from cantools.web import email_admins
 	if clean == "False":
 		clean = False
 	thresh = int(thresh)
-	from cantools.web import email_admins
+	conlim = int(conlim)
 	os.chdir(dpath)
 	set_log("cron-vitals.log")
 	log("scanning vitals", important=True)
@@ -310,9 +311,12 @@ def vitals(clean=False, thresh=90, dpath="."):
 	lz.append("inode usage: %s%%"%(inodes,))
 	memuse = float(output("free | grep Mem | awk '{print $3/$2 * 100.0}'"))
 	lz.append("memory usage: %s%%"%(memuse,))
+	if conlim:
+		concount = int(output("lsof -i | wc -l"))
+		lz.append("connections: %s"%(concount,))
 	for l in lz:
 		log(l)
-	if hdrive > thresh or inodes > thresh or memuse > thresh:
+	if hdrive > thresh or inodes > thresh or memuse > thresh or (conlim and concount > conlim):
 		log("threshold exceeded - notifying admins")
 		if hdrive > thresh and clean:
 			log("cleaning up!")
