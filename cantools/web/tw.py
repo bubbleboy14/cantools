@@ -1,7 +1,7 @@
 import json, gc, os, inspect, threading, psutil
-from babyweb import *
-from babyweb.config import config as tinyfyg
-from babyweb.daemons import WebBase, addWeb, logger_getter
+from babyweb.daemons import WebBase, initWebs, logger_getter
+from babyweb.server import run_dez_webserver
+from babyweb.config import config as babyfyg
 from ..util import init_rel
 from cantools import config
 
@@ -14,21 +14,23 @@ A_CB = { "/admin": "admin", "/_db": "_db" }
 
 def setcfg():
 	for prop in ["cache", "encode", "mempad", "web", "cron", "scrambler"]:
-		tinyfyg.update(prop, config[prop])
+		babyfyg.update(prop, config[prop])
 	for prop in ["contacts", "reportees"]:
-		tinyfyg.admin.update(prop, config.admin[prop])
+		babyfyg.admin.update(prop, config.admin[prop])
 	for prop in ["verify", "certfile", "keyfile", "cacerts"]:
-		tinyfyg.ssl.update(prop, config.ssl[prop])
+		babyfyg.ssl.update(prop, config.ssl[prop])
 	for prop in ["oflist", "openfiles", "tracemalloc", "allow"]:
-		tinyfyg.log.update(prop, config.log[prop])
-	tinyfyg.update("memcache", config.memcache.request)
-	tmfg = tinyfyg.mail
-	tmfg.update("mailer", config.mailer)
-	tmfg.update("gmailer", config.gmailer)
-	tmfg.update("name", config.mailername)
-	tmfg.update("html", config.mailhtml)
-	tmfg.update("verbose", config.mailoud)
-	tmfg.update("scantick", config.mailscantick)
+		babyfyg.log.update(prop, config.log[prop])
+	babyfyg.update("memcache", config.memcache.request)
+	bmfg = babyfyg.mail
+	bmfg.update("mailer", config.mailer)
+	bmfg.update("gmailer", config.gmailer)
+	bmfg.update("name", config.mailername)
+	bmfg.update("html", config.mailhtml)
+	bmfg.update("verbose", config.mailoud)
+	bmfg.update("scantick", config.mailscantick)
+
+setcfg()
 
 class Admin(WebBase):
     def __init__(self, bind_address, port, logger_getter, shield, mempad):
@@ -52,12 +54,12 @@ class Admin(WebBase):
 
 def run_tw():
 	init_rel()
-	addWeb("admin", Admin, config.admin)
+	initWebs({
+		"admin": {
+			"daemon": Admin,
+			"config": config.admin
+		}
+	})
 	config.admin.update("pw",
 		config.cache("admin password? ", overwrite=config.newpass))
 	run_dez_webserver()
-
-setcfg()
-
-from babyweb.mail import send_mail, email_admins, email_reportees, mailer, reader, check_inbox, scanner, on_mail
-from babyweb.sms import send_sms
