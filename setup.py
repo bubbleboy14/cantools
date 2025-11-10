@@ -15,11 +15,11 @@ setup(
         'cantools.scripts',
         'cantools.scripts.pubsub',
         'cantools.util',
-        'cantools.web',
-        'cantools.web.dez_server'
+        'cantools.web'
     ],
     zip_safe = False,
     install_requires = [
+        "babyweb >= 0.1.1.2",
         "venvr >= 0.1.5.7",
         "fyg >= 0.1.7.8",
         "rel >= 0.4.9.21",

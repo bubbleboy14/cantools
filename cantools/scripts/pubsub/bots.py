@@ -1,7 +1,6 @@
 import datetime, json, os
 from cantools import config
 from cantools.util import log, write
-from cantools.web import fetch, send_mail
 from .actor import Actor
 try:
 	import psutil
@@ -80,6 +79,7 @@ class Monitor(Bot):
 			write(data, self._datedir(), True, append=True, newline=True)
 
 	def _cpu(self):
+		from cantools.web import send_mail
 		c = self.current["cpu"] = psutil.cpu_percent()
 		if self.alert.get("cpu"):
 			if c < config.admin.monitor.thresholds.cpu:
@@ -93,6 +93,7 @@ class Monitor(Bot):
 				send_mail(config.admin.contacts, subject="High CPU", body="just started")
 
 	def _tick(self):
+		from cantools.web import fetch
 		self._cpu()
 		dioc = psutil.disk_io_counters()
 		nioc = psutil.net_io_counters()

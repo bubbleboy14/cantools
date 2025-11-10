@@ -69,6 +69,7 @@ cfg = {
 		"protocol": "http",
 		"xorigin": False,
 		"shield": False,
+		"debug": False,
 		"csp": None,
 		"log": None,
 		"errlog": None,

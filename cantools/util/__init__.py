@@ -7,6 +7,7 @@ from .media import transcode, segment, hlsify, shouldMoveMoov, crop, resizep2, t
 from .admin import certs, screener
 from .apper import android
 from .ai import tox, vox, tellme
+from .package import pipper
 
 def init_basic():
     os.path.isdir("emails") and sys.path.append("emails")

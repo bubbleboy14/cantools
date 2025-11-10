@@ -10,15 +10,40 @@ if config.web.server == "gae":
 	util.init_gae()
 else:
 	util.init_basic()
-from . import geo
-from .scripts import builder, deploy, init, pubsub, start, index, migrate, doc, bench, util
+#from . import geo
+from .scripts import builder, pubsub
 
-ctstart = start.go
-ctdeploy = deploy.run
-ctpubsub = pubsub.get_addr_and_start
-ctinit = init.parse_and_make
-ctindex = index.go
-ctmigrate = migrate.go
-ctdoc = doc.build
-ctbench = bench.run
-ctutil = util.run
+def ctstart():
+	from .scripts import start
+	start.go()
+
+def ctdeploy():
+	from .scripts import deploy
+	deploy.run()
+
+def ctpubsub():
+	pubsub.get_addr_and_start()
+
+def ctinit():
+	from .scripts import init
+	init.parse_and_make()
+
+def ctindex():
+	from .scripts import index
+	index.go()
+
+def ctmigrate():
+	from .scripts import migrate
+	migrate.go()
+
+def ctdoc():
+	from .scripts import doc
+	doc.build()
+
+def ctbench():
+	from .scripts import bench
+	bench.run()
+
+def ctutil():
+	from .scripts import util
+	util.run()

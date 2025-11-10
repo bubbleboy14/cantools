@@ -61,8 +61,3 @@ def delmem(key):
 def clearmem():
     from google.appengine.api import memcache
     memcache.flush_all()
-
-set_getmem(getmem)
-set_setmem(setmem)
-set_delmem(delmem)
-set_clearmem(clearmem)
