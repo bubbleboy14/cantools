@@ -54,7 +54,7 @@ class Admin(WebBase):
         self.logger.info(report)
         self.daemon.respond(req, report)
 
-def run_tw():
+def run_bw():
 	syslog("initializing web server")
 	init_rel()
 	initWebs({

@@ -44,8 +44,8 @@ def go():
 		print(cmd)
 		subprocess.call(cmd, shell=True)
 	elif options.web_backend == "dez":
-		from cantools.web import run_tw
-		run_tw()
+		from cantools.web import run_bw
+		run_bw()
 	else:
 		error("invalid web_backend: %s"%(options.web_backend,))
 
