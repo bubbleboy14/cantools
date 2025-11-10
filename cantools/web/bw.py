@@ -2,6 +2,7 @@ import json, gc, os, inspect, threading, psutil
 from babyweb.daemons import WebBase, initWebs, logger_getter
 from babyweb.server import run_dez_webserver
 from babyweb.config import config as babyfyg
+from babyweb.logger import log, syslog
 from ..util import init_rel
 from cantools import config
 
@@ -13,6 +14,7 @@ A_STATIC = {
 A_CB = { "/admin": "admin", "/_db": "_db" }
 
 def setcfg():
+	syslog("passing configuration to babyweb")
 	for prop in ["cache", "encode", "mempad", "web", "cron", "scrambler"]:
 		babyfyg.update(prop, config[prop])
 	for prop in ["contacts", "reportees"]:
@@ -53,6 +55,7 @@ class Admin(WebBase):
         self.daemon.respond(req, report)
 
 def run_tw():
+	syslog("initializing web server")
 	init_rel()
 	initWebs({
 		"admin": {
