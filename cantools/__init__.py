@@ -11,7 +11,7 @@ if config.web.server == "gae":
 else:
 	util.init_basic()
 #from . import geo
-from .scripts import builder
+from .scripts import builder, pubsub
 
 def ctstart():
 	from .scripts import start
@@ -22,7 +22,6 @@ def ctdeploy():
 	deploy.run()
 
 def ctpubsub():
-	from .scripts import pubsub
 	pubsub.get_addr_and_start()
 
 def ctinit():
