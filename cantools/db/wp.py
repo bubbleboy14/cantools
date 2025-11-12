@@ -45,7 +45,7 @@ def trydb(attempts=5, wait=0.4):
 		db = setdb()
 		if db:
 			return db
-		log("trydb failed retry #" + attempt, important=True)
+		log("trydb failed retry #%s"%(attempt,), important=True)
 		time.sleep(wait)
 
 def getdb(subdb=False):
