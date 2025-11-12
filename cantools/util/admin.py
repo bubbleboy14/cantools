@@ -347,9 +347,9 @@ def sslredirect(port=80):
 def blacklist(ip):
 	if not confirm("blacklist %s?"%(ip,)):
 		return log("okay, bye!")
-	from cantools.web import controller
+	from cantools.web import shield
 	from cantools import config
-	controller.setBlacklist()
+	shield.setBlacklist()
 	blist = config.web.blacklist.obj()
 	if ip in blist:
 		return log("%s is already blacklisted! reason: %s"%(ip, blist[ip]))
