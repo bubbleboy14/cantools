@@ -97,12 +97,13 @@ CT.data = {
 		return CT.data.map[key];
 	},
 	"add": function(d, overwrite) {
-		if (CT.data.map[d.key] && overwrite !== true) {
+		var key = d.key || d.label;
+		if (CT.data.map[key] && overwrite !== true) {
 			for (var k in d)
-				CT.data.map[d.key][k] = d[k];
+				CT.data.map[key][k] = d[k];
 		}
 		else
-			CT.data.map[d.key] = d;
+			CT.data.map[key] = d;
 	},
 	"addSet": function(dlist) {
 		for (var i = 0; i < dlist.length; i++)
