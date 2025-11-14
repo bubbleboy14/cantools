@@ -20,9 +20,9 @@ setup(
     zip_safe = False,
     install_requires = [
         "babyweb >= 0.1.1.5",
-        "venvr >= 0.1.5.7",
+        "venvr >= 0.1.5.8",
         "fyg >= 0.1.7.8",
-        "rel >= 0.4.9.21",
+        "rel >= 0.4.9.22",
         "dez >= 0.10.10.42",
         "catmail >= 0.1.9.1",
         "databae >= 0.1.4.15",
