@@ -1,6 +1,5 @@
 from datetime import datetime
 from .properties import *
-from six import with_metaclass
 
 class CTMeta(ndb.MetaModel):
     def __new__(cls, name, bases, attrs):
@@ -22,7 +21,7 @@ class CTMeta(ndb.MetaModel):
         modelsubs[lname] = super(CTMeta, cls).__new__(cls, name, bases, attrs)
         return modelsubs[lname]
 
-class ModelBase(with_metaclass(CTMeta, ndb.Model)):
+class ModelBase(ndb.Model, metaclass=CTMeta):
     index = Integer()
 
     def __eq__(self, other):
