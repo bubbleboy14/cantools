@@ -2,11 +2,6 @@ import datetime, json, os
 from cantools import config
 from cantools.util import log, write
 from .actor import Actor
-try:
-	import psutil
-except ImportError as e:
-	pass # google crap engine (get it if you need it!)
-from six import with_metaclass
 
 class BotMeta(type):
 	def __new__(cls, name, bases, attrs):
@@ -16,7 +11,7 @@ class BotMeta(type):
 			config.pubsub.bots.update(name.lower(), bc)
 		return bc
 
-class Bot(with_metaclass(BotMeta, Actor)):
+class Bot(Actor, metaclass=BotMeta):
 	num = 0
 	def __init__(self, server, channel, name=None):
 		Bot.num += 1
@@ -79,6 +74,7 @@ class Monitor(Bot):
 			write(data, self._datedir(), True, append=True, newline=True)
 
 	def _cpu(self):
+		import psutil
 		from cantools.web import send_mail
 		c = self.current["cpu"] = psutil.cpu_percent()
 		if self.alert.get("cpu"):
@@ -93,6 +89,7 @@ class Monitor(Bot):
 				send_mail(config.admin.contacts, subject="High CPU", body="just started")
 
 	def _tick(self):
+		import psutil
 		from cantools.web import fetch
 		self._cpu()
 		dioc = psutil.disk_io_counters()
