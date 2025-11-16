@@ -19,19 +19,16 @@ setup(
     ],
     zip_safe = False,
     install_requires = [
-        "babyweb >= 0.1.1.5",
+        "babyweb >= 0.1.1.6",
         "venvr >= 0.1.5.8",
         "fyg >= 0.1.7.8",
         "rel >= 0.4.9.22",
         "dez >= 0.10.10.42",
         "catmail >= 0.1.9.1",
-        "databae >= 0.1.4.15",
-        "requests >= 2.3.0",
+        "databae >= 0.1.4.16",
 #        "jsmin >= 2.2.2",
-#        "sqlalchemy >= 2.0.30",
 #        "psutil >= 5.0.1",
 #        "braintree >= 4.5.0",
-        "six >= 1.12.0"
     ],
     entry_points = '''
         [console_scripts]
