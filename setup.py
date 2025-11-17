@@ -19,7 +19,7 @@ setup(
     ],
     zip_safe = False,
     install_requires = [
-        "babyweb >= 0.1.1.6",
+        "babyweb >= 0.1.1.7",
         "venvr >= 0.1.5.8",
         "fyg >= 0.1.7.8",
         "rel >= 0.4.9.22",
