@@ -92,7 +92,8 @@ for key, val in items:
 		c.update(target, val)
 
 config.update("cache", pc)
-config.db.update("main", config.db[config.web.server])
+if not config.db.main:
+	config.db.update("main", config.db[config.web.server])
 for prop in ["deep", "flush", "timestamp", "allow"]:
 	confyg.log.update(prop, config.log[prop])
 for prop in ["cache", "refcount", "main", "test", "blob", "alter", "echo", "notext", "stringsize", "flatkeysize"]:

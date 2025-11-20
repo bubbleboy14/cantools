@@ -11,6 +11,7 @@ elif config.web.server == "dez":
 		if threadId == "MainThread":
 			threadId = tick()
 		return "%s%s"%(threadId, cgi_dump())
+	session = seshman.get()
 	set_scoper(scoper)
 	set_pre_close(seshman.close)
 else:
