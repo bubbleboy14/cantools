@@ -5,6 +5,8 @@ if config.web.server == "gae":
 	from .gae.model import *
 elif config.web.server == "dez":
 	from rel import tick
+	if not config.db.nopoly:
+		from databae.poly import ModelBase, TimeStampedBase
 	from databae import *
 	from cantools.web import set_pre_close, cgi_dump
 	def scoper(threadId):
