@@ -44,16 +44,9 @@ Run this in 'index' mode on a database with lots of missing index values.
 from getpass import getpass
 from optparse import OptionParser
 from fyg.util import log, error, batch
-from cantools.db import get_schema, get_model, put_multi, delete_multi, unpad_key
+from cantools.db import get_schema, get_model, put_multi, delete_multi, unpad_key, session, func
 from cantools.web import fetch
 from cantools import config
-if config.web.server == "dez":
-	from cantools.db import session, func, refresh_counter
-
-try:
-    input = raw_input # py2/3 compatibility
-except NameError:
-    pass
 
 counts = { "_counters": 0 }
 RETRIES = 5
@@ -93,6 +86,7 @@ def refmap():
 	return rmap
 
 def do_batch(chunk, reference):
+	from databae.lookup import refresh_counter
 	log("refreshing %s %s keys"%(len(chunk), reference), 1)
 	i = 0
 	rc = []
