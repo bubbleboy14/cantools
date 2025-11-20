@@ -99,6 +99,7 @@ cfg = {
 		"echo": False,
 		"public": True, # read from db without credentials via _db.py web handler
 		"notext": False,
+		"nopoly": False,
 		"stringsize": 500,
 		"flatkeysize": 80,
 		"index": {
