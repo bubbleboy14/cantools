@@ -25,7 +25,7 @@ setup(
         "rel >= 0.4.9.22",
         "dez >= 0.10.10.42",
         "catmail >= 0.1.9.1",
-        "databae >= 0.1.4.17",
+        "databae >= 0.1.4.18",
 #        "jsmin >= 2.2.2",
 #        "psutil >= 5.0.1",
 #        "braintree >= 4.5.0",
