@@ -94,6 +94,8 @@ for key, val in items:
 config.update("cache", pc)
 if not config.db.main:
 	config.db.update("main", config.db[config.web.server])
+if "DBPW" in config.db.main:
+	config.db.update("main", config.db.main.replace("DBPW", config.cache("database password? ")))
 for prop in ["deep", "flush", "timestamp", "allow"]:
 	confyg.log.update(prop, config.log[prop])
 for prop in ["cache", "refcount", "main", "test", "blob", "alter", "echo", "jsontext", "arraytext", "stringsize", "flatkeysize"]:
