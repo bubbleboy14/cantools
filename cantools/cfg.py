@@ -98,8 +98,9 @@ cfg = {
 		"alter": False, # add new columns to tables - sqlite only!
 		"echo": False,
 		"public": True, # read from db without credentials via _db.py web handler
-		"notext": False,
 		"nopoly": False,
+		"jsontext": True,
+		"arraytext": True,
 		"stringsize": 500,
 		"flatkeysize": 80,
 		"index": {
