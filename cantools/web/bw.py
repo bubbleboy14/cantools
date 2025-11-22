@@ -23,6 +23,8 @@ def setcfg():
 		babyfyg.ssl.update(prop, config.ssl[prop])
 	for prop in ["oflist", "openfiles", "tracemalloc", "allow"]:
 		babyfyg.log.update(prop, config.log[prop])
+	for prop in ["active", "user", "gateway", "minport", "maxport"]:
+		babyfyg.proxy.update(prop, config.proxy[prop])
 	babyfyg.update("memcache", config.memcache.request)
 	bmfg = babyfyg.mail
 	bmfg.update("mailer", config.mailer)

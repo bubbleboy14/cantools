@@ -79,6 +79,9 @@ cfg = {
 		"blacklist": [],
 		"whitelist": []
 	},
+	"proxy": { # user, gateway, minport, maxport
+		"active": False
+	},
 	"ssl": {
 		"verify": True,
 		"certfile": None,
