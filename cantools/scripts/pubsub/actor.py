@@ -1,4 +1,6 @@
-class Actor(object):
+from fyg.util import Named
+
+class Actor(Named):
     def data(self):
         return {
             "name": self.name,

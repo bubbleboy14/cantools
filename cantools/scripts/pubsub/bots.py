@@ -20,7 +20,7 @@ class Bot(Actor, metaclass=BotMeta):
 		self.channel = channel # often we only care about one channel
 		self.channels = set()
 		self._set_defaults()
-		log("Bot Spawned: '%s'"%(self.name,), 2)
+		self.log("Bot Spawned")
 		channel.join(self)
 		self.server.bots[self.name] = self
 
@@ -35,7 +35,7 @@ class Bot(Actor, metaclass=BotMeta):
 
 	def _default_handler(self, action):
 		def _h(*args):
-			log('Bot %s handling %s: "%s"'%(self.name, action, json.dumps(args)), 3)
+			self.log("handling", action, ":", args)
 		return _h
 
 	def _set_defaults(self):
@@ -68,7 +68,7 @@ class Monitor(Bot):
 			os.mkdir(dp)
 		return os.path.join(dp, str(n.hour))
 
-	def log(self, data):
+	def report(self, data):
 		self.pub(data)
 		if config.admin.monitor.log:
 			write(data, self._datedir(), True, append=True, newline=True)
@@ -80,12 +80,12 @@ class Monitor(Bot):
 		if self.alert.get("cpu"):
 			if c < config.admin.monitor.thresholds.cpu:
 				del self.alert["cpu"]
-				log("CPU calmed down")
+				self.log("CPU calmed down")
 				send_mail(config.admin.contacts, subject="High CPU", body="just ended")
 		else:
 			if c >= config.admin.monitor.thresholds.cpu:
 				self.alert["cpu"] = True
-				log("CPU just started going crazy")
+				self.log("CPU just started going crazy")
 				send_mail(config.admin.contacts, subject="High CPU", body="just started")
 
 	def _tick(self):
@@ -137,5 +137,5 @@ class Monitor(Bot):
 		if config.admin.monitor.proxy:
 			data["ips"]["proxy"] = fetch(config.admin.host, "/_report",
 				config.admin.monitor.proxy, True)["ips"]
-		self.log(data)
+		self.report(data)
 		return True
