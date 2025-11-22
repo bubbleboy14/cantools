@@ -11,6 +11,7 @@ from .package import pipper
 
 def init_basic():
     os.path.isdir("emails") and sys.path.append("emails")
+    sys.path.insert(0, ".") # for dynamically loading modules
 
 def init_rel():
     import rel
