@@ -79,13 +79,17 @@ def pcheck(pname, target, starter):
 		return True
 
 def pkill(pname, force=False):
-	plines = output("ps -ef | grep %s | egrep -v 'screener|pkill|grep'"%(pname,)).split("\n")
-	log("found %s '%s' processes"%(len(plines), pname), important=True)
-	if plines:
-		procs = [[w for w in line.split(" ") if w][1] for line in plines]
-		if force or confirm("kill %s '%s' processes"%(len(procs), pname)):
-			for proc in procs:
-				cmd("kill -9 %s"%(proc,))
+	pblock = output("ps -ef | grep %s | egrep -v 'screener|pkill|grep'"%(pname,))
+	if not pblock:
+		log("no '%s' processes!"%(pname,))
+	else:
+		plines = pblock.split("\n")
+		log("found %s '%s' processes"%(len(plines), pname), important=True)
+		if plines:
+			procs = [[w for w in line.split(" ") if w][1] for line in plines]
+			if force or confirm("kill %s '%s' processes"%(len(procs), pname)):
+				for proc in procs:
+					cmd("kill -9 %s"%(proc,))
 	log("goodbye")
 
 def binpath(bpath="/usr/bin/"):
