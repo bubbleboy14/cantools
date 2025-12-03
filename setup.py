@@ -19,11 +19,11 @@ setup(
     ],
     zip_safe = False,
     install_requires = [
-        "babyweb >= 0.1.1.9",
+        "babyweb >= 0.1.2",
         "venvr >= 0.1.5.8",
         "fyg >= 0.1.7.8",
         "rel >= 0.4.9.22",
-        "dez >= 0.10.10.42",
+        "dez >= 0.10.10.43",
         "catmail >= 0.1.9.1",
         "databae >= 0.1.5.1",
 #        "jsmin >= 2.2.2",
