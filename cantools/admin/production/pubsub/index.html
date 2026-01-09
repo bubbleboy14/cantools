@@ -324,10 +324,10 @@ arr.push(el);},"remove":function(arr,el){var elindex=arr.indexOf(el);if(elindex!
 return arr.splice(elindex,1);},"replace":function(arr,el,rep){var elindex=arr.indexOf(el);if(elindex!=-1)
 arr[elindex]=rep;},"sum":function(arr){return arr.length?arr.reduce(function(a,b){if(Array.isArray(a)){return a.map(function(v,i){return v+b[i];});}
 return a+b;}):arr;},"alpha":function(arr,prop){return arr.sort(function(a,b){if(prop){a=a[prop];b=b[prop];}
-return(a<b)?-1:(a>b)?1:0;});},"has":function(key){return!!CT.data.map[key];},"get":function(key){return CT.data.map[key];},"add":function(d,overwrite){if(CT.data.map[d.key]&&overwrite!==true){for(var k in d)
-CT.data.map[d.key][k]=d[k];}
+return(a<b)?-1:(a>b)?1:0;});},"has":function(key){return!!CT.data.map[key];},"get":function(key){return CT.data.map[key];},"add":function(d,overwrite){var key=d.key||d.label;if(CT.data.map[key]&&overwrite!==true){for(var k in d)
+CT.data.map[key][k]=d[k];}
 else
-CT.data.map[d.key]=d;},"addSet":function(dlist){for(var i=0;i<dlist.length;i++)
+CT.data.map[key]=d;},"addSet":function(dlist){for(var i=0;i<dlist.length;i++)
 CT.data.add(dlist[i]);},"getSet":function(klist){return klist.map(CT.data.get);},"uniquify":function(items,exceptions){exceptions=exceptions||[];items=CT.data.copyList(items);items.sort();var newitems=[];var latestitem="";for(var i=0;i<items.length;i++){if(items[i]!=latestitem&&exceptions.indexOf(items[i])==-1){latestitem=items[i];newitems.push(latestitem);}}
 return newitems;},"copy":function(str){var f=CT.dom.field(null,str,"transparent");document.body.appendChild(f);f.select();if(document.execCommand('copy')){alert("Link saved to clipboard. Great!");f.remove();}else{f.className="";CT.modal.modal(CT.dom.div(["Ctr-C to Copy URL",f],"centered"));setTimeout(function(){f.select();});}},"token":function(){return Math.random().toString(36).substr(2);},"numstr":function(len){var s="",chunk;while(len){chunk=Math.min(len,16);s+=""+CT.data.random(Math.pow(10,chunk));len-=chunk;}
 return s;},"random":function(max,noRound){var r=Math.random()*(max||2);return noRound?r:Math.floor(r);},"choice":function(arr){return arr[CT.data.random(arr.length)];},"checkAndDo":function(keys,cb,nlcb,eb,req,getpath,getparams){var needed=[];keys=CT.data.uniquify(keys);for(var i=0;i<keys.length;i++){if(CT.data.map[keys[i]]==null||req&&CT.data.map[keys[i]][req]==null)
