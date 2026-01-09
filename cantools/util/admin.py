@@ -1,4 +1,5 @@
 import os, sys, rel, time, datetime
+from fyg.util import pcount, pcheck, pkill
 from cantools.util import cmd, output, error, log, set_log, close_log, read, write, confirm, rm
 
 coremods = ["screen", "ctstart", "ctpubsub", "ctutil", "ctinit", "dez_reverse_proxy", "dez_websocket_proxy"]
@@ -64,33 +65,6 @@ def certs(dpath="/root", sname=None):
 	cmd('certbot renew --pre-hook "killall screen" --post-hook "%s"'%(_starter(sname),))
 	log("goodbye")
 	close_log()
-
-def pcount(pname):
-	log("checking count: %s"%(pname,), important=True)
-	num = int(output("ps -ef | grep %s | egrep -v 'screener|pcount|grep' | wc -l"%(pname,)))
-	log("%s count: %s"%(pname, num), 1)
-	return num
-
-def pcheck(pname, target, starter):
-	if target and pcount(pname) != target:
-		log("not enough %s processes - restarting screen!"%(pname,), 1)
-		log(output("screen -Q windows"), important=True)
-		cmd("killall screen; %s"%(starter,))
-		return True
-
-def pkill(pname, force=False):
-	pblock = output("ps -ef | grep %s | egrep -v 'screener|pkill|grep'"%(pname,))
-	if not pblock:
-		log("no '%s' processes!"%(pname,))
-	else:
-		plines = pblock.split("\n")
-		log("found %s '%s' processes"%(len(plines), pname), important=True)
-		if plines:
-			procs = [[w for w in line.split(" ") if w][1] for line in plines]
-			if force or confirm("kill %s '%s' processes"%(len(procs), pname)):
-				for proc in procs:
-					cmd("kill -9 %s"%(proc,))
-	log("goodbye")
 
 def binpath(bpath="/usr/bin/"):
 	log("checking %s core modules"%(len(coremods),), important=True)

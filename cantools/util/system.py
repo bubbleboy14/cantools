@@ -1,9 +1,5 @@
-import os, sys, subprocess, platform
-try:
-	from commands import getoutput   # py2
-except:
-	from subprocess import getoutput # py3
-from fyg.util import log, read, write, rm
+import os, sys
+from fyg.util import log, read, write, rm, sudoed, cmd, output
 
 def cp(content, fname): # more write than copy, buuuut...
 	log("writing %s"%(fname,), 2)
@@ -39,23 +35,6 @@ def mkdir(pname, recursive=False):
 
 def sed(fname, flag, replacement, target=None):
 	write(read(fname).replace(flag, replacement), target or fname)
-
-def sudoed(cline, sudo=False):
-	if sudo and platform.system() != "Windows" and os.geteuid(): # !root
-		cline = "sudo %s"%(cline,)
-	return cline
-
-def cmd(cline, sudo=False, silent=False):
-	cline = sudoed(cline, sudo)
-	silent or log('issuing command: "%s"'%(cline,), 2)
-	subprocess.call(cline, shell=True)
-
-def output(cline, sudo=False, silent=False, loud=False):
-	cline = sudoed(cline, sudo)
-	silent or log('getting output for: "%s"'%(cline,), 2)
-	output = getoutput(cline)
-	loud and log(output)
-	return output
 
 def envget(name):
 	return output("echo $%s"%(name,))
