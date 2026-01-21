@@ -40,6 +40,9 @@ gcpath = os.path.join(os.path.expanduser("~"), "ct.cfg")
 if os.path.isfile(gcpath):
 	print("loading global configuration at: %s"%(gcpath,))
 	lines = read(gcpath, True) + lines
+if os.path.isfile("extra.cfg"):
+	print("loading extra configuration at: extra.cfg")
+	lines = lines + read("extra.cfg", True)
 for line in lines:
 	if line.startswith("#"):
 		continue
