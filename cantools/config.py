@@ -97,6 +97,10 @@ for key, val in items:
 config.update("cache", pc)
 if not config.db.main:
 	config.db.update("main", config.db[config.web.server])
+if "ENV" in config.db.main:
+	config.db.update("main", config.db.main.replace("ENV",
+		"%s:%s@%s/%s"%tuple(map(lambda e : os.getenv(e),
+			["DB_USERNAME", "DB_PASSWORD", "DB_HOST", "DB_DATABASE"]))))
 if "DBPW" in config.db.main:
 	config.db.update("main", config.db.main.replace("DBPW", config.cache("database password? ")))
 for prop in ["deep", "flush", "timestamp", "allow"]:
