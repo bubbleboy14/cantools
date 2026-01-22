@@ -15,6 +15,9 @@ setup(
         'cantools.scripts',
         'cantools.scripts.pubsub',
         'cantools.util',
+        'cantools.util.ai',
+        'cantools.util.ai.tox',
+        'cantools.util.apper',
         'cantools.web'
     ],
     zip_safe = False,
