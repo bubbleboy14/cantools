@@ -95,6 +95,11 @@ for key, val in items:
 		c.update(target, val)
 
 config.update("cache", pc)
+
+if config.dotenv:
+	from dotenv import load_dotenv
+	load_dotenv()
+
 if not config.db.main:
 	config.db.update("main", config.db[config.web.server])
 if "ENV" in config.db.main:
