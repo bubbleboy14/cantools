@@ -95,10 +95,13 @@ for key, val in items:
 		c.update(target, val)
 
 config.update("cache", pc)
-
 if config.dotenv:
-	from dotenv import load_dotenv
+	from dotenv import load_dotenv, dotenv_values
 	load_dotenv()
+	if os.path.exists(config.dotenv):
+		print("loading env from", config.dotenv)
+		denv = read(config.dotenv, isjson=True)
+		config.cache.withdot(denv, dotenv_values())
 
 if not config.db.main:
 	config.db.update("main", config.db[config.web.server])
