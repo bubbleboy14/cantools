@@ -96,8 +96,10 @@ for key, val in items:
 
 config.update("cache", pc)
 if config.dotenv:
-	from dotenv import load_dotenv, dotenv_values
-	load_dotenv()
+	from dotenv import find_dotenv, load_dotenv, dotenv_values
+	denvpath = find_dotenv(usecwd=True)
+	print("dotenv:", denvpath)
+	load_dotenv(denvpath, verbose=True, override=True)
 	if os.path.exists(config.dotenv):
 		print("loading env from", config.dotenv)
 		denv = read(config.dotenv, isjson=True)
