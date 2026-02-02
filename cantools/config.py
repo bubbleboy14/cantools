@@ -113,6 +113,11 @@ if "ENV" in config.db.main:
 			["DB_USERNAME", "DB_PASSWORD", "DB_HOST", "DB_DATABASE"]))))
 if "DBPW" in config.db.main:
 	config.db.update("main", config.db.main.replace("DBPW", config.cache("database password? ")))
+
+if len(config.db.main.split("@")) > 2:
+	p1, p2 = config.db.main.rsplit("@", 1)
+	config.db.update("main", "%s@%s"%(p1.replace("@", "%40"), p2))
+
 for prop in ["deep", "flush", "timestamp", "allow"]:
 	confyg.log.update(prop, config.log[prop])
 for prop in ["cache", "refcount", "main", "test", "blob", "alter", "echo", "jsontext", "arraytext", "stringsize", "flatkeysize"]:
