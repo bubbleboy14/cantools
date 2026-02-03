@@ -480,6 +480,36 @@ def withtmp(fdata, fun, owner=None, fname="_tmp"):
 	fun()
 	os.remove(fname)
 
+UNIT = """[Unit]
+Description=%s Service
+After=network.target
+
+[Service]
+Type=simple
+User=%s
+WorkingDirectory=%s
+ExecStart=%s
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target"""
+
+def unit(port=80, path=".", user="ubuntu", ipath="/etc/systemd/system/", force=False):
+	port = int(port)
+	absdir = os.path.abspath(path)
+	pname = absdir.split("/").pop()
+	sname = "%s.service"%(pname,)
+	istr = "%s in %s"%(sname, ipath)
+	startcmd = "ctstart -p %s"%(port,)
+	if port == 80:
+		startcmd = "sudo %s"%(startcmd,)
+	ustr = UNIT%(pname.capitalize(), user, absdir, startcmd)
+	print(ustr)
+	if force or confirm("install %s"%(istr,)):
+		print("installing", istr)
+		write(ustr, "%s%s"%(ipath, sname))
+
 def servicer(proc, action="restart", sycon="service", ask=False):
 	if ask and not confirm("%s %s"%(action, proc)):
 		return
