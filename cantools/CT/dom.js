@@ -1275,6 +1275,7 @@ CT.dom = {
 		}, n = CT.dom.smartField({
 			isTA: true,
 			keyup: check,
+			classname: o.classname,
 			value: JSON.stringify(data)
 		});
 		n.style.outline = "none";
