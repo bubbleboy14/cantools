@@ -448,6 +448,9 @@ CT.modal.Prompt = CT.Class({
 		"number": function() {
 			return CT.dom.numberSelector(this.opts);
 		},
+		"json": function() {
+			return CT.dom.jsonSelector(this.opts);
+		},
 		"time": function() {
 			return CT.dom.timeSelector();
 		},
@@ -498,7 +501,9 @@ CT.modal.Prompt = CT.Class({
 				return alert("please use a 10-digit phone number");
 			else if (this.opts.style == "email" && !CT.parse.validEmail(this.input.value))
 				return alert("please enter a valid email address");
-			this.opts.cb(this.input && (this.input.ctfile
+			else if (this.opts.style == "json" && !this.input.isvalid())
+				return alert("please enter valid json");
+			this.opts.cb(this.input && (this.input.ctfile || this.input.jsonval
 				|| ((typeof this.input.value == "function") ? this.input.value()
 					: (this.opts.data[this.input.value] || this.input.value))));
 		}

@@ -1268,6 +1268,26 @@ CT.dom = {
 		return f;
 	},
 
+	"jsonSelector": function(o) {
+		var ncol, data = o.data, check = function(val) {
+			ncol = n.isvalid() ? "green" : "red";
+			n.style.border = "2px solid " + ncol;
+		}, n = CT.dom.smartField({
+			isTA: true,
+			keyup: check,
+			value: JSON.stringify(data)
+		});
+		n.style.outline = "none";
+		n.jsonval = data;
+		n.isvalid = function() {
+			try {
+				n.jsonval = JSON.parse(n.value);
+				return true;
+			} catch(e) {}
+		};
+		return n;
+	},
+
 	"numberSelector": function(o) {
 		var initial = typeof o.initial == "number" ? o.initial : 1, label = function(val) {
 			return o.labeler ? o.labeler(val) : val;
