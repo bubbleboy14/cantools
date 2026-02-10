@@ -23,7 +23,7 @@ def init_rel():
     if rcfg.turbo:
         rel.set_turbo(rcfg.turbo)
     if rcfg.method:
-        rel.initialize([rcfg.method])
+        log("initialized rel with: %s"%(rel.initialize([rcfg.method]),), important=True)
     rel.set_verbose(rcfg.verbose)
     loudListen(rcfg.loudlisten)
 
