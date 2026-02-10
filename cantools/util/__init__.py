@@ -22,6 +22,8 @@ def init_rel():
         rel.set_sleep(rcfg.sleep)
     if rcfg.turbo:
         rel.set_turbo(rcfg.turbo)
+    if rcfg.method:
+        rel.initialize([rcfg.method])
     rel.set_verbose(rcfg.verbose)
     loudListen(rcfg.loudlisten)
 
