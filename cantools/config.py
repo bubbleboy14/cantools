@@ -105,21 +105,34 @@ if config.dotenv:
 		denv = read(config.dotenv, isjson=True)
 		config.cache.withdot(denv, dotenv_values())
 
-if not config.db.main:
-	config.db.update("main", config.db[config.web.server])
-if "ENV" in config.db.main:
-	config.db.update("main", config.db.main.replace("ENV",
-		"%s:%s@%s/%s"%tuple(map(lambda e : os.getenv(e),
-			["DB_USERNAME", "DB_PASSWORD", "DB_HOST", "DB_DATABASE"]))))
-if "DBPW" in config.db.main:
-	config.db.update("main", config.db.main.replace("DBPW", config.cache("database password? ")))
-
-if len(config.db.main.split("@")) > 2:
-	p1, p2 = config.db.main.rsplit("@", 1)
-	config.db.update("main", "%s@%s"%(p1.replace("@", "%40"), p2))
-
 for prop in ["deep", "flush", "timestamp", "allow"]:
 	confyg.log.update(prop, config.log[prop])
+
+def initdb(name, dcfg):
+	if "ENV" in dcfg[name]:
+		dcfg.update(name, dcfg[name].replace("ENV",
+			"%s:%s@%s/%s"%tuple(map(lambda e : os.getenv(e),
+				["DB_USERNAME", "DB_PASSWORD", "DB_HOST", "DB_DATABASE"]))))
+	if "DBPW" in dcfg[name]:
+		dcfg.update(name, dcfg[name].replace("DBPW", config.cache("database password? ")))
+	redacted = dcfg[name]
+	if "@" in dcfg[name]:
+		if len(dcfg[name].split("@")) > 2:
+			p1, p2 = dcfg[name].rsplit("@", 1)
+			dcfg.update(name, "%s@%s"%(p1.replace("@", "%40"), p2))
+		auth = dcfg[name].split("@").pop(0).split("//").pop()
+		if ":" in auth:
+			p = auth.split(":", 1).pop()
+			redacted = redacted.replace(p, "REDACTED_PASSWORD")
+	print("initdb", name, ":", redacted)
+
+if not config.db.main:
+	config.db.update("main", config.db[config.web.server])
+initdb("main", config.db)
+if config.dbs:
+	for dbname, dbaddr in config.dbs.items():
+		initdb(dbname, config.dbs)
+		dbcfg.update(dbname, config.dbs[dbname])
 for prop in ["cache", "refcount", "main", "test", "blob", "alter", "echo", "jsontext", "arraytext", "stringsize", "flatkeysize"]:
 	dbcfg.update(prop, config.db[prop])
 for prop in ["key", "named"]:
