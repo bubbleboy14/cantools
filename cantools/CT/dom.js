@@ -805,10 +805,11 @@ CT.dom = {
 		return table;
 	},
 	"timer": function(start, cb, classname, id, attrs) {
-		var n = CT.dom.node(start, "div", classname, id, attrs);
-		n._sec = start;
+		var countup = !start, inc = countup ? 1 : -1,
+			n = CT.dom.node(start || "0", "div", classname, id, attrs);
+		n._sec = countup ? 0 : start;
 		n._check = function() {
-			n._sec -= 1;
+			n._sec += inc;
 			n.innerHTML = n._sec;
 			if (n._sec == 0) {
 				n.stop();
@@ -827,6 +828,10 @@ CT.dom = {
 				clearInterval(n._interval);
 				n._interval = null;
 			}
+		};
+		n.destroy = function() {
+			n.stop();
+			n.remove();
 		};
 		n.start();
 		return n;
