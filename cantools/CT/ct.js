@@ -257,8 +257,16 @@ var CT = {
 		"spinOn": function() {
 			CT.net._spinner_node = CT.net._spinner_node || CT.dom.spinner();
 			document.body.appendChild(CT.net._spinner_node);
+			if (CT.net._spinner == "timer") {
+				CT.net._spinner_node.timer = CT.dom.timer(0, null, "ctswrap gigantic");
+				document.body.appendChild(CT.net._spinner_node.timer);
+			}
 		},
 		"spinOff": function() {
+			if (CT.net._spinner_node.timer) {
+				CT.net._spinner_node.timer.destroy();
+				delete CT.net._spinner_node.timer;
+			}
 			CT.dom.remove(CT.net._spinner_node);
 		},
 		"_xhrcb": function(path, cb, eb, cbarg, ebarg, errMsg, signature, _500as200, noct, spinner, basic) {
