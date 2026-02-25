@@ -122,10 +122,10 @@ def initdb(name, dcfg):
 		if len(dcfg[name].split("@")) > 2:
 			p1, p2 = dcfg[name].rsplit("@", 1)
 			dcfg.update(name, "%s@%s"%(p1.replace("@", "%40"), p2))
-		auth = dcfg[name].split("@").pop(0).split("//").pop()
+		auth = dcfg[name].split("//").pop().split("@").pop(0)
 		if ":" in auth:
 			p = auth.split(":", 1).pop()
-			redacted = redacted.replace(p, "REDACTED_PASSWORD")
+			redacted = dcfg[name].replace(p, "REDACTED_PASSWORD")
 	print("initdb", name, ":", redacted)
 
 if not config.db.main:
