@@ -115,6 +115,8 @@ def initdb(name, dcfg):
 				["DB_USERNAME", "DB_PASSWORD", "DB_HOST", "DB_DATABASE"]))))
 	if "DBPW" in dcfg[name]:
 		dcfg.update(name, dcfg[name].replace("DBPW", config.cache("database password? ")))
+	if dcfg[name] == "SIDE":
+		dcfg.update(name, "%s/%s"%(config.db.main.rsplit("/", 1).pop(0), name))
 	redacted = dcfg[name]
 	if "@" in dcfg[name]:
 		if len(dcfg[name].split("@")) > 2:
