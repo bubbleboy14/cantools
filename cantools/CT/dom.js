@@ -1416,10 +1416,18 @@ CT.dom = {
 		return n;
 	},
 
-	"filter": function(nodes, placeholder, showDisplay, className) {
+	"filter": function(nodes, placeholder, showDisplay, className, canInvert) {
 		var refresher = function(val) {
 			var refitem = function(n, i) {
-				CT.dom[(!val || (n.firstElementChild || n).innerHTML.toLowerCase().includes(val.toLowerCase())) ? "show" : "hide"](n, showDisplay);
+				var tarnode = n.firstElementChild || n, hasflag, shouldshow,
+					tarval = tarnode.innerHTML.toLowerCase(),
+					curval = val && val.toLowerCase(),
+					inverted = canInvert && curval && curval.startsWith("-");
+				if (inverted)
+					curval = curval.slice(1);
+				hasflag = curval && tarval.includes(curval);
+				shouldshow = inverted ? !hasflag : hasflag;
+				CT.dom[(!curval || shouldshow) ? "show" : "hide"](n, showDisplay);
 			};
 			if (Array.isArray(nodes))
 				nodes.forEach(refitem);
