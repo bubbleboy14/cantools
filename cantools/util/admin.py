@@ -299,12 +299,14 @@ def vitals(clean=False, thresh=90, dpath=".", conlim=0):
 	lz.append("inode usage: %s%%"%(inodes,))
 	memuse = float(output("free | grep Mem | awk '{print $3/$2 * 100.0}'"))
 	lz.append("memory usage: %s%%"%(memuse,))
+	cpuse = float(output("grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100/($2+$4+$5)} END {print usage }'"))
+	lz.append("cpu usage: %s%%"%(cpuse,))
 	if conlim:
 		concount = int(output("lsof -i | wc -l"))
 		lz.append("connections: %s"%(concount,))
 	for l in lz:
 		log(l)
-	if hdrive > thresh or inodes > thresh or memuse > thresh or (conlim and concount > conlim):
+	if hdrive > thresh or inodes > thresh or memuse > thresh or cpuse > thresh or (conlim and concount > conlim):
 		log("threshold exceeded - notifying admins")
 		if hdrive > thresh and clean:
 			log("cleaning up!")
