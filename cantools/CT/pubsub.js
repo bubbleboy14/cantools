@@ -109,7 +109,7 @@ CT.pubsub = {
 		"on": { // websocket events
 			"open": function() {
 				CT.pubsub._.open = true;
-				CT.pubsub._.reconnect_interval = 250;
+//				CT.pubsub._.reconnect_interval = 250;
 				clearTimeout(CT.pubsub._.starter);
 				var oobj = {
 					"action": "register",
