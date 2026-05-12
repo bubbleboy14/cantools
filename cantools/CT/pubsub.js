@@ -109,17 +109,17 @@ CT.pubsub = {
 		"on": { // websocket events
 			"open": function() {
 				CT.pubsub._.open = true;
-				CT.pubsub._.reconnect_interval = 250;
-				CT.pubsub._.write({
+//				CT.pubsub._.reconnect_interval = 250;
+				clearTimeout(CT.pubsub._.starter);
+				var oobj = {
 					"action": "register",
 					"data": CT.pubsub._.args[2],
 					"meta": CT.pubsub._.args[4]
-				});
-				for (var channel in CT.pubsub._.channels)
-					CT.pubsub.subscribe(channel);
-				CT.pubsub._.queue.forEach(CT.pubsub._.write);
-				CT.pubsub._.queue.length = 0;
-				CT.pubsub._.cb.open();
+				};
+				if (core && core.config.pspw)
+					oobj.pw = prompt("password?");
+				CT.pubsub._.write(oobj);
+				CT.pubsub._.starter = setTimeout(CT.pubsub._.start, 1000);
 			},
 			"close": function() {
 				CT.pubsub._.open = false;
@@ -136,6 +136,16 @@ CT.pubsub = {
 				_.process[d.action](d.data);
 			}
 		},
+		"start": function() {
+			var _ = CT.pubsub._;
+			if (!_.open)
+				return _.log("not open - aborting start");
+			for (var channel in _.channels)
+				CT.pubsub.subscribe(channel);
+			_.queue.forEach(_.write);
+			_.queue.length = 0;
+			_.cb.open();
+		},
 		"write": function(data) {
 			var _ = CT.pubsub._;
 			if (_.open) {
@@ -148,7 +158,7 @@ CT.pubsub = {
 			var r_int = CT.pubsub._.reconnect_interval;
 			CT.pubsub._.log("RECONNECT", r_int);
 			setTimeout(function() {
-				CT.pubsub.connect.apply(null, CT.pubsub._.args)
+				CT.pubsub.connect.apply(null, CT.pubsub._.args);
 			}, r_int);
 			CT.pubsub._.reconnect_interval = Math.min(2 * r_int, 30000);
 		}

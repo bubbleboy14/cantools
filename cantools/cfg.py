@@ -139,7 +139,8 @@ cfg = {
 		"echo": True,
 		"log": None,
 		"meta": False,
-		"b64": False
+		"b64": False,
+		"pw": None
 	},
 	"parse_error_segment_length": 100,
 	"build": {
