@@ -9,15 +9,25 @@ class PubSubUser(Actor):
         self.conn = conn
         self.server = server
         self._log = logger
+        self._closed = False
         self.channels = set()
         self.conn.set_cb(self._register)
         self._log('NEW CONNECTION (%s)'%(self.id,), 1, True)
 
     def write(self, data):
+        if self._closed:
+            return self.log("aborting write - already closed!")
         data["data"]["datetime"] = str(datetime.utcnow())
         self.conn.write(data)
 
+    def close(self):
+        self.log("closing!")
+        self._closed = True
+        self.conn.close()
+
     def _read(self, obj):
+        if self._closed:
+            return self.log("aborting _read - already closed!")
         if obj["action"] == "close":
             return self.conn.close()
         getattr(self.server, obj["action"])(obj["data"], self)
@@ -46,6 +56,7 @@ class PubSubUser(Actor):
         self._log('REGISTER: "%s"'%(name,), 1, True)
         self.name = name
         self.meta = obj.get("meta")
-        self.server.newUser(self)
+        self.pw = obj.get("pw")
         self.conn.set_cb(self._read)
         self.conn.set_close_cb(self._close)
+        self.server.newUser(self)
