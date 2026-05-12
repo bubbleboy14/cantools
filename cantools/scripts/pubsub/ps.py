@@ -41,7 +41,11 @@ class PubSub(WebSocketDaemon):
     def newUser(self, u):
         if not u.name: # on dc?
             self._log("user disconnected without registering")
-            u.conn.close()
+            u.close()
+        elif config.pubsub.pw and config.pubsub.pw != u.pw:
+            self._log("wrong password!")
+            u._error("wrong")
+            u.close()
         elif u.name.startswith("__admin__") and u.name.endswith(b64encode(config.admin.pw.encode()).decode()):
             self.admins[u.name] = u
             self.snapshot(u)
