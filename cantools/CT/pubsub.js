@@ -108,18 +108,18 @@ CT.pubsub = {
 		},
 		"on": { // websocket events
 			"open": function() {
-				CT.pubsub._.open = true;
-//				CT.pubsub._.reconnect_interval = 250;
-				clearTimeout(CT.pubsub._.starter);
-				var oobj = {
+				var _ = CT.pubsub._, oobj = {
 					"action": "register",
-					"data": CT.pubsub._.args[2],
-					"meta": CT.pubsub._.args[4]
+					"data": _.args[2],
+					"meta": _.args[4]
 				};
+				_.open = true;
+//				CT.pubsub._.reconnect_interval = 250;
+				clearTimeout(_.starter);
 				if (core && core.config.pspw)
-					oobj.pw = prompt("password?");
-				CT.pubsub._.write(oobj);
-				CT.pubsub._.starter = setTimeout(CT.pubsub._.start, 1000);
+					oobj.pw = _.maybepw = _.pw || prompt("password?");
+				_.write(oobj);
+				_.starter = setTimeout(_.start, 1000);
 			},
 			"close": function() {
 				CT.pubsub._.open = false;
@@ -144,6 +144,7 @@ CT.pubsub = {
 				CT.pubsub.subscribe(channel);
 			_.queue.forEach(_.write);
 			_.queue.length = 0;
+			_.pw = _.maybepw;
 			_.cb.open();
 		},
 		"write": function(data) {
