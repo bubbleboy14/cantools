@@ -1,3 +1,4 @@
+import time
 from cantools import config
 
 def diffmerge(orig, diff): # move this somewhere else....
@@ -17,6 +18,7 @@ class PubSubChannel(object):
         self.users = set()
         self.history = []
         self.metadata = {}
+        self.last_activity = time.time()
         self._log('NEW CHANNEL: "%s"'%(name,), 1, True)
 
     def data(self):
@@ -34,6 +36,7 @@ class PubSubChannel(object):
 
     def meta(self, subobj):
         subobj["channel"] = self.name
+        self.last_activity = time.time()
         self._broadcast({
             "action": "meta",
             "data": subobj
@@ -42,7 +45,7 @@ class PubSubChannel(object):
     def chmeta(self, subobj):
         subobj["channel"] = self.name # _usually_ unnecessary
         diffmerge(self.metadata, subobj["meta"])
-#        self.metadata = subobj["meta"]
+        self.last_activity = time.time()
         self._broadcast({
             "action": "chmeta",
             "data": subobj
@@ -50,6 +53,7 @@ class PubSubChannel(object):
 
     def write(self, subobj):
         subobj["channel"] = self.name
+        self.last_activity = time.time()
         obj = {
             "action": "publish",
             "data": subobj
