@@ -142,7 +142,7 @@ cfg = {
 		"b64": False,
 		"pw": None,
 		"prune": {
-			"idle": 0,    # 600
+			"idle": 600,
 			"interval": 0 # 60
 		}
 	},
