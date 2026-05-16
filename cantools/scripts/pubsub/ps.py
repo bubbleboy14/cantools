@@ -156,7 +156,8 @@ class PubSub(WebSocketDaemon):
 
     def publish(self, data, user):
         channel = data["channel"]
-        self._check_channel(channel)
+        if not self._check_channel(channel, justBool=True):
+            return self._log("aborting publish on retired channel: %s"%(channel,))
         self.channels[channel].write({
             "message": data["message"],
             "user": user.name
