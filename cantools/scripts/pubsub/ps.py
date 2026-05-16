@@ -1,10 +1,13 @@
-import os, sys
+import os, sys, time, rel
 from base64 import b64encode
 from dez.network.websocket import WebSocketDaemon
 from cantools import config
 from cantools.util import log, set_log
-from .user import PubSubUser
 from .channel import PubSubChannel
+from .user import PubSubUser
+from .bots import Bot
+
+prunefyg = config.pubsub.prune
 
 class PubSub(WebSocketDaemon):
     def __init__(self, *args, **kwargs):
@@ -30,6 +33,38 @@ class PubSub(WebSocketDaemon):
         self.loadBots()
         config.admin.update("pw", config.cache("admin password? "))
         self._log("Initialized PubSub Server @ %s:%s"%(self.hostname, self.port), important=True)
+        if prunefyg.interval:
+            rel.timeout(prunefyg.interval, self.prune)
+
+    def prune(self):
+        self._log("prune - %s active channels"%(len(self.channels),), important=True)
+        now = time.time()
+        stale = []
+        for name, chan in self.channels.items():
+            if now - chan.last_activity < prunefyg.idle:
+                continue
+            if not any(not isinstance(u, Bot) for u in chan.users):
+                stale.append(name)
+        if stale:
+            for name in stale:
+                self.retire(name)
+            self._log("pruned %d idle channels; %d channels, %s bots remain"%(len(stale),
+                len(self.channels), len(self.bots)), important=True)
+        return True
+
+    def retire(self, name):
+        self._log("retiring %s"%(name,), important=True)
+        chan = self.channels.get(name)
+        if not chan:
+            return self._log("channel not found!", important=True)
+        for u in list(chan.users):
+            if isinstance(u, Bot):
+                self._log("dismissing bot: %s"%(u.name,))
+                self.bots.pop(u.name, None)
+                u.channels.discard(chan)
+        chan.users.clear()
+        del self.channels[name]
+        self._log("retired %s"%(name,), important=True)
 
     def loadBots(self):
         self._log("Loading Bots: %s"%(config.pubsub.botnames,))
@@ -121,7 +156,8 @@ class PubSub(WebSocketDaemon):
 
     def publish(self, data, user):
         channel = data["channel"]
-        self._check_channel(channel)
+        if not self._check_channel(channel, justBool=True):
+            return self._log("aborting publish on retired channel: %s"%(channel,))
         self.channels[channel].write({
             "message": data["message"],
             "user": user.name

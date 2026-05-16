@@ -140,7 +140,11 @@ cfg = {
 		"log": None,
 		"meta": False,
 		"b64": False,
-		"pw": None
+		"pw": None,
+		"prune": {
+			"idle": 600,
+			"interval": 0 # 60
+		}
 	},
 	"parse_error_segment_length": 100,
 	"build": {
