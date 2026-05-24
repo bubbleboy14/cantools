@@ -240,8 +240,8 @@ def askArch(path):
 	log("ok, i'm moving it to %s"%(newpath,))
 	os.rename(path, newpath)
 
-def askGet(path, user, domain, basepath, projpath, keyfile=None, isdir=False):
-	if not confirm("should i get %s"%(path,), True):
+def askGet(path, user, domain, basepath, projpath, keyfile=None, isdir=False, default=True):
+	if not confirm("should i get %s"%(path,), default):
 		return
 	askArch(path)
 	scp(user, domain, "/%s/%s/%s"%(basepath, projpath, path), keyfile, isdir)
@@ -257,7 +257,7 @@ def doGets(user, domain, projpath, keyfile):
 	basepath = askBasePath(user)
 	askGet("data.db", user, domain, basepath, projpath, keyfile)
 	askGet("blob", user, domain, basepath, projpath, keyfile, True)
-	askGet("pack.zip", user, domain, basepath, projpath, keyfile)
+	askGet("pack.zip", user, domain, basepath, projpath, keyfile, default=False)
 	otherPath = input("anything else? [default: nah] ")
 	while otherPath:
 		askGet(otherPath, user, domain, basepath, projpath, keyfile,
