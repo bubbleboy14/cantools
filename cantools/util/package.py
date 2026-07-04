@@ -1,5 +1,5 @@
 import os, sys, sysconfig, importlib
-from cantools.util import cmd, log, pymod, read, write
+from cantools.util import cmd, log, pymod, read, write, confirm
 
 def managedpip():
     fname = os.path.join(sysconfig.get_path("stdlib"), "EXTERNALLY-MANAGED")
@@ -13,19 +13,29 @@ def virtenv():
     print("virtual environment:", invenv)
     return invenv
 
-def pipper(execute=False, force=False):
+def pipper(execute=False, nosudo=False, rmegg=False, force=False):
+    if execute == "False":
+        execute = False
+    if nosudo == "False":
+        nosudo = False
+    if rmegg == "False":
+        rmegg = False
+    if rmegg and force or confirm("remove egg"):
+        cmd("rm -rf *egg-info", sudo=True)
     p = "pip install -e ."
     valid = True
     notvenv = not virtenv()
+    shouldsudo = notvenv and not nosudo
+    log("sudoing: %s"%(shouldsudo,))
     if managedpip() and notvenv:
         log("your Python is externally managed by your OS")
-        if force or input("install anyway? [y/N] ").lower().startswith("y"):
+        if force or confirm("install anyway"):
             p += " --break-system-packages --use-pep517"
         else:
             valid = False
     def dopip():
         if valid:
-            pymod(p, notvenv)
+            pymod(p, shouldsudo)
         else:
             log("pip skip!")
     if execute:
