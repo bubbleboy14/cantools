@@ -13,15 +13,16 @@ def virtenv():
     print("virtual environment:", invenv)
     return invenv
 
-def pipper(execute=False, nosudo=False, rmegg=False, force=False):
+def pipper(execute=False, rmegg=False, nosudo=True, force=False):
     if execute == "False":
         execute = False
-    if nosudo == "False":
-        nosudo = False
     if rmegg == "False":
         rmegg = False
+    if nosudo == "False":
+        nosudo = False
+    ecmd = None
     if rmegg and force or confirm("remove egg"):
-        cmd("rm -rf *egg-info", sudo=True)
+        ecmd = "rm -rf *egg-info"
     p = "pip install -e ."
     valid = True
     notvenv = not virtenv()
@@ -35,6 +36,7 @@ def pipper(execute=False, nosudo=False, rmegg=False, force=False):
             valid = False
     def dopip():
         if valid:
+            ecmd and cmd(ecmd, sudo=True)
             pymod(p, shouldsudo)
         else:
             log("pip skip!")
@@ -125,8 +127,8 @@ def vpush(modname=None, packname=None, curver=None, doxxer=None):
     pwheel(packname or modname, version)
     log("we did it (%s -> %s)!"%(curver, version), important=True)
 
-def refresh_plugins():
-    pcmd = pipper()
+def refresh_plugins(rmegg=False, nosudo=True, force=False):
+    pcmd = pipper(rmegg=rmegg, nosudo=nosudo, force=force)
     def refresher():
         cmd("git pull")
         pcmd()
