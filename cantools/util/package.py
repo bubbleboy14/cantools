@@ -21,7 +21,7 @@ def pipper(execute=False, rmegg=False, nosudo=True, force=False):
     if nosudo == "False":
         nosudo = False
     ecmd = None
-    if rmegg and force or confirm("remove egg"):
+    if rmegg and (force or confirm("remove egg")):
         ecmd = "rm -rf *egg-info"
     p = "pip install -e ."
     valid = True
