@@ -85,8 +85,8 @@ for key, val in items:
 			if target == "web_rollz":
 				rollz = {}
 				for v in val:
-					flag, domain = v.split(":")
-					rollz[flag] = domain
+					flag, rule = v.split(":", 1)
+					rollz[flag] = rule
 				val = rollz
 		if "_" in target:
 			path, target = target.rsplit("_", 1)
