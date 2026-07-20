@@ -14,7 +14,6 @@ A_STATIC = {
 A_CB = { "/admin": "admin", "/_db": "_db" }
 
 def setcfg():
-	syslog("passing configuration to babyweb")
 	for prop in ["cache", "encode", "mempad", "web", "cron", "scrambler"]:
 		babyfyg.update(prop, config[prop])
 	for prop in ["contacts", "reportees"]:
@@ -33,6 +32,7 @@ def setcfg():
 	bmfg.update("html", config.mailhtml)
 	bmfg.update("verbose", config.mailoud)
 	bmfg.update("scantick", config.mailscantick)
+	syslog("passed configuration to babyweb")
 
 setcfg()
 
