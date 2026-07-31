@@ -73,11 +73,18 @@ class PubSub(WebSocketDaemon):
             self._log("Importing Bot: %s"%(bname,), 2)
             __import__(bname) # config modified in pubsub.bots.BotMeta.__new__()
 
+    def authFailed(self, u):
+        pw = config.pubsub.pw
+        if pw:
+            if pw == "PROMPT": # use with DOTENV = envmap.json
+                pw = config.cache("pubsub password? ")
+            return pw != u.pw
+
     def newUser(self, u):
         if not u.name: # on dc?
             self._log("user disconnected without registering")
             u.close()
-        elif config.pubsub.pw and config.pubsub.pw != u.pw:
+        elif self.authFailed(u):
             self._log("wrong password!")
             u._error("wrong")
             u.close()
