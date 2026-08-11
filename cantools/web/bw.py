@@ -32,6 +32,9 @@ def setcfg():
 	bmfg.update("html", config.mailhtml)
 	bmfg.update("verbose", config.mailoud)
 	bmfg.update("scantick", config.mailscantick)
+	cmt = config.mailthrottler
+	bmfg.throttler.update("active", cmt.active)
+	bmfg.throttler.update("period", cmt.period)
 	syslog("passed configuration to babyweb")
 
 setcfg()
