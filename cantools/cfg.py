@@ -130,6 +130,10 @@ cfg = {
 	"mailhtml": True,
 	"mailoud": False,
 	"mailscantick": 2,
+	"mailthrottler": {
+		"active": False,
+		"period": 600
+	},
 	"pubsub": {
 		"host": "localhost",
 		"port": 8888,
