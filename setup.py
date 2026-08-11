@@ -24,7 +24,7 @@ setup(
     install_requires = [
         "babyweb >= 0.1.4.3",
         "venvr >= 0.1.5.8",
-        "fyg >= 0.1.7.10",
+        "fyg >= 0.1.7.11",
         "rel >= 0.4.9.27",
         "dez >= 0.10.10.54",
         "catmail >= 0.1.9.4",
