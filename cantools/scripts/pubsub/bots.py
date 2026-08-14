@@ -33,6 +33,9 @@ class Bot(Actor, metaclass=BotMeta):
 	def write(self, obj): # receive message from channel
 		getattr(self, "on_%s"%(obj["action"],))(obj["data"])
 
+	def stop(self): # override to cancel timers / release resources on retire()
+		pass
+
 	def _default_handler(self, action):
 		def _h(*args):
 			self.log("handling", action, ":", args)
@@ -46,11 +49,14 @@ class Bot(Actor, metaclass=BotMeta):
 
 class Monitor(Bot):
 	def __init__(self, server, channel, name="monitor"): # only one monitor
-		import event # here for google crap engine
+		import rel # here for google crap engine
 		self.current = {}
 		self.alert = {}
 		Bot.__init__(self, server, channel, name)
-		event.timeout(config.admin.monitor.interval, self._tick)
+		self._ticker = rel.timeout(config.admin.monitor.interval, self._tick)
+
+	def stop(self):
+		self._ticker.delete(dereference=True)
 
 	def _datedir(self):
 		n = datetime.datetime.now()
