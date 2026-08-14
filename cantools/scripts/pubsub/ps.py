@@ -62,6 +62,7 @@ class PubSub(WebSocketDaemon):
                 self._log("dismissing bot: %s"%(u.name,))
                 self.bots.pop(u.name, None)
                 u.channels.discard(chan)
+                u.stop()
         chan.users.clear()
         del self.channels[name]
         self._log("retired %s"%(name,), important=True)
