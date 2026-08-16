@@ -43,7 +43,7 @@ class PubSub(WebSocketDaemon):
         for name, chan in self.channels.items():
             if now - chan.last_activity < prunefyg.idle:
                 continue
-            if not any(not isinstance(u, Bot) for u in chan.users):
+            if prunefyg.drop or not any(not isinstance(u, Bot) for u in chan.users):
                 stale.append(name)
         if stale:
             for name in stale:
@@ -63,6 +63,9 @@ class PubSub(WebSocketDaemon):
                 self.bots.pop(u.name, None)
                 u.channels.discard(chan)
                 u.stop()
+            elif prunefyg.drop:
+                self._log("dropping user: %s"%(u.name,))
+                u.close()
         chan.users.clear()
         del self.channels[name]
         self._log("retired %s"%(name,), important=True)

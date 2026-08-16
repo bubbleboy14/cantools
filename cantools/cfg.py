@@ -147,7 +147,8 @@ cfg = {
 		"pw": None,
 		"prune": {
 			"idle": 600,
-			"interval": 0 # 60
+			"interval": 0, # 60
+			"drop": False
 		}
 	},
 	"parse_error_segment_length": 100,
