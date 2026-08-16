@@ -1,5 +1,6 @@
 import time
 from cantools import config
+from .bots import Bot
 
 def diffmerge(orig, diff): # move this somewhere else....
     for k, v in diff.items():
@@ -61,6 +62,9 @@ class PubSubChannel(object):
         self._broadcast(obj)
         self.history.append(subobj)
         self.history = self.history[-config.pubsub.history:]
+
+    def humans(self):
+        return list(filter(lambda u : not isinstance(u, Bot), self.users))
 
     def leave(self, user):
         if user in self.users:

@@ -148,7 +148,8 @@ cfg = {
 		"prune": {
 			"idle": 600,
 			"interval": 0, # 60
-			"drop": False
+			"drop": False,
+			"unsub": False
 		}
 	},
 	"parse_error_segment_length": 100,

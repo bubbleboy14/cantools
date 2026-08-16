@@ -43,7 +43,12 @@ class PubSub(WebSocketDaemon):
         for name, chan in self.channels.items():
             if now - chan.last_activity < prunefyg.idle:
                 continue
-            if prunefyg.drop or not any(not isinstance(u, Bot) for u in chan.users):
+            humans = chan.humans()
+            if prunefyg.unsub and humans:
+                self._log("unsubbing %s users"%(len(humans),), important=True)
+                for human in humans:
+                    chan.leave(human)
+            if prunefyg.drop or not chan.humans():
                 stale.append(name)
         if stale:
             for name in stale:
