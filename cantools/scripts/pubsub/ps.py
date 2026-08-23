@@ -37,7 +37,7 @@ class PubSub(WebSocketDaemon):
             rel.timeout(prunefyg.interval, self.prune)
 
     def prune(self):
-        self._log("prune - %s active channels"%(len(self.channels),), important=True)
+        self._log("prune - %s active channels"%(len(self.channels),), important=True, flush=True)
         now = time.time()
         stale = []
         for name, chan in self.channels.items():
@@ -193,9 +193,9 @@ class PubSub(WebSocketDaemon):
             self._new_channel(channel)
         return condition
 
-    def _log(self, data, level=0, important=False):
+    def _log(self, data, level=0, important=False, flush=False):
         if not self.silent:
-            log(data, level=level, important=important)
+            log(data, level=level, important=important, flush=flush)
 
     def connect(self, conn):
         PubSubUser(conn, self, self._log)
