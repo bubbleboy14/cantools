@@ -40,6 +40,21 @@ def snapinstall(pkg, classic=False):
 		iline = "%s --classic"%(iline,)
 	cmd(iline, sudo=True)
 
+def installdeps():
+	from cantools import config
+	dlen = len(config.build.dependencies)
+	if dlen:
+		log("Installing %s System Dependencies"%(dlen,), important=True)
+		install(*config.build.dependencies)
+	slen = len(config.build.snaps)
+	if slen:
+		log("Installing %s Snap Dependencies"%(slen,), important=True)
+		for s in config.build.snaps:
+			classic = s.startswith("classic:")
+			if classic:
+				s = s.split(":").pop()
+			snapinstall(s, classic=classic)
+
 def simplecfg(fname, sequential=False):
 	if not os.path.exists(fname):
 		return log("configuration file not found: %s"%(fname,))

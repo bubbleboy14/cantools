@@ -43,7 +43,7 @@ from fyg.util import confirm
 from cantools import config, include_plugin, mods_and_repos
 from cantools.util import log, error, cp, sym, mkdir, rm, py, cmd, output, read
 from cantools.util.package import pipper, refresh_plugins
-from cantools.util.admin import install
+from cantools.util.admin import install, installdeps
 from .builder import build_all
 
 try:
@@ -161,10 +161,8 @@ class Builder(object):
 			self._getplugs(config.plugin.modules)
 
 	def install_sysdeps(self):
-		dlen = len(config.build.dependencies)
-		if dlen and self.install_dependencies:
-			log("Installing %s System Dependencies"%(dlen,), 1)
-			install(*config.build.dependencies)
+		if self.install_dependencies:
+			installdeps()
 
 	def plugdirs(self):
 		log("Building Directories for %s Plugins"%(len(list(self.plugins.keys())),), important=True)
