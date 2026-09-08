@@ -27,7 +27,8 @@ from databae.util import blobify
 from fyg.util import log, error, write, confirm
 from cantools import db
 from cantools.util import mkdir, cmd, output, sym
-from cantools.util.admin import install, snapinstall, simplecfg, enc, dec, qdec, phpver, running, servicer, mysqlcheck, zipit
+from cantools.util.admin import (install, snapinstall, simplecfg, enc, dec,
+	qdec, phpver, running, servicer, mysqlcheck, zipit, drylog, prodeps, deps)
 
 LIMIT = 500
 
@@ -269,40 +270,6 @@ def snap(domain):
 		domain = input("what's the snap domain? ")
 	doGets(input("what's the user? [default: root]: ") or "root",
 		domain, projpath(), input("what's the key file? [default: none] "))
-
-def drylog(cfg):
-	for variety in cfg:
-		for line in cfg[variety]:
-			log("%s: %s"%(variety, line), 1)
-
-def prodeps(pman):
-	cfg = simplecfg("%s.profile"%(pman,))
-	bcfg = cfg and cfg.get("basic")
-	if not bcfg:
-		return
-	if pman == "apt": # else snap or snap classic
-		return install(*bcfg)
-	isclas = pman == "clasnap"
-	for pkg in bcfg:
-		snapinstall(pkg, isclas)
-
-def deps(dryrun=False):
-	cfg = simplecfg("deps.cfg")
-	if not cfg: return
-	log("installing dependencies", important=True)
-	if dryrun:
-		return drylog(cfg)
-	if "basic" in cfg:
-		install(*cfg["basic"])
-	if "snap" in cfg:
-		for pkg in cfg["snap"]:
-			snapinstall(pkg)
-	if "clasnap" in cfg:
-		for pkg in cfg["clasnap"]:
-			snapinstall(pkg, True)
-	if "pro" in cfg:
-		for pman in cfg["pro"]:
-			prodeps(pman)
 
 def usergroup(cfg, recursive=True, nobasic=False):
 	chowner = "chown"

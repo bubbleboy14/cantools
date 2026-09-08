@@ -13,17 +13,21 @@ def virtenv():
     print("virtual environment:", invenv)
     return invenv
 
-def pipper(execute=False, rmegg=False, nosudo=True, force=False):
+def pipper(execute=False, rmegg=False, predeps=False, nosudo=True, force=False, target="-e ."):
     if execute == "False":
         execute = False
     if rmegg == "False":
         rmegg = False
+    if predeps == "False":
+        predeps = False
     if nosudo == "False":
         nosudo = False
+    if force == "False":
+        force = False
     ecmd = None
     if rmegg and (force or confirm("remove egg")):
         ecmd = "rm -rf *egg-info"
-    p = "pip install -e ."
+    p = "pip install %s"%(target,)
     valid = True
     notvenv = not virtenv()
     shouldsudo = notvenv and not nosudo
@@ -37,6 +41,9 @@ def pipper(execute=False, rmegg=False, nosudo=True, force=False):
     def dopip():
         if valid:
             ecmd and cmd(ecmd, sudo=True)
+            if predeps and (force or confirm("install deps.cfg packages")):
+                from .admin import deps
+                deps()
             pymod(p, shouldsudo)
         else:
             log("pip skip!")

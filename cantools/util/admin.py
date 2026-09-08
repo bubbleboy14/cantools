@@ -73,6 +73,44 @@ def simplecfg(fname, sequential=False):
 			data[variety].append(line)
 	return data
 
+def drylog(cfg):
+	for variety in cfg:
+		for line in cfg[variety]:
+			log("%s: %s"%(variety, line), 1)
+
+def prodeps(pman):
+	cfg = simplecfg("%s.profile"%(pman,))
+	bcfg = cfg and cfg.get("basic")
+	if not bcfg:
+		return
+	if pman == "apt": # else snap or snap classic
+		return install(*bcfg)
+	isclas = pman == "clasnap"
+	for pkg in bcfg:
+		snapinstall(pkg, isclas)
+
+def deps(dryrun=False):
+	cfg = simplecfg("deps.cfg")
+	if not cfg: return
+	log("installing dependencies", important=True)
+	if dryrun:
+		return drylog(cfg)
+	if "basic" in cfg:
+		install(*cfg["basic"])
+	if "snap" in cfg:
+		for pkg in cfg["snap"]:
+			snapinstall(pkg)
+	if "clasnap" in cfg:
+		for pkg in cfg["clasnap"]:
+			snapinstall(pkg, True)
+	if "pip" in cfg:
+		from .package import pipper
+		for pkg in cfg["pip"]:
+			pipper(execute=True, force=True, target=pkg)
+	if "pro" in cfg:
+		for pman in cfg["pro"]:
+			prodeps(pman)
+
 def certs(dpath="/root", sname=None):
 	os.chdir(dpath)
 	set_log("cron-certs.log")
