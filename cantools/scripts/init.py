@@ -268,6 +268,11 @@ class Builder(object):
 			for path in [p for p in list(config.init.vcignore.keys()) if p != "."]:
 				for fname in config.init.vcignore[path]:
 					cfg.append(os.path.join(path, fname))
+			for path in config.init.vcignorecontents:
+				gk = "%s/.gitkeep"%(path,)
+				cfg.append("%s/*"%(path,))
+				cfg.append("!%s"%(gk,))
+				cmd("touch %s"%(gk,))
 			cp("\n".join(cfg), ".gitignore")
 		elif itype == "svn":
 			log("configuring svn", 2)
@@ -276,6 +281,8 @@ class Builder(object):
 				cp("\n".join(files), "_tmp")
 				cmd("svn propset svn:ignore -F _tmp %s"%(root,))
 				rm("_tmp")
+			for path in config.init.vcignorecontents:
+				cmd("svn propset svn:ignore '*' %s"%(path,))
 
 def update(autodeps=False):
 	log("Updating cantools and managed plugins", important=True)
