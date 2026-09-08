@@ -239,7 +239,7 @@ cfg = {
 		"dirs": ["js", "css", "img", "logs", "blob", "html", "html-static", "html-production"],
 		"vcignorecontents": ["logs", "blob"],
 		"vcignore": {
-			".": ["*pyc", "*~", ".ctp", "_", "admin.py", "_db.py", "_memcache.py", "_pay.py"],
+			".": ["*pyc", "*~", ".ctp", "_", "admin.py", "_db.py", "_memcache.py", "_pay.py", "data.db"],
 			"css": ["ct.css"],
 			"js": ["CT"]
 		},
