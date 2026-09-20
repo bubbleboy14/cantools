@@ -40,7 +40,7 @@ def o2f(outname, inames, ext="jpg", pref=""):
 #
 
 def dlp(url, opath=None, tarform="mp4", size="+size"):
-	ytc = "yt-dlp -f %s -S %s"%(tarform, size)
+	ytc = "yt-dlp -t %s -S %s"%(tarform, size)
 	if opath:
 		ytc = "%s -o %s"%(ytc, opath)
 	cmd("%s %s"%(ytc, url))
