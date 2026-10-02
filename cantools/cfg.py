@@ -4,6 +4,7 @@ cfg = {
 	"log": {
 		"deep": False,
 		"flush": False,
+		"rotating": False,
 		"timestamp": True,
 		"openfiles": False,
 		"tracemalloc": False,
