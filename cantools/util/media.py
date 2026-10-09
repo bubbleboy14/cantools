@@ -39,7 +39,7 @@ def o2f(outname, inames, ext="jpg", pref=""):
 # video (ffmpeg)
 #
 
-def dlp(url, opath=None, tarform="mp4", size="+size"):
+def dlp(url, opath=None, tarform="mp4", size="vcodec:h264,acodec:aac,+size"):
 	ytc = "yt-dlp -t %s -S %s"%(tarform, size)
 	if opath:
 		ytc = "%s -o %s"%(ytc, opath)
