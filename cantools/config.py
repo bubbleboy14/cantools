@@ -62,9 +62,9 @@ for line in lines:
 for key, val in items:
 	if key in ["ENCODE", "DB_ECHO", "DB_PUBLIC", "DB_REFCOUNT", "DB_CACHE", "DB_JSONTEXT", "DB_ARRAYTEXT", "DB_NOPOLY", "DB_POOL_NULL", "DB_INDEX_KEYS", "DB_INDEX_NAMED", "PROXY_ACTIVE", "GEO_TEST", "REL_VERBOSE", "REL_LOUDLISTEN", "MEMCACHE_REQUEST", "MEMCACHE_DB", "PUBSUB_ECHO", "PUBSUB_META", "PUBSUB_B64", "PUBSUB_PRUNE_DROP", "PUBSUB_PRUNE_UNSUB", "SSL_VERIFY", "ADMIN_MONITOR_LOG", "WEB_DEBUG", "WEB_XORIGIN", "LOG_TIMESTAMP", "LOG_FLUSH", "LOG_ROTATING", "BUILD_PROD_CLOSURE", "BUILD_PROD_B64", "GMAILER", "MAILHTML", "MAILOUD", "MAILTHROTTLER_ACTIVE"]:
 		val = val == "True"
-	elif key in ["PUBSUB_HISTORY", "PUBSUB_PRUNE_IDLE", "PUBSUB_PRUNE_INTERVAL", "MEMPAD", "WEB_SHIELD_CHUNK", "WEB_SHIELD_LIMIT", "WEB_SHIELD_INTERVAL", "PROXY_MINPORT", "PROXY_MAXPORT", "MEMCACHE_PROX_TIMEOUT", "DB_POOL_SIZE", "DB_POOL_OVERFLOW", "DB_POOL_RECYCLE", "DB_STRINGSIZE", "DB_FLATKEYSIZE", "LOG_OPENFILES", "LOG_TRACEMALLOC", "MAILSCANTICK", "MAILTHROTTLER_PERIOD"]:
+	elif key in ["PUBSUB_HISTORY", "PUBSUB_PRUNE_IDLE", "PUBSUB_PRUNE_INTERVAL", "MEMPAD", "WEB_SHIELD_CHUNK", "WEB_SHIELD_LIMIT", "WEB_SHIELD_INTERVAL", "PROXY_MINPORT", "PROXY_MAXPORT", "MEMCACHE_PROX_TIMEOUT", "DB_POOL_SIZE", "DB_POOL_OVERFLOW", "DB_POOL_RECYCLE", "DB_TIMEOUT_READ", "DB_TIMEOUT_WRITE", "DB_TIMEOUT_CONNECT", "DB_RETRY_READS", "DB_STRINGSIZE", "DB_FLATKEYSIZE", "LOG_OPENFILES", "LOG_TRACEMALLOC", "MAILSCANTICK", "MAILTHROTTLER_PERIOD"]:
 		val = int(val)
-	elif key in ["REL_SLEEP", "REL_TURBO"]:
+	elif key in ["REL_SLEEP", "REL_TURBO", "DB_RETRY_DELAY"]:
 		val = float(val)
 	if key == "DB":
 		config.db.update(config.web.server, _getpass(val, "db"))
@@ -141,6 +141,10 @@ for prop in ["key", "named"]:
 	dbcfg.index.update(prop, config.db.index[prop])
 for prop in ["null", "size", "recycle", "overflow"]:
 	dbcfg.pool.update(prop, config.db.pool[prop])
+for prop in ["read", "write", "connect"]:
+	dbcfg.timeout.update(prop, config.db.timeout[prop])
+for prop in ["reads", "delay"]:
+	dbcfg.retry.update(prop, config.db.retry[prop])
 
 # set protocol based on certs
 if config.ssl.certfile:
